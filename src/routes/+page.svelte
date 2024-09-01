@@ -19,7 +19,7 @@
 
 		map.addControl(new NavigationControl({ visualizePitch: true }), 'bottom-right');
 
-		map.addControl(new MaplibreTerradrawControl(), 'top-left');
+		map.addControl(new MaplibreTerradrawControl({}), 'top-left');
 	});
 </script>
 

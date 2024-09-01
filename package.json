@@ -50,6 +50,7 @@
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.36.0",
 		"globals": "^15.0.0",
+		"lefthook": "^1.7.14",
 		"maplibre-gl": "^4.6.0",
 		"postcss": "^8.4.42",
 		"postcss-cli": "^11.0.0",

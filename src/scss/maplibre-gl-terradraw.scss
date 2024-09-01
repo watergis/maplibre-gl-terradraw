@@ -1,0 +1,87 @@
+.maplibregl-terradraw-add-button {
+	background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%235f6368%22%3E%3Cpath%20d%3D%22M200-200h57l391-391-57-57-391%20391v57Zm-80%2080v-170l528-527q12-11%2026.5-17t30.5-6q16%200%2031%206t26%2018l55%2056q12%2011%2017.5%2026t5.5%2030q0%2016-5.5%2030.5T817-647L290-120H120Zm640-584-56-56%2056%2056Zm-141%2085-28-29%2057%2057-29-28Z%22%2F%3E%3C%2Fsvg%3E');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 90%;
+
+	&.enabled {
+		background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%235f6368%22%3E%3Cpath%20d%3D%22m622-453-56-56%2082-82-57-57-82%2082-56-56%20195-195q12-12%2026.5-17.5T705-840q16%200%2031%206t26%2018l55%2056q12%2011%2017.5%2026t5.5%2030q0%2016-5.5%2030.5T817-647L622-453ZM200-200h57l195-195-28-29-29-28-195%20195v57ZM792-56%20509-338%20290-120H120v-169l219-219L56-792l57-57%20736%20736-57%2057Zm-32-648-56-56%2056%2056Zm-169%2056%2057%2057-57-57ZM424-424l-29-28%2057%2057-28-29Z%22%2F%3E%3C%2Fsvg%3E');
+		background-size: 100%;
+	}
+}
+
+.maplibregl-terradraw-add-point-button {
+	background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%200%2024%2024%22%20width%3D%2224px%22%20fill%3D%22%235f6368%22%3E%3Cpath%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%3Cpath%20d%3D%22M12%202C6.47%202%202%206.47%202%2012s4.47%2010%2010%2010%2010-4.47%2010-10S17.53%202%2012%202z%22%2F%3E%3C%2Fsvg%3E');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 50%;
+}
+
+.maplibregl-terradraw-add-linestring-button {
+	background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%235f6368%22%3E%3Cpath%20d%3D%22M600-80v-100L320-320H120v-240h172l108-124v-196h240v240H468L360-516v126l240%20120v-50h240v240H600ZM480-720h80v-80h-80v80ZM200-400h80v-80h-80v80Zm480%20240h80v-80h-80v80ZM520-760ZM240-440Zm480%20240Z%22%2F%3E%3C%2Fsvg%3E');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 80%;
+}
+
+.maplibregl-terradraw-add-polygon-button {
+	background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%235f6368%22%3E%3Cpath%20d%3D%22M480-200%20200-480l280-280%20280%20280-280%20280Zm0-114%20166-166-166-166-166%20166%20166%20166Zm0-166Z%22%2F%3E%3C%2Fsvg%3E');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 100%;
+}
+
+.maplibregl-terradraw-add-rectangle-button {
+	background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%235f6368%22%3E%3Cpath%20d%3D%22M80-160v-640h800v640H80Zm80-80h640v-480H160v480Zm0%200v-480%20480Z%22%2F%3E%3C%2Fsvg%3E');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 80%;
+}
+
+.maplibregl-terradraw-add-angled-rectangle-button {
+	background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%235f6368%22%3E%3Cpath%20d%3D%22M80-160v-640h800v640H80Zm80-80h640v-480H160v480Zm0%200v-480%20480Z%22%2F%3E%3C%2Fsvg%3E');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 80%;
+	transform: rotate(45deg);
+}
+
+.maplibregl-terradraw-add-circle-button {
+	background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%235f6368%22%3E%3Cpath%20d%3D%22M480-80q-83%200-156-31.5T197-197q-54-54-85.5-127T80-480q0-83%2031.5-156T197-763q54-54%20127-85.5T480-880q83%200%20156%2031.5T763-763q54%2054%2085.5%20127T880-480q0%2083-31.5%20156T763-197q-54%2054-127%2085.5T480-80Zm0-80q134%200%20227-93t93-227q0-134-93-227t-227-93q-134%200-227%2093t-93%20227q0%20134%2093%20227t227%2093Zm0-320Z%22%2F%3E%3C%2Fsvg%3E');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 80%;
+}
+
+.maplibregl-terradraw-add-freehand-button {
+	background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%235f6368%22%3E%3Cpath%20d%3D%22m499-287%20335-335-52-52-335%20335%2052%2052Zm-261%2087q-100-5-149-42T40-349q0-65%2053.5-105.5T242-503q39-3%2058.5-12.5T320-542q0-26-29.5-39T193-600l7-80q103%208%20151.5%2041.5T400-542q0%2053-38.5%2083T248-423q-64%205-96%2023.5T120-349q0%2035%2028%2050.5t94%2018.5l-4%2080Zm280%207L353-358l382-382q20-20%2047.5-20t47.5%2020l70%2070q20%2020%2020%2047.5T900-575L518-193Zm-159%2033q-17%204-30-9t-9-30l33-159%20165%20165-159%2033Z%22%2F%3E%3C%2Fsvg%3E');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 80%;
+}
+
+.maplibregl-terradraw-add-select-button {
+	background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%235f6368%22%3E%3Cpath%20d%3D%22m320-410%2079-110h170L320-716v306ZM551-80%20406-392%20240-160v-720l560%20440H516l144%20309-109%2051ZM399-520Z%22%2F%3E%3C%2Fsvg%3E');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 80%;
+}
+
+.maplibregl-terradraw-add-control {
+	display: block;
+
+	&.hidden {
+		display: none;
+	}
+
+	&.active {
+		background-color: #FBC412;
+	}
+}
+
+.maplibregl-terradraw-delete-button {
+	background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%235f6368%22%3E%3Cpath%20d%3D%22M280-120q-33%200-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0%2033-23.5%2056.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160%200h80v-360h-80v360ZM280-720v520-520Z%22%2F%3E%3C%2Fsvg%3E');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 90%;
+}

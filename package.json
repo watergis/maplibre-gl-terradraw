@@ -1,0 +1,69 @@
+{
+	"name": "@watergis/maplibre-gl-terradraw",
+	"version": "0.0.1",
+	"description": "This plugin is to add controls to your maplibre for sketching powered by terradraw library.",
+	"type": "module",
+	"main": "package/maplibre-gl-terradraw.umd.js",
+	"module": "package/maplibre-gl-terradraw.es.js",
+	"exports": {
+		".": {
+			"import": "./package/maplibre-gl-terradraw.es.js",
+			"require": "./package/maplibre-gl-terradraw.umd.js"
+		},
+		"./dist/maplibre-gl-export.css": {
+			"import": "./package/maplibre-gl-terradraw.css",
+			"require": "./package/maplibre-gl-terradraw.css"
+		}
+	},
+	"files": [
+		"package",
+		"!package/**/*.test.*",
+		"!package/**/*.spec.*"
+	],
+	"scripts": {
+		"dev": "vite dev",
+		"build": "npm run build:doc && npm run package",
+		"build:doc": "vite build --config vite.config.ts",
+		"preview": "vite preview",
+		"package": "npm run package:js && npm run package:css",
+		"package:js": "tsc && vite build --config vite.lib.config.ts",
+		"package:scss": "sass --no-source-map --style=compressed src/scss/maplibre-gl-terradraw.scss:package/maplibre-gl-terradraw.css",
+		"package:postcss": "postcss package/*.css -r",
+		"package:css": "npm run package:scss && npm run package:postcss",
+		"prepublishOnly": "npm run package",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"lint": "prettier --check . && eslint .",
+		"format": "prettier --write ."
+	},
+	"peerDependencies": {
+		"svelte": "^4.0.0"
+	},
+	"devDependencies": {
+		"@sveltejs/adapter-auto": "^3.0.0",
+		"@sveltejs/kit": "^2.0.0",
+		"@sveltejs/package": "^2.0.0",
+		"@sveltejs/vite-plugin-svelte": "^3.0.0",
+		"@types/eslint": "^9.6.0",
+		"autoprefixer": "^10.4.20",
+		"eslint": "^9.0.0",
+		"eslint-config-prettier": "^9.1.0",
+		"eslint-plugin-svelte": "^2.36.0",
+		"globals": "^15.0.0",
+		"maplibre-gl": "^4.6.0",
+		"postcss": "^8.4.42",
+		"postcss-cli": "^11.0.0",
+		"prettier": "^3.1.1",
+		"prettier-plugin-svelte": "^3.1.2",
+		"publint": "^0.2.0",
+		"sass": "^1.77.8",
+		"svelte": "^4.2.7",
+		"svelte-check": "^3.6.0",
+		"typescript": "^5.0.0",
+		"typescript-eslint": "^8.0.0",
+		"vite": "^5.0.11"
+	},
+	"dependencies": {
+		"terra-draw": "1.0.0-beta.1"
+	}
+}

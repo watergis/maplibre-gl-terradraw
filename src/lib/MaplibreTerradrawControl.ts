@@ -31,7 +31,7 @@ export class MaplibreTerradrawControl implements IControl {
 	private modeButtons: { [key: string]: HTMLButtonElement } = {};
 	private deleteButton?: HTMLButtonElement;
 	private isExpanded = false;
-    private activeMode: string;
+	private activeMode: string;
 
 	private terradraw?: TerraDraw;
 
@@ -48,7 +48,7 @@ export class MaplibreTerradrawControl implements IControl {
 
 	constructor(options: ControlOptions) {
 		this.modeButtons = {};
-		this.activeMode = ''
+		this.activeMode = '';
 
 		if (options) {
 			this.options = Object.assign(this.options, options);
@@ -175,7 +175,7 @@ export class MaplibreTerradrawControl implements IControl {
 			modes: modes
 		});
 
-        this.terradraw.start()
+		this.terradraw.start();
 
 		this.controlContainer = document.createElement('div');
 		this.controlContainer.classList.add(`maplibregl-ctrl`);
@@ -250,15 +250,15 @@ export class MaplibreTerradrawControl implements IControl {
 				this.terradraw.start();
 			}
 			this.terradraw.setMode(type);
-            this.activeMode = type
+			this.activeMode = type;
 
-            const controls = document.getElementsByClassName('maplibregl-terradraw-add-control');
+			const controls = document.getElementsByClassName('maplibregl-terradraw-add-control');
 			for (let i = 0; i < controls.length; i++) {
 				const item = controls.item(i);
 				if (!item) continue;
 				item.classList.remove('active');
 			}
-            btn.classList.add('active')
+			btn.classList.add('active');
 		});
 		this.modeButtons[type] = btn;
 	}

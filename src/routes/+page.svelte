@@ -19,7 +19,15 @@
 
 		map.addControl(new NavigationControl({ visualizePitch: true }), 'bottom-right');
 
-		map.addControl(new MaplibreTerradrawControl({}), 'top-left');
+		const drawControl = new MaplibreTerradrawControl({});
+		map.addControl(drawControl, 'top-left');
+
+		const drawInstance = drawControl.getTerraDrawInstance();
+		drawInstance?.on('select', (id: string) => {
+			const snapshot = drawInstance.getSnapshot();
+			const polygon = snapshot?.find((feature) => feature.id === id);
+			console.log(polygon);
+		});
 	});
 </script>
 

@@ -8,6 +8,7 @@ import {
 	TerraDrawPointMode,
 	TerraDrawPolygonMode,
 	TerraDrawRectangleMode,
+	TerraDrawRenderMode,
 	TerraDrawSelectMode,
 	ValidateNotSelfIntersecting
 } from 'terra-draw';
@@ -19,6 +20,13 @@ import {
  */
 export const getTerraDrawModes = (options: ControlOptions) => {
 	const modes = [];
+
+	modes.push(
+		new TerraDrawRenderMode({
+			modeName: 'render',
+			styles: {}
+		})
+	);
 
 	if (options.point === true) {
 		modes.push(new TerraDrawPointMode());

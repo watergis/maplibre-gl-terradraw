@@ -15,7 +15,7 @@ npm i -D @watergis/maplibre-gl-terradraw
 
 ```ts
 import { MaplibreTerradrawControl } from '@watergis/maplibre-gl-terradraw';
-import '@watergis/maplibre-gl-terradraw/package/maplibre-gl-terradraw.scss';
+import '@watergis/maplibre-gl-terradraw/dist/maplibre-gl-terradraw.css';
 
 map.addControl(
 	new MaplibreTerradrawControl({

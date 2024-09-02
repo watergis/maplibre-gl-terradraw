@@ -3,22 +3,24 @@
 	"version": "0.0.1",
 	"description": "This plugin is to add controls to your maplibre for sketching powered by terradraw library.",
 	"type": "module",
-	"main": "package/maplibre-gl-terradraw.umd.js",
-	"module": "package/maplibre-gl-terradraw.es.js",
+	"main": "dist/maplibre-gl-terradraw.umd.js",
+	"types": "./dist/types/index.d.ts",
+	"module": "dist/maplibre-gl-terradraw.es.js",
 	"exports": {
 		".": {
-			"import": "./package/maplibre-gl-terradraw.es.js",
-			"require": "./package/maplibre-gl-terradraw.umd.js"
+			"import": "./dist/maplibre-gl-terradraw.es.js",
+			"require": "./dist/maplibre-gl-terradraw.umd.js",
+			"types": "./dist/types/index.d.ts"
 		},
-		"./package/maplibre-gl-export.css": {
-			"import": "./package/maplibre-gl-terradraw.css",
-			"require": "./package/maplibre-gl-terradraw.css"
+		"./dist/maplibre-gl-terradraw.css": {
+			"import": "./dist/maplibre-gl-terradraw.css",
+			"require": "./dist/maplibre-gl-terradraw.css"
 		}
 	},
 	"files": [
-		"package",
-		"!package/**/*.test.*",
-		"!package/**/*.spec.*"
+		"dist",
+		"!dist/**/*.test.*",
+		"!dist/**/*.spec.*"
 	],
 	"scripts": {
 		"dev": "vite dev",
@@ -26,9 +28,9 @@
 		"build:doc": "vite build --config vite.config.ts",
 		"preview": "vite preview",
 		"package": "npm run package:js && npm run package:css",
-		"package:js": "tsc && vite build --config vite.lib.config.ts",
-		"package:scss": "sass --no-source-map --style=compressed src/scss/maplibre-gl-terradraw.scss:package/maplibre-gl-terradraw.css",
-		"package:postcss": "postcss package/*.css -r",
+		"package:js": "tsc --project tsconfig.lib.json && vite build --config vite.lib.config.ts",
+		"package:scss": "sass --no-source-map --style=compressed src/scss/maplibre-gl-terradraw.scss:dist/maplibre-gl-terradraw.css",
+		"package:postcss": "postcss dist/*.css -r",
 		"package:css": "npm run package:scss && npm run package:postcss",
 		"prepublishOnly": "npm run package",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -63,8 +65,8 @@
 		"vite": "^5.0.11"
 	},
 	"dependencies": {
-		"terra-draw": "1.0.0-beta.1",
-		"maplibre-gl": "^4.6.0"
+		"maplibre-gl": "^4.6.0",
+		"terra-draw": "1.0.0-beta.1"
 	},
 	"packageManager": "pnpm@9.8.0",
 	"engines": {

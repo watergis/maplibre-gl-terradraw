@@ -1,5 +1,7 @@
 # maplibre-gl-terradraw
 
+![License](https://img.shields.io/github/license/watergis/maplibre-gl-terradraw)
+[![version](https://img.shields.io/npm/v/@watergis/maplibre-gl-terradraw.svg)](https://www.npmjs.com/package/@watergis/maplibre-gl-terradraw)
 [![CI](https://github.com/watergis/maplibre-gl-terradraw/actions/workflows/ci.yml/badge.svg)](https://github.com/watergis/maplibre-gl-terradraw/actions/workflows/ci.yml)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/3486d35f-7a74-4c1c-a94a-6db0f7250583/deploy-status)](https://app.netlify.com/sites/maplibre-gl-terradraw/deploys)
 

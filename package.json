@@ -68,7 +68,7 @@
 		"maplibre-gl": "^4.6.0",
 		"terra-draw": "1.0.0-beta.1"
 	},
-	"packageManager": "pnpm@9.8.0",
+	"packageManager": "pnpm@9.9.0",
 	"engines": {
 		"pnpm": "^9.0.0"
 	}

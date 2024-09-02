@@ -19,11 +19,14 @@ import {
  * @returns return an array of enabled terradraw mode objects
  */
 export const getTerraDrawModes = (options: ControlOptions) => {
-	const modes = [
+	const modes = [];
+
+	modes.push(
 		new TerraDrawRenderMode({
-			modeName: 'render'
+			modeName: 'render',
+			styles: {}
 		})
-	];
+	);
 
 	if (options.point === true) {
 		modes.push(new TerraDrawPointMode());

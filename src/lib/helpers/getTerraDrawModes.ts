@@ -1,4 +1,4 @@
-import type { ControlOptions } from '$lib/interfaces/ControlOptions.js';
+import type { ControlOptions } from '../interfaces/ControlOptions.js';
 import type { MapGeoJSONFeature } from 'maplibre-gl';
 import {
 	TerraDrawAngledRectangleMode,
@@ -29,9 +29,13 @@ export const getTerraDrawModes = (options: ControlOptions) => {
 	if (options.polygon === true) {
 		modes.push(
 			new TerraDrawPolygonMode({
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
 				validation: (feature: MapGeoJSONFeature, e: { updateType: string }) => {
 					const updateType = e.updateType;
 					if (updateType === 'finish' || updateType === 'commit') {
+						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+						// @ts-ignore
 						return ValidateNotSelfIntersecting(feature);
 					}
 					return true;

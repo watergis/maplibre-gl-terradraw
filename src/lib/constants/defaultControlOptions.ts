@@ -1,4 +1,4 @@
-import type { ControlOptions } from '$lib/interfaces/ControlOptions.js';
+import type { ControlOptions } from '../interfaces/ControlOptions.js';
 
 export const defaultControlOptions: ControlOptions = {
 	point: true,

@@ -10,7 +10,7 @@
 			"import": "./package/maplibre-gl-terradraw.es.js",
 			"require": "./package/maplibre-gl-terradraw.umd.js"
 		},
-		"./dist/maplibre-gl-export.css": {
+		"./package/maplibre-gl-export.css": {
 			"import": "./package/maplibre-gl-terradraw.css",
 			"require": "./package/maplibre-gl-terradraw.css"
 		}

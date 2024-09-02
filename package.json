@@ -1,6 +1,6 @@
 {
 	"name": "@watergis/maplibre-gl-terradraw",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "This plugin is to add controls to your maplibre for sketching powered by terradraw library.",
 	"type": "module",
 	"main": "dist/maplibre-gl-terradraw.umd.js",

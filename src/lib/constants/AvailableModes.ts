@@ -6,5 +6,6 @@ export const AvailableModes = [
 	'circle',
 	'freehand',
 	'angled-rectangle',
-	'select'
+	'select',
+	'render'
 ] as const;

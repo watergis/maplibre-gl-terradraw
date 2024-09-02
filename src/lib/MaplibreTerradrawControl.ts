@@ -18,7 +18,7 @@ export class MaplibreTerradrawControl implements IControl {
 
 	constructor(options?: ControlOptions) {
 		this.modeButtons = {};
-		this.activeMode = '';
+		this.activeMode = 'render';
 
 		if (options) {
 			this.options = Object.assign(this.options, options);
@@ -71,6 +71,7 @@ export class MaplibreTerradrawControl implements IControl {
 		});
 
 		modes.forEach((m) => {
+			if (m.mode === 'render') return;
 			this.addTerradrawButton(m.mode);
 		});
 
@@ -119,9 +120,8 @@ export class MaplibreTerradrawControl implements IControl {
 	public deactivate() {
 		if (!this.terradraw) return;
 		if (!this.terradraw.enabled) return;
-		this.terradraw.stop();
-		this.deactivate();
 		this.resetActiveMode();
+		this.terradraw.stop();
 	}
 
 	public getTerraDrawInstance() {
@@ -129,14 +129,18 @@ export class MaplibreTerradrawControl implements IControl {
 	}
 
 	private resetActiveMode() {
-		this.activeMode = '';
-
+		if (!this.terradraw) return;
+		if (!this.terradraw.enabled) {
+			this.terradraw.start();
+		}
 		const controls = document.getElementsByClassName('maplibregl-terradraw-add-control');
 		for (let i = 0; i < controls.length; i++) {
 			const item = controls.item(i);
 			if (!item) continue;
 			item.classList.remove('active');
 		}
+		this.activeMode = 'render';
+		this.terradraw?.setMode('render');
 	}
 
 	private addTerradrawButton(mode: TerradrawMode) {
@@ -147,11 +151,17 @@ export class MaplibreTerradrawControl implements IControl {
 		btn.type = 'button';
 		btn.addEventListener('click', () => {
 			if (!this.terradraw) return;
+
+			const isActive = btn.classList.contains('active');
+
 			this.activate();
 			this.resetActiveMode();
-			this.terradraw.setMode(mode);
-			this.activeMode = mode;
-			btn.classList.add('active');
+
+			if (!isActive) {
+				this.terradraw.setMode(mode);
+				this.activeMode = mode;
+				btn.classList.add('active');
+			}
 		});
 		this.modeButtons[mode] = btn;
 	}

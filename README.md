@@ -5,7 +5,7 @@
 [![CI](https://github.com/watergis/maplibre-gl-terradraw/actions/workflows/ci.yml/badge.svg)](https://github.com/watergis/maplibre-gl-terradraw/actions/workflows/ci.yml)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/3486d35f-7a74-4c1c-a94a-6db0f7250583/deploy-status)](https://app.netlify.com/sites/maplibre-gl-terradraw/deploys)
 
-This plugin is to add controls to your maplibre for sketching powered by [terradraw](https://github.com/JamesLMilner/terra-draw) library.
+This plugin is to add controls to your MapLibre for sketching powered by [Terra Draw](https://github.com/JamesLMilner/terra-draw) library.
 
 ## Install
 
@@ -34,16 +34,16 @@ map.addControl(
 );
 ```
 
-As default, all terradraw modes are enabled, you can disable options if you don't want to use them.
+As default, all Terra Draw modes are enabled, you can disable options if you don't want to use them.
 
-You can get terradraw instance by the following function.
+You can get Terra Draw instance by the following function.
 
 ```ts
 const drawControl = new MaplibreTerradrawControl();
 const drawInstance = drawControl.getTerraDrawInstance();
 ```
 
-You can add event listener to subscribe terradraw event as you wish. The below example is to subscribe `select` event of terradraw.
+You can add event listener to subscribe Terra Draw event as you wish. The below example is to subscribe `select` event of Terra Draw.
 
 ```ts
 drawInstance.on('select', (id: string) => {

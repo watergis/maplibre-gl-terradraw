@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 0.0.4
+
+### Patch Changes
+
+- 069bd2e: fix: moved maplibre-gl and terra-draw to peerDependencies. and updated all other dependencies.
+
 ## 0.0.3
 
 ### Patch Changes

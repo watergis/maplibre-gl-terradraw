@@ -1,0 +1,35 @@
+import { Map } from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
+import { MaplibreTerradrawControl } from '@watergis/maplibre-gl-terradraw'
+
+const map = new Map({
+			container: 'map',
+			style: '{style}',
+			center: [0, 0],
+			zoom: 1,
+		});
+
+// As default, all Terra Draw modes are enabled, 
+// you can disable options if you don't want to use them.
+const draw = new MaplibreTerradrawControl({
+    point: true,
+    line: true,
+    polygon: true,
+    rectangle: true,
+    circle: true,
+    freehand: true,
+    angledRectangle: true,
+    select: true
+});
+map.addControl(drawControl, 'top-left');
+
+// You can get Terra Draw instance by the following function.
+const drawInstance = drawControl.getTerraDrawInstance();
+
+// You can add event listener to subscribe Terra Draw event as you wish. 
+// The below example is to subscribe `select` event of Terra Draw.
+drawInstance.on('select', (id: string) => {
+	const snapshot = drawInstance.getSnapshot();
+	const polygon = snapshot?.find((feature) => feature.id === id);
+	console.log(polygon);
+});

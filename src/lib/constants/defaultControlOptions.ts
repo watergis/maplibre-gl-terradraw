@@ -1,5 +1,8 @@
 import type { ControlOptions } from '../interfaces/ControlOptions.js';
 
+/**
+ * Default control options
+ */
 export const defaultControlOptions: ControlOptions = {
 	point: true,
 	line: true,
@@ -8,5 +11,6 @@ export const defaultControlOptions: ControlOptions = {
 	circle: true,
 	freehand: true,
 	angledRectangle: true,
-	select: true
+	select: true,
+	open: false
 };

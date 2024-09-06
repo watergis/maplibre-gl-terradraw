@@ -19,7 +19,8 @@ const draw = new MaplibreTerradrawControl({
     circle: true,
     freehand: true,
     angledRectangle: true,
-    select: true
+    select: true,
+    open: false,
 });
 map.addControl(drawControl, 'top-left');
 

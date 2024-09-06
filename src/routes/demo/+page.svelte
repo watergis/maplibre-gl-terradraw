@@ -34,7 +34,7 @@
 			'bottom-right'
 		);
 
-		const drawControl = new MaplibreTerradrawControl({});
+		const drawControl = new MaplibreTerradrawControl({ open: true });
 		map.addControl(drawControl, 'top-left');
 
 		const drawInstance = drawControl.getTerraDrawInstance();
@@ -49,8 +49,6 @@
 <div class="map" bind:this={mapContainer}>
 	<div class="overlay" hidden={selectedFeature.length === 0}>
 		<CodeBlock language="javascript" bind:code={selectedFeature}></CodeBlock>
-
-		<!-- <textarea class="textarea selected-geometry" bind:value={selectedFeature} /> -->
 	</div>
 </div>
 

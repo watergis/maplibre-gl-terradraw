@@ -4,6 +4,9 @@ import type { ControlOptions, TerradrawMode } from './interfaces/index.js';
 import { defaultControlOptions } from './constants/defaultControlOptions.js';
 import { getTerraDrawModes } from './helpers/index.js';
 
+/**
+ * Maplibre GL Terra Draw Control
+ */
 export class MaplibreTerradrawControl implements IControl {
 	private controlContainer?: HTMLElement;
 	private map?: Map;
@@ -16,6 +19,10 @@ export class MaplibreTerradrawControl implements IControl {
 	private terradraw?: TerraDraw;
 	private options: ControlOptions = defaultControlOptions;
 
+	/**
+	 * Constructor
+	 * @param options Plugin control options
+	 */
 	constructor(options?: ControlOptions) {
 		this.modeButtons = {};
 		this.activeMode = 'render';
@@ -37,6 +44,9 @@ export class MaplibreTerradrawControl implements IControl {
 		if (modes.length === 0) {
 			throw new Error('At least a mode must be enabled.');
 		}
+
+		this.isExpanded = this.options.open === true;
+
 		this.terradraw = new TerraDraw({
 			adapter: new TerraDrawMapLibreGLAdapter({ map }),
 			modes: modes
@@ -50,25 +60,11 @@ export class MaplibreTerradrawControl implements IControl {
 
 		this.addButton = document.createElement('button');
 		this.addButton.classList.add(`maplibregl-terradraw-add-button`);
+		if (this.isExpanded) {
+			this.addButton.classList.add('enabled');
+		}
 		this.addButton.type = 'button';
-		this.addButton.addEventListener('click', () => {
-			if (!this.terradraw) return;
-
-			const controls = document.getElementsByClassName('maplibregl-terradraw-add-control');
-			for (let i = 0; i < controls.length; i++) {
-				const item = controls.item(i);
-				if (!item) continue;
-				if (this.isExpanded) {
-					item.classList.add('hidden');
-					this.addButton?.classList.remove('enabled');
-					this.resetActiveMode();
-				} else {
-					item.classList.remove('hidden');
-					this.addButton?.classList.add('enabled');
-				}
-			}
-			this.isExpanded = !this.isExpanded;
-		});
+		this.addButton.addEventListener('click', this.toggleEditor.bind(this));
 
 		modes.forEach((m) => {
 			if (m.mode === 'render') return;
@@ -78,7 +74,9 @@ export class MaplibreTerradrawControl implements IControl {
 		this.deleteButton = document.createElement('button');
 		this.deleteButton.classList.add('maplibregl-terradraw-add-control');
 		this.deleteButton.classList.add(`maplibregl-terradraw-delete-button`);
-		this.deleteButton.classList.add('hidden');
+		if (!this.isExpanded) {
+			this.deleteButton.classList.add('hidden');
+		}
 		this.deleteButton.type = 'button';
 		this.deleteButton.addEventListener('click', () => {
 			if (!this.terradraw) return;
@@ -110,6 +108,9 @@ export class MaplibreTerradrawControl implements IControl {
 		this.map = undefined;
 	}
 
+	/**
+	 * Activate Terra Draw to start drawing
+	 */
 	public activate() {
 		if (!this.terradraw) return;
 		if (!this.terradraw.enabled) {
@@ -117,6 +118,9 @@ export class MaplibreTerradrawControl implements IControl {
 		}
 	}
 
+	/**
+	 * Deactivate Terra Draw to stop drawing
+	 */
 	public deactivate() {
 		if (!this.terradraw) return;
 		if (!this.terradraw.enabled) return;
@@ -124,10 +128,42 @@ export class MaplibreTerradrawControl implements IControl {
 		this.terradraw.stop();
 	}
 
+	/**
+	 * Get the Terra Draw instance.
+	 * For the Terra Draw API, please refer to https://terradraw.io/#/api
+	 * @returns Terra Draw instance
+	 */
 	public getTerraDrawInstance() {
 		return this.terradraw;
 	}
 
+	/**
+	 * Toggle editor control
+	 */
+	private toggleEditor() {
+		if (!this.terradraw) return;
+		const controls = document.getElementsByClassName('maplibregl-terradraw-add-control');
+		for (let i = 0; i < controls.length; i++) {
+			const item = controls.item(i);
+			if (!item) continue;
+			if (this.isExpanded) {
+				item.classList.add('hidden');
+			} else {
+				item.classList.remove('hidden');
+			}
+		}
+		if (this.isExpanded) {
+			this.addButton?.classList.remove('enabled');
+			this.resetActiveMode();
+		} else {
+			this.addButton?.classList.add('enabled');
+		}
+		this.isExpanded = !this.isExpanded;
+	}
+
+	/**
+	 * Reset active mode to back to render mode
+	 */
 	private resetActiveMode() {
 		if (!this.terradraw) return;
 		if (!this.terradraw.enabled) {
@@ -143,11 +179,17 @@ export class MaplibreTerradrawControl implements IControl {
 		this.terradraw?.setMode('render');
 	}
 
+	/**
+	 * Add Terra Draw drawing mode button
+	 * @param mode Terra Draw mode name
+	 */
 	private addTerradrawButton(mode: TerradrawMode) {
 		const btn = document.createElement('button');
 		btn.classList.add('maplibregl-terradraw-add-control');
 		btn.classList.add(`maplibregl-terradraw-add-${mode}-button`);
-		btn.classList.add('hidden');
+		if (!this.isExpanded) {
+			btn.classList.add('hidden');
+		}
 		btn.type = 'button';
 		btn.addEventListener('click', () => {
 			if (!this.terradraw) return;

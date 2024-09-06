@@ -34,6 +34,15 @@ pnpm build
 
 Output files for the package are generated under `package` folder. The demo website will be exported under `dist` folder.
 
+### Test CDN
+
+```shell
+pnpm build
+pnpm dev
+```
+
+Access to http://localhost:5173/index_cdn.html for testing CDN module.
+
 ## Release packages
 
 It uses changeset to release. Please create release notes by the following command. Changeset will release package once the PR is merged into main branch.

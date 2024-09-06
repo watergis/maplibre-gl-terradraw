@@ -5,5 +5,10 @@ export default defineConfig({
 	plugins: [sveltekit()],
 	ssr: {
 		noExternal: 'maplibre-gl'
+	},
+	server: {
+		fs: {
+			allow: ['./dist']
+		}
 	}
 });

@@ -8,6 +8,8 @@
 	let mapContainer: HTMLDivElement;
 	let map: Map;
 
+	let selectedFeature = '';
+
 	onMount(() => {
 		map = new Map({
 			container: mapContainer,
@@ -25,8 +27,8 @@
 		const drawInstance = drawControl.getTerraDrawInstance();
 		drawInstance?.on('select', (id: string) => {
 			const snapshot = drawInstance.getSnapshot();
-			const polygon = snapshot?.find((feature) => feature.id === id);
-			console.log(polygon);
+			const feature = snapshot?.find((feature) => feature.id === id);
+			selectedFeature = JSON.stringify(feature, null, 4);
 		});
 	});
 </script>
@@ -41,7 +43,11 @@
 	</style>
 </svelte:head>
 
-<div class="map" bind:this={mapContainer}></div>
+<div class="map" bind:this={mapContainer}>
+	<div class="overlay" hidden={selectedFeature.length === 0}>
+		<textarea class="selected-geometry" bind:value={selectedFeature} />
+	</div>
+</div>
 
 <style lang="scss">
 	.map {
@@ -50,5 +56,21 @@
 		bottom: 0;
 		width: 100%;
 		z-index: 10;
+
+		.overlay {
+			position: absolute;
+			bottom: 5px;
+			left: 5px;
+			z-index: 10;
+
+			.selected-geometry {
+				height: fit-content;
+				min-height: 200px;
+				max-height: 300px;
+				width: 350px;
+				overflow-y: auto;
+				resize: none;
+			}
+		}
 	}
 </style>

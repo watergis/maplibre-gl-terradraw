@@ -7,13 +7,17 @@
 
 This plugin is to add controls to your MapLibre for sketching powered by [Terra Draw](https://github.com/JamesLMilner/terra-draw) library.
 
-## Install
+## Usage
+
+### NPM
+
+- install
 
 ```shell
 npm i -D @watergis/maplibre-gl-terradraw
 ```
 
-## Usage
+Then,
 
 ```ts
 import { MaplibreTerradrawControl } from '@watergis/maplibre-gl-terradraw';
@@ -52,6 +56,20 @@ drawInstance.on('select', (id: string) => {
 	console.log(polygon);
 });
 ```
+
+### CDN
+
+Include CSS and umd.js from CDN as follows.
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.umd.js"></script>
+<link
+	rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.css"
+/>
+```
+
+For CDN example, please refer to [index_cdn.html](./static/index_cdn.html).
 
 ## Contribution
 

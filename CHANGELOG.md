@@ -1,5 +1,17 @@
 # @watergis/maplibre-gl-terradraw
 
+## 0.0.5
+
+### Patch Changes
+
+- 8ec1f8c: feat: added `open` option in the control constructor. Default is false. If true is set to `open` option, editor controller will be expaned as default.
+
+  To expand control as default, create control instance like below.
+
+  ```js
+  const drawControl = new MaplibreTerradrawControl({ open: true });
+  ```
+
 ## 0.0.4
 
 ### Patch Changes

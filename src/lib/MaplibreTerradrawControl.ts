@@ -1,8 +1,13 @@
 import type { ControlPosition, IControl, Map } from 'maplibre-gl';
 import { TerraDraw, TerraDrawMapLibreGLAdapter } from 'terra-draw';
-import type { ControlOptions, TerradrawMode } from './interfaces/index.js';
+import type {
+	ControlOptions,
+	ModeOptions,
+	TerradrawMode,
+	TerradrawModeClass
+} from './interfaces/index.js';
 import { defaultControlOptions } from './constants/defaultControlOptions.js';
-import { getTerraDrawModes } from './helpers/index.js';
+import { getDefaultModeOptions } from './constants/getDefaultModeOptions.js';
 
 /**
  * Maplibre GL Terra Draw Control
@@ -19,17 +24,23 @@ export class MaplibreTerradrawControl implements IControl {
 	private terradraw?: TerraDraw;
 	private options: ControlOptions = defaultControlOptions;
 
+	private modeOptions?: ModeOptions;
+
 	/**
 	 * Constructor
 	 * @param options Plugin control options
+	 * @param modeOptions Overwrite Terra Draw mode options if you specified.
+	 *
 	 */
-	constructor(options?: ControlOptions) {
+	constructor(options?: ControlOptions, modeOptions?: ModeOptions) {
 		this.modeButtons = {};
 		this.activeMode = 'render';
 
 		if (options) {
 			this.options = Object.assign(this.options, options);
 		}
+
+		this.modeOptions = modeOptions;
 	}
 
 	public getDefaultPosition(): ControlPosition {
@@ -38,12 +49,21 @@ export class MaplibreTerradrawControl implements IControl {
 	}
 
 	public onAdd(map: Map): HTMLElement {
-		this.map = map;
-
-		const modes = getTerraDrawModes(this.options);
-		if (modes.length === 0) {
+		if (this.options && this.options.modes && this.options.modes.length === 0) {
 			throw new Error('At least a mode must be enabled.');
 		}
+		this.map = map;
+
+		const defaultOptions = getDefaultModeOptions();
+		const modes: TerradrawModeClass[] = [defaultOptions['render']];
+
+		this.options?.modes?.forEach((m) => {
+			if (this.modeOptions && this.modeOptions[m]) {
+				modes.push(this.modeOptions[m]);
+			} else if (defaultOptions[m]) {
+				modes.push(defaultOptions[m]);
+			}
+		});
 
 		this.isExpanded = this.options.open === true;
 
@@ -66,9 +86,9 @@ export class MaplibreTerradrawControl implements IControl {
 		this.addButton.type = 'button';
 		this.addButton.addEventListener('click', this.toggleEditor.bind(this));
 
-		modes.forEach((m) => {
+		modes.forEach((m: TerradrawModeClass) => {
 			if (m.mode === 'render') return;
-			this.addTerradrawButton(m.mode);
+			this.addTerradrawButton(m.mode as TerradrawMode);
 		});
 
 		this.deleteButton = document.createElement('button');

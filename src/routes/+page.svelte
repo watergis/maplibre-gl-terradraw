@@ -114,6 +114,76 @@
 
 			<CodeBlock language="html" lineNumbers code={cdnExample} />
 		</div>
+
+		<h3 class="h3 pt-6">Customization</h3>
+
+		<h4 class="h4 pt-6">Get rid of some drawing modes</h4>
+
+		<p>
+			By default, all Terra Draw modes will be added to the control. However, you might want to
+			remove some drawing modes from your app.
+		</p>
+		<p>
+			The following example is to add <b>Point</b> and <b>Select</b> control to the plugin.
+			Furthremore, this example code bring <b>Select</b> mode first while it is shown in the last as
+			default.
+		</p>
+
+		<CodeBlock
+			language="js"
+			lineNumbers
+			code={`
+const drawControl = new MaplibreTerradrawControl({
+	modes: [
+		'select',
+		'point'
+	]
+});
+map.addControl(drawControl, 'top-left');
+		`}
+		/>
+
+		<h4 class="h4 pt-6">Customise drawing options</h4>
+
+		<p>
+			This plugin tries to optimise the better drawing options for each Terra Draw mode. However,
+			preconfigured drawing options might not be desired for your app.
+		</p>
+		<p>
+			For example, if you only want to use polygon control,but you don't want users to drag a
+			polygon or adding/deleting a node on an edge of a polygon, the following setting can be done.
+		</p>
+
+		<CodeBlock
+			language="js"
+			lineNumbers
+			code={`
+const drawControl = new MaplibreTerradrawControl({
+	modes: [
+		'polygon',
+		'select'
+	]
+},{
+    select: new TerraDrawSelectMode({
+        flags: {
+            polygon: {
+                feature: {
+                    draggable: false, // users cannot drag to move polygon
+                    rotateable: true,
+                    scaleable: true,
+                    coordinates: {
+                        midpoints: false, // users cannot add a node on the middle of edge.
+                        draggable: true,
+                        deletable: false // users cannot delete a node.
+                    }
+                }
+            },
+        }
+    })
+});
+map.addControl(drawControl, 'top-left');
+		`}
+		/>
 	</div>
 
 	<div class="space-y-2 py-4">

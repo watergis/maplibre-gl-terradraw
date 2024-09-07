@@ -34,7 +34,19 @@
 			'bottom-right'
 		);
 
-		const drawControl = new MaplibreTerradrawControl({ open: true });
+		const drawControl = new MaplibreTerradrawControl({
+			modes: [
+				'point',
+				'linestring',
+				'polygon',
+				'rectangle',
+				'angled-rectangle',
+				'circle',
+				'freehand',
+				'select'
+			],
+			open: true
+		});
 		map.addControl(drawControl, 'top-left');
 
 		const drawInstance = drawControl.getTerraDrawInstance();

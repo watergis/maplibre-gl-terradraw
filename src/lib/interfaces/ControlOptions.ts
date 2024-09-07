@@ -1,39 +1,18 @@
+import type { TerradrawMode } from './TerradrawMode.js';
+
 /**
  * Plugin control constructor options
  */
 export interface ControlOptions {
 	/**
-	 * Enable point mode. Default is true
+	 * Terradraw modes added to the control.
+	 * The mode will be added in the same order of the array.
+	 * Default is all modes in the below order:
+	 * ['point', 'linestring', 'polygon', 'rectangle', 'angled-rectangle', 'circle', 'freehand', 'select']
+	 *
+	 * You can change the order of modes, or can get rid of some modes which you don't need for your app.
 	 */
-	point?: boolean;
-	/**
-	 * Enable line mode. Default is true
-	 */
-	line?: boolean;
-	/**
-	 * Enable polygon mode. Default is true
-	 */
-	polygon?: boolean;
-	/**
-	 * Enable rectangle mode. Default is true
-	 */
-	rectangle?: boolean;
-	/**
-	 * Enable circle mode. Default is true
-	 */
-	circle?: boolean;
-	/**
-	 * Enable freehand mode. Default is true
-	 */
-	freehand?: boolean;
-	/**
-	 * Enable angled rectangle mode. Default is true
-	 */
-	angledRectangle?: boolean;
-	/**
-	 * Enable select mode. Default is true
-	 */
-	select?: boolean;
+	modes?: TerradrawMode[];
 	/**
 	 * Open editor as default if true. Default is false
 	 */

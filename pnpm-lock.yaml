@@ -9,7 +9,7 @@ importers:
   .:
     dependencies:
       maplibre-gl:
-        specifier: ^4.6.0
+        specifier: ^2.0.0 || ^3.0.0 || ^4.0.0
         version: 4.6.0
       terra-draw:
         specifier: ^1.0.0-beta.1

@@ -73,7 +73,7 @@
 		"vite": "^5.4.3"
 	},
 	"peerDependencies": {
-		"maplibre-gl": "^4.6.0",
+		"maplibre-gl": "^2.0.0 || ^3.0.0 || ^4.0.0",
 		"terra-draw": "^1.0.0-beta.1"
 	},
 	"repository": {

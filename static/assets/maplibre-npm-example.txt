@@ -12,14 +12,7 @@ const map = new Map({
 // As default, all Terra Draw modes are enabled, 
 // you can disable options if you don't want to use them.
 const draw = new MaplibreTerradrawControl({
-    point: true,
-    line: true,
-    polygon: true,
-    rectangle: true,
-    circle: true,
-    freehand: true,
-    angledRectangle: true,
-    select: true,
+    modes: ['point', 'linestring', 'polygon', 'rectangle', 'angled-rectangle', 'circle', 'freehand', 'select'],
     open: false,
 });
 map.addControl(drawControl, 'top-left');

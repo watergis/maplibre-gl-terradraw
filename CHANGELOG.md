@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 0.0.6
+
+### Patch Changes
+
+- 0d9c15e: fix: updated peerDependencies in package.json to support maplibre v2 to v4 since terra-draw is supporting maplibre from v2
+
 ## 0.0.5
 
 ### Patch Changes

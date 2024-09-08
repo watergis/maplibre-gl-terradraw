@@ -1,3 +1,4 @@
+import type { ModeOptions } from './ModeOptions.js';
 import type { TerradrawMode } from './TerradrawMode.js';
 
 /**
@@ -17,4 +18,9 @@ export interface ControlOptions {
 	 * Open editor as default if true. Default is false
 	 */
 	open?: boolean;
+
+	/**
+	 * Overwrite Terra Draw mode options if you specified.
+	 */
+	modeOptions?: ModeOptions;
 }

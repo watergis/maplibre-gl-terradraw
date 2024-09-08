@@ -14,7 +14,6 @@ export class MaplibreTerradrawControl implements IControl {
 	private modeButtons: { [key: string]: HTMLButtonElement } = {};
 	private deleteButton?: HTMLButtonElement;
 	private isExpanded = false;
-	private activeMode: string;
 
 	private terradraw?: TerraDraw;
 	private options: ControlOptions = defaultControlOptions;
@@ -25,7 +24,6 @@ export class MaplibreTerradrawControl implements IControl {
 	 */
 	constructor(options?: ControlOptions) {
 		this.modeButtons = {};
-		this.activeMode = 'render';
 
 		if (options) {
 			this.options = Object.assign(this.options, options);
@@ -203,7 +201,6 @@ export class MaplibreTerradrawControl implements IControl {
 			if (!item) continue;
 			item.classList.remove('active');
 		}
-		this.activeMode = 'render';
 		this.terradraw?.setMode('render');
 	}
 
@@ -229,7 +226,6 @@ export class MaplibreTerradrawControl implements IControl {
 
 			if (!isActive) {
 				this.terradraw.setMode(mode);
-				this.activeMode = mode;
 				btn.classList.add('active');
 			}
 		});

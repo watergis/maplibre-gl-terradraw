@@ -1,11 +1,6 @@
 import type { ControlPosition, IControl, Map } from 'maplibre-gl';
 import { TerraDraw, TerraDrawMapLibreGLAdapter } from 'terra-draw';
-import type {
-	ControlOptions,
-	ModeOptions,
-	TerradrawMode,
-	TerradrawModeClass
-} from './interfaces/index.js';
+import type { ControlOptions, TerradrawMode, TerradrawModeClass } from './interfaces/index.js';
 import { defaultControlOptions } from './constants/defaultControlOptions.js';
 import { getDefaultModeOptions } from './constants/getDefaultModeOptions.js';
 
@@ -24,23 +19,17 @@ export class MaplibreTerradrawControl implements IControl {
 	private terradraw?: TerraDraw;
 	private options: ControlOptions = defaultControlOptions;
 
-	private modeOptions?: ModeOptions;
-
 	/**
 	 * Constructor
 	 * @param options Plugin control options
-	 * @param modeOptions Overwrite Terra Draw mode options if you specified.
-	 *
 	 */
-	constructor(options?: ControlOptions, modeOptions?: ModeOptions) {
+	constructor(options?: ControlOptions) {
 		this.modeButtons = {};
 		this.activeMode = 'render';
 
 		if (options) {
 			this.options = Object.assign(this.options, options);
 		}
-
-		this.modeOptions = modeOptions;
 	}
 
 	public getDefaultPosition(): ControlPosition {
@@ -58,8 +47,27 @@ export class MaplibreTerradrawControl implements IControl {
 		const modes: TerradrawModeClass[] = [defaultOptions['render']];
 
 		this.options?.modes?.forEach((m) => {
-			if (this.modeOptions && this.modeOptions[m]) {
-				modes.push(this.modeOptions[m]);
+			if (this.options.modeOptions && this.options.modeOptions[m]) {
+				const newOption = this.options.modeOptions[m];
+
+				if (m === 'select') {
+					// overwrite other select mode settings if new option does not contain.
+					const defaultOption = defaultOptions[m];
+					if (defaultOption) {
+						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+						// @ts-ignore
+						const flags = defaultOption.flags;
+						Object.keys(flags).forEach((key) => {
+							// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+							// @ts-ignore
+							if (newOption.flags[key]) return;
+							// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+							// @ts-ignore
+							newOption.flags[key] = flags[key];
+						});
+					}
+				}
+				modes.push(newOption);
 			} else if (defaultOptions[m]) {
 				modes.push(defaultOptions[m]);
 			}

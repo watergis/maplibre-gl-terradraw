@@ -159,27 +159,29 @@ map.addControl(drawControl, 'top-left');
 			lineNumbers
 			code={`
 const drawControl = new MaplibreTerradrawControl({
-	modes: [
-		'polygon',
-		'select'
-	]
-},{
-    select: new TerraDrawSelectMode({
-        flags: {
-            polygon: {
-                feature: {
-                    draggable: false, // users cannot drag to move polygon
-                    rotateable: true,
-                    scaleable: true,
-                    coordinates: {
-                        midpoints: false, // users cannot add a node on the middle of edge.
-                        draggable: true,
-                        deletable: false // users cannot delete a node.
-                    }
-                }
-            },
-        }
-    })
+	// only show polgyon, line and select mode.
+	modes: ['polygon', 'linestring', 'select'],
+	modeOptions: {
+		select: new TerraDrawSelectMode({
+			flags: {
+				// only update polygon settings for select mode.
+				// default settings will be used for other geometry types
+				// in this case, line uses default options of the plugin.
+				polygon: {
+					feature: {
+						draggable: false, // users cannot drag to move polygon
+						rotateable: true,
+						scaleable: true,
+						coordinates: {
+							midpoints: false, // users cannot add a node on the middle of edge.
+							draggable: true,
+							deletable: false // users cannot delete a node.
+						}
+					}
+				}
+			}
+		})
+	}
 });
 map.addControl(drawControl, 'top-left');
 		`}

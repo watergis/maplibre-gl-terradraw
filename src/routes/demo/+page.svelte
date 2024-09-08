@@ -6,6 +6,7 @@
 	import '../../scss/maplibre-gl-terradraw.scss';
 	import type { PageData } from './$types.js';
 	import { CodeBlock } from '@skeletonlabs/skeleton';
+	import { TerraDrawSelectMode } from 'terra-draw';
 
 	export let data: PageData;
 	let mapContainer: HTMLDivElement;
@@ -45,7 +46,27 @@
 				'freehand',
 				'select'
 			],
-			open: true
+			open: true,
+			modeOptions: {
+				select: new TerraDrawSelectMode({
+					flags: {
+						// only update polygon settings for select mode.
+						// default settings will be used for other geometry types
+						polygon: {
+							feature: {
+								draggable: false,
+								rotateable: true,
+								scaleable: true,
+								coordinates: {
+									midpoints: false,
+									draggable: true,
+									deletable: false
+								}
+							}
+						}
+					}
+				})
+			}
 		});
 		map.addControl(drawControl, 'top-left');
 

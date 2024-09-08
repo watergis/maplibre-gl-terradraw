@@ -1,9 +1,23 @@
-import type { LayoutLoad } from './$types.js';
+import type { LayoutServerLoad } from './$types.js';
 
-export const load: LayoutLoad = async () => {
-	const data = {
+export const load: LayoutServerLoad = async () => {
+	const packageName = '@watergis/maplibre-gl-terradraw';
+
+	const getVersion = async () => {
+		const res = await fetch(`https://registry.npmjs.org/${packageName}/latest`);
+		if (!res.ok) {
+			return;
+		}
+		const json = await res.json();
+		return json.version;
+	};
+
+	const version = await getVersion();
+
+	return {
 		metadata: {
-			packageName: '@watergis/maplibre-gl-terradraw',
+			packageName: packageName,
+			version,
 			title: 'Maplibre GL Terra Draw',
 			description:
 				'This plugin is to add controls to your Maplibre for drawing powered by Terra Draw library.',
@@ -19,7 +33,6 @@ export const load: LayoutLoad = async () => {
 			{ href: 'https://github.com/watergis/maplibre-gl-terradraw', title: 'GitHub' }
 		]
 	};
-	return data;
 };
 
 export const prerender = true;

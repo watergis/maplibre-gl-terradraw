@@ -1,55 +1,16 @@
 <script lang="ts">
 	import { CodeBlock, RadioGroup, RadioItem, Tab, TabGroup } from '@skeletonlabs/skeleton';
-	import { onMount } from 'svelte';
 	import type { PageData } from './$types.js';
 
 	export let data: PageData;
 
-	let imprtTypeTabs = [
+	let importTypeTabs = [
 		{ label: 'NPM', value: 'npm' },
 		{ label: 'CDN', value: 'cdn' }
 	];
-	let importTypeTabSet: string = imprtTypeTabs[0].value;
+	let importTypeTabSet: string = importTypeTabs[0].value;
 
 	let packageManager = 'npm';
-	let version = 'latest';
-	let cdnExample = '';
-	let npmExample = '';
-
-	const getVersion = async () => {
-		const res = await fetch(`https://registry.npmjs.org/${data.metadata.packageName}/latest`);
-		if (!res.ok) {
-			return;
-		}
-		const json = await res.json();
-		version = json.version;
-	};
-
-	const getExample = async (type: 'cdn' | 'npm') => {
-		let url = `/assets/maplibre-npm-example.txt`;
-		if (type === 'cdn') {
-			url = `/index_cdn.html`;
-		}
-		const res = await fetch(url);
-		if (!res.ok) {
-			return '';
-		}
-		return await res.text();
-	};
-
-	onMount(() => {
-		getVersion().then(() => {
-			getExample('cdn').then((text) => {
-				cdnExample = text.replace(
-					/..\/..\//g,
-					`https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@${version}/`
-				);
-			});
-			getExample('npm').then((text) => {
-				npmExample = text.replace(/{style}/g, data.style);
-			});
-		});
-	});
 </script>
 
 <div class="px-4">
@@ -73,11 +34,11 @@
 		<h3 class="h3 pt-6 pb-4">Demo</h3>
 
 		<a class="btn variant-filled-primary capitalize" href="/demo">
-			Open DEMO ({version})
+			Open DEMO ({data.metadata.version})
 		</a>
 
 		<TabGroup>
-			{#each imprtTypeTabs as tab}
+			{#each importTypeTabs as tab}
 				<Tab bind:group={importTypeTabSet} name={tab.value} value={tab.value}>{tab.label}</Tab>
 			{/each}
 		</TabGroup>
@@ -109,13 +70,13 @@
 
 			<p>Copy and past the below code.</p>
 
-			<CodeBlock language="ts" lineNumbers code={npmExample} />
+			<CodeBlock language="ts" lineNumbers code={data.examples.npm} />
 		</div>
 
 		<div hidden={importTypeTabSet !== 'cdn'}>
 			<h3 class="h3 pt-6">Usage</h3>
 
-			<CodeBlock language="html" lineNumbers code={cdnExample} />
+			<CodeBlock language="html" lineNumbers code={data.examples.cdn} />
 		</div>
 
 		<h3 class="h3 pt-6">Customization</h3>

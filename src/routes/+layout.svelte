@@ -96,6 +96,7 @@
 		<nav class="list-nav p-4">
 			<ul>
 				<li><a href="/" on:click={drawerClose}>Homepage</a></li>
+				<li><a href="/demo" on:click={drawerClose}>Demo</a></li>
 				{#each data.nav as link}
 					<li>
 						<a href={link.href} target="_blank" on:click={drawerClose}> {link.title} </a>

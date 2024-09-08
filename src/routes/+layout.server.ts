@@ -29,8 +29,11 @@ export const load: LayoutServerLoad = async () => {
 		},
 		style: 'https://demotiles.maplibre.org/style.json',
 		nav: [
-			{ href: 'https://twitter.com/j_igarashi', title: 'Twitter' },
-			{ href: 'https://github.com/watergis/maplibre-gl-terradraw', title: 'GitHub' }
+			{ href: 'https://twitter.com/j_igarashi', icon: 'fa-brands fa-x-twitter' },
+			{
+				href: 'https://github.com/watergis/maplibre-gl-terradraw',
+				icon: 'fa-brands fa-github'
+			}
 		]
 	};
 };

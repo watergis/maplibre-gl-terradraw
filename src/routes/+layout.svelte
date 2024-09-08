@@ -50,6 +50,16 @@
 	});
 </script>
 
+<svelte:head>
+	<link
+		rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+		integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+		crossorigin="anonymous"
+		referrerpolicy="no-referrer"
+	/>
+</svelte:head>
+
 <!-- App Shell -->
 <AppShell>
 	<svelte:fragment slot="header">
@@ -81,7 +91,7 @@
 							target="_blank"
 							rel="noreferrer"
 						>
-							{link.title}
+							<span><i class={link.icon}></i></span>
 						</a>
 					{/each}
 				</div>
@@ -97,25 +107,27 @@
 			<ul>
 				<li><a href="/" on:click={drawerClose}>Homepage</a></li>
 				<li><a href="/demo" on:click={drawerClose}>Demo</a></li>
-				{#each data.nav as link}
-					<li>
-						<a href={link.href} target="_blank" on:click={drawerClose}> {link.title} </a>
-					</li>
-				{/each}
+
 				<li>
-					<div class="flex items-center px-4">
-						<span class="pr-4">Light/Dark switch</span>
-						<span><LightSwitch /></span>
+					<div class="flex items-center py-2">
+						<div class="px-4"><LightSwitch /></div>
+						{#each data.nav as link}
+							<a href={link.href} target="_blank" on:click={drawerClose}>
+								<span><i class={link.icon}></i></span>
+							</a>
+						{/each}
 					</div>
 				</li>
+				<li>
+					<p class="px-4 py-2">©{year} {data.metadata.author}</p>
+				</li>
+				{#each data.metadata.licenses as license}
+					<li>
+						<p class="px-4 py-2">{license}</p>
+					</li>
+				{/each}
 			</ul>
 		</nav>
-
-		<hr />
-		<p class="px-8">©{year} {data.metadata.author}</p>
-		{#each data.metadata.licenses as license}
-			<p class="px-8">{license}</p>
-		{/each}
 	</Drawer>
 
 	<slot />

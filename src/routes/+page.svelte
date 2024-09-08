@@ -159,15 +159,14 @@ map.addControl(drawControl, 'top-left');
 			lineNumbers
 			code={`
 const drawControl = new MaplibreTerradrawControl({
-	modes: [
-		'polygon',
-		'select'
-	],
+	// only show polgyon, line and select mode.
+	modes: ['polygon', 'linestring', 'select'],
 	modeOptions: {
 		select: new TerraDrawSelectMode({
 			flags: {
 				// only update polygon settings for select mode.
 				// default settings will be used for other geometry types
+				// in this case, line uses default options of the plugin.
 				polygon: {
 					feature: {
 						draggable: false, // users cannot drag to move polygon

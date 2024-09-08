@@ -54,9 +54,15 @@ export class MaplibreTerradrawControl implements IControl {
 					// overwrite other select mode settings if new option does not contain.
 					const defaultOption = defaultOptions[m];
 					if (defaultOption) {
+						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+						// @ts-ignore
 						const flags = defaultOption.flags;
 						Object.keys(flags).forEach((key) => {
+							// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+							// @ts-ignore
 							if (newOption.flags[key]) return;
+							// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+							// @ts-ignore
 							newOption.flags[key] = flags[key];
 						});
 					}

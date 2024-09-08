@@ -17,7 +17,7 @@
 	let npmExample = '';
 
 	const getVersion = async () => {
-		const res = await fetch(`https://registry.npmjs.org/${data.packageName}/latest`);
+		const res = await fetch(`https://registry.npmjs.org/${data.metadata.packageName}/latest`);
 		if (!res.ok) {
 			return;
 		}
@@ -54,10 +54,10 @@
 
 <div class="px-4">
 	<div class="text-center">
-		<h2 class="h1 pt-4 pb-6">Welcome to {data.title}</h2>
+		<h2 class="h1 pt-4 pb-6">Welcome to {data.metadata.title}</h2>
 
 		<div class="flex justify-center space-x-2 pb-4">
-			This plugin is to add controls to your MapLibre for sketching powered by Terra Draw library.
+			{data.metadata.description}
 		</div>
 
 		<div class="flex justify-center space-x-2">
@@ -94,11 +94,14 @@
 
 			<div class="pt-2">
 				{#if packageManager === 'npm'}
-					<CodeBlock language="shell" code={`npm install --save-dev ${data.packageName}`} />
+					<CodeBlock
+						language="shell"
+						code={`npm install --save-dev ${data.metadata.packageName}`}
+					/>
 				{:else if packageManager === 'yarn'}
-					<CodeBlock language="shell" code={`yarn add --dev ${data.packageName}`} />
+					<CodeBlock language="shell" code={`yarn add --dev ${data.metadata.packageName}`} />
 				{:else if packageManager === 'pnpm'}
-					<CodeBlock language="shell" code={`pnpm add --save-dev ${data.packageName}`} />
+					<CodeBlock language="shell" code={`pnpm add --save-dev ${data.metadata.packageName}`} />
 				{/if}
 			</div>
 
@@ -188,9 +191,11 @@ map.addControl(drawControl, 'top-left');
 		/>
 	</div>
 
+	<hr />
 	<div class="space-y-2 py-4">
-		<p class="flex justify-center space-x-2">The source code is licensed MIT.</p>
-		<p class="flex justify-center space-x-2">The website content is licensed CC BY NC SA 4.0.</p>
+		{#each data.metadata.licenses as license}
+			<p class="space-x-2">{license}</p>
+		{/each}
 	</div>
 </div>
 

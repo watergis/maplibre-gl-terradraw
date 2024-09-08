@@ -13,7 +13,6 @@
 	import typescript from 'highlight.js/lib/languages/typescript';
 	import shell from 'highlight.js/lib/languages/shell';
 	import { initializeStores, Drawer, getDrawerStore } from '@skeletonlabs/skeleton';
-	import Navigation from './Navigation.svelte';
 
 	hljs.registerLanguage('xml', xml); // for HTML
 	hljs.registerLanguage('css', css);
@@ -26,10 +25,10 @@
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
+	import type { PageData } from './$types.js';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
-	let title = 'Maplibre GL Terra Draw';
 	let year = new Date().getFullYear();
 
 	initializeStores();
@@ -39,6 +38,12 @@
 	const drawerOpen = () => {
 		drawerStore.open({});
 	};
+
+	const drawerClose = () => {
+		drawerStore.close();
+	};
+
+	export let data: PageData;
 
 	onMount(() => {
 		autoModeWatcher();
@@ -61,7 +66,7 @@
 							</svg>
 						</span>
 					</button>
-					<a href="/"><strong class="text-xl uppercase">{title}</strong></a>
+					<a href="/"><strong class="text-xl uppercase">{data.metadata.title}</strong></a>
 				</div>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
@@ -69,42 +74,54 @@
 					<LightSwitch />
 				</div>
 				<div class="hidden md:inline-block">
-					<a
-						class="btn btn-sm variant-ghost-surface"
-						href="https://twitter.com/j_igarashi"
-						target="_blank"
-						rel="noreferrer"
-					>
-						Twitter
-					</a>
-					<a
-						class="btn btn-sm variant-ghost-surface"
-						href="https://github.com/watergis/maplibre-gl-terradraw"
-						target="_blank"
-						rel="noreferrer"
-					>
-						GitHub
-					</a>
+					{#each data.nav as link}
+						<a
+							class="btn btn-sm variant-ghost-surface ml-2"
+							href={link.href}
+							target="_blank"
+							rel="noreferrer"
+						>
+							{link.title}
+						</a>
+					{/each}
 				</div>
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>
 
 	<Drawer>
-		<h2 class="p-4">{title}</h2>
+		<h2 class="p-4">{data.metadata.title}</h2>
 		<hr />
-		<Navigation />
+
+		<nav class="list-nav p-4">
+			<ul>
+				<li><a href="/" on:click={drawerClose}>Homepage</a></li>
+				{#each data.nav as link}
+					<li>
+						<a href={link.href} target="_blank" on:click={drawerClose}> {link.title} </a>
+					</li>
+				{/each}
+				<li>
+					<div class="flex items-center px-4">
+						<span class="pr-4">Light/Dark switch</span>
+						<span><LightSwitch /></span>
+					</div>
+				</li>
+			</ul>
+		</nav>
+
 		<hr />
-		<p class="px-8">Maintained by JinIgarashi</p>
-		<p class="px-8">The source code is licensed MIT</p>
-		<p class="px-8">The website content is licensed CC BY NC SA 4.0</p>
+		<p class="px-8">©{year} {data.metadata.author}</p>
+		{#each data.metadata.licenses as license}
+			<p class="px-8">{license}</p>
+		{/each}
 	</Drawer>
 
 	<slot />
 
 	<svelte:fragment slot="footer">
 		<div class="space-y-2 py-4">
-			<p class="flex justify-center space-x-2">©{year} Jin Igarashi</p>
+			<p class="flex justify-center space-x-2">©{year} {data.metadata.author}</p>
 		</div>
 	</svelte:fragment>
 </AppShell>

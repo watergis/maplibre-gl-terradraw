@@ -81,6 +81,11 @@
 
 <div class="map" bind:this={mapContainer}>
 	<div class="overlay" hidden={selectedFeature.length === 0}>
+		<div class="p-2">
+			<p>
+				For Polygon, use <b>ctrl+s</b> to resize the feature, and use <b>ctrl+r</b> to rotate the feature.
+			</p>
+		</div>
 		<CodeBlock language="javascript" bind:code={selectedFeature}></CodeBlock>
 	</div>
 </div>
@@ -102,6 +107,8 @@
 			max-height: 300px;
 			width: 350px;
 			overflow-y: auto;
+
+			background-color: white;
 		}
 	}
 </style>

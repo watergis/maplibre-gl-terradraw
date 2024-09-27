@@ -63,6 +63,8 @@ export const getDefaultModeOptions = () => {
 				linestring: {
 					feature: {
 						draggable: true,
+						rotateable: true,
+						scaleable: true,
 						coordinates: {
 							midpoints: true,
 							draggable: true,

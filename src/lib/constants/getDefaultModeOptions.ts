@@ -45,7 +45,8 @@ export const getDefaultModeOptions = () => {
 			flags: {
 				point: {
 					feature: {
-						draggable: true
+						draggable: true,
+						deletable: true
 					}
 				},
 				polygon: {
@@ -53,6 +54,7 @@ export const getDefaultModeOptions = () => {
 						draggable: true,
 						rotateable: true,
 						scaleable: true,
+						deletable: true,
 						coordinates: {
 							midpoints: true,
 							draggable: true,
@@ -63,6 +65,9 @@ export const getDefaultModeOptions = () => {
 				linestring: {
 					feature: {
 						draggable: true,
+						rotateable: true,
+						scaleable: true,
+						deletable: true,
 						coordinates: {
 							midpoints: true,
 							draggable: true,
@@ -73,6 +78,7 @@ export const getDefaultModeOptions = () => {
 				freehand: {
 					feature: {
 						draggable: true,
+						deletable: true,
 						coordinates: {
 							midpoints: true,
 							draggable: true,
@@ -83,6 +89,7 @@ export const getDefaultModeOptions = () => {
 				circle: {
 					feature: {
 						draggable: true,
+						deletable: true,
 						coordinates: {
 							midpoints: true,
 							draggable: true,
@@ -95,6 +102,7 @@ export const getDefaultModeOptions = () => {
 						draggable: true,
 						rotateable: true,
 						scaleable: true,
+						deletable: true,
 						coordinates: {
 							midpoints: true,
 							draggable: true,
@@ -107,6 +115,7 @@ export const getDefaultModeOptions = () => {
 						draggable: true,
 						rotateable: true,
 						scaleable: true,
+						deletable: true,
 						coordinates: {
 							midpoints: true,
 							draggable: true,

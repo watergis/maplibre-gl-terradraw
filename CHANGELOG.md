@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 0.1.2
+
+### Patch Changes
+
+- d1633d4: fix: added rotateable and scalable for linestring.
+
 ## 0.1.1
 
 ### Patch Changes

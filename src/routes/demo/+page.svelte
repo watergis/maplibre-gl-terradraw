@@ -8,13 +8,18 @@
 	import { CodeBlock } from '@skeletonlabs/skeleton';
 	import { TerraDrawSelectMode } from 'terra-draw';
 
-	export let data: PageData;
-	let mapContainer: HTMLDivElement;
+	interface Props {
+		data: PageData;
+	}
+
+	let { data }: Props = $props();
+	let mapContainer: HTMLDivElement | undefined = $state();
 	let map: Map;
 
-	let selectedFeature = '';
+	let selectedFeature = $state('');
 
 	onMount(() => {
+		if (!mapContainer) return;
 		map = new Map({
 			container: mapContainer,
 			style: data.style,

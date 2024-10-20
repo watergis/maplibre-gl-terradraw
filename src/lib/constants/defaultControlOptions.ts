@@ -5,6 +5,7 @@ import type { ControlOptions } from '../interfaces/ControlOptions.js';
  */
 export const defaultControlOptions: ControlOptions = {
 	modes: [
+		'render',
 		'point',
 		'linestring',
 		'polygon',

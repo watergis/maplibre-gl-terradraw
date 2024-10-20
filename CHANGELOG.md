@@ -1,5 +1,43 @@
 # @watergis/maplibre-gl-terradraw
 
+## 0.2.0
+
+### Minor Changes
+
+- bc8d9c3: feat: add 'delete' mode to arrow users to show/hide delete button in prefered order.
+
+  ```ts
+  const drawControl = new MaplibreTerradrawControl({
+  	modes: [
+  		'render',
+  		'select',
+  		'point',
+  		'delete' // delete mode must be specified to show delete button in the tool
+  	],
+  	open: true
+  });
+  map.addControl(drawControl, 'top-left');
+  ```
+
+- bf466fb: feat: add 'render' mode in default control options in constructor. Now, the position of render toggle mode button can be changed, or completely remove it from control to keep tool always open.
+
+  ```ts
+  const drawControl = new MaplibreTerradrawControl({
+  	modes: [
+  		'render', // delete this if you want the tool to be always opened.
+  		'select',
+  		'point'
+  	],
+  	open: true // if you remove 'render' mode, make sure setting open as true.
+  });
+  map.addControl(drawControl, 'top-left');
+  ```
+
+### Patch Changes
+
+- aac04eb: fix: show tooltip for each button.
+- 0a6130e: fix: fixed bug of angled-rectangle icon in active state. Rotate 45 degree of SVG itself.
+
 ## 0.1.2
 
 ### Patch Changes

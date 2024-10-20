@@ -2,15 +2,19 @@
 	import { CodeBlock, RadioGroup, RadioItem, Tab, TabGroup } from '@skeletonlabs/skeleton';
 	import type { PageData } from './$types.js';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
+
+	let { data }: Props = $props();
 
 	let importTypeTabs = [
 		{ label: 'NPM', value: 'npm' },
 		{ label: 'CDN', value: 'cdn' }
 	];
-	let importTypeTabSet: string = importTypeTabs[0].value;
+	let importTypeTabSet: string = $state(importTypeTabs[0].value);
 
-	let packageManager = 'npm';
+	let packageManager = $state('npm');
 </script>
 
 <div class="px-4">

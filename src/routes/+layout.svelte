@@ -43,7 +43,12 @@
 		drawerStore.close();
 	};
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+		children?: import('svelte').Snippet;
+	}
+
+	let { data, children }: Props = $props();
 
 	onMount(() => {
 		autoModeWatcher();
@@ -62,12 +67,16 @@
 
 <!-- App Shell -->
 <AppShell>
-	<svelte:fragment slot="header">
+	{#snippet header()}
 		<!-- App Bar -->
 		<AppBar>
-			<svelte:fragment slot="lead">
+			{#snippet lead()}
 				<div class="flex items-center">
-					<button class="md:hidden btn btn-sm mr-4" on:click={drawerOpen}>
+					<button
+						class="md:hidden btn btn-sm mr-4"
+						aria-label={data.metadata.title}
+						onclick={drawerOpen}
+					>
 						<span>
 							<svg viewBox="0 0 100 80" class="fill-token w-4 h-4">
 								<rect width="100" height="20" />
@@ -78,8 +87,8 @@
 					</button>
 					<a href="/"><strong class="text-xl uppercase">{data.metadata.title}</strong></a>
 				</div>
-			</svelte:fragment>
-			<svelte:fragment slot="trail">
+			{/snippet}
+			{#snippet trail()}
 				<div class="hidden md:inline-block">
 					<LightSwitch />
 				</div>
@@ -90,14 +99,15 @@
 							href={link.href}
 							target="_blank"
 							rel="noreferrer"
+							aria-label={link.icon}
 						>
 							<span><i class={link.icon}></i></span>
 						</a>
 					{/each}
 				</div>
-			</svelte:fragment>
+			{/snippet}
 		</AppBar>
-	</svelte:fragment>
+	{/snippet}
 
 	<Drawer>
 		<h2 class="p-4">{data.metadata.title}</h2>
@@ -105,14 +115,14 @@
 
 		<nav class="list-nav p-4">
 			<ul>
-				<li><a href="/" on:click={drawerClose}>Homepage</a></li>
-				<li><a href="/demo" on:click={drawerClose}>Demo</a></li>
+				<li><a href="/" onclick={drawerClose}>Homepage</a></li>
+				<li><a href="/demo" onclick={drawerClose}>Demo</a></li>
 
 				<li>
 					<div class="flex items-center py-2">
 						<div class="px-4"><LightSwitch /></div>
 						{#each data.nav as link}
-							<a href={link.href} target="_blank" on:click={drawerClose}>
+							<a href={link.href} target="_blank" onclick={drawerClose} aria-label={link.icon}>
 								<span><i class={link.icon}></i></span>
 							</a>
 						{/each}
@@ -130,11 +140,11 @@
 		</nav>
 	</Drawer>
 
-	<slot />
+	{@render children?.()}
 
-	<svelte:fragment slot="footer">
+	{#snippet footer()}
 		<div class="space-y-2 py-4">
 			<p class="flex justify-center space-x-2">©{year} {data.metadata.author}</p>
 		</div>
-	</svelte:fragment>
+	{/snippet}
 </AppShell>

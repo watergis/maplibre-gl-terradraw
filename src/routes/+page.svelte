@@ -103,6 +103,7 @@
 			code={`
 const drawControl = new MaplibreTerradrawControl({
 	modes: [
+		'render', 
 		'select',
 		'point'
 	]
@@ -128,7 +129,7 @@ map.addControl(drawControl, 'top-left');
 			code={`
 const drawControl = new MaplibreTerradrawControl({
 	// only show polgyon, line and select mode.
-	modes: ['polygon', 'linestring', 'select'],
+	modes: ['render', 'polygon', 'linestring', 'select'],
 	modeOptions: {
 		select: new TerraDrawSelectMode({
 			flags: {
@@ -150,6 +151,28 @@ const drawControl = new MaplibreTerradrawControl({
 			}
 		})
 	}
+});
+map.addControl(drawControl, 'top-left');
+		`}
+		/>
+
+		<h4 class="h4 pt-6">Always open drawing mode</h4>
+
+		<p>
+			if you want the drawing tool to be always expanded, simplely remote `render` mode from
+			constuctor options, then set `true` to `open` property.
+		</p>
+
+		<CodeBlock
+			language="js"
+			lineNumbers
+			code={`
+const drawControl = new MaplibreTerradrawControl({
+	modes: [
+		'select',
+		'point'
+	],
+	open: true,
 });
 map.addControl(drawControl, 'top-left');
 		`}

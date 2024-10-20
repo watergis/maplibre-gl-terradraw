@@ -10,7 +10,6 @@ import { getDefaultModeOptions } from './constants/getDefaultModeOptions.js';
 export class MaplibreTerradrawControl implements IControl {
 	private controlContainer?: HTMLElement;
 	private map?: Map;
-	private addButton?: HTMLButtonElement;
 	private modeButtons: { [key: string]: HTMLButtonElement } = {};
 	private deleteButton?: HTMLButtonElement;
 	private isExpanded = false;
@@ -42,7 +41,7 @@ export class MaplibreTerradrawControl implements IControl {
 		this.map = map;
 
 		const defaultOptions = getDefaultModeOptions();
-		const modes: TerradrawModeClass[] = [defaultOptions['render']];
+		const modes: TerradrawModeClass[] = [];
 
 		this.options?.modes?.forEach((m) => {
 			if (this.options.modeOptions && this.options.modeOptions[m]) {
@@ -84,17 +83,7 @@ export class MaplibreTerradrawControl implements IControl {
 		this.controlContainer.classList.add(`maplibregl-ctrl`);
 		this.controlContainer.classList.add(`maplibregl-ctrl-group`);
 
-		this.addButton = document.createElement('button');
-		this.addButton.classList.add(`maplibregl-terradraw-add-button`);
-		if (this.isExpanded) {
-			this.addButton.classList.add('enabled');
-		}
-		this.addButton.type = 'button';
-		this.addButton.title = this.capitalize('expand or collapse drawing tool');
-		this.addButton.addEventListener('click', this.toggleEditor.bind(this));
-
 		modes.forEach((m: TerradrawModeClass) => {
-			if (m.mode === 'render') return;
 			this.addTerradrawButton(m.mode as TerradrawMode);
 		});
 
@@ -113,7 +102,6 @@ export class MaplibreTerradrawControl implements IControl {
 			this.deactivate();
 		});
 
-		this.controlContainer.appendChild(this.addButton);
 		Object.values(this.modeButtons).forEach((ele) => {
 			this.controlContainer?.appendChild(ele);
 		});
@@ -123,12 +111,7 @@ export class MaplibreTerradrawControl implements IControl {
 	}
 
 	public onRemove(): void {
-		if (
-			!this.controlContainer ||
-			!this.controlContainer.parentNode ||
-			!this.map ||
-			!this.addButton
-		) {
+		if (!this.controlContainer || !this.controlContainer.parentNode || !this.map) {
 			return;
 		}
 		this.modeButtons = {};
@@ -180,12 +163,16 @@ export class MaplibreTerradrawControl implements IControl {
 				item.classList.remove('hidden');
 			}
 		}
-		if (this.isExpanded) {
-			this.addButton?.classList.remove('enabled');
-			this.resetActiveMode();
-		} else {
-			this.addButton?.classList.add('enabled');
+		const addButton = document.getElementsByClassName('maplibregl-terradraw-add-render-button');
+		if (addButton && addButton.length > 0) {
+			if (this.isExpanded) {
+				addButton.item(0)?.classList.remove('enabled');
+				this.resetActiveMode();
+			} else {
+				addButton.item(0)?.classList.add('enabled');
+			}
 		}
+
 		this.isExpanded = !this.isExpanded;
 	}
 
@@ -212,27 +199,38 @@ export class MaplibreTerradrawControl implements IControl {
 	 */
 	private addTerradrawButton(mode: TerradrawMode) {
 		const btn = document.createElement('button');
-		btn.classList.add('maplibregl-terradraw-add-control');
 		btn.classList.add(`maplibregl-terradraw-add-${mode}-button`);
-		if (!this.isExpanded) {
-			btn.classList.add('hidden');
-		}
 		btn.type = 'button';
-		btn.title = this.capitalize(mode.replace(/-/g, ' '));
-		btn.addEventListener('click', () => {
-			if (!this.terradraw) return;
-
-			const isActive = btn.classList.contains('active');
-
-			this.activate();
-			this.resetActiveMode();
-
-			if (!isActive) {
-				this.terradraw.setMode(mode);
-				btn.classList.add('active');
-			}
-		});
 		this.modeButtons[mode] = btn;
+
+		if (mode === 'render') {
+			if (this.isExpanded) {
+				btn.classList.add('enabled');
+			}
+			btn.type = 'button';
+			btn.title = this.capitalize('expand or collapse drawing tool');
+			btn.addEventListener('click', this.toggleEditor.bind(this));
+		} else {
+			btn.classList.add('maplibregl-terradraw-add-control');
+
+			if (!this.isExpanded) {
+				btn.classList.add('hidden');
+			}
+			btn.title = this.capitalize(mode.replace(/-/g, ' '));
+			btn.addEventListener('click', () => {
+				if (!this.terradraw) return;
+
+				const isActive = btn.classList.contains('active');
+
+				this.activate();
+				this.resetActiveMode();
+
+				if (!isActive) {
+					this.terradraw.setMode(mode);
+					btn.classList.add('active');
+				}
+			});
+		}
 	}
 
 	private capitalize(value: string) {

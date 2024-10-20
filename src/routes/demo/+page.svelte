@@ -42,6 +42,7 @@
 
 		const drawControl = new MaplibreTerradrawControl({
 			modes: [
+				'render',
 				'point',
 				'linestring',
 				'polygon',
@@ -87,7 +88,7 @@
 <div class="map" bind:this={mapContainer}>
 	<div class="overlay" hidden={selectedFeature.length === 0}>
 		<div class="p-2">
-			<p>
+			<p class="text-black">
 				For Polygon, use <b>ctrl+s</b> to resize the feature, and use <b>ctrl+r</b> to rotate the feature.
 			</p>
 		</div>

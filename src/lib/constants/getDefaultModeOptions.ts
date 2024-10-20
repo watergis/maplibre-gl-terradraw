@@ -117,6 +117,10 @@ export const getDefaultModeOptions = () => {
 					}
 				}
 			}
+		}),
+		delete: new TerraDrawRenderMode({
+			modeName: 'delete',
+			styles: {}
 		})
 	};
 	return modeOptions;

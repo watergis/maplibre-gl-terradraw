@@ -11,7 +11,6 @@ export class MaplibreTerradrawControl implements IControl {
 	private controlContainer?: HTMLElement;
 	private map?: Map;
 	private modeButtons: { [key: string]: HTMLButtonElement } = {};
-	private deleteButton?: HTMLButtonElement;
 	private isExpanded = false;
 
 	private terradraw?: TerraDraw;
@@ -87,25 +86,9 @@ export class MaplibreTerradrawControl implements IControl {
 			this.addTerradrawButton(m.mode as TerradrawMode);
 		});
 
-		this.deleteButton = document.createElement('button');
-		this.deleteButton.classList.add('maplibregl-terradraw-add-control');
-		this.deleteButton.classList.add(`maplibregl-terradraw-delete-button`);
-		if (!this.isExpanded) {
-			this.deleteButton.classList.add('hidden');
-		}
-		this.deleteButton.type = 'button';
-		this.deleteButton.title = this.capitalize('delete');
-		this.deleteButton.addEventListener('click', () => {
-			if (!this.terradraw) return;
-			if (!this.terradraw.enabled) return;
-			this.terradraw.clear();
-			this.deactivate();
-		});
-
 		Object.values(this.modeButtons).forEach((ele) => {
 			this.controlContainer?.appendChild(ele);
 		});
-		this.controlContainer.appendChild(this.deleteButton);
 
 		return this.controlContainer;
 	}
@@ -163,7 +146,7 @@ export class MaplibreTerradrawControl implements IControl {
 				item.classList.remove('hidden');
 			}
 		}
-		const addButton = document.getElementsByClassName('maplibregl-terradraw-add-render-button');
+		const addButton = document.getElementsByClassName('maplibregl-terradraw-render-button');
 		if (addButton && addButton.length > 0) {
 			if (this.isExpanded) {
 				addButton.item(0)?.classList.remove('enabled');
@@ -199,11 +182,12 @@ export class MaplibreTerradrawControl implements IControl {
 	 */
 	private addTerradrawButton(mode: TerradrawMode) {
 		const btn = document.createElement('button');
-		btn.classList.add(`maplibregl-terradraw-add-${mode}-button`);
 		btn.type = 'button';
 		this.modeButtons[mode] = btn;
 
 		if (mode === 'render') {
+			btn.classList.add(`maplibregl-terradraw-${mode}-button`);
+
 			if (this.isExpanded) {
 				btn.classList.add('enabled');
 			}
@@ -217,19 +201,33 @@ export class MaplibreTerradrawControl implements IControl {
 				btn.classList.add('hidden');
 			}
 			btn.title = this.capitalize(mode.replace(/-/g, ' '));
-			btn.addEventListener('click', () => {
-				if (!this.terradraw) return;
 
-				const isActive = btn.classList.contains('active');
+			if (mode === 'delete') {
+				btn.classList.add(`maplibregl-terradraw-${mode}-button`);
 
-				this.activate();
-				this.resetActiveMode();
+				btn.addEventListener('click', () => {
+					if (!this.terradraw) return;
+					if (!this.terradraw.enabled) return;
+					this.terradraw.clear();
+					this.deactivate();
+				});
+			} else {
+				btn.classList.add(`maplibregl-terradraw-add-${mode}-button`);
 
-				if (!isActive) {
-					this.terradraw.setMode(mode);
-					btn.classList.add('active');
-				}
-			});
+				btn.addEventListener('click', () => {
+					if (!this.terradraw) return;
+
+					const isActive = btn.classList.contains('active');
+
+					this.activate();
+					this.resetActiveMode();
+
+					if (!isActive) {
+						this.terradraw.setMode(mode);
+						btn.classList.add('active');
+					}
+				});
+			}
 		}
 	}
 

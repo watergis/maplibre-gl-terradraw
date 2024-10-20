@@ -10,5 +10,6 @@ export const AvailableModes = [
 	'freehand',
 	'angled-rectangle',
 	'select',
-	'render'
+	'render',
+	'delete'
 ] as const;

@@ -39,11 +39,10 @@
 }
 
 .maplibregl-terradraw-add-angled-rectangle-button {
-	background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%235f6368%22%3E%3Cpath%20d%3D%22M80-160v-640h800v640H80Zm80-80h640v-480H160v480Zm0%200v-480%20480Z%22%2F%3E%3C%2Fsvg%3E');
+	background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%235f6368%22%20transform%3D%22rotate(45)%22%3E%3Cpath%20d%3D%22M80-160v-640h800v640H80Zm80-80h640v-480H160v480Zm0%200v-480%20480Z%22%2F%3E%3C%2Fsvg%3E');
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: 80%;
-	transform: rotate(45deg);
 }
 
 .maplibregl-terradraw-add-circle-button {

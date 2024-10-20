@@ -90,6 +90,7 @@ export class MaplibreTerradrawControl implements IControl {
 			this.addButton.classList.add('enabled');
 		}
 		this.addButton.type = 'button';
+		this.addButton.title = this.capitalize('expand or collapse drawing tool');
 		this.addButton.addEventListener('click', this.toggleEditor.bind(this));
 
 		modes.forEach((m: TerradrawModeClass) => {
@@ -104,6 +105,7 @@ export class MaplibreTerradrawControl implements IControl {
 			this.deleteButton.classList.add('hidden');
 		}
 		this.deleteButton.type = 'button';
+		this.deleteButton.title = this.capitalize('delete');
 		this.deleteButton.addEventListener('click', () => {
 			if (!this.terradraw) return;
 			if (!this.terradraw.enabled) return;
@@ -216,6 +218,7 @@ export class MaplibreTerradrawControl implements IControl {
 			btn.classList.add('hidden');
 		}
 		btn.type = 'button';
+		btn.title = this.capitalize(mode.replace(/-/g, ' '));
 		btn.addEventListener('click', () => {
 			if (!this.terradraw) return;
 
@@ -230,5 +233,9 @@ export class MaplibreTerradrawControl implements IControl {
 			}
 		});
 		this.modeButtons[mode] = btn;
+	}
+
+	private capitalize(value: string) {
+		return value.charAt(0).toUpperCase() + value.slice(1);
 	}
 }

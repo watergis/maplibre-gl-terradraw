@@ -50,7 +50,8 @@
 				'angled-rectangle',
 				'circle',
 				'freehand',
-				'select'
+				'select',
+				'delete'
 			],
 			open: true,
 			modeOptions: {

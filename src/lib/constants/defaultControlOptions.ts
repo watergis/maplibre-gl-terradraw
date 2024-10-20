@@ -13,7 +13,8 @@ export const defaultControlOptions: ControlOptions = {
 		'angled-rectangle',
 		'circle',
 		'freehand',
-		'select'
+		'select',
+		'delete'
 	],
 	open: false
 };

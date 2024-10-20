@@ -105,7 +105,8 @@ const drawControl = new MaplibreTerradrawControl({
 	modes: [
 		'render', 
 		'select',
-		'point'
+		'point',
+		'delete'
 	]
 });
 map.addControl(drawControl, 'top-left');
@@ -129,7 +130,7 @@ map.addControl(drawControl, 'top-left');
 			code={`
 const drawControl = new MaplibreTerradrawControl({
 	// only show polgyon, line and select mode.
-	modes: ['render', 'polygon', 'linestring', 'select'],
+	modes: ['render', 'polygon', 'linestring', 'select', 'delete'],
 	modeOptions: {
 		select: new TerraDrawSelectMode({
 			flags: {
@@ -170,7 +171,8 @@ map.addControl(drawControl, 'top-left');
 const drawControl = new MaplibreTerradrawControl({
 	modes: [
 		'select',
-		'point'
+		'point',
+		'delete'
 	],
 	open: true,
 });

@@ -5,7 +5,7 @@ export const load: PageServerLoad = async ({ fetch, parent }) => {
 
 	const getExample = async (type: 'cdn' | 'npm') => {
 		if (type === 'cdn') {
-			const res = await fetch(`/index_cdn.html`);
+			const res = await fetch(`/assets/maplibre-cdn-example.txt`);
 			const text = await res.text();
 			return text.replace(
 				/..\/..\//g,

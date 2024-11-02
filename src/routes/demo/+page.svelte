@@ -5,6 +5,9 @@
 	import '../../scss/maplibre-gl-terradraw.scss';
 	import type { PageData } from './$types.js';
 	import { CodeBlock } from '@skeletonlabs/skeleton';
+	import { page } from '$app/stores';
+	import type { TerradrawMode } from '$lib/interfaces/TerradrawMode.js';
+	import { AvailableModes } from '$lib/constants/AvailableModes.js';
 
 	interface Props {
 		data: PageData;
@@ -38,22 +41,21 @@
 			'bottom-right'
 		);
 
+		const modes = $page.url.searchParams.get('modes') || '';
+		let terradrawModes: TerradrawMode[] = [];
+		if (modes.length > 0) {
+			terradrawModes = modes.split(',') as TerradrawMode[];
+		}
+		if (terradrawModes.length === 0) {
+			terradrawModes = ['render', ...AvailableModes.filter((m) => m !== 'render')];
+		}
+
+		const open = $page.url.searchParams.get('open') || 'true';
+		const isOpen = open === 'true' ? true : false;
+
 		const drawControl = new MaplibreTerradrawControl({
-			modes: [
-				'render',
-				'point',
-				'linestring',
-				'polygon',
-				'rectangle',
-				'angled-rectangle',
-				'sensor',
-				'sector',
-				'circle',
-				'freehand',
-				'select',
-				'delete'
-			],
-			open: true
+			modes: terradrawModes,
+			open: isOpen
 		});
 		map.addControl(drawControl, 'top-left');
 

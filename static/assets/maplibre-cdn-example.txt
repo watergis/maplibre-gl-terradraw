@@ -32,21 +32,8 @@
 			});
 
 			const draw = new MaplibreTerradrawControl({
-				modes: [
-					'render',
-					'point',
-					'linestring',
-					'polygon',
-					'rectangle',
-					'angled-rectangle',
-					'sensor',
-					'sector',
-					'circle',
-					'freehand',
-					'select',
-					'delete'
-				],
-				open: false
+				modes: [{modes}],
+				open: {open}
 			});
 			map.addControl(draw, 'top-right');
 		</script>

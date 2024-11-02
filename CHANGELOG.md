@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 0.3.1
+
+### Patch Changes
+
+- ec05a90: call TerraDraw.stop() when calling onRemove()
+
 ## 0.3.0
 
 ### Minor Changes

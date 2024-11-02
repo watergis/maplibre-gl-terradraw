@@ -1,6 +1,16 @@
 <script lang="ts">
-	import { CodeBlock, RadioGroup, RadioItem, Tab, TabGroup } from '@skeletonlabs/skeleton';
+	import {
+		CodeBlock,
+		InputChip,
+		RadioGroup,
+		RadioItem,
+		Tab,
+		TabGroup,
+		SlideToggle
+	} from '@skeletonlabs/skeleton';
 	import type { PageData } from './$types.js';
+	import { AvailableModes } from '$lib/constants/AvailableModes.js';
+	import { onMount } from 'svelte';
 
 	interface Props {
 		data: PageData;
@@ -14,7 +24,17 @@
 	];
 	let importTypeTabSet: string = $state(importTypeTabs[0].value);
 
+	let availableMode: string[] = AvailableModes as unknown as string[];
+	let selectedModes: string[] = $state([]);
+	let isOpen = $state(true);
+
 	let packageManager = $state('npm');
+
+	onMount(() => {
+		if (selectedModes.length === 0) {
+			selectedModes = ['render', ...availableMode.filter((m) => m !== 'render')];
+		}
+	});
 </script>
 
 <div class="px-4">
@@ -37,9 +57,28 @@
 	<div class="space-y-2">
 		<h3 class="h3 pt-6 pb-4">Demo</h3>
 
-		<a class="btn variant-filled-primary capitalize" href="/demo">
+		<a
+			class="btn variant-filled-primary capitalize"
+			href="{selectedModes.length === 0
+				? ''
+				: `/demo?modes=${selectedModes.join(',')}`}&open={isOpen}"
+			tabindex={selectedModes.length === 0 ? 0 : -1}
+		>
 			Open DEMO ({data.metadata.version})
 		</a>
+
+		<InputChip
+			name="terradraw-modes"
+			placeholder="{selectedModes.length === 0
+				? 'Select at least a mode. '
+				: ''}Select TerraDraw modes to be added"
+			bind:value={selectedModes}
+			whitelist={availableMode}
+		/>
+
+		<SlideToggle name="slide" bind:checked={isOpen}
+			>{isOpen ? 'Open' : 'Close'} drawing editor as default</SlideToggle
+		>
 
 		<TabGroup>
 			{#each importTypeTabs as tab}
@@ -74,13 +113,25 @@
 
 			<p>Copy and past the below code.</p>
 
-			<CodeBlock language="ts" lineNumbers code={data.examples.npm} />
+			<CodeBlock
+				language="ts"
+				lineNumbers
+				code={data.examples.npm
+					.replace('{modes}', selectedModes.map((m) => `'${m}'`).join(','))
+					.replace('{open}', `${isOpen}`)}
+			/>
 		</div>
 
 		<div hidden={importTypeTabSet !== 'cdn'}>
 			<h3 class="h3 pt-6">Usage</h3>
 
-			<CodeBlock language="html" lineNumbers code={data.examples.cdn} />
+			<CodeBlock
+				language="html"
+				lineNumbers
+				code={data.examples.cdn
+					.replace('{modes}', selectedModes.map((m) => `'${m}'`).join(','))
+					.replace('{open}', `${isOpen}`)}
+			/>
 		</div>
 
 		<h3 class="h3 pt-6">Customization</h3>

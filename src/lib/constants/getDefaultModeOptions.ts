@@ -149,6 +149,10 @@ export const getDefaultModeOptions = () => {
 		delete: new TerraDrawRenderMode({
 			modeName: 'delete',
 			styles: {}
+		}),
+		'delete-selection': new TerraDrawRenderMode({
+			modeName: 'delete-selection',
+			styles: {}
 		})
 	};
 	return modeOptions;

@@ -98,3 +98,15 @@
 	background-repeat: no-repeat;
 	background-size: 90%;
 }
+
+.maplibregl-terradraw-delete-selection-button {
+	background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%235f6368%22%3E%3Cpath%20d%3D%22m500-120-56-56%20142-142-142-142%2056-56%20142%20142%20142-142%2056%2056-142%20142%20142%20142-56%2056-142-142-142%20142Zm-220%200v-80h80v80h-80Zm-80-640h-80q0-33%2023.5-56.5T200-840v80Zm80%200v-80h80v80h-80Zm160%200v-80h80v80h-80Zm160%200v-80h80v80h-80Zm160%200v-80q33%200%2056.5%2023.5T840-760h-80ZM200-200v80q-33%200-56.5-23.5T120-200h80Zm-80-80v-80h80v80h-80Zm0-160v-80h80v80h-80Zm0-160v-80h80v80h-80Zm640%200v-80h80v80h-80Z%22%2F%3E%3C%2Fsvg%3E');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 90%;
+	display: block;
+
+	&.hidden-delete-selection {
+		display: none;
+	}
+}

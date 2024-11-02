@@ -157,7 +157,7 @@ export class MaplibreTerradrawControl implements IControl {
 				addButton.item(0)?.classList.add('enabled');
 			}
 		}
-
+		this.toggleDeleteSelectionButton();
 		this.isExpanded = !this.isExpanded;
 	}
 
@@ -210,8 +210,30 @@ export class MaplibreTerradrawControl implements IControl {
 				btn.addEventListener('click', () => {
 					if (!this.terradraw) return;
 					if (!this.terradraw.enabled) return;
+
 					this.terradraw.clear();
 					this.deactivate();
+					this.toggleDeleteSelectionButton();
+				});
+			} else if (mode === 'delete-selection') {
+				btn.classList.add(`maplibregl-terradraw-${mode}-button`);
+				btn.classList.add(`hidden-delete-selection`);
+				btn.addEventListener('click', () => {
+					if (!this.terradraw) return;
+					if (!this.terradraw.enabled) return;
+
+					const snapshot = this.terradraw?.getSnapshot();
+					const selected = snapshot.filter((f) => f.properties.selected === true);
+
+					if (selected.length > 0) {
+						// if feature is selected, delete only selected feature
+						const currentMode = this.terradraw.getMode();
+						this.terradraw.setMode('render');
+						const ids = selected.map((f) => f.id);
+						this.terradraw.removeFeatures(ids);
+						this.terradraw.setMode(currentMode);
+					}
+					this.toggleDeleteSelectionButton();
 				});
 			} else {
 				btn.classList.add(`maplibregl-terradraw-add-${mode}-button`);
@@ -220,7 +242,6 @@ export class MaplibreTerradrawControl implements IControl {
 					if (!this.terradraw) return;
 
 					const isActive = btn.classList.contains('active');
-
 					this.activate();
 					this.resetActiveMode();
 
@@ -228,7 +249,25 @@ export class MaplibreTerradrawControl implements IControl {
 						this.terradraw.setMode(mode);
 						btn.classList.add('active');
 					}
+					this.toggleDeleteSelectionButton();
 				});
+			}
+		}
+	}
+
+	private toggleDeleteSelectionButton() {
+		const enabled = this.terradraw?.enabled || false;
+		const mode = this.terradraw?.getMode();
+
+		const isActive = enabled && mode === 'select';
+		const btns = document.getElementsByClassName(`maplibregl-terradraw-delete-selection-button`);
+		for (let i = 0; i < btns.length; i++) {
+			const btn = btns.item(i);
+			if (!btn) continue;
+			if (isActive) {
+				btn.classList.remove('hidden-delete-selection');
+			} else {
+				btn.classList.add('hidden-delete-selection');
 			}
 		}
 	}

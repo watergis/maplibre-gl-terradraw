@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 0.2.1
+
+### Patch Changes
+
+- c4e42ff: remove controlContrainer on map.removeControl(drawControl)
+
 ## 0.2.0
 
 ### Minor Changes

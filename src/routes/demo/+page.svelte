@@ -1,12 +1,10 @@
 <script lang="ts">
 	import { GeolocateControl, Map, NavigationControl } from 'maplibre-gl';
-	import { onMount } from 'svelte';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { MaplibreTerradrawControl } from '$lib/MaplibreTerradrawControl.js';
 	import '../../scss/maplibre-gl-terradraw.scss';
 	import type { PageData } from './$types.js';
 	import { CodeBlock } from '@skeletonlabs/skeleton';
-	import { TerraDrawSelectMode } from 'terra-draw';
 
 	interface Props {
 		data: PageData;
@@ -18,7 +16,7 @@
 
 	let selectedFeature = $state('');
 
-	onMount(() => {
+	$effect(() => {
 		if (!mapContainer) return;
 		map = new Map({
 			container: mapContainer,
@@ -48,32 +46,14 @@
 				'polygon',
 				'rectangle',
 				'angled-rectangle',
+				'sensor',
+				'sector',
 				'circle',
 				'freehand',
 				'select',
 				'delete'
 			],
-			open: true,
-			modeOptions: {
-				select: new TerraDrawSelectMode({
-					flags: {
-						// only update polygon settings for select mode.
-						// default settings will be used for other geometry types
-						polygon: {
-							feature: {
-								draggable: false,
-								rotateable: true,
-								scaleable: true,
-								coordinates: {
-									midpoints: false,
-									draggable: true,
-									deletable: false
-								}
-							}
-						}
-					}
-				})
-			}
+			open: true
 		});
 		map.addControl(drawControl, 'top-left');
 

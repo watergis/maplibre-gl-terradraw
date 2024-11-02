@@ -9,6 +9,8 @@ export const AvailableModes = [
 	'circle',
 	'freehand',
 	'angled-rectangle',
+	'sensor',
+	'sector',
 	'select',
 	'render',
 	'delete'

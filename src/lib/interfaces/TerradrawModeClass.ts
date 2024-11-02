@@ -6,6 +6,8 @@ import {
 	TerraDrawPointMode,
 	TerraDrawPolygonMode,
 	TerraDrawRectangleMode,
+	TerraDrawSectorMode,
+	TerraDrawSensorMode,
 	TerraDrawRenderMode,
 	TerraDrawSelectMode
 } from 'terra-draw';
@@ -18,5 +20,7 @@ export type TerradrawModeClass =
 	| TerraDrawPointMode
 	| TerraDrawPolygonMode
 	| TerraDrawRectangleMode
+	| TerraDrawSectorMode
+	| TerraDrawSensorMode
 	| TerraDrawRenderMode
 	| TerraDrawSelectMode;

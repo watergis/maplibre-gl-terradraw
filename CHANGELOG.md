@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 0.3.0
+
+### Minor Changes
+
+- c8742be: feat: added Sensor mode and Sector mode to the plugin.
+
 ## 0.2.1
 
 ### Patch Changes

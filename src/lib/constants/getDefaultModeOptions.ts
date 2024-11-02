@@ -8,7 +8,9 @@ import {
 	TerraDrawPolygonMode,
 	TerraDrawRectangleMode,
 	TerraDrawRenderMode,
+	TerraDrawSectorMode,
 	TerraDrawSelectMode,
+	TerraDrawSensorMode,
 	ValidateNotSelfIntersecting
 } from 'terra-draw';
 
@@ -41,6 +43,8 @@ export const getDefaultModeOptions = () => {
 		'angled-rectangle': new TerraDrawAngledRectangleMode(),
 		circle: new TerraDrawCircleMode(),
 		freehand: new TerraDrawFreehandMode(),
+		sensor: new TerraDrawSensorMode(),
+		sector: new TerraDrawSectorMode(),
 		select: new TerraDrawSelectMode({
 			flags: {
 				point: {
@@ -105,6 +109,30 @@ export const getDefaultModeOptions = () => {
 					}
 				},
 				'angled-rectangle': {
+					feature: {
+						draggable: true,
+						rotateable: true,
+						scaleable: true,
+						coordinates: {
+							midpoints: true,
+							draggable: true,
+							deletable: true
+						}
+					}
+				},
+				sensor: {
+					feature: {
+						draggable: true,
+						rotateable: true,
+						scaleable: true,
+						coordinates: {
+							midpoints: true,
+							draggable: true,
+							deletable: true
+						}
+					}
+				},
+				sector: {
 					feature: {
 						draggable: true,
 						rotateable: true,

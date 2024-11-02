@@ -66,6 +66,20 @@
 	background-size: 80%;
 }
 
+.maplibregl-terradraw-add-sensor-button {
+	background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%235f6368%22%20transform%3D%22rotate(45)%22%3E%3Cpath%20d%3D%22M480-120q-66%200-113-47t-47-113q0-66%2047-113t113-47q66%200%20113%2047t47%20113q0%2066-47%20113t-113%2047Zm0-80q33%200%2056.5-23.5T560-280q0-33-23.5-56.5T480-360q-33%200-56.5%2023.5T400-280q0%2033%2023.5%2056.5T480-200ZM122-616l-59-55q81-79%20188-124t229-45q122%200%20229%2045t188%20124l-59%2055q-71-67-162-105.5T480-760q-105%200-196%2038.5T122-616Zm570%20137q-42-38-96-59.5T480-560q-62%200-115.5%2021.5T268-479l-59-55q54-50%20123.5-78T480-640q78%200%20147%2028t123%2078l-58%2055ZM480-280Z%22%2F%3E%3C%2Fsvg%3E');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 80%;
+}
+
+.maplibregl-terradraw-add-sector-button {
+	background: url('data:image/svg+xml,%3Csvg%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20transform%3D%22rotate(-15)%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M8%206%20A10%2010%200%200%201%2017.5%2016%20L8%2016%20Z%22%20fill%3D%22none%22%20stroke%3D%22black%22%20%2F%3E%3C%2Fsvg%3E');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 100%;
+}
+
 .maplibregl-terradraw-add-control {
 	display: block;
 

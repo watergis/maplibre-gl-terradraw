@@ -24,7 +24,6 @@
 	// Floating UI for Popups
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
-	import { onMount } from 'svelte';
 	import type { PageData } from './$types.js';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
@@ -50,7 +49,7 @@
 
 	let { data, children }: Props = $props();
 
-	onMount(() => {
+	$effect(() => {
 		autoModeWatcher();
 	});
 </script>

@@ -11,6 +11,8 @@ export const defaultControlOptions: ControlOptions = {
 		'polygon',
 		'rectangle',
 		'angled-rectangle',
+		'sensor',
+		'sector',
 		'circle',
 		'freehand',
 		'select',

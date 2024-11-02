@@ -100,6 +100,7 @@ export class MaplibreTerradrawControl implements IControl {
 		this.modeButtons = {};
 		this.terradraw = undefined;
 		this.map = undefined;
+		this.controlContainer.parentNode.removeChild(this.controlContainer);
 	}
 
 	/**

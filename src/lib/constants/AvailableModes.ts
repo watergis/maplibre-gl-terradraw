@@ -2,6 +2,7 @@
  * The list of available Terra Draw drawing modes
  */
 export const AvailableModes = [
+	'render',
 	'point',
 	'linestring',
 	'polygon',
@@ -12,6 +13,6 @@ export const AvailableModes = [
 	'sensor',
 	'sector',
 	'select',
-	'render',
+	'delete-selection',
 	'delete'
 ] as const;

@@ -16,6 +16,7 @@ export const defaultControlOptions: ControlOptions = {
 		'circle',
 		'freehand',
 		'select',
+		'delete-selection',
 		'delete'
 	],
 	open: false

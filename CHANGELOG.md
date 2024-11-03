@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 0.4.1
+
+### Patch Changes
+
+- fa9ec0f: call this.deactivate() when calling map.removeControl(drawControl)
+
 ## 0.4.0
 
 ### Minor Changes

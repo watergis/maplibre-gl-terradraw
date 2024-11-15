@@ -67,6 +67,9 @@
 			Open DEMO ({data.metadata.version})
 		</a>
 
+		<h4 class="h4 pt-6">Choose options for demo</h4>
+		<p>Your chosen options are automatically applied at the demo and the below usage code.</p>
+
 		<InputChip
 			name="terradraw-modes"
 			placeholder="{selectedModes.length === 0
@@ -76,9 +79,19 @@
 			whitelist={availableMode}
 		/>
 
+		<p>
+			By default, all Terra Draw modes will be added to the control. However, you might want to
+			remove some drawing modes from your app.
+		</p>
+
 		<SlideToggle name="slide" bind:checked={isOpen}
 			>{isOpen ? 'Open' : 'Close'} drawing editor as default</SlideToggle
 		>
+
+		<p>
+			if you want the drawing tool to be always expanded, simplely remove `render` mode from
+			constuctor options, then set `true` to `open` property.
+		</p>
 
 		<TabGroup>
 			{#each importTypeTabs as tab}
@@ -136,34 +149,6 @@
 
 		<h3 class="h3 pt-6">Customization</h3>
 
-		<h4 class="h4 pt-6">Get rid of some drawing modes</h4>
-
-		<p>
-			By default, all Terra Draw modes will be added to the control. However, you might want to
-			remove some drawing modes from your app.
-		</p>
-		<p>
-			The following example is to add <b>Point</b> and <b>Select</b> control to the plugin.
-			Furthremore, this example code bring <b>Select</b> mode first while it is shown in the last as
-			default.
-		</p>
-
-		<CodeBlock
-			language="js"
-			lineNumbers
-			code={`
-const drawControl = new MaplibreTerradrawControl({
-	modes: [
-		'render', 
-		'select',
-		'point',
-		'delete'
-	]
-});
-map.addControl(drawControl, 'top-left');
-		`}
-		/>
-
 		<h4 class="h4 pt-6">Customise drawing options</h4>
 
 		<p>
@@ -203,29 +188,6 @@ const drawControl = new MaplibreTerradrawControl({
 			}
 		})
 	}
-});
-map.addControl(drawControl, 'top-left');
-		`}
-		/>
-
-		<h4 class="h4 pt-6">Always open drawing mode</h4>
-
-		<p>
-			if you want the drawing tool to be always expanded, simplely remote `render` mode from
-			constuctor options, then set `true` to `open` property.
-		</p>
-
-		<CodeBlock
-			language="js"
-			lineNumbers
-			code={`
-const drawControl = new MaplibreTerradrawControl({
-	modes: [
-		'select',
-		'point',
-		'delete'
-	],
-	open: true,
 });
 map.addControl(drawControl, 'top-left');
 		`}

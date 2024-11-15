@@ -1,5 +1,12 @@
 # @watergis/maplibre-gl-terradraw
 
+## 0.4.2
+
+### Patch Changes
+
+- cdf5c1d: fix: fixed bug of angled-rectangle, sensor and sector SVG icons which were not rotated with transform in some browser.
+- 37a9836: fix: fixed bug when render button is removed. add default hidden mode if no render buttom.
+
 ## 0.4.1
 
 ### Patch Changes

@@ -87,8 +87,8 @@
 
 		.overlay {
 			position: absolute;
-			bottom: 5px;
-			left: 5px;
+			top: 5px;
+			right: 5px;
 			z-index: 10;
 
 			height: fit-content;

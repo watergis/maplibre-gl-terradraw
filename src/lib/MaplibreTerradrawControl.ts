@@ -97,7 +97,7 @@ export class MaplibreTerradrawControl implements IControl {
 		if (!this.controlContainer || !this.controlContainer.parentNode || !this.map) {
 			return;
 		}
-		this.terradraw?.stop();
+		this.deactivate();
 		this.modeButtons = {};
 		this.terradraw = undefined;
 		this.map = undefined;

@@ -1,5 +1,5 @@
 import type { ControlPosition, IControl, Map } from 'maplibre-gl';
-import { TerraDraw, TerraDrawMapLibreGLAdapter } from 'terra-draw';
+import { TerraDraw, TerraDrawMapLibreGLAdapter, TerraDrawRenderMode } from 'terra-draw';
 import type { ControlOptions, TerradrawMode, TerradrawModeClass } from './interfaces/index.js';
 import { defaultControlOptions } from './constants/defaultControlOptions.js';
 import { getDefaultModeOptions } from './constants/getDefaultModeOptions.js';
@@ -15,6 +15,8 @@ export class MaplibreTerradrawControl implements IControl {
 
 	private terradraw?: TerraDraw;
 	private options: ControlOptions = defaultControlOptions;
+
+	private defaultMode = 'render';
 
 	/**
 	 * Constructor
@@ -69,6 +71,17 @@ export class MaplibreTerradrawControl implements IControl {
 			}
 		});
 
+		// if no render button is specified, it add hidden render mode
+		if (!this.options?.modes?.includes('render')) {
+			modes.push(
+				new TerraDrawRenderMode({
+					modeName: 'default',
+					styles: {}
+				})
+			);
+			this.defaultMode = 'default';
+		}
+
 		this.isExpanded = this.options.open === true;
 
 		this.terradraw = new TerraDraw({
@@ -83,6 +96,7 @@ export class MaplibreTerradrawControl implements IControl {
 		this.controlContainer.classList.add(`maplibregl-ctrl-group`);
 
 		modes.forEach((m: TerradrawModeClass) => {
+			if (m.mode === 'default') return;
 			this.addTerradrawButton(m.mode as TerradrawMode);
 		});
 
@@ -175,7 +189,7 @@ export class MaplibreTerradrawControl implements IControl {
 			if (!item) continue;
 			item.classList.remove('active');
 		}
-		this.terradraw?.setMode('render');
+		this.terradraw?.setMode(this.defaultMode);
 	}
 
 	/**
@@ -228,7 +242,7 @@ export class MaplibreTerradrawControl implements IControl {
 					if (selected.length > 0) {
 						// if feature is selected, delete only selected feature
 						const currentMode = this.terradraw.getMode();
-						this.terradraw.setMode('render');
+						this.terradraw.setMode(this.defaultMode);
 						const ids = selected.map((f) => f.id);
 						this.terradraw.removeFeatures(ids);
 						this.terradraw.setMode(currentMode);

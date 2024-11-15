@@ -65,6 +65,14 @@
 			const feature = snapshot?.find((feature) => feature.id === id);
 			selectedFeature = JSON.stringify(feature, null, 4);
 		});
+
+		drawInstance?.on('change', () => {
+			const snapshot = drawInstance.getSnapshot();
+			const selectedFeatures = snapshot.filter((f) => f.properties.selected === true);
+			if (selectedFeatures.length === 0) {
+				selectedFeature = '';
+			}
+		});
 	});
 </script>
 

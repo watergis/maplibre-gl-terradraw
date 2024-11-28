@@ -34,15 +34,6 @@ pnpm build
 
 Output files for the package are generated under `package` folder. The demo website will be exported under `dist` folder.
 
-### Test CDN
-
-```shell
-pnpm build
-pnpm dev
-```
-
-Access to http://localhost:5173/index_cdn.html for testing CDN module.
-
 ## Release packages
 
 It uses changeset to release. Please create release notes by the following command. Changeset will release package once the PR is merged into main branch.
@@ -65,7 +56,7 @@ pnpm changeset
 
 6. Make eslint pass. Run: `pnpm lint`
 
-7. Add a changeset file by following [this](#release)
+7. Add a changeset file by `pnpm changeset`
 
 8. Commit local changes in git. Run: `git add . && git commit -m "precise commit message"
 

@@ -2,7 +2,7 @@
 	import { Map, NavigationControl } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import '../../scss/maplibre-gl-terradraw.scss';
-	import { onMount, type Snippet } from 'svelte';
+	import { untrack, type Snippet } from 'svelte';
 	import { CodeBlock } from '@skeletonlabs/skeleton';
 
 	type Props = {
@@ -18,32 +18,34 @@
 
 	let codeSnippet = $state('');
 
-	onMount(() => {
-		if (!mapContainer) return;
-		map = new Map({
-			container: mapContainer,
-			style: style,
-			center: [0, 0],
-			zoom: 1,
-			maxPitch: 85
-		});
+	$effect(() =>
+		untrack(() => {
+			if (!mapContainer) return;
+			map = new Map({
+				container: mapContainer,
+				style: style,
+				center: [0, 0],
+				zoom: 1,
+				maxPitch: 85
+			});
 
-		map.addControl(new NavigationControl({ visualizePitch: true }), 'bottom-right');
+			map.addControl(new NavigationControl({ visualizePitch: true }), 'bottom-right');
 
-		if (setTerradraw) {
-			setTerradraw(map);
+			if (setTerradraw) {
+				setTerradraw(map);
 
-			codeSnippet = setTerradraw
-				.toString()
-				.replace(/^[^{]*{\s*/, '')
-				.replace(/}\s*$/, '')
-				.replace(/\t/g, '  ');
-		}
+				codeSnippet = setTerradraw
+					.toString()
+					.replace(/^[^{]*{\s*/, '')
+					.replace(/}\s*$/, '')
+					.replace(/\t/g, '  ');
+			}
 
-		setTimeout(() => {
-			map.resize();
-		}, 500);
-	});
+			setTimeout(() => {
+				map.resize();
+			}, 500);
+		})
+	);
 </script>
 
 <h4 class="h3 px-4 py-5">{@render title()}</h4>

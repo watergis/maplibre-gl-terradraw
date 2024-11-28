@@ -71,6 +71,12 @@ export class MaplibreTerradrawControl implements IControl {
 			}
 		});
 
+		// sometimes, an error of 'Can not register unless mode is unregistered' is thrown by terradraw,
+		// thus, force reset mode state as unregistered
+		modes.forEach((m) => {
+			m._state = 'unregistered';
+		});
+
 		// if no render button is specified, it add hidden render mode
 		if (!this.options?.modes?.includes('render')) {
 			modes.push(

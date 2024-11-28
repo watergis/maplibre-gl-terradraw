@@ -149,49 +149,20 @@
 
 		<h3 class="h3 pt-6">Customization</h3>
 
-		<h4 class="h4 pt-6">Customise drawing options</h4>
-
-		<p>
-			This plugin tries to optimise the better drawing options for each Terra Draw mode. However,
-			preconfigured drawing options might not be desired for your app.
-		</p>
-		<p>
-			For example, if you only want to use polygon control,but you don't want users to drag a
-			polygon or adding/deleting a node on an edge of a polygon, the following setting can be done.
-		</p>
-
-		<CodeBlock
-			language="js"
-			lineNumbers
-			code={`
-const drawControl = new MaplibreTerradrawControl({
-	// only show polgyon, line and select mode.
-	modes: ['render', 'polygon', 'linestring', 'select', 'delete'],
-	modeOptions: {
-		select: new TerraDrawSelectMode({
-			flags: {
-				// only update polygon settings for select mode.
-				// default settings will be used for other geometry types
-				// in this case, line uses default options of the plugin.
-				polygon: {
-					feature: {
-						draggable: false, // users cannot drag to move polygon
-						rotateable: true,
-						scaleable: true,
-						coordinates: {
-							midpoints: false, // users cannot add a node on the middle of edge.
-							draggable: true,
-							deletable: false // users cannot delete a node.
-						}
-					}
-				}
-			}
-		})
-	}
-});
-map.addControl(drawControl, 'top-left');
-		`}
-		/>
+		<nav class="list-nav pt-4 pb-6">
+			<ul>
+				{#each data.customization as custom}
+					<li>
+						<a href={custom.href}>
+							<span class="badge bg-primary-500"><i class="fa-solid fa-arrow-right"></i></span>
+							<span class="flex-auto">
+								<span class="font-bold">{custom.title}</span> - {custom.description}
+							</span>
+						</a>
+					</li>
+				{/each}
+			</ul>
+		</nav>
 	</div>
 
 	<hr />

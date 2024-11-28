@@ -15,6 +15,26 @@
 
 	let selectedFeature = $state('');
 
+	const code = `
+const drawControl = new MaplibreTerradrawControl({
+	modes: ['polygon', 'select', 'delete'],
+	open: true
+});
+map.addControl(drawControl, 'top-left');
+
+// You can get Terra Draw instance by the following function.
+const drawInstance = drawControl.getTerraDrawInstance();
+if (drawInstance) {
+	// You can add event listener to subscribe Terra Draw event as you wish.
+	// The below example is to subscribe 'select' event of Terra Draw.
+	drawInstance.on('select', (id: string) => {
+		const snapshot = drawInstance.getSnapshot();
+		const features = snapshot?.find((feature) => feature.id === id);
+		console.log(features)
+	});
+}
+	`;
+
 	const setTerradraw = (map: Map) => {
 		const drawControl = new MaplibreTerradrawControl({
 			modes: ['polygon', 'select', 'delete'],
@@ -22,23 +42,18 @@
 		});
 		map.addControl(drawControl, 'top-left');
 
-		// You can get Terra Draw instance by the following function.
 		const drawInstance = drawControl.getTerraDrawInstance();
 		if (drawInstance) {
-			// You can add event listener to subscribe Terra Draw event as you wish.
-			// The below example is to subscribe `select` event of Terra Draw.
 			drawInstance.on('select', (id: string) => {
 				const snapshot = drawInstance.getSnapshot();
 				const features = snapshot?.find((feature) => feature.id === id);
-
-				// set GeoJSON to variable to use
 				selectedFeature = JSON.stringify(features);
 			});
 		}
 	};
 </script>
 
-<MapTemplate {style} {setTerradraw}>
+<MapTemplate {style} {setTerradraw} {code}>
 	{#snippet title()}
 		Subscribe select event of TerraDraw
 	{/snippet}

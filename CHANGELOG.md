@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 0.4.4
+
+### Patch Changes
+
+- fc1c04f: fix: in some timing, TerraDraw throw error of 'Can not register unless mode is unregistered'. Hence, it resets \_state in modes as unregistered before adding.
+
 ## 0.4.3
 
 ### Patch Changes

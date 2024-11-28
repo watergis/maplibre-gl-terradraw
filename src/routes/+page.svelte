@@ -107,6 +107,7 @@
 				<RadioItem bind:group={packageManager} name="justify" value={'npm'}>npm</RadioItem>
 				<RadioItem bind:group={packageManager} name="justify" value={'yarn'}>yarn</RadioItem>
 				<RadioItem bind:group={packageManager} name="justify" value={'pnpm'}>pnpm</RadioItem>
+				<RadioItem bind:group={packageManager} name="justify" value={'bun'}>bun</RadioItem>
 			</RadioGroup>
 
 			<div class="pt-2">
@@ -119,6 +120,11 @@
 					<CodeBlock language="shell" code={`yarn add --dev ${data.metadata.packageName}`} />
 				{:else if packageManager === 'pnpm'}
 					<CodeBlock language="shell" code={`pnpm add --save-dev ${data.metadata.packageName}`} />
+				{:else if packageManager === 'bun'}
+					<CodeBlock
+						language="shell"
+						code={`bun install --save-dev ${data.metadata.packageName}`}
+					/>
 				{/if}
 			</div>
 

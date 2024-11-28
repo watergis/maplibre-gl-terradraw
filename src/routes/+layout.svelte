@@ -11,6 +11,7 @@
 	import css from 'highlight.js/lib/languages/css';
 	import javascript from 'highlight.js/lib/languages/javascript';
 	import typescript from 'highlight.js/lib/languages/typescript';
+	import json from 'highlight.js/lib/languages/json';
 	import shell from 'highlight.js/lib/languages/shell';
 	import { initializeStores, Drawer, getDrawerStore } from '@skeletonlabs/skeleton';
 
@@ -18,6 +19,7 @@
 	hljs.registerLanguage('css', css);
 	hljs.registerLanguage('javascript', javascript);
 	hljs.registerLanguage('typescript', typescript);
+	hljs.registerLanguage('json', json);
 	hljs.registerLanguage('shell', shell);
 	storeHighlightJs.set(hljs);
 
@@ -116,7 +118,10 @@
 			<ul>
 				<li><a href="/" onclick={drawerClose}>Homepage</a></li>
 				<li><a href="/demo" onclick={drawerClose}>Demo</a></li>
-
+				<li><h4>Customization</h4></li>
+				{#each data.customization as custom}
+					<li><a href={custom.href} onclick={drawerClose}>{custom.title}</a></li>
+				{/each}
 				<li>
 					<div class="flex items-center py-2">
 						<div class="px-4"><LightSwitch /></div>

@@ -16,14 +16,3 @@ const draw = new MaplibreTerradrawControl({
     open: {open},
 });
 map.addControl(drawControl, 'top-left');
-
-// You can get Terra Draw instance by the following function.
-const drawInstance = drawControl.getTerraDrawInstance();
-
-// You can add event listener to subscribe Terra Draw event as you wish. 
-// The below example is to subscribe `select` event of Terra Draw.
-drawInstance.on('select', (id: string) => {
-	const snapshot = drawInstance.getSnapshot();
-	const polygon = snapshot?.find((feature) => feature.id === id);
-	console.log(polygon);
-});

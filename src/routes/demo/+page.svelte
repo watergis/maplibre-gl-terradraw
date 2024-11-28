@@ -8,6 +8,7 @@
 	import { page } from '$app/stores';
 	import type { TerradrawMode } from '$lib/interfaces/TerradrawMode.js';
 	import { AvailableModes } from '$lib/constants/AvailableModes.js';
+	import { onMount } from 'svelte';
 
 	interface Props {
 		data: PageData;
@@ -19,15 +20,14 @@
 
 	let selectedFeature = $state('');
 
-	$effect(() => {
+	onMount(() => {
 		if (!mapContainer) return;
 		map = new Map({
 			container: mapContainer,
 			style: data.style,
 			center: [0, 0],
 			zoom: 1,
-			maxPitch: 85,
-			hash: true
+			maxPitch: 85
 		});
 
 		map.addControl(new NavigationControl({ visualizePitch: true }), 'bottom-right');

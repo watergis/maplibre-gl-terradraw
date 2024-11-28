@@ -39,6 +39,11 @@ export const load: LayoutServerLoad = async () => {
 				href: '/customise/select-event',
 				title: 'Subscribe select event of TerraDraw',
 				description: 'Use TerraDraw API to subscribe an event.'
+			},
+			{
+				href: '/customise/add-geojson',
+				title: 'Adding default GeoJSON feature to TerraDraw',
+				description: 'Add GeoJSON features to TerraDraw as default by using addFeatures function.'
 			}
 		],
 		nav: [

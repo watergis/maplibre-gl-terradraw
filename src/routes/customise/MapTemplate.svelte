@@ -10,13 +10,12 @@
 		setTerradraw: (map: Map) => void;
 		title: Snippet;
 		description: Snippet;
+		code: string;
 	};
-	const { style, title, description, setTerradraw }: Props = $props();
+	const { style, title, description, setTerradraw, code }: Props = $props();
 
 	let mapContainer: HTMLDivElement | undefined = $state();
 	let map: Map;
-
-	let codeSnippet = $state('');
 
 	$effect(() =>
 		untrack(() => {
@@ -33,12 +32,6 @@
 
 			if (setTerradraw) {
 				setTerradraw(map);
-
-				codeSnippet = setTerradraw
-					.toString()
-					.replace(/^[^{]*{\s*/, '')
-					.replace(/}\s*$/, '')
-					.replace(/\t/g, '  ');
 			}
 
 			setTimeout(() => {
@@ -56,9 +49,9 @@
 	<div class="p-4">
 		{@render description()}
 	</div>
-	{#if codeSnippet}
+	{#if code}
 		<div class="px-4 pb-4">
-			<CodeBlock language="js" lineNumbers code={codeSnippet} />
+			<CodeBlock language="js" lineNumbers {code} />
 		</div>
 	{/if}
 </div>

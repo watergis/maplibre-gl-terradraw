@@ -56,7 +56,7 @@ pnpm changeset
 
 6. Make eslint pass. Run: `pnpm lint`
 
-7. Add a changeset file by following [this](#release)
+7. Add a changeset file by `pnpm changeset`
 
 8. Commit local changes in git. Run: `git add . && git commit -m "precise commit message"
 

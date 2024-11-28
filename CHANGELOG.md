@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 0.4.3
+
+### Patch Changes
+
+- 5529521: chore: updated devDependencies.
+
 ## 0.4.2
 
 ### Patch Changes

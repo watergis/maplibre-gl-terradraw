@@ -118,10 +118,8 @@
 			<ul>
 				<li><a href="/" onclick={drawerClose}>Homepage</a></li>
 				<li><a href="/demo" onclick={drawerClose}>Demo</a></li>
-				<li><h4>Customization</h4></li>
-				{#each data.customization as custom}
-					<li><a href={custom.href} onclick={drawerClose}>{custom.title}</a></li>
-				{/each}
+				<li><a href="/examples" onclick={drawerClose}>Examples</a></li>
+
 				<li>
 					<div class="flex items-center py-2">
 						<div class="px-4"><LightSwitch /></div>

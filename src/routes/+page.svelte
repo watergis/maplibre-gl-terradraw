@@ -153,22 +153,10 @@
 			/>
 		</div>
 
-		<h3 class="h3 pt-6">Customization</h3>
-
-		<nav class="list-nav pt-4 pb-6">
-			<ul>
-				{#each data.customization as custom}
-					<li>
-						<a href={custom.href}>
-							<span class="badge bg-primary-500"><i class="fa-solid fa-arrow-right"></i></span>
-							<span class="flex-auto">
-								<span class="font-bold">{custom.title}</span> - {custom.description}
-							</span>
-						</a>
-					</li>
-				{/each}
-			</ul>
-		</nav>
+		<p class="py-4">
+			<span class="font-bold">Examples</span> can be explored
+			<a href="/examples" class="text-blue-600 visited:text-purple-600">here</a>.
+		</p>
 	</div>
 
 	<hr />

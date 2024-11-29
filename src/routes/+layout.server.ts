@@ -28,24 +28,7 @@ export const load: LayoutServerLoad = async () => {
 			]
 		},
 		style: 'https://demotiles.maplibre.org/style.json',
-		customization: [
-			{
-				href: '/customise/drawing-option',
-				title: 'Customise drawing options',
-				description:
-					'Change default drawing options to disable some editing functionalities of polygon mode.'
-			},
-			{
-				href: '/customise/select-event',
-				title: 'Subscribe select event of TerraDraw',
-				description: 'Use TerraDraw API to subscribe an event.'
-			},
-			{
-				href: '/customise/add-geojson',
-				title: 'Adding default GeoJSON feature to TerraDraw',
-				description: 'Add GeoJSON features to TerraDraw as default by using addFeatures function.'
-			}
-		],
+
 		nav: [
 			{ href: 'https://twitter.com/j_igarashi', icon: 'fa-brands fa-x-twitter' },
 			{

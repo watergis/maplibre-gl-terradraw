@@ -26,8 +26,8 @@
 			map = new Map({
 				container: mapContainer,
 				style: data.style,
-				center: [0, 0],
-				zoom: 1,
+				center: [18.28, 6.25],
+				zoom: 2.5,
 				maxPitch: 85
 			});
 
@@ -72,6 +72,16 @@
 				const selectedFeatures = snapshot.filter((f) => f.properties.selected === true);
 				if (selectedFeatures.length === 0) {
 					selectedFeature = '';
+				}
+			});
+
+			map.once('load', () => {
+				const initData = data.geojson.filter((f) =>
+					(terradrawModes as string[]).includes(f.properties.mode)
+				);
+				console.log(initData);
+				if (initData.length > 0) {
+					drawInstance?.addFeatures(initData);
 				}
 			});
 		})

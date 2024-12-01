@@ -153,9 +153,18 @@
 			/>
 		</div>
 
+		<h3 class="h3 pt-6">Examples</h3>
+
 		<p class="py-4">
 			<span class="font-bold">Examples</span> can be explored
 			<a href="/examples" class="text-blue-600 visited:text-purple-600">here</a>.
+		</p>
+
+		<h3 class="h3 pt-6">API Documentation</h3>
+
+		<p class="py-4">
+			The plugin <span class="font-bold">API documentation</span> is available
+			<a href="/docs" class="text-blue-600 visited:text-purple-600">here</a>.
 		</p>
 	</div>
 

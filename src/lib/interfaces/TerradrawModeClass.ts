@@ -12,6 +12,9 @@ import {
 	TerraDrawSelectMode
 } from 'terra-draw';
 
+/**
+ * TerraDraw mode class types
+ */
 export type TerradrawModeClass =
 	| TerraDrawAngledRectangleMode
 	| TerraDrawCircleMode

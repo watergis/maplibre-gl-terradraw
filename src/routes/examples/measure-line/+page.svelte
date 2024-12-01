@@ -256,8 +256,11 @@ map.once('load', () => {
 	{#snippet description()}
 		<p>
 			This example shows how you can calculate distance by using
-			[turf.js](https://turfjs.org/docs/api/distance) when you input a linestring by TerraDraw line
-			mode.
+			<a
+				href="https://turfjs.org/docs/api/distance"
+				target="_blank"
+				class="text-blue-600 visited:text-purple-600">turf/distance</a
+			> when you input a linestring by TerraDraw line mode.
 		</p>
 
 		{#if selectedFeature}

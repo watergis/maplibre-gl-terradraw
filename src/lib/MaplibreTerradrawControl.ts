@@ -43,11 +43,20 @@ export class MaplibreTerradrawControl implements IControl {
 		}
 	}
 
+	/**
+	 * Get the default control position
+	 * @returns default control position. Default is 'top-right'
+	 */
 	public getDefaultPosition(): ControlPosition {
 		const defaultPosition = 'top-right';
 		return defaultPosition;
 	}
 
+	/**
+	 * add the plugin control to maplibre
+	 * @param map Maplibre Map object
+	 * @returns HTML Element
+	 */
 	public onAdd(map: Map): HTMLElement {
 		if (this.options && this.options.modes && this.options.modes.length === 0) {
 			throw new Error('At least a mode must be enabled.');
@@ -130,6 +139,10 @@ export class MaplibreTerradrawControl implements IControl {
 		return this.controlContainer;
 	}
 
+	/**
+	 * Remove the plugin control from maplibre
+	 * @returns void
+	 */
 	public onRemove(): void {
 		if (!this.controlContainer || !this.controlContainer.parentNode || !this.map) {
 			return;
@@ -337,6 +350,9 @@ export class MaplibreTerradrawControl implements IControl {
 		}
 	}
 
+	/**
+	 * Toggle the state of delete-select button
+	 */
 	private toggleDeleteSelectionButton() {
 		const enabled = this.terradraw?.enabled || false;
 		const mode = this.terradraw?.getMode();
@@ -354,6 +370,11 @@ export class MaplibreTerradrawControl implements IControl {
 		}
 	}
 
+	/**
+	 * Capitalzie string value
+	 * @param value string value
+	 * @returns string
+	 */
 	private capitalize(value: string) {
 		return value.charAt(0).toUpperCase() + value.slice(1);
 	}

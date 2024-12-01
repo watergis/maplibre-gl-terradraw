@@ -1,6 +1,16 @@
 import type { ControlPosition, IControl, Map } from 'maplibre-gl';
-import { TerraDraw, TerraDrawMapLibreGLAdapter, TerraDrawRenderMode } from 'terra-draw';
-import type { ControlOptions, TerradrawMode, TerradrawModeClass } from './interfaces/index.js';
+import {
+	type GeoJSONStoreFeatures,
+	TerraDraw,
+	TerraDrawMapLibreGLAdapter,
+	TerraDrawRenderMode
+} from 'terra-draw';
+import type {
+	ControlOptions,
+	EventType,
+	TerradrawMode,
+	TerradrawModeClass
+} from './interfaces/index.js';
 import { defaultControlOptions } from './constants/defaultControlOptions.js';
 import { getDefaultModeOptions } from './constants/getDefaultModeOptions.js';
 
@@ -15,6 +25,9 @@ export class MaplibreTerradrawControl implements IControl {
 
 	private terradraw?: TerraDraw;
 	private options: ControlOptions = defaultControlOptions;
+	private events: {
+		[key: string]: [(event?: { feature?: GeoJSONStoreFeatures[]; mode?: TerradrawMode }) => void];
+	} = {};
 
 	private defaultMode = 'render';
 
@@ -129,12 +142,54 @@ export class MaplibreTerradrawControl implements IControl {
 	}
 
 	/**
+	 * Register an event for the plugin
+	 * @param event event type
+	 * @param callback
+	 */
+	public on(event: EventType, callback: (event?: { feature?: GeoJSONStoreFeatures[] }) => void) {
+		if (!this.events[event]) {
+			this.events[event] = [callback];
+		} else {
+			this.events[event].push(callback);
+		}
+	}
+
+	/**
+	 * Unregister an event for the plugin
+	 * @param event event type
+	 * @param callback
+	 * @returns
+	 */
+	public off(event: EventType, callback: (event?: { feature?: GeoJSONStoreFeatures[] }) => void) {
+		if (!this.events[event]) return;
+		const index = this.events[event].findIndex((c) => c === callback);
+		if (index !== -1) {
+			this.events[event].splice(index, 1);
+		}
+	}
+
+	/**
+	 * Dispatch an event. Pass the current snapshot of features and mode
+	 * @param event event type
+	 */
+	private dispatchEvent(event: EventType) {
+		if (this.events[event]) {
+			this.events[event].forEach((callback) => {
+				const snapshot = this.terradraw?.getSnapshot();
+				const currentFeature = snapshot?.filter((f) => f.properties.selected === true);
+				callback({ feature: currentFeature, mode: this.terradraw?.getMode() as TerradrawMode });
+			});
+		}
+	}
+
+	/**
 	 * Activate Terra Draw to start drawing
 	 */
 	public activate() {
 		if (!this.terradraw) return;
 		if (!this.terradraw.enabled) {
 			this.terradraw.start();
+			this.dispatchEvent('mode-changed');
 		}
 	}
 
@@ -145,6 +200,7 @@ export class MaplibreTerradrawControl implements IControl {
 		if (!this.terradraw) return;
 		if (!this.terradraw.enabled) return;
 		this.resetActiveMode();
+		this.dispatchEvent('mode-changed');
 		this.terradraw.stop();
 	}
 
@@ -238,6 +294,7 @@ export class MaplibreTerradrawControl implements IControl {
 					this.terradraw.clear();
 					this.deactivate();
 					this.toggleDeleteSelectionButton();
+					this.dispatchEvent('feature-deleted');
 				});
 			} else if (mode === 'delete-selection') {
 				btn.classList.add(`maplibregl-terradraw-${mode}-button`);
@@ -256,6 +313,7 @@ export class MaplibreTerradrawControl implements IControl {
 						const ids = selected.map((f) => f.id);
 						this.terradraw.removeFeatures(ids);
 						this.terradraw.setMode(currentMode);
+						this.dispatchEvent('feature-deleted');
 					}
 					this.toggleDeleteSelectionButton();
 				});

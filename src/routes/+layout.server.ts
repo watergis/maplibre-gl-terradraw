@@ -28,7 +28,6 @@ export const load: LayoutServerLoad = async () => {
 			]
 		},
 		style: 'https://demotiles.maplibre.org/style.json',
-
 		nav: [
 			{ href: 'https://twitter.com/j_igarashi', icon: 'fa-brands fa-x-twitter' },
 			{

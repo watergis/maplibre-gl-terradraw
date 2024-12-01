@@ -45,16 +45,17 @@
 		"@skeletonlabs/skeleton": "^2.10.3",
 		"@skeletonlabs/tw-plugin": "^0.4.0",
 		"@sveltejs/adapter-auto": "^3.3.1",
-		"@sveltejs/kit": "^2.8.5",
+		"@sveltejs/kit": "^2.9.0",
 		"@sveltejs/package": "^2.3.7",
 		"@sveltejs/vite-plugin-svelte": "^4.0.2",
 		"@tailwindcss/forms": "^0.5.9",
 		"@tailwindcss/typography": "^0.5.15",
+		"@turf/distance": "^7.1.0",
 		"@types/eslint": "^9.6.1",
 		"autoprefixer": "^10.4.20",
-		"eslint": "^9.15.0",
+		"eslint": "^9.16.0",
 		"eslint-config-prettier": "^9.1.0",
-		"eslint-plugin-svelte": "^2.46.0",
+		"eslint-plugin-svelte": "^2.46.1",
 		"globals": "^15.12.0",
 		"highlight.js": "^11.10.0",
 		"lefthook": "^1.8.4",
@@ -65,7 +66,7 @@
 		"publint": "^0.2.12",
 		"sass": "^1.81.0",
 		"sass-embedded": "^1.81.0",
-		"svelte": "^5.2.10",
+		"svelte": "^5.2.12",
 		"svelte-check": "^4.1.0",
 		"tailwindcss": "^3.4.15",
 		"typescript": "^5.7.2",
@@ -91,7 +92,7 @@
 		"url": "https://github.com/watergis/maplibre-gl-terradraw/issues"
 	},
 	"homepage": "https://github.com/watergis/maplibre-gl-terradraw#readme",
-	"packageManager": "pnpm@9.14.3",
+	"packageManager": "pnpm@9.14.4",
 	"engines": {
 		"pnpm": "^9.0.0"
 	}

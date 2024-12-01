@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 0.5.0
+
+### Minor Changes
+
+- 853a8a1: feat: add on/off function to the control for subscribing some events (currently only two modes - mode-changed and feature-deleted are supported)
+
 ## 0.4.4
 
 ### Patch Changes

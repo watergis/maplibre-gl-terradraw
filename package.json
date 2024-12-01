@@ -25,7 +25,7 @@
 	"scripts": {
 		"dev": "npm run typedoc && vite dev",
 		"build": "npm run build:doc && npm run package",
-		"build:doc": "npm run typedoc && vite build --config vite.config.ts",
+		"build:doc": "vite build --config vite.config.ts",
 		"preview": "vite preview",
 		"package": "npm run package:js && npm run package:css",
 		"package:js": "tsc --project tsconfig.lib.json && vite build --config vite.lib.config.ts",

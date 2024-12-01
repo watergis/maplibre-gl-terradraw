@@ -79,7 +79,6 @@
 				const initData = data.geojson.filter((f) =>
 					(terradrawModes as string[]).includes(f.properties.mode)
 				);
-				console.log(initData);
 				if (initData.length > 0) {
 					drawInstance?.addFeatures(initData);
 				}

@@ -45,6 +45,12 @@ importers:
       '@tailwindcss/typography':
         specifier: ^0.5.15
         version: 0.5.15(tailwindcss@3.4.15)
+      '@turf/area':
+        specifier: ^7.1.0
+        version: 7.1.0
+      '@turf/centroid':
+        specifier: ^7.1.0
+        version: 7.1.0
       '@turf/distance':
         specifier: ^7.1.0
         version: 7.1.0
@@ -692,6 +698,12 @@ packages:
     peerDependencies:
       tailwindcss: '>=3.0.0 || insiders || >=4.0.0-alpha.20'
 
+  '@turf/area@7.1.0':
+    resolution: {integrity: sha512-w91FEe02/mQfMPRX2pXua48scFuKJ2dSVMF2XmJ6+BJfFiCPxp95I3+Org8+ZsYv93CDNKbf0oLNEPnuQdgs2g==}
+
+  '@turf/centroid@7.1.0':
+    resolution: {integrity: sha512-1Y1b2l+ZB1CZ+ITjUCsGqC4/tSjwm/R4OUfDztVqyyCq/VvezkLmTNqvXTGXgfP0GXkpv68iCfxF5M7QdM5pJQ==}
+
   '@turf/distance@7.1.0':
     resolution: {integrity: sha512-hhNHhxCHB3ddzAGCNY4BtE29OZh+DAJPvUapQz+wOjISnlwvMcwLKvslgHWSYF536QDVe/93FEU2q67+CsZTPA==}
 
@@ -700,6 +712,9 @@ packages:
 
   '@turf/invariant@7.1.0':
     resolution: {integrity: sha512-OCLNqkItBYIP1nE9lJGuIUatWGtQ4rhBKAyTfFu0z8npVzGEYzvguEeof8/6LkKmTTEHW53tCjoEhSSzdRh08Q==}
+
+  '@turf/meta@7.1.0':
+    resolution: {integrity: sha512-ZgGpWWiKz797Fe8lfRj7HKCkGR+nSJ/5aKXMyofCvLSc2PuYJs/qyyifDPWjASQQCzseJ7AlF2Pc/XQ/3XkkuA==}
 
   '@types/cookie@0.6.0':
     resolution: {integrity: sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA==}
@@ -2945,6 +2960,20 @@ snapshots:
       postcss-selector-parser: 6.0.10
       tailwindcss: 3.4.15
 
+  '@turf/area@7.1.0':
+    dependencies:
+      '@turf/helpers': 7.1.0
+      '@turf/meta': 7.1.0
+      '@types/geojson': 7946.0.14
+      tslib: 2.8.1
+
+  '@turf/centroid@7.1.0':
+    dependencies:
+      '@turf/helpers': 7.1.0
+      '@turf/meta': 7.1.0
+      '@types/geojson': 7946.0.14
+      tslib: 2.8.1
+
   '@turf/distance@7.1.0':
     dependencies:
       '@turf/helpers': 7.1.0
@@ -2962,6 +2991,11 @@ snapshots:
       '@turf/helpers': 7.1.0
       '@types/geojson': 7946.0.14
       tslib: 2.8.1
+
+  '@turf/meta@7.1.0':
+    dependencies:
+      '@turf/helpers': 7.1.0
+      '@types/geojson': 7946.0.14
 
   '@types/cookie@0.6.0': {}
 

@@ -34,9 +34,15 @@ export const load: PageServerLoad = async () => {
 			},
 			{
 				href: '/examples/measure-distance',
-				title: 'Measure the distance of line',
+				title: 'Measure distance of line',
 				image: '/assets/images/measure-distance.webp',
-				description: 'Measure the distance of line feature added by terradraw.'
+				description: 'Measure distance of line feature added by terradraw.'
+			},
+			{
+				href: '/examples/measure-area',
+				title: 'Measure area of polygon',
+				image: '/assets/images/measure-area.webp',
+				description: 'Measure area of polygon feature added by terradraw.'
 			}
 		]
 	};

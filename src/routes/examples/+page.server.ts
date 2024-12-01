@@ -2,6 +2,16 @@ import type { PageServerLoad } from './$types.js';
 
 export const load: PageServerLoad = async () => {
 	return {
+		breadcrumbs: [
+			{
+				href: '/',
+				title: 'Home'
+			},
+			{
+				href: '/examples',
+				title: 'Examples'
+			}
+		],
 		examples: [
 			{
 				href: '/examples/drawing-option',
@@ -23,7 +33,7 @@ export const load: PageServerLoad = async () => {
 				description: 'Add GeoJSON features to TerraDraw as default by using addFeatures function.'
 			},
 			{
-				href: '/examples/measure-line',
+				href: '/examples/measure-distance',
 				title: 'Measure the distance of line',
 				image: '/assets/images/measure-distance.webp',
 				description: 'Measure the distance of line feature added by terradraw.'

@@ -50,6 +50,7 @@
 		"@sveltejs/vite-plugin-svelte": "^4.0.2",
 		"@tailwindcss/forms": "^0.5.9",
 		"@tailwindcss/typography": "^0.5.15",
+		"@turf/distance": "^7.1.0",
 		"@types/eslint": "^9.6.1",
 		"autoprefixer": "^10.4.20",
 		"eslint": "^9.15.0",

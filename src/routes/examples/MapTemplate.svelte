@@ -60,12 +60,12 @@
 	.map {
 		position: relative;
 		width: 100%;
-		height: 50%;
+		height: 50vh;
 	}
 
 	.contents {
 		position: relative;
 		width: 100%;
-		height: 50%;
+		height: 50vh;
 	}
 </style>

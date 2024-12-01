@@ -21,6 +21,12 @@ export const load: PageServerLoad = async () => {
 				title: 'Adding default GeoJSON feature to TerraDraw',
 				image: '/assets/images/add-geojson.webp',
 				description: 'Add GeoJSON features to TerraDraw as default by using addFeatures function.'
+			},
+			{
+				href: '/examples/measure-line',
+				title: 'Measure the distance of line',
+				image: '/assets/images/measure-distance.webp',
+				description: 'Measure the distance of line feature added by terradraw.'
 			}
 		]
 	};

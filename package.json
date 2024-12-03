@@ -23,7 +23,7 @@
 		"!dist/**/*.spec.*"
 	],
 	"scripts": {
-		"dev": "npm run typedoc && vite dev",
+		"dev": "vite dev",
 		"build": "npm run build:doc && npm run package",
 		"build:doc": "vite build --config vite.config.ts",
 		"preview": "vite preview",
@@ -38,7 +38,7 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"release": "changeset publish",
-		"typedoc": "typedoc --entryPointStrategy Expand src/lib --out static/docs"
+		"typedoc": "typedoc --entryPointStrategy Expand src/lib --out docs"
 	},
 	"devDependencies": {
 		"@changesets/cli": "^2.27.10",

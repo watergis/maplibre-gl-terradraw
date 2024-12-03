@@ -164,7 +164,10 @@
 
 		<p class="py-4">
 			The plugin <span class="font-bold">API documentation</span> is available
-			<a href="/docs" class="text-blue-600 visited:text-purple-600">here</a>.
+			<a
+				href="https://watergis.github.io/maplibre-gl-terradraw"
+				class="text-blue-600 visited:text-purple-600">here</a
+			>.
 		</p>
 	</div>
 

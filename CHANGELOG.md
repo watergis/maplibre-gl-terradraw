@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 0.5.1
+
+### Patch Changes
+
+- 9358be9: chore: updated vite and other dependencies. Moved exports.types before import and require in package.json
+
 ## 0.5.0
 
 ### Minor Changes

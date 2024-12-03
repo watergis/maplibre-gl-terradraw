@@ -119,7 +119,11 @@
 				<li><a href="/" onclick={drawerClose}>Homepage</a></li>
 				<li><a href="/demo" onclick={drawerClose}>Demo</a></li>
 				<li><a href="/examples" onclick={drawerClose}>Examples</a></li>
-				<li><a href="/docs" onclick={drawerClose}>API Docs</a></li>
+				<li>
+					<a href="https://watergis.github.io/maplibre-gl-terradraw" onclick={drawerClose}
+						>API Docs</a
+					>
+				</li>
 
 				<li>
 					<div class="flex items-center py-2">

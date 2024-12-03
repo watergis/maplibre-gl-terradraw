@@ -34,7 +34,7 @@ pnpm build
 
 Output files for the package are generated under `package` folder. The demo website will be exported under `dist` folder.
 
-If you want to update typedoc documentation, please execute the following command to update them under `/static/docs` folder.
+If you want to check typedoc documentation, please execute the following command to update them under `/docs` folder. The typedoc documentation is deployed to GitHub pages by CI.
 
 ```shell
 pnpm typedoc

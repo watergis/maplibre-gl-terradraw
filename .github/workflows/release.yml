@@ -7,6 +7,7 @@ on:
 env:
   CI: true
   PNPM_CACHE_FOLDER: .pnpm-store
+  NODE_VERSION: 22
 
 jobs:
   release:
@@ -17,9 +18,6 @@ jobs:
       pull-requests: write # to create pull request (changesets/action)
     name: Release
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [22]
 
     steps:
       - name: checkout code repository
@@ -27,10 +25,10 @@ jobs:
         with:
           fetch-depth: 0
       - uses: pnpm/action-setup@v4.0.0
-      - name: Setup Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
 
       - name: install dependencies
@@ -49,20 +47,19 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.npm_token }}
+
   typedoc:
     runs-on: ubuntu-latest
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - uses: pnpm/action-setup@v4.0.0
-      - name: Setup Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
 
       - name: install dependencies

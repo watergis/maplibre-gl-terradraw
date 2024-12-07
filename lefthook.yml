@@ -9,6 +9,8 @@ pre-commit:
       run: pnpm lint
     check:
       run: pnpm check
+    typedoc:
+      run: pnpm typedoc
 
 pre-push:
   parallel: true

@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [22]
+        node-version: [20, 22]
 
     steps:
       - uses: actions/checkout@v4
@@ -32,6 +32,9 @@ jobs:
 
       - run: pnpm lint
       - run: pnpm check
+
+      - name: build typedoc
+        run: pnpm typedoc
 
       - name: build
         run: pnpm build

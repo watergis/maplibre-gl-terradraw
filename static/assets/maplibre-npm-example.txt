@@ -1,6 +1,6 @@
 import { Map } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import MaplibreTerradrawControl from '@watergis/maplibre-gl-terradraw'
+import { MaplibreTerradrawControl } from '@watergis/maplibre-gl-terradraw'
 import '@watergis/maplibre-gl-terradraw/dist/maplibre-gl-terradraw.css'
 
 const map = new Map({

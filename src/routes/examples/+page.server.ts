@@ -33,14 +33,20 @@ export const load: PageServerLoad = async () => {
 				description: 'Add GeoJSON features to TerraDraw as default by using addFeatures function.'
 			},
 			{
+				href: '/examples/measure-control',
+				title: 'Measure line and polygon with measure control',
+				image: '/assets/images/measure-control.webp',
+				description: 'Measure line and polygon with MaplibreMeasureControl'
+			},
+			{
 				href: '/examples/measure-distance',
-				title: 'Measure distance of line',
+				title: 'Measure distance of line with default control',
 				image: '/assets/images/measure-distance.webp',
 				description: 'Measure distance of line feature added by terradraw.'
 			},
 			{
 				href: '/examples/measure-area',
-				title: 'Measure area of polygon',
+				title: 'Measure area of polygon with default control',
 				image: '/assets/images/measure-area.webp',
 				description: 'Measure area of polygon feature added by terradraw.'
 			}

@@ -1,3 +1,4 @@
+import type { MapGeoJSONFeature } from 'maplibre-gl';
 import type { ModeOptions } from '../interfaces/ModeOptions.js';
 import {
 	TerraDrawAngledRectangleMode,

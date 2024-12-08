@@ -36,7 +36,7 @@ export const load: PageServerLoad = async () => {
 				href: '/examples/measure-control',
 				title: 'Measure line and polygon with measure control',
 				image: '/assets/images/measure-control.webp',
-				description: 'Measure line and polygon with MaplibreMeasureControl'
+				description: 'Measure line and polygon with MeasureControl'
 			},
 			{
 				href: '/examples/measure-distance',

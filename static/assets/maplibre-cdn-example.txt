@@ -31,11 +31,11 @@
 				zoom: 1
 			});
 
-			const draw = new MaplibreTerradrawControl({
+			const draw = new MaplibreTerradrawControl.MaplibreTerradrawControl({
 				modes: [{modes}],
 				open: {open}
 			});
-			map.addControl(draw, 'top-right');
+			map.addControl(draw, 'top-left');
 		</script>
 	</body>
 </html>

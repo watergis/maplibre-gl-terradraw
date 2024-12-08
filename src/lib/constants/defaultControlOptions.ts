@@ -1,4 +1,4 @@
-import type { MeasureControlOptions } from '$lib/interfaces/MeasureControlOptions.js';
+import type { MeasureControlOptions } from '../interfaces/MeasureControlOptions.js';
 import type { TerradrawControlOptions } from '../interfaces/TerradrawControlOptions.js';
 
 /**

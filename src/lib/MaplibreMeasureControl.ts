@@ -90,7 +90,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		const drawInstance = this.getTerraDrawInstance();
 		if (drawInstance) {
 			// subscribe finish event of TerraDraw to calc distance
-			drawInstance.on('finish', (id) => {
+			drawInstance.on('finish', (id: string) => {
 				if (!this.map) return;
 				const drawInstance = this.getTerraDrawInstance();
 				if (!drawInstance) return;
@@ -196,7 +196,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				this.linelayerSpec.source
 			] as GeoJSONSourceSpecification;
 			if (geojsonSource) {
-				const coordinates: number[][] = feature.geometry.coordinates;
+				const coordinates: number[][] = feature.geometry.coordinates as number[][];
 
 				// calculate distance for each segment of LineString feature
 				let totalDistance = 0;
@@ -285,7 +285,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				const features = snapshot?.filter((feature) =>
 					['LineString', 'Polygon'].includes(feature.geometry.type)
 				);
-				const ids: string[] = features.map((f) => f.id);
+				const ids: string[] = features.map((f) => f.id as string);
 				if (
 					typeof geojsonSource.data !== 'string' &&
 					geojsonSource.data.type === 'FeatureCollection'

@@ -28,9 +28,20 @@ This release has a breaking change of the plugin interface. Due to adding new pl
 
 New usage of `MaplibreTerradrawControl` will be like below.
 
+- NPM
+
 ```diff
 - import MaplibreTerradrawControl from '$lib/index.js';
 + import { MaplibreTerradrawControl } from '$lib/index.js';
+```
+
+- CDN
+
+for CDN, library name of `MaplibreTerradrawControl` needs to be added.
+
+```diff
+- const draw = new MaplibreTerradrawControl();
++ const draw = new MaplibreTerradrawControl.MaplibreTerradrawControl();
 ```
 
 Furthermore, all interfaces and constants are now exported from index.js.

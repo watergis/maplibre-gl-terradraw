@@ -2,7 +2,9 @@
 '@watergis/maplibre-gl-terradraw': minor
 ---
 
-feat: add MaplibreMeasureControl to provide measure line and area control easily.
+This release has a breaking change of the plugin interface. Please read carefully this changelog.
+
+added MaplibreMeasureControl to provide measure line and area control easily.
 
 Usage of `MaplibreMeasureControl` is like the below code.
 
@@ -24,7 +26,7 @@ const drawControl = new MaplibreMeasureControl({
 map.addControl(drawControl, 'top-left');
 ```
 
-This release has a breaking change of the plugin interface. Due to adding new plugin control, `default` export was removed.
+Due to adding new plugin control, `default` export was removed.
 
 New usage of `MaplibreTerradrawControl` will be like below.
 

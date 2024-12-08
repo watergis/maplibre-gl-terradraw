@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 0.6.1
+
+### Patch Changes
+
+- af6beaf: fix: only add relevant source for user specified modes. For example, only line layer and source is added if no modes of polygon are used.
+
 ## 0.6.0
 
 ### Minor Changes

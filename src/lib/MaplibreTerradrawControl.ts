@@ -11,8 +11,7 @@ import type {
 	TerradrawMode,
 	TerradrawModeClass
 } from './interfaces/index.js';
-import { defaultControlOptions } from './constants/defaultControlOptions.js';
-import { getDefaultModeOptions } from './constants/getDefaultModeOptions.js';
+import { defaultControlOptions, getDefaultModeOptions } from './constants/index.js';
 
 /**
  * Maplibre GL Terra Draw Control

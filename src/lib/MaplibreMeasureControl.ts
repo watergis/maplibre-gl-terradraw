@@ -8,8 +8,8 @@ import { MaplibreTerradrawControl } from './MaplibreTerradrawControl.js';
 import { distance } from '@turf/distance';
 import { area } from '@turf/area';
 import { centroid } from '@turf/centroid';
-import { defaultMeasureControlOptions } from './constants/defaultControlOptions.js';
-import type { MeasureControlOptions } from './interfaces/MeasureControlOptions.js';
+import { defaultMeasureControlOptions } from './constants/index.js';
+import type { MeasureControlOptions } from './interfaces/index.js';
 
 /**
  * Maplibre GL Terra Draw Measure Control
@@ -29,7 +29,8 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		}
 		super({
 			modes: measureOptions.modes,
-			open: measureOptions.open
+			open: measureOptions.open,
+			modeOptions: measureOptions.modeOptions
 		});
 		this.linelayerSpec = measureOptions.linelayerSpec as SymbolLayerSpecification;
 		this.polygonLayerSpec = measureOptions.polygonLayerSpec as SymbolLayerSpecification;

@@ -79,7 +79,10 @@
 	},
 	"peerDependencies": {
 		"maplibre-gl": "^2.0.0 || ^3.0.0 || ^4.0.0",
-		"terra-draw": "^1.0.0-beta.1"
+		"terra-draw": "^1.0.0-beta.1",
+		"@turf/area": "^7.0.0",
+		"@turf/centroid": "^7.0.0",
+		"@turf/distance": "^7.0.0"
 	},
 	"repository": {
 		"type": "git",

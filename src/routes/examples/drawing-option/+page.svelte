@@ -1,5 +1,5 @@
 <script lang="ts">
-	import MaplibreTerradrawControl from '$lib/index.js';
+	import { MaplibreTerradrawControl } from '$lib/index.js';
 	import { TerraDrawSelectMode } from 'terra-draw';
 	import MapTemplate from '../MapTemplate.svelte';
 	import type { PageData } from './$types.js';

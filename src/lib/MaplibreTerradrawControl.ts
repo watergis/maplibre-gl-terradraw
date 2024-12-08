@@ -6,7 +6,7 @@ import {
 	TerraDrawRenderMode
 } from 'terra-draw';
 import type {
-	ControlOptions,
+	TerradrawControlOptions,
 	EventType,
 	TerradrawMode,
 	TerradrawModeClass
@@ -18,24 +18,24 @@ import { getDefaultModeOptions } from './constants/getDefaultModeOptions.js';
  * Maplibre GL Terra Draw Control
  */
 export class MaplibreTerradrawControl implements IControl {
-	private controlContainer?: HTMLElement;
-	private map?: Map;
-	private modeButtons: { [key: string]: HTMLButtonElement } = {};
-	private isExpanded = false;
+	protected controlContainer?: HTMLElement;
+	protected map?: Map;
+	protected modeButtons: { [key: string]: HTMLButtonElement } = {};
+	protected isExpanded = false;
 
-	private terradraw?: TerraDraw;
-	private options: ControlOptions = defaultControlOptions;
-	private events: {
+	protected terradraw?: TerraDraw;
+	protected options: TerradrawControlOptions = defaultControlOptions;
+	protected events: {
 		[key: string]: [(event?: { feature?: GeoJSONStoreFeatures[]; mode?: TerradrawMode }) => void];
 	} = {};
 
-	private defaultMode = 'render';
+	protected defaultMode = 'render';
 
 	/**
 	 * Constructor
 	 * @param options Plugin control options
 	 */
-	constructor(options?: ControlOptions) {
+	constructor(options?: TerradrawControlOptions) {
 		this.modeButtons = {};
 
 		if (options) {
@@ -185,7 +185,7 @@ export class MaplibreTerradrawControl implements IControl {
 	 * Dispatch an event. Pass the current snapshot of features and mode
 	 * @param event event type
 	 */
-	private dispatchEvent(event: EventType) {
+	protected dispatchEvent(event: EventType) {
 		if (this.events[event]) {
 			this.events[event].forEach((callback) => {
 				const snapshot = this.terradraw?.getSnapshot();
@@ -229,7 +229,7 @@ export class MaplibreTerradrawControl implements IControl {
 	/**
 	 * Toggle editor control
 	 */
-	private toggleEditor() {
+	protected toggleEditor() {
 		if (!this.terradraw) return;
 		const controls = document.getElementsByClassName('maplibregl-terradraw-add-control');
 		for (let i = 0; i < controls.length; i++) {
@@ -257,7 +257,7 @@ export class MaplibreTerradrawControl implements IControl {
 	/**
 	 * Reset active mode to back to render mode
 	 */
-	private resetActiveMode() {
+	protected resetActiveMode() {
 		if (!this.terradraw) return;
 		if (!this.terradraw.enabled) {
 			this.terradraw.start();
@@ -275,7 +275,7 @@ export class MaplibreTerradrawControl implements IControl {
 	 * Add Terra Draw drawing mode button
 	 * @param mode Terra Draw mode name
 	 */
-	private addTerradrawButton(mode: TerradrawMode) {
+	protected addTerradrawButton(mode: TerradrawMode) {
 		const btn = document.createElement('button');
 		btn.type = 'button';
 		this.modeButtons[mode] = btn;
@@ -353,7 +353,7 @@ export class MaplibreTerradrawControl implements IControl {
 	/**
 	 * Toggle the state of delete-select button
 	 */
-	private toggleDeleteSelectionButton() {
+	protected toggleDeleteSelectionButton() {
 		const enabled = this.terradraw?.enabled || false;
 		const mode = this.terradraw?.getMode();
 
@@ -375,7 +375,7 @@ export class MaplibreTerradrawControl implements IControl {
 	 * @param value string value
 	 * @returns string
 	 */
-	private capitalize(value: string) {
+	protected capitalize(value: string) {
 		return value.charAt(0).toUpperCase() + value.slice(1);
 	}
 }

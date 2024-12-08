@@ -2,9 +2,9 @@ import type { ModeOptions } from './ModeOptions.js';
 import type { TerradrawMode } from './TerradrawMode.js';
 
 /**
- * Plugin control constructor options
+ * Terradraw Control Plugin control constructor options
  */
-export interface ControlOptions {
+export interface TerradrawControlOptions {
 	/**
 	 * Terradraw modes added to the control.
 	 * The mode will be added in the same order of the array.

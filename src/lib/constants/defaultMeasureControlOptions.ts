@@ -113,7 +113,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 			}
 		})
 	},
-	linelayerSpec: {
+	lineLayerLabelSpec: {
 		id: 'terradraw-measure-line-label',
 		type: 'symbol',
 		source: 'terradraw-measure-line-source',
@@ -143,6 +143,19 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 			'text-halo-color': '#ffffff',
 			'text-halo-width': 10,
 			'text-color': '#000000'
+		}
+	},
+	lineLayerNodeSpec: {
+		id: 'terradraw-measure-line-node',
+		type: 'circle',
+		source: 'terradraw-measure-line-source',
+		filter: ['match', ['geometry-type'], ['Point'], true, false],
+		layout: {},
+		paint: {
+			'circle-radius': 5,
+			'circle-color': '#FFFFFF',
+			'circle-stroke-color': '#000000',
+			'circle-stroke-width': 1
 		}
 	},
 	polygonLayerSpec: {

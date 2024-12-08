@@ -1,4 +1,5 @@
 import type {
+	CircleLayerSpecification,
 	GeoJSONSource,
 	GeoJSONSourceSpecification,
 	Map,
@@ -15,7 +16,8 @@ import type { MeasureControlOptions } from './interfaces/index.js';
  * Maplibre GL Terra Draw Measure Control
  */
 export class MaplibreMeasureControl extends MaplibreTerradrawControl {
-	private linelayerSpec: SymbolLayerSpecification;
+	private lineLayerLabelSpec: SymbolLayerSpecification;
+	private lineLayerNodeSpec: CircleLayerSpecification;
 	private polygonLayerSpec: SymbolLayerSpecification;
 
 	/**
@@ -32,7 +34,8 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			open: measureOptions.open,
 			modeOptions: measureOptions.modeOptions
 		});
-		this.linelayerSpec = measureOptions.linelayerSpec as SymbolLayerSpecification;
+		this.lineLayerLabelSpec = measureOptions.lineLayerLabelSpec as SymbolLayerSpecification;
+		this.lineLayerNodeSpec = measureOptions.lineLayerNodeSpec as CircleLayerSpecification;
 		this.polygonLayerSpec = measureOptions.polygonLayerSpec as SymbolLayerSpecification;
 	}
 
@@ -66,16 +69,21 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 
 		if (lineModes && lineModes.length > 0) {
 			// add GeoJSON source for distance label
-			if (!this.map.getSource(this.linelayerSpec.source)) {
-				this.map.addSource(this.linelayerSpec.source, {
+			if (!this.map.getSource(this.lineLayerLabelSpec.source)) {
+				this.map.addSource(this.lineLayerLabelSpec.source, {
 					type: 'geojson',
 					data: { type: 'FeatureCollection', features: [] }
 				});
 			}
 
+			// add GeoJSON layer for distance label node appearance
+			if (!this.map.getLayer(this.lineLayerNodeSpec.id)) {
+				this.map.addLayer(this.lineLayerNodeSpec);
+			}
+
 			// add GeoJSON layer for distance label appearance
-			if (!this.map.getLayer(this.linelayerSpec.id)) {
-				this.map.addLayer(this.linelayerSpec);
+			if (!this.map.getLayer(this.lineLayerLabelSpec.id)) {
+				this.map.addLayer(this.lineLayerLabelSpec);
 			}
 		}
 
@@ -133,14 +141,17 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	private unregisterMesureControl() {
 		this.off('feature-deleted', this.onFeatureDeleted.bind(this));
 		if (!this.map) return;
-		if (this.map.getLayer(this.linelayerSpec.id)) {
-			this.map.removeLayer(this.linelayerSpec.id);
+		if (this.map.getLayer(this.lineLayerLabelSpec.id)) {
+			this.map.removeLayer(this.lineLayerLabelSpec.id);
+		}
+		if (this.map.getLayer(this.lineLayerNodeSpec.id)) {
+			this.map.removeLayer(this.lineLayerNodeSpec.id);
 		}
 		if (this.map.getLayer(this.polygonLayerSpec.id)) {
 			this.map.removeLayer(this.polygonLayerSpec.id);
 		}
-		if (this.map.getSource(this.linelayerSpec.source)) {
-			this.map.removeSource(this.linelayerSpec.source);
+		if (this.map.getSource(this.lineLayerLabelSpec.source)) {
+			this.map.removeSource(this.lineLayerLabelSpec.source);
 		}
 		if (this.map.getSource(this.polygonLayerSpec.source)) {
 			this.map.removeSource(this.polygonLayerSpec.source);
@@ -211,7 +222,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		const feature = snapshot?.find((f) => f.id === id && f.geometry.type === 'LineString');
 		if (feature) {
 			const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
-				this.linelayerSpec.source
+				this.lineLayerLabelSpec.source
 			] as GeoJSONSourceSpecification;
 			if (geojsonSource) {
 				const coordinates: number[][] = feature.geometry.coordinates as number[][];
@@ -279,10 +290,11 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				}
 
 				// update GeoJSON source with new data
-				(this.map.getSource(this.linelayerSpec.source) as GeoJSONSource)?.setData(
+				(this.map.getSource(this.lineLayerLabelSpec.source) as GeoJSONSource)?.setData(
 					geojsonSource.data
 				);
-				this.map.moveLayer(this.linelayerSpec.id);
+				this.map.moveLayer(this.lineLayerLabelSpec.id);
+				this.map.moveLayer(this.lineLayerNodeSpec.id);
 			}
 		}
 	}
@@ -294,7 +306,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		if (!this.map) return;
 		const drawInstance = this.getTerraDrawInstance();
 		if (drawInstance) {
-			const sourceIds = [this.linelayerSpec.source, this.polygonLayerSpec.source];
+			const sourceIds = [this.lineLayerLabelSpec.source, this.polygonLayerSpec.source];
 			for (const src of sourceIds) {
 				const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
 					src
@@ -315,12 +327,15 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 							ids.includes(f.properties?.originalId)
 						);
 					}
-					if (src === this.linelayerSpec.source) {
-						(this.map.getSource(this.linelayerSpec.source) as GeoJSONSource)?.setData(
+					if (src === this.lineLayerLabelSpec.source) {
+						(this.map.getSource(this.lineLayerLabelSpec.source) as GeoJSONSource)?.setData(
 							geojsonSource.data
 						);
-						if (this.map.getLayer(this.linelayerSpec.id)) {
-							this.map.moveLayer(this.linelayerSpec.id);
+						if (this.map.getLayer(this.lineLayerNodeSpec.id)) {
+							this.map.moveLayer(this.lineLayerNodeSpec.id);
+						}
+						if (this.map.getLayer(this.lineLayerLabelSpec.id)) {
+							this.map.moveLayer(this.lineLayerLabelSpec.id);
 						}
 					} else if (src === this.polygonLayerSpec.source) {
 						(this.map.getSource(this.polygonLayerSpec.source) as GeoJSONSource)?.setData(

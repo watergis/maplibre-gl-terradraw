@@ -1,4 +1,4 @@
-import type { SymbolLayerSpecification } from 'maplibre-gl';
+import type { CircleLayerSpecification, SymbolLayerSpecification } from 'maplibre-gl';
 import type { ModeOptions } from './ModeOptions.js';
 import type { MeasureControlMode } from './TerradrawMode.js';
 
@@ -28,7 +28,12 @@ export interface MeasureControlOptions {
 	/**
 	 * Maplibre symbol layer specification (on line nodes) for line distance layer
 	 */
-	linelayerSpec?: SymbolLayerSpecification;
+	lineLayerLabelSpec?: SymbolLayerSpecification;
+
+	/**
+	 * Maplibre circle layer specification for visualizing node style of line distance layer
+	 */
+	lineLayerNodeSpec?: CircleLayerSpecification;
 
 	/**
 	 * Maplibre symbol layer specification (centroid) for polygon area layer

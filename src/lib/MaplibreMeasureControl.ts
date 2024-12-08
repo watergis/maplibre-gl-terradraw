@@ -61,51 +61,68 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	private registerMesureControl() {
 		if (!this.map) return;
 
-		// add GeoJSON source for distance label
-		if (!this.map.getSource(this.linelayerSpec.source)) {
-			this.map.addSource(this.linelayerSpec.source, {
-				type: 'geojson',
-				data: { type: 'FeatureCollection', features: [] }
-			});
+		const lineModes = this.options.modes?.filter((m) => ['linestring'].includes(m));
+
+		if (lineModes && lineModes.length > 0) {
+			// add GeoJSON source for distance label
+			if (!this.map.getSource(this.linelayerSpec.source)) {
+				this.map.addSource(this.linelayerSpec.source, {
+					type: 'geojson',
+					data: { type: 'FeatureCollection', features: [] }
+				});
+			}
+
+			// add GeoJSON layer for distance label appearance
+			if (!this.map.getLayer(this.linelayerSpec.id)) {
+				this.map.addLayer(this.linelayerSpec);
+			}
 		}
 
-		// add GeoJSON layer for distance label appearance
-		if (!this.map.getLayer(this.linelayerSpec.id)) {
-			this.map.addLayer(this.linelayerSpec);
+		const polygonModes = this.options.modes?.filter((m) =>
+			[
+				'polygon',
+				'rectangle',
+				'angled-rectangle',
+				'circle',
+				'sector',
+				'sensor',
+				'freehand'
+			].includes(m)
+		);
+		if (polygonModes && polygonModes.length > 0) {
+			// add GeoJSON source for distance label
+			if (!this.map.getSource(this.polygonLayerSpec.source)) {
+				this.map.addSource(this.polygonLayerSpec.source, {
+					type: 'geojson',
+					data: { type: 'FeatureCollection', features: [] }
+				});
+			} // add GeoJSON layer for polygon area label appearance
+			if (!this.map.getLayer(this.polygonLayerSpec.id)) {
+				this.map.addLayer(this.polygonLayerSpec);
+			}
 		}
 
-		// add GeoJSON source for distance label
-		if (!this.map.getSource(this.polygonLayerSpec.source)) {
-			this.map.addSource(this.polygonLayerSpec.source, {
-				type: 'geojson',
-				data: { type: 'FeatureCollection', features: [] }
-			});
-		}
+		if ((lineModes && lineModes.length > 0) || (polygonModes && polygonModes.length > 0)) {
+			const drawInstance = this.getTerraDrawInstance();
+			if (drawInstance) {
+				// subscribe finish event of TerraDraw to calc distance
+				drawInstance.on('finish', (id: string) => {
+					if (!this.map) return;
+					const drawInstance = this.getTerraDrawInstance();
+					if (!drawInstance) return;
+					const snapshot = drawInstance.getSnapshot();
+					const feature = snapshot?.find((f) => f.id === id);
+					const geometryType = feature.geometry.type;
+					if (geometryType === 'LineString') {
+						this.measureLine(id);
+					} else if (geometryType === 'Polygon') {
+						this.measurePolygon(id);
+					}
+				});
 
-		// add GeoJSON layer for polygon area label appearance
-		if (!this.map.getLayer(this.polygonLayerSpec.id)) {
-			this.map.addLayer(this.polygonLayerSpec);
-		}
-
-		const drawInstance = this.getTerraDrawInstance();
-		if (drawInstance) {
-			// subscribe finish event of TerraDraw to calc distance
-			drawInstance.on('finish', (id: string) => {
-				if (!this.map) return;
-				const drawInstance = this.getTerraDrawInstance();
-				if (!drawInstance) return;
-				const snapshot = drawInstance.getSnapshot();
-				const feature = snapshot?.find((f) => f.id === id);
-				const geometryType = feature.geometry.type;
-				if (geometryType === 'LineString') {
-					this.measureLine(id);
-				} else if (geometryType === 'Polygon') {
-					this.measurePolygon(id);
-				}
-			});
-
-			// subscribe feature-deleted event for the plugin control
-			this.on('feature-deleted', this.onFeatureDeleted.bind(this));
+				// subscribe feature-deleted event for the plugin control
+				this.on('feature-deleted', this.onFeatureDeleted.bind(this));
+			}
 		}
 	}
 
@@ -276,33 +293,43 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		if (!this.map) return;
 		const drawInstance = this.getTerraDrawInstance();
 		if (drawInstance) {
-			const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
-				(this.linelayerSpec.source, this.polygonLayerSpec.source)
-			] as GeoJSONSourceSpecification;
-			if (geojsonSource) {
-				// get IDs in current TerraDraw snapshot
-				const snapshot = drawInstance.getSnapshot();
-				const features = snapshot?.filter((feature) =>
-					['LineString', 'Polygon'].includes(feature.geometry.type)
-				);
-				const ids: string[] = features.map((f) => f.id as string);
-				if (
-					typeof geojsonSource.data !== 'string' &&
-					geojsonSource.data.type === 'FeatureCollection'
-				) {
-					// Delete label features if originalId does not exist anymore.
-					geojsonSource.data.features = geojsonSource.data.features.filter((f) =>
-						ids.includes(f.properties?.originalId)
+			const sourceIds = [this.linelayerSpec.source, this.polygonLayerSpec.source];
+			for (const src of sourceIds) {
+				const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
+					src
+				] as GeoJSONSourceSpecification;
+				if (geojsonSource) {
+					// get IDs in current TerraDraw snapshot
+					const snapshot = drawInstance.getSnapshot();
+					const features = snapshot?.filter((feature) =>
+						['LineString', 'Polygon'].includes(feature.geometry.type)
 					);
+					const ids: string[] = features.map((f) => f.id as string);
+					if (
+						typeof geojsonSource.data !== 'string' &&
+						geojsonSource.data.type === 'FeatureCollection'
+					) {
+						// Delete label features if originalId does not exist anymore.
+						geojsonSource.data.features = geojsonSource.data.features.filter((f) =>
+							ids.includes(f.properties?.originalId)
+						);
+					}
+					if (src === this.linelayerSpec.source) {
+						(this.map.getSource(this.linelayerSpec.source) as GeoJSONSource)?.setData(
+							geojsonSource.data
+						);
+						if (this.map.getLayer(this.linelayerSpec.id)) {
+							this.map.moveLayer(this.linelayerSpec.id);
+						}
+					} else if (src === this.polygonLayerSpec.source) {
+						(this.map.getSource(this.polygonLayerSpec.source) as GeoJSONSource)?.setData(
+							geojsonSource.data
+						);
+						if (this.map.getLayer(this.polygonLayerSpec.id)) {
+							this.map.moveLayer(this.polygonLayerSpec.id);
+						}
+					}
 				}
-				(this.map.getSource(this.linelayerSpec.source) as GeoJSONSource)?.setData(
-					geojsonSource.data
-				);
-				(this.map.getSource(this.polygonLayerSpec.source) as GeoJSONSource)?.setData(
-					geojsonSource.data
-				);
-				this.map.moveLayer(this.linelayerSpec.id);
-				this.map.moveLayer(this.polygonLayerSpec.id);
 			}
 		}
 	}

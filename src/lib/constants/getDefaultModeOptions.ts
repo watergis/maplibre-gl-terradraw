@@ -28,9 +28,13 @@ export const getDefaultModeOptions = () => {
 		point: new TerraDrawPointMode(),
 		linestring: new TerraDrawLineStringMode(),
 		polygon: new TerraDrawPolygonMode({
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
 			validation: (feature: MapGeoJSONFeature, e: { updateType: string }) => {
 				const updateType = e.updateType;
 				if (updateType === 'finish' || updateType === 'commit') {
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
 					return ValidateNotSelfIntersecting(feature);
 				}
 				return true;

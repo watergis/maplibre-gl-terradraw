@@ -52,9 +52,13 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 				closingPointOutlineColor: '#000000',
 				closingPointOutlineWidth: 1
 			},
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
 			validation: (feature: MapGeoJSONFeature, e: { updateType: string }) => {
 				const updateType = e.updateType;
 				if (updateType === 'finish' || updateType === 'commit') {
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
 					return ValidateNotSelfIntersecting(feature);
 				}
 				return true;

@@ -66,7 +66,9 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: build typedoc
-        run: pnpm typedoc
+        run: |
+          pnpm build
+          pnpm typedoc
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4

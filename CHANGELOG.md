@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 0.6.2
+
+### Patch Changes
+
+- 42e6ef0: fix: changed TerraDraw mode style for MeasureControl to differentiate from normal control. Also, circle layer for line label is added to visualize node of distance.
+
 ## 0.6.1
 
 ### Patch Changes

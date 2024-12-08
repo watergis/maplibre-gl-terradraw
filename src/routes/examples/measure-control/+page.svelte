@@ -52,7 +52,7 @@ map.addControl(drawControl, 'top-left');
 
 <MapTemplate {style} {setTerradraw} {code}>
 	{#snippet title()}
-		Measure area of polygon feature
+		Measure distance and length of feature
 	{/snippet}
 
 	{#snippet description()}

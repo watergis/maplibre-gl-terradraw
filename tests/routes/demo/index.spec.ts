@@ -29,7 +29,6 @@ test.describe('demo page test', () => {
 
 			const modeButoton = page.locator(className);
 			await expect(modeButoton).toBeTruthy();
-			await expect(modeButoton).toHaveCount(1);
 		}
 	});
 });

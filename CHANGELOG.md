@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 0.6.3
+
+### Patch Changes
+
+- 5a285ce: fix: support select and delete-selection mode for MeasureControl. Use change event to compute distance and area instead of finished.
+
 ## 0.6.2
 
 ### Patch Changes

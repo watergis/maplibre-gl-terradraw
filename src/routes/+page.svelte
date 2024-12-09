@@ -135,7 +135,7 @@
 			<CodeBlock
 				language="ts"
 				lineNumbers
-				code={data.examples.npm
+				code={data.codes.npm
 					.replace('{modes}', selectedModes.map((m) => `'${m}'`).join(','))
 					.replace('{open}', `${isOpen}`)}
 			/>
@@ -147,18 +147,11 @@
 			<CodeBlock
 				language="html"
 				lineNumbers
-				code={data.examples.cdn
+				code={data.codes.cdn
 					.replace('{modes}', selectedModes.map((m) => `'${m}'`).join(','))
 					.replace('{open}', `${isOpen}`)}
 			/>
 		</div>
-
-		<h3 class="h3 pt-6">Examples</h3>
-
-		<p class="py-4">
-			<span class="font-bold">Examples</span> can be explored
-			<a href="/examples" class="text-blue-600 visited:text-purple-600">here</a>.
-		</p>
 
 		<h3 class="h3 pt-6">API Documentation</h3>
 
@@ -169,6 +162,27 @@
 				class="text-blue-600 visited:text-purple-600">here</a
 			>.
 		</p>
+
+		<h3 class="h3 pt-6">
+			<a href="/examples" class="text-blue-600 visited:text-purple-600">Examples</a>
+		</h3>
+
+		<div class="py-4">
+			<div class="flex flex-wrap gap-4">
+				{#each data.examples as custom}
+					<a
+						class="card card-hover sm:w-auto md:max-w-48 lg:max-w-64 xl:max-w-80"
+						href={custom.href}
+					>
+						<header class="card-header font-bold min-h-16">{custom.title}</header>
+						<section class="card-image p-4">
+							<img src={custom.image} alt={custom.title} />
+						</section>
+						<footer class="card-footer">{custom.description}</footer>
+					</a>
+				{/each}
+			</div>
+		</div>
 	</div>
 
 	<hr />

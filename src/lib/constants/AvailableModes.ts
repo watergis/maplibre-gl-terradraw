@@ -30,5 +30,7 @@ export const AvailableMeasureModes = [
 	'angled-rectangle',
 	'sensor',
 	'sector',
+	'select',
+	'delete-selection',
 	'delete'
 ] as const;

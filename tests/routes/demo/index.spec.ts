@@ -1,4 +1,4 @@
-import { AvailableModes } from '$lib/index.js';
+import { AvailableModes } from '../../../src/lib/index.js';
 import { test, expect } from '@playwright/test';
 
 test.describe('demo page test', () => {

@@ -19,7 +19,7 @@ export const load: PageServerLoad = async ({ fetch, parent }) => {
 	};
 
 	return {
-		examples: {
+		codes: {
 			cdn: await getExample('cdn'),
 			npm: await getExample('npm')
 		}

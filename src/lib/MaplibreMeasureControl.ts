@@ -10,7 +10,7 @@ import { distance } from '@turf/distance';
 import { area } from '@turf/area';
 import { centroid } from '@turf/centroid';
 import { defaultMeasureControlOptions } from './constants/index.js';
-import type { MeasureControlOptions } from './interfaces/index.js';
+import type { MeasureControlOptions, TerradrawMode } from './interfaces/index.js';
 
 /**
  * Maplibre GL Terra Draw Measure Control
@@ -114,18 +114,25 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		if ((lineModes && lineModes.length > 0) || (polygonModes && polygonModes.length > 0)) {
 			const drawInstance = this.getTerraDrawInstance();
 			if (drawInstance) {
-				// subscribe finish event of TerraDraw to calc distance
-				drawInstance.on('finish', (id: string) => {
+				// subscribe change event of TerraDraw to calc distance
+				drawInstance.on('change', (ids: string[]) => {
 					if (!this.map) return;
 					const drawInstance = this.getTerraDrawInstance();
 					if (!drawInstance) return;
 					const snapshot = drawInstance.getSnapshot();
-					const feature = snapshot?.find((f) => f.id === id);
-					const geometryType = feature.geometry.type;
-					if (geometryType === 'LineString') {
-						this.measureLine(id);
-					} else if (geometryType === 'Polygon') {
-						this.measurePolygon(id);
+					for (const id of ids) {
+						const feature = snapshot?.find((f) => f.id === id);
+						if (!feature) continue;
+						const geometryType = feature.geometry.type;
+						const mode = feature.properties.mode as TerradrawMode;
+						if (mode === 'linestring' && geometryType === 'LineString') {
+							this.measureLine(id);
+						} else if (
+							!['point', 'linestring', 'select', 'render'].includes(mode) &&
+							geometryType === 'Polygon'
+						) {
+							this.measurePolygon(id);
+						}
 					}
 				});
 
@@ -174,6 +181,16 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				this.polygonLayerSpec.source
 			] as GeoJSONSourceSpecification;
 			if (geojsonSource) {
+				// delete old nodes
+				if (
+					typeof geojsonSource.data !== 'string' &&
+					geojsonSource.data.type === 'FeatureCollection'
+				) {
+					geojsonSource.data.features = geojsonSource.data.features.filter(
+						(f) => f.properties?.originalId !== id
+					);
+				}
+
 				// caculate area in m2 by using turf/area
 				const result = area(feature.geometry);
 				const point = JSON.parse(JSON.stringify(feature));
@@ -226,6 +243,16 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			] as GeoJSONSourceSpecification;
 			if (geojsonSource) {
 				const coordinates: number[][] = feature.geometry.coordinates as number[][];
+
+				// delete old nodes
+				if (
+					typeof geojsonSource.data !== 'string' &&
+					geojsonSource.data.type === 'FeatureCollection'
+				) {
+					geojsonSource.data.features = geojsonSource.data.features.filter(
+						(f) => f.properties?.originalId !== id
+					);
+				}
 
 				// calculate distance for each segment of LineString feature
 				let totalDistance = 0;

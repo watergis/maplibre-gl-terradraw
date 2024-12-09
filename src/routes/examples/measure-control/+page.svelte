@@ -24,6 +24,8 @@ const drawControl = new MaplibreMeasureControl({
 		'sector',
 		'sensor',
 		'freehand',
+		'select',
+		'delete-selection',
 		'delete'
 	],
 	open: true
@@ -42,6 +44,8 @@ map.addControl(drawControl, 'top-left');
 				'sector',
 				'sensor',
 				'freehand',
+				'select',
+				'delete-selection',
 				'delete'
 			],
 			open: true

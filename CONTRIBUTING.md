@@ -40,6 +40,20 @@ If you want to check typedoc documentation, please execute the following command
 pnpm typedoc
 ```
 
+### Test
+
+Install playwright browser, then execute test scripts.
+
+```shell
+pnpm exec playwright install --with-deps
+```
+
+```shell
+pnpm test
+```
+
+Read more about playwright [here](https://playwright.dev/docs/intro)
+
 ## Release packages
 
 It uses changeset to release. Please create release notes by the following command. Changeset will release package once the PR is merged into main branch.

@@ -54,6 +54,14 @@ pnpm test
 
 Read more about playwright [here](https://playwright.dev/docs/intro)
 
+### Update dependency graph
+
+Install [graphviz](https://graphviz.org/download/), then execute the following command.
+
+```shell
+pnpm depcruise src/lib --include-only '^src/lib' --output-type dot | dot -T svg > dependency-graph.svg
+```
+
 ## Release packages
 
 It uses changeset to release. Please create release notes by the following command. Changeset will release package once the PR is merged into main branch.

@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 0.6.4
+
+### Patch Changes
+
+- e7b1a5f: refactor: restructure folder structure to make sure each constant and interface is in a file. Also, upadated dependencies.
+
 ## 0.6.3
 
 ### Patch Changes

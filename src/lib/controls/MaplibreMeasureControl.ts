@@ -9,8 +9,8 @@ import { MaplibreTerradrawControl } from './MaplibreTerradrawControl.js';
 import { distance } from '@turf/distance';
 import { area } from '@turf/area';
 import { centroid } from '@turf/centroid';
-import { defaultMeasureControlOptions } from './constants/index.js';
-import type { MeasureControlOptions, TerradrawMode } from './interfaces/index.js';
+import { defaultMeasureControlOptions } from '../constants/index.js';
+import type { MeasureControlOptions, TerradrawMode } from '../interfaces/index.js';
 
 /**
  * Maplibre GL Terra Draw Measure Control

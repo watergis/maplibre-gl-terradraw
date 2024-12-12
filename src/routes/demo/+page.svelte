@@ -1,13 +1,11 @@
 <script lang="ts">
 	import { GeolocateControl, Map, NavigationControl } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
-	import { MaplibreTerradrawControl } from '$lib/MaplibreTerradrawControl.js';
+	import { MaplibreTerradrawControl, type TerradrawMode, AvailableModes } from '$lib/index.js';
 	import '../../scss/maplibre-gl-terradraw.scss';
 	import type { PageData } from './$types.js';
 	import { CodeBlock } from '@skeletonlabs/skeleton';
 	import { page } from '$app/stores';
-	import type { TerradrawMode } from '$lib/interfaces/TerradrawMode.js';
-	import { AvailableModes } from '$lib/constants/AvailableModes.js';
 	import { untrack } from 'svelte';
 
 	interface Props {

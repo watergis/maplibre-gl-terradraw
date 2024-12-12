@@ -1,9 +1,8 @@
 /**
- * The list of available Terra Draw drawing modes for MaplibreTerraDrawControl
+ * The list of available Terra Draw drawing modes for MaplibreMeasureControl
  */
-export const AvailableModes = [
+export const AvailableMeasureModes = [
 	'render',
-	'point',
 	'linestring',
 	'polygon',
 	'rectangle',

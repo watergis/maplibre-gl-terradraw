@@ -1,6 +1,6 @@
 import type { CircleLayerSpecification, SymbolLayerSpecification } from 'maplibre-gl';
 import type { ModeOptions } from './ModeOptions.js';
-import type { MeasureControlMode } from './TerradrawMode.js';
+import type { MeasureControlMode } from './MeasureControlMode.js';
 
 /**
  * MeasureControl Plugin control constructor options

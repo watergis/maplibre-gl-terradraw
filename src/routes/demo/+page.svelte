@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { GeolocateControl, Map, NavigationControl } from 'maplibre-gl';
+	import { GeolocateControl, Map, NavigationControl, GlobeControl } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { MaplibreTerradrawControl, type TerradrawMode, AvailableModes } from '$lib/index.js';
 	import '../../scss/maplibre-gl-terradraw.scss';
@@ -14,7 +14,7 @@
 
 	let { data }: Props = $props();
 	let mapContainer: HTMLDivElement | undefined = $state();
-	let map: Map;
+	let map: Map | undefined;
 
 	let selectedFeature = $state('');
 
@@ -39,6 +39,7 @@
 				}),
 				'bottom-right'
 			);
+			map.addControl(new GlobeControl(), 'bottom-right');
 
 			const modes = $page.url.searchParams.get('modes') || '';
 			let terradrawModes: TerradrawMode[] = [];
@@ -101,6 +102,7 @@
 		position: relative;
 		width: 100%;
 		height: 100%;
+		background: linear-gradient(to right, #4286f4, #373b44);
 
 		.overlay {
 			position: absolute;

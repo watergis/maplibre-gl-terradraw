@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Map, NavigationControl } from 'maplibre-gl';
+	import { GlobeControl, Map, NavigationControl } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import '../../scss/maplibre-gl-terradraw.scss';
 	import { untrack, type Snippet } from 'svelte';
@@ -15,7 +15,7 @@
 	const { style, title, description, setTerradraw, code }: Props = $props();
 
 	let mapContainer: HTMLDivElement | undefined = $state();
-	let map: Map;
+	let map: Map | undefined;
 
 	$effect(() =>
 		untrack(() => {
@@ -30,13 +30,15 @@
 
 			map.addControl(new NavigationControl({ visualizePitch: true }), 'bottom-right');
 
+			map.addControl(new GlobeControl(), 'bottom-right');
+
 			if (setTerradraw) {
 				setTerradraw(map);
 			}
 
-			setTimeout(() => {
-				map.resize();
-			}, 500);
+			map.once('load', () => {
+				map?.resize();
+			});
 		})
 	);
 </script>
@@ -61,6 +63,7 @@
 		position: relative;
 		width: 100%;
 		height: 50vh;
+		background: linear-gradient(to right, #4286f4, #373b44);
 	}
 
 	.contents {

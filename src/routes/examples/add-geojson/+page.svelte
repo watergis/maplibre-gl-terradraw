@@ -14,7 +14,7 @@
 
 	const code = `
 const drawControl = new MaplibreTerradrawControl({
-	modes: ['polygon', 'select'],
+	modes: ['rectangle', 'select'],
 	open: true
 });
 map.addControl(drawControl, 'top-left');
@@ -24,63 +24,66 @@ map.once('load', () => {
 	const drawInstance = drawControl.getTerraDrawInstance();
 	if (drawInstance) {
 		// geojson data to be added
-		const geojson = {
-			// id must be unique (uuid is recommended)
-			id: '23d1a5b7-fb80-4310-befc-d48af8d42007',
-			type: 'Feature',
-			geometry: {
-				type: 'Polygon',
-				coordinates: [
-					[
-						[9.095279849, 31.437112592],
-						[40.664336241, 31.437112592],
-						[40.664336241, 13.509421612],
-						[9.095279849, 13.509421612],
-						[9.095279849, 31.437112592]
+		const geojson = [
+			{
+				id: '6b438f48-f6da-4649-9212-76f5a1506296',
+				type: 'Feature',
+				geometry: {
+					type: 'Polygon',
+					coordinates: [
+						[
+							[26.938972246, 25.217617825],
+							[-4.045232861, 25.217617825],
+							[-4.045232861, -7.839055615],
+							[26.938972246, -7.839055615],
+							[26.938972246, 25.217617825]
+						]
 					]
-				]
-			},
-			properties: {
-				mode: 'polygon' // set mode option for this feature
+				},
+				properties: {
+					mode: 'rectangle',
+					selected: true
+				}
 			}
-		};
-		drawInstance.addFeatures([geojson]);
+		];
+		drawInstance?.addFeatures(geojson);
 	}
 });
 	`;
 
 	const setTerradraw = (map: Map) => {
 		const drawControl = new MaplibreTerradrawControl({
-			modes: ['polygon', 'select'],
+			modes: ['rectangle', 'select'],
 			open: true
 		});
 		map.addControl(drawControl, 'top-left');
 
+		const drawInstance = drawControl.getTerraDrawInstance();
+
 		map.once('load', () => {
-			const drawInstance = drawControl.getTerraDrawInstance();
-			if (drawInstance) {
-				const geojson = {
-					id: '23d1a5b7-fb80-4310-befc-d48af8d42007',
+			const geojson = [
+				{
+					id: '6b438f48-f6da-4649-9212-76f5a1506296',
 					type: 'Feature',
 					geometry: {
 						type: 'Polygon',
 						coordinates: [
 							[
-								[9.095279849, 31.437112592],
-								[40.664336241, 31.437112592],
-								[40.664336241, 13.509421612],
-								[9.095279849, 13.509421612],
-								[9.095279849, 31.437112592]
+								[26.938972246, 25.217617825],
+								[-4.045232861, 25.217617825],
+								[-4.045232861, -7.839055615],
+								[26.938972246, -7.839055615],
+								[26.938972246, 25.217617825]
 							]
 						]
 					},
 					properties: {
-						mode: 'polygon'
+						mode: 'rectangle',
+						selected: true
 					}
-				};
-
-				drawInstance.addFeatures([geojson]);
-			}
+				}
+			];
+			drawInstance?.addFeatures(geojson);
 		});
 	};
 </script>

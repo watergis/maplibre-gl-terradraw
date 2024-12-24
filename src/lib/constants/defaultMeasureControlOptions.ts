@@ -6,11 +6,9 @@ import {
 	TerraDrawPolygonMode,
 	TerraDrawRectangleMode,
 	TerraDrawSectorMode,
-	TerraDrawSensorMode,
-	ValidateNotSelfIntersecting
+	TerraDrawSensorMode
 } from 'terra-draw';
 import type { MeasureControlOptions } from '../interfaces/MeasureControlOptions.js';
-import type { MapGeoJSONFeature } from 'maplibre-gl';
 
 /**
  * Default MeasureControl options
@@ -51,17 +49,6 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 				closingPointWidth: 5,
 				closingPointOutlineColor: '#000000',
 				closingPointOutlineWidth: 1
-			},
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			validation: (feature: MapGeoJSONFeature, e: { updateType: string }) => {
-				const updateType = e.updateType;
-				if (updateType === 'finish' || updateType === 'commit') {
-					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-					// @ts-ignore
-					return ValidateNotSelfIntersecting(feature);
-				}
-				return true;
 			}
 		}),
 		rectangle: new TerraDrawRectangleMode({

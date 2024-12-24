@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 0.6.6
+
+### Patch Changes
+
+- db9b16f: fix: fixed bug of polygon validation.
+
 ## 0.6.5
 
 ### Patch Changes

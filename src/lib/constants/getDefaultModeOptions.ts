@@ -37,7 +37,7 @@ export const getDefaultModeOptions = () => {
 					// @ts-ignore
 					return ValidateNotSelfIntersecting(feature);
 				}
-				return true;
+				return { valid: true };
 			}
 		}),
 		rectangle: new TerraDrawRectangleMode(),

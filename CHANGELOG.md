@@ -1,5 +1,13 @@
 # @watergis/maplibre-gl-terradraw
 
+## 0.6.5
+
+### Patch Changes
+
+- b46c62b: feat: add maplibre v5 pre to peerDependencies, and added GlobeControl to the demo.
+- 1ac5ce8: fix: delete unfinished geojson features if measured feature is cancelled. Furtheremore, deleted polygon validation from MeasureControl.
+- 9d35b87: fix: add select and delete-selection for default mode of MeasureControl
+
 ## 0.6.4
 
 ### Patch Changes

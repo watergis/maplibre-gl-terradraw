@@ -122,16 +122,22 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					const snapshot = drawInstance.getSnapshot();
 					for (const id of ids) {
 						const feature = snapshot?.find((f) => f.id === id);
-						if (!feature) continue;
-						const geometryType = feature.geometry.type;
-						const mode = feature.properties.mode as TerradrawMode;
-						if (mode === 'linestring' && geometryType === 'LineString') {
-							this.measureLine(id);
-						} else if (
-							!['point', 'linestring', 'select', 'render'].includes(mode) &&
-							geometryType === 'Polygon'
-						) {
-							this.measurePolygon(id);
+						if (feature) {
+							const geometryType = feature.geometry.type;
+							const mode = feature.properties.mode as TerradrawMode;
+							if (mode === 'linestring' && geometryType === 'LineString') {
+								this.measureLine(id);
+							} else if (
+								!['point', 'linestring', 'select', 'render'].includes(mode) &&
+								geometryType === 'Polygon'
+							) {
+								this.measurePolygon(id);
+							}
+						} else {
+							// if editing ID does not exist, delete all related features from measure layers
+							this.clearMeasureFeatures(id, this.lineLayerNodeSpec.source);
+							this.clearMeasureFeatures(id, this.lineLayerLabelSpec.source);
+							this.clearMeasureFeatures(id, this.polygonLayerSpec.source);
 						}
 					}
 				});
@@ -162,6 +168,33 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		}
 		if (this.map.getSource(this.polygonLayerSpec.source)) {
 			this.map.removeSource(this.polygonLayerSpec.source);
+		}
+	}
+
+	/**
+	 * Clear GeoJSON feature related to measure control by TerraDraw feature ID
+	 * @param id feature ID
+	 * @param sourceId source ID to delete
+	 * @returns void
+	 */
+	private clearMeasureFeatures(id: string, sourceId: string) {
+		if (!this.map) return;
+		const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
+			sourceId
+		] as GeoJSONSourceSpecification;
+		if (geojsonSource) {
+			// delete old nodes
+			if (
+				typeof geojsonSource.data !== 'string' &&
+				geojsonSource.data.type === 'FeatureCollection'
+			) {
+				geojsonSource.data.features = geojsonSource.data.features.filter(
+					(f) => f.properties?.originalId !== id
+				);
+
+				// update GeoJSON source with new data
+				(this.map.getSource(sourceId) as GeoJSONSource)?.setData(geojsonSource.data);
+			}
 		}
 	}
 

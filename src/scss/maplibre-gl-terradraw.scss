@@ -64,6 +64,10 @@
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: 80%;
+
+	&:disabled {
+		background-color: rgb(235, 235, 228);
+	}
 }
 
 .maplibregl-terradraw-add-sensor-button {
@@ -97,6 +101,10 @@
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: 90%;
+
+	&:disabled {
+		background-color: rgb(235, 235, 228);
+	}
 }
 
 .maplibregl-terradraw-delete-selection-button {
@@ -108,5 +116,16 @@
 
 	&.hidden-delete-selection {
 		display: none;
+	}
+}
+
+.maplibregl-terradraw-download-button {
+	background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%235f6368%22%3E%3Cpath%20d%3D%22M480-320%20280-520l56-58%20104%20104v-326h80v326l104-104%2056%2058-200%20200ZM240-160q-33%200-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0%2033-23.5%2056.5T720-160H240Z%22%2F%3E%3C%2Fsvg%3E');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 90%;
+
+	&:disabled {
+		background-color: rgb(235, 235, 228);
 	}
 }

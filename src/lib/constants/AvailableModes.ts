@@ -14,5 +14,6 @@ export const AvailableModes = [
 	'sector',
 	'select',
 	'delete-selection',
-	'delete'
+	'delete',
+	'download'
 ] as const;

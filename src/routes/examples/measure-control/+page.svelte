@@ -26,7 +26,8 @@ const drawControl = new MaplibreMeasureControl({
 		'freehand',
 		'select',
 		'delete-selection',
-		'delete'
+		'delete',
+		'download'
 	],
 	open: true
 });
@@ -46,7 +47,8 @@ map.addControl(drawControl, 'top-left');
 				'freehand',
 				'select',
 				'delete-selection',
-				'delete'
+				'delete',
+				'download'
 			],
 			open: true
 		});

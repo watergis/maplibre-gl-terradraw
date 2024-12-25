@@ -135,6 +135,8 @@ export class MaplibreTerradrawControl implements IControl {
 			this.controlContainer?.appendChild(ele);
 		});
 
+		this.terradraw?.on('change', this.toggleButtonsWhenNoFeature.bind(this));
+		this.toggleButtonsWhenNoFeature();
 		return this.controlContainer;
 	}
 
@@ -250,6 +252,7 @@ export class MaplibreTerradrawControl implements IControl {
 			}
 		}
 		this.toggleDeleteSelectionButton();
+		this.toggleButtonsWhenNoFeature();
 		this.isExpanded = !this.isExpanded;
 	}
 
@@ -306,6 +309,7 @@ export class MaplibreTerradrawControl implements IControl {
 					this.terradraw.clear();
 					this.deactivate();
 					this.toggleDeleteSelectionButton();
+					this.toggleButtonsWhenNoFeature();
 					this.dispatchEvent('feature-deleted');
 				});
 			} else if (mode === 'delete-selection') {
@@ -328,7 +332,11 @@ export class MaplibreTerradrawControl implements IControl {
 						this.dispatchEvent('feature-deleted');
 					}
 					this.toggleDeleteSelectionButton();
+					this.toggleButtonsWhenNoFeature();
 				});
+			} else if (mode === 'download') {
+				btn.classList.add(`maplibregl-terradraw-${mode}-button`);
+				btn.addEventListener('click', this.handleDownload.bind(this));
 			} else {
 				btn.classList.add(`maplibregl-terradraw-add-${mode}-button`);
 
@@ -344,7 +352,67 @@ export class MaplibreTerradrawControl implements IControl {
 						btn.classList.add('active');
 					}
 					this.toggleDeleteSelectionButton();
+					this.toggleButtonsWhenNoFeature();
 				});
+			}
+		}
+	}
+
+	/**
+	 * get GeoJSON features
+	 * @param onlySelected If true, returns only selected features. Default is false.
+	 * @returns FeatureCollection in GeoJSON format
+	 */
+	public getFeatures(onlySelected = false) {
+		if (!this.terradraw) return;
+		const snapshot = this.terradraw?.getSnapshot();
+		const features = snapshot.filter((f) => f.properties.mode !== 'select');
+
+		const fc = {
+			type: 'FeatureCollection',
+			features: features
+		};
+		if (onlySelected !== true) {
+			return fc;
+		}
+		fc.features = fc.features.filter((f) => f.properties.selected === true);
+		return fc;
+	}
+
+	/**
+	 * Download button click event handler
+	 */
+	protected handleDownload() {
+		const fc = this.getFeatures(false);
+
+		const dataStr = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(fc));
+		const download = document.createElement('a');
+		download.setAttribute('href', dataStr);
+		download.setAttribute('download', 'data.geojson');
+		document.body.appendChild(download);
+		download.click();
+		download.remove();
+	}
+
+	/**
+	 * Toggle the state of buttons when there is no features
+	 */
+	protected toggleButtonsWhenNoFeature() {
+		if (!this.controlContainer) return;
+		const fc = this.getFeatures(false);
+		const isActive = fc && fc.features.length > 0 ? true : false;
+
+		const targets = [
+			`maplibregl-terradraw-add-select-button`,
+			`maplibregl-terradraw-download-button`,
+			`maplibregl-terradraw-delete-button`
+		];
+		for (const className of targets) {
+			const btns = this.controlContainer.getElementsByClassName(className);
+			for (let i = 0; i < btns.length; i++) {
+				const btn = btns.item(i) as HTMLButtonElement;
+				if (!btn) continue;
+				btn.disabled = !isActive;
 			}
 		}
 	}
@@ -355,8 +423,9 @@ export class MaplibreTerradrawControl implements IControl {
 	protected toggleDeleteSelectionButton() {
 		const enabled = this.terradraw?.enabled || false;
 		const mode = this.terradraw?.getMode();
-
-		const isActive = enabled && mode === 'select';
+		const fc = this.getFeatures(false);
+		const hasFeatures = fc && fc.features.length > 0;
+		const isActive = hasFeatures && enabled && mode === 'select';
 		const btns = document.getElementsByClassName(`maplibregl-terradraw-delete-selection-button`);
 		for (let i = 0; i < btns.length; i++) {
 			const btn = btns.item(i);
@@ -365,6 +434,15 @@ export class MaplibreTerradrawControl implements IControl {
 				btn.classList.remove('hidden-delete-selection');
 			} else {
 				btn.classList.add('hidden-delete-selection');
+			}
+		}
+
+		if (!hasFeatures) {
+			const btns = document.getElementsByClassName(`maplibregl-terradraw-add-select-button`);
+			for (let i = 0; i < btns.length; i++) {
+				const btn = btns.item(i);
+				if (!btn) continue;
+				btn.classList.remove('active');
 			}
 		}
 	}

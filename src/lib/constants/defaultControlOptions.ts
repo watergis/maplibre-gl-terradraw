@@ -17,7 +17,8 @@ export const defaultControlOptions: TerradrawControlOptions = {
 		'freehand',
 		'select',
 		'delete-selection',
-		'delete'
+		'delete',
+		'download'
 	],
 	open: false
 };

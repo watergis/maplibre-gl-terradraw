@@ -26,7 +26,8 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 		'freehand',
 		'select',
 		'delete-selection',
-		'delete'
+		'delete',
+		'download'
 	],
 	open: false,
 	// see styling parameters of Terra Draw at https://github.com/JamesLMilner/terra-draw/blob/main/guides/5.STYLING.md

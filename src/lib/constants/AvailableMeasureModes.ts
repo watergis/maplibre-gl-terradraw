@@ -13,5 +13,6 @@ export const AvailableMeasureModes = [
 	'sector',
 	'select',
 	'delete-selection',
-	'delete'
+	'delete',
+	'download'
 ] as const;

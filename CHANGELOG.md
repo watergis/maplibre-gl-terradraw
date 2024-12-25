@@ -1,5 +1,15 @@
 # @watergis/maplibre-gl-terradraw
 
+## 0.7.0
+
+### Minor Changes
+
+- 29b7a4b: feat: add download button to fetch geojson feature collection. Furtheremore, select, delete and download button are disabled when no feature is drawn.
+
+### Patch Changes
+
+- 29b7a4b: feat: update TerraDraw to 1.0.0-beta.10
+
 ## 0.6.6
 
 ### Patch Changes

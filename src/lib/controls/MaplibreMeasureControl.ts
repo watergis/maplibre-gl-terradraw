@@ -11,6 +11,7 @@ import { area } from '@turf/area';
 import { centroid } from '@turf/centroid';
 import { defaultMeasureControlOptions } from '../constants/index.js';
 import type { MeasureControlOptions, TerradrawMode } from '../interfaces/index.js';
+import type { GeoJSONStoreFeatures } from 'terra-draw';
 
 /**
  * Maplibre GL Terra Draw Measure Control
@@ -199,6 +200,72 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	}
 
 	/**
+	 * Calculate area from polygon feature
+	 * @param feature Polygon GeoJSON feature
+	 * @returns  The returning feature will contain `area`,`unit` properties.
+	 */
+	private calcArea(feature: GeoJSONStoreFeatures) {
+		if (feature.geometry.type !== 'Polygon') return feature;
+		// caculate area in m2 by using turf/area
+		const result = area(feature.geometry);
+
+		// convert unit to ha or km2 if value is larger
+		let outputArea = result;
+		let outputUnit = 'm2';
+		if (result > 10000) {
+			outputArea = result / 10000;
+			outputUnit = 'ha';
+		} else if (result > 1000) {
+			outputArea = result / 1000;
+			outputUnit = 'km2';
+		}
+
+		outputArea = parseFloat(outputArea.toFixed(2));
+
+		feature.properties.area = outputArea;
+		feature.properties.unit = outputUnit;
+
+		return feature;
+	}
+
+	/**
+	 * Caclulate distance for each segment on a given feature
+	 * @param feature LineString GeoJSON feature
+	 * @returns The returning feature will contain `segments`, `distance`, `unit` properties. `segments` will have multiple point features.
+	 */
+	private calcDistance(feature: GeoJSONStoreFeatures) {
+		if (feature.geometry.type !== 'LineString') return feature;
+		const coordinates: number[][] = (feature as GeoJSONStoreFeatures).geometry
+			.coordinates as number[][];
+
+		// calculate distance for each segment of LineString feature
+		let totalDistance = 0;
+		const segments: GeoJSONStoreFeatures[] = [];
+		for (let i = 0; i < coordinates.length - 1; i++) {
+			const start = coordinates[i];
+			const end = coordinates[i + 1];
+			const result = distance(start, end, { units: 'kilometers' });
+			totalDistance += result;
+
+			// segment
+			const segment = JSON.parse(JSON.stringify(feature));
+			segment.id = `${segment.id}-${i}`;
+			segment.geometry.coordinates = [start, end];
+			segment.properties.originalId = feature.id;
+			segment.properties.distance = parseFloat(result.toFixed(2));
+			segment.properties.total = parseFloat(totalDistance.toFixed(2));
+			segment.properties.unit = 'km';
+			segments.push(segment);
+		}
+
+		feature.properties.distance = segments[segments.length - 1].properties.total;
+		feature.properties.unit = segments[segments.length - 1].properties.unit;
+		feature.properties.segments = JSON.parse(JSON.stringify(segments));
+
+		return feature;
+	}
+
+	/**
 	 * measure polygon area for given feature ID
 	 * @param id terradraw feature id
 	 */
@@ -208,7 +275,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		if (!drawInstance) return;
 
 		const snapshot = drawInstance.getSnapshot();
-		const feature = snapshot?.find((f) => f.id === id && f.geometry.type === 'Polygon');
+		let feature = snapshot?.find((f) => f.id === id && f.geometry.type === 'Polygon');
 		if (feature) {
 			const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
 				this.polygonLayerSpec.source
@@ -224,26 +291,14 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					);
 				}
 
-				// caculate area in m2 by using turf/area
-				const result = area(feature.geometry);
 				const point = JSON.parse(JSON.stringify(feature));
 				point.id = point.id + '-area-label';
 				point.geometry = centroid(feature.geometry).geometry;
 				point.properties.originalId = feature.id;
 
-				// convert unit to ha or km2 if value is larger
-				let outputArea = result;
-				let outputUnit = 'm2';
-				if (result > 10000) {
-					outputArea = result / 10000;
-					outputUnit = 'ha';
-				} else if (result > 1000) {
-					outputArea = result / 1000;
-					outputUnit = 'km2';
-				}
-
-				point.properties.area = outputArea.toFixed(2);
-				point.properties.unit = outputUnit;
+				feature = this.calcArea(feature);
+				point.properties.area = feature.properties.area;
+				point.properties.unit = feature.properties.unit;
 
 				if (
 					typeof geojsonSource.data !== 'string' &&
@@ -269,14 +324,12 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		const drawInstance = this.getTerraDrawInstance();
 		if (!drawInstance) return;
 		const snapshot = drawInstance.getSnapshot();
-		const feature = snapshot?.find((f) => f.id === id && f.geometry.type === 'LineString');
+		let feature = snapshot?.find((f) => f.id === id && f.geometry.type === 'LineString');
 		if (feature) {
 			const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
 				this.lineLayerLabelSpec.source
 			] as GeoJSONSourceSpecification;
 			if (geojsonSource) {
-				const coordinates: number[][] = feature.geometry.coordinates as number[][];
-
 				// delete old nodes
 				if (
 					typeof geojsonSource.data !== 'string' &&
@@ -287,22 +340,10 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					);
 				}
 
-				// calculate distance for each segment of LineString feature
-				let totalDistance = 0;
-				for (let i = 0; i < coordinates.length - 1; i++) {
-					const start = coordinates[i];
-					const end = coordinates[i + 1];
-					const result = distance(start, end, { units: 'kilometers' });
-					totalDistance += result;
-
-					// segment
-					const segment = JSON.parse(JSON.stringify(feature));
-					segment.id = `${segment.id}-${i}`;
-					segment.geometry.coordinates = [start, end];
-					segment.properties.originalId = feature.id;
-					segment.properties.distance = result.toFixed(2);
-					segment.properties.total = totalDistance.toFixed(2);
-					segment.properties.unit = 'km';
+				feature = this.calcDistance(feature);
+				const segments = feature.properties.segments as unknown as GeoJSONStoreFeatures[];
+				for (let i = 0; i < segments.length; i++) {
+					const segment = segments[i];
 
 					if (
 						typeof geojsonSource.data !== 'string' &&
@@ -311,18 +352,20 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 						geojsonSource.data.features.push(segment);
 					}
 
+					const coordinates: number[][] = segment.geometry.coordinates as number[][];
+					const start = coordinates[0];
+					const end = coordinates[1];
+
 					// node
 					if (i === 0) {
-						const startNode = JSON.parse(JSON.stringify(feature));
+						const startNode = JSON.parse(JSON.stringify(segment));
 						startNode.id = `${segment.id}-node-${i}`;
 						startNode.geometry = {
 							type: 'Point',
 							coordinates: start
 						};
-						startNode.properties.originalId = feature.id;
 						startNode.properties.distance = 0;
 						startNode.properties.total = 0;
-						startNode.properties.unit = 'km';
 
 						if (
 							typeof geojsonSource.data !== 'string' &&
@@ -331,16 +374,13 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 							geojsonSource.data.features.push(startNode);
 						}
 					}
-					const endNode = JSON.parse(JSON.stringify(feature));
+					const endNode = JSON.parse(JSON.stringify(segment));
 					endNode.id = `${segment.id}-node-${i + 1}`;
 					endNode.geometry = {
 						type: 'Point',
 						coordinates: end
 					};
-					endNode.properties.originalId = feature.id;
-					endNode.properties.distance = result.toFixed(2);
-					endNode.properties.total = totalDistance.toFixed(2);
-					endNode.properties.unit = 'km';
+
 					if (
 						typeof geojsonSource.data !== 'string' &&
 						geojsonSource.data.type === 'FeatureCollection'
@@ -408,5 +448,39 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Calculate area / distance and update a feature properties
+	 * @param feature GeoJSON feature
+	 * @returns updated GeoJSON feature
+	 */
+	private updateFeatureProperties = (feature: GeoJSONStoreFeatures) => {
+		if (!this.map) return feature;
+		if (!this.map.loaded()) return feature;
+		const geomType = feature.geometry.type;
+		if (geomType === 'LineString') {
+			feature = this.calcDistance(feature);
+		} else if (geomType === 'Polygon') {
+			feature = this.calcArea(feature);
+		}
+
+		return feature;
+	};
+
+	/**
+	 * get GeoJSON features
+	 * @param onlySelected If true, returns only selected features. Default is false.
+	 * @returns FeatureCollection in GeoJSON format
+	 */
+	public getFeatures(onlySelected = false) {
+		const fc = super.getFeatures(onlySelected);
+		if (!fc) return fc;
+		if (!this.terradraw) return fc;
+
+		for (let i = 0; i < fc.features.length; i++) {
+			fc.features[i] = this.updateFeatureProperties(fc.features[i]);
+		}
+		return fc;
 	}
 }

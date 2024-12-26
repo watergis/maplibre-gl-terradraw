@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MaplibreTerradrawControl } from '$lib/index.js';
+	import { getDefaultModeOptions, MaplibreTerradrawControl } from '$lib/index.js';
 	import MapTemplate from '../MapTemplate.svelte';
 	import type { PageData } from './$types.js';
 	import { Map } from 'maplibre-gl';
@@ -54,7 +54,8 @@ map.once('load', () => {
 	const setTerradraw = (map: Map) => {
 		const drawControl = new MaplibreTerradrawControl({
 			modes: ['rectangle', 'select'],
-			open: true
+			open: true,
+			modeOptions: getDefaultModeOptions()
 		});
 		map.addControl(drawControl, 'top-left');
 

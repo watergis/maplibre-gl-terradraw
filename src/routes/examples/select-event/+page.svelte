@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MaplibreTerradrawControl } from '$lib/index.js';
+	import { getDefaultModeOptions, MaplibreTerradrawControl } from '$lib/index.js';
 	import { CodeBlock } from '@skeletonlabs/skeleton';
 	import MapTemplate from '../MapTemplate.svelte';
 	import type { PageData } from './$types.js';
@@ -38,7 +38,8 @@ if (drawInstance) {
 	const setTerradraw = (map: Map) => {
 		const drawControl = new MaplibreTerradrawControl({
 			modes: ['polygon', 'select', 'delete'],
-			open: true
+			open: true,
+			modeOptions: getDefaultModeOptions()
 		});
 		map.addControl(drawControl, 'top-left');
 

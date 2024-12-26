@@ -39,6 +39,7 @@
 		"format": "prettier --write .",
 		"release": "changeset publish",
 		"typedoc": "typedoc --entryPointStrategy Expand src/lib --out docs",
+		"depcruise": "depcruise src/lib --include-only '^src/lib' --output-type dot | dot -T svg > dependency-graph.svg",
 		"test": "playwright test"
 	},
 	"devDependencies": {

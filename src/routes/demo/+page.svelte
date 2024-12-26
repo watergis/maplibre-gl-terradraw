@@ -1,7 +1,12 @@
 <script lang="ts">
 	import { GeolocateControl, Map, NavigationControl, GlobeControl } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
-	import { MaplibreTerradrawControl, type TerradrawMode, AvailableModes } from '$lib/index.js';
+	import {
+		MaplibreTerradrawControl,
+		type TerradrawMode,
+		AvailableModes,
+		getDefaultModeOptions
+	} from '$lib/index.js';
 	import '../../scss/maplibre-gl-terradraw.scss';
 	import type { PageData } from './$types.js';
 	import { CodeBlock } from '@skeletonlabs/skeleton';
@@ -55,7 +60,8 @@
 
 			const drawControl = new MaplibreTerradrawControl({
 				modes: terradrawModes,
-				open: isOpen
+				open: isOpen,
+				modeOptions: getDefaultModeOptions()
 			});
 			map.addControl(drawControl, 'top-left');
 

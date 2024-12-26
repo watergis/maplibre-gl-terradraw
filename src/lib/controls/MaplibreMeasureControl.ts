@@ -3,7 +3,6 @@ import type {
 	GeoJSONSource,
 	GeoJSONSourceSpecification,
 	Map,
-	MapGeoJSONFeature,
 	SymbolLayerSpecification
 } from 'maplibre-gl';
 import { MaplibreTerradrawControl } from './MaplibreTerradrawControl.js';
@@ -205,7 +204,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * @param feature Polygon GeoJSON feature
 	 * @returns  The returning feature will contain `area`,`unit` properties.
 	 */
-	private calcArea(feature: MapGeoJSONFeature) {
+	private calcArea(feature: GeoJSONStoreFeatures) {
 		if (feature.geometry.type !== 'Polygon') return feature;
 		// caculate area in m2 by using turf/area
 		const result = area(feature.geometry);
@@ -234,14 +233,14 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * @param feature LineString GeoJSON feature
 	 * @returns The returning feature will contain `segments`, `distance`, `unit` properties. `segments` will have multiple point features.
 	 */
-	private calcDistance(feature: MapGeoJSONFeature) {
+	private calcDistance(feature: GeoJSONStoreFeatures) {
 		if (feature.geometry.type !== 'LineString') return feature;
 		const coordinates: number[][] = (feature as GeoJSONStoreFeatures).geometry
 			.coordinates as number[][];
 
 		// calculate distance for each segment of LineString feature
 		let totalDistance = 0;
-		const segments: MapGeoJSONFeature[] = [];
+		const segments: GeoJSONStoreFeatures[] = [];
 		for (let i = 0; i < coordinates.length - 1; i++) {
 			const start = coordinates[i];
 			const end = coordinates[i + 1];
@@ -261,7 +260,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 
 		feature.properties.distance = segments[segments.length - 1].properties.total;
 		feature.properties.unit = segments[segments.length - 1].properties.unit;
-		feature.properties.segments = segments;
+		feature.properties.segments = JSON.parse(JSON.stringify(segments));
 
 		return feature;
 	}
@@ -342,7 +341,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				}
 
 				feature = this.calcDistance(feature);
-				const segments = feature.properties.segments as GeoJSONStoreFeatures;
+				const segments = feature.properties.segments as unknown as GeoJSONStoreFeatures[];
 				for (let i = 0; i < segments.length; i++) {
 					const segment = segments[i];
 
@@ -456,7 +455,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * @param feature GeoJSON feature
 	 * @returns updated GeoJSON feature
 	 */
-	private updateFeatureProperties = (feature: MapGeoJSONFeature) => {
+	private updateFeatureProperties = (feature: GeoJSONStoreFeatures) => {
 		if (!this.map) return feature;
 		if (!this.map.loaded()) return feature;
 		const geomType = feature.geometry.type;

@@ -59,7 +59,7 @@ Read more about playwright [here](https://playwright.dev/docs/intro)
 Install [graphviz](https://graphviz.org/download/), then execute the following command.
 
 ```shell
-pnpm depcruise src/lib --include-only '^src/lib' --output-type dot | dot -T svg > dependency-graph.svg
+pnpm depcruise
 ```
 
 ## Release packages

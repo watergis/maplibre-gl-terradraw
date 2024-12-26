@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 0.7.1
+
+### Patch Changes
+
+- 0addc97: fix: update properties to include measured distance/area in getFeatures function.
+
 ## 0.7.0
 
 ### Minor Changes

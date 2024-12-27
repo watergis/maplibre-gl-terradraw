@@ -176,9 +176,9 @@
 					>
 						<header class="card-header font-bold min-h-16">{custom.title}</header>
 						<section class="card-image p-4">
-							<img src={custom.image} alt={custom.title} />
+							<img class="preview-image" src={custom.image} alt={custom.title} />
 						</section>
-						<footer class="card-footer">{custom.description}</footer>
+						<footer class="card-footer"><p class="description">{custom.description}</p></footer>
 					</a>
 				{/each}
 			</div>
@@ -194,4 +194,14 @@
 </div>
 
 <style lang="postcss">
+	.preview-image {
+		max-height: 130px;
+		margin: 0 auto;
+	}
+	.description {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 3;
+		overflow: hidden;
+	}
 </style>

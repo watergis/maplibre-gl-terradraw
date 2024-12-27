@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>Customising drawing options</title>
+		<meta
+			property="og:description"
+			content="This plugin tries to optimise the better drawing options for each Terra Draw mode. However, preconfigured drawing options might not be desired for your app. For example, if you only want to use polygon control,but you don't want users to drag a polygon or adding/deleting a node on an edge of a polygon, the following setting can be done."
+		/>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
+		<script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+			}
+			html,
+			body,
+			#map {
+				height: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<script src="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.umd.js"></script>
+		<script src="https://unpkg.com/terra-draw@1.0.0-beta.0/dist/terra-draw.umd.js"></script>
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.css"
+		/>
+		<div id="map"></div>
+
+		<script>
+			const map = new maplibregl.Map({
+				container: 'map',
+				style: 'https://demotiles.maplibre.org/style.json',
+				center: [0, 0],
+				zoom: 1,
+				maxPitch: 85
+			});
+
+			const drawControl = new MaplibreTerradrawControl.MaplibreTerradrawControl({
+				// only show polgyon, select, delete mode.
+				modes: ['polygon', 'select', 'delete'],
+				open: true,
+				modeOptions: {
+					select: new terraDraw.TerraDrawSelectMode({
+						flags: {
+							polygon: {
+								feature: {
+									draggable: false,
+									rotateable: true,
+									scaleable: true,
+									coordinates: {
+										midpoints: false,
+										draggable: true,
+										deletable: false
+									}
+								}
+							}
+						}
+					})
+				}
+			});
+			map.addControl(drawControl, 'top-left');
+		</script>
+	</body>
+</html>

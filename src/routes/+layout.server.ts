@@ -1,6 +1,18 @@
 import type { LayoutServerLoad } from './$types.js';
 
-export const load: LayoutServerLoad = async () => {
+const getTitle = (body: string) => {
+	const match = body.match(/<title>([^<]*)<\/title>/);
+	if (!match || typeof match[1] !== 'string') return '';
+	return match[1];
+};
+
+const getDescription = (body: string) => {
+	const match = body.match(/<meta\s+property="og:description"\s+content="([^"]+)"\s*\/?>/);
+	if (!match || typeof match[1] !== 'string') return '';
+	return match[1];
+};
+
+export const load: LayoutServerLoad = async ({ fetch }) => {
 	const packageName = '@watergis/maplibre-gl-terradraw';
 
 	const getVersion = async () => {
@@ -13,6 +25,24 @@ export const load: LayoutServerLoad = async () => {
 	};
 
 	const version = await getVersion();
+
+	const items = ['measure-control', 'add-geojson', 'select-event', 'drawing-option'];
+	const examples = [];
+	for (const item of items) {
+		const res = await fetch(`/api/examples/${item}`);
+		if (!res.ok) continue;
+		const html = await res.text();
+
+		const title = getTitle(html);
+		const description = getDescription(html);
+
+		examples.push({
+			href: `/examples/${item}`,
+			title: title,
+			image: `/assets/images/${item}.webp`,
+			description: description
+		});
+	}
 
 	return {
 		metadata: {
@@ -35,47 +65,6 @@ export const load: LayoutServerLoad = async () => {
 				icon: 'fa-brands fa-github'
 			}
 		],
-		examples: [
-			{
-				href: '/examples/drawing-option',
-				title: 'Customise drawing options',
-				image: '/assets/images/customise-draw-option.webp',
-				description:
-					'Change default drawing options to disable some editing functionalities of polygon mode.'
-			},
-			{
-				href: '/examples/select-event',
-				title: 'Subscribe select event of TerraDraw',
-				image: '/assets/images/subscribe-selectevent.webp',
-				description: 'Use TerraDraw API to subscribe an event.'
-			},
-			{
-				href: '/examples/add-geojson',
-				title: 'Adding default GeoJSON feature to TerraDraw',
-				image: '/assets/images/add-geojson.webp',
-				description: 'Add GeoJSON features to TerraDraw as default by using addFeatures function.'
-			},
-			{
-				href: '/examples/measure-control',
-				title: 'Measure line and polygon with measure control',
-				image: '/assets/images/measure-control.webp',
-				description: 'Measure line and polygon with MeasureControl'
-			},
-			{
-				href: '/examples/measure-distance',
-				title: 'Measure distance of line with default control',
-				image: '/assets/images/measure-distance.webp',
-				description: 'Measure distance of line feature added by terradraw.'
-			},
-			{
-				href: '/examples/measure-area',
-				title: 'Measure area of polygon with default control',
-				image: '/assets/images/measure-area.webp',
-				description: 'Measure area of polygon feature added by terradraw.'
-			}
-		]
+		examples: examples
 	};
 };
-
-export const prerender = true;
-export const ssr = false;

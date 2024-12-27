@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>Adding default GeoJSON feature to TerraDraw</title>
+		<meta
+			property="og:description"
+			content="You can add GeoJSON features by using addFeatures() function in the TerraDraw instance which can be retrieved through getTerraDrawInstance() function."
+		/>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
+		<script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+			}
+			html,
+			body,
+			#map {
+				height: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<script src="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.umd.js"></script>
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.css"
+		/>
+		<div id="map"></div>
+
+		<script>
+			const map = new maplibregl.Map({
+				container: 'map',
+				style: 'https://demotiles.maplibre.org/style.json',
+				center: [0, 0],
+				zoom: 1,
+				maxPitch: 85
+			});
+
+			const drawControl = new MaplibreTerradrawControl.MaplibreTerradrawControl({
+				modes: ['rectangle', 'select'],
+				open: true
+			});
+			map.addControl(drawControl, 'top-left');
+
+			// geojson features should be added after style is being loaded.
+			map.once('load', () => {
+				const drawInstance = drawControl.getTerraDrawInstance();
+				if (drawInstance) {
+					// geojson data to be added
+					const geojson = [
+						{
+							id: '6b438f48-f6da-4649-9212-76f5a1506296',
+							type: 'Feature',
+							geometry: {
+								type: 'Polygon',
+								coordinates: [
+									[
+										[26.938972246, 25.217617825],
+										[-4.045232861, 25.217617825],
+										[-4.045232861, -7.839055615],
+										[26.938972246, -7.839055615],
+										[26.938972246, 25.217617825]
+									]
+								]
+							},
+							properties: {
+								mode: 'rectangle',
+								selected: true
+							}
+						}
+					];
+					drawInstance?.addFeatures(geojson);
+				}
+			});
+		</script>
+	</body>
+</html>

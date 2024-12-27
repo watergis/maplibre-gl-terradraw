@@ -27,6 +27,7 @@
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
 	import type { PageData } from './$types.js';
+	import { page } from '$app/state';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
@@ -64,6 +65,21 @@
 		crossorigin="anonymous"
 		referrerpolicy="no-referrer"
 	/>
+
+	<title>{page.data.title}</title>
+	<meta property="og:site_name" content={page.data.title} />
+	<meta property="og:type" content="article" />
+	<meta name="description" content={page.data.description} />
+	<meta property="og:description" content={page.data.description} />
+	<meta name="twitter:description" content={page.data.description} />
+	<meta property="og:title" content={page.data.title} />
+	<meta property="og:image" content="/assets/plugin-overview.png" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content="Maplibre GL Terra Draw" />
+	<meta name="twitter:image" content="/assets/plugin-overview.png" />
+	<meta property="og:url" content={page.url.href} />
 </svelte:head>
 
 <!-- App Shell -->

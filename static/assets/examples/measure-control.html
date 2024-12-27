@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>Measure distance and length of feature</title>
+		<meta
+			property="og:description"
+			content="This example shows how you can calculate length of line and area of polygon by using MaplibreMeasureControl when you input a line or a polygon."
+		/>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
+		<script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+			}
+			html,
+			body,
+			#map {
+				height: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<script src="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.umd.js"></script>
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.css"
+		/>
+		<div id="map"></div>
+
+		<script>
+			const map = new maplibregl.Map({
+				container: 'map',
+				style: 'https://demotiles.maplibre.org/style.json',
+				center: [0, 0],
+				zoom: 1,
+				maxPitch: 85
+			});
+
+			// select TerraDraw modes you want to add. All TerraDraw modes except point are supported. select and delete-selection are not supported by MeasureControl
+			const drawControl = new MaplibreTerradrawControl.MaplibreMeasureControl({
+				modes: [
+					'linestring',
+					'polygon',
+					'rectangle',
+					'angled-rectangle',
+					'circle',
+					'sector',
+					'sensor',
+					'freehand',
+					'select',
+					'delete-selection',
+					'delete',
+					'download'
+				],
+				open: true
+			});
+			map.addControl(drawControl, 'top-left');
+		</script>
+	</body>
+</html>

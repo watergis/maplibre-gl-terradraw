@@ -1,15 +1,14 @@
-import { error } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types.js';
 
 const getTitle = (body: string) => {
 	const match = body.match(/<title>([^<]*)<\/title>/);
-	if (!match || typeof match[1] !== 'string') error(400, 'Unable to parse the title tag');
+	if (!match || typeof match[1] !== 'string') return '';
 	return match[1];
 };
 
 const getDescription = (body: string) => {
 	const match = body.match(/<meta\s+property="og:description"\s+content="([^"]+)"\s*\/?>/);
-	if (!match || typeof match[1] !== 'string') error(400, 'Unable to parse the title tag');
+	if (!match || typeof match[1] !== 'string') return '';
 	return match[1];
 };
 
@@ -31,6 +30,7 @@ export const load: LayoutServerLoad = async ({ fetch }) => {
 	const examples = [];
 	for (const item of items) {
 		const res = await fetch(`/assets/examples/${item}.html`);
+		if (!res.ok) continue;
 		const html = await res.text();
 
 		const title = getTitle(html);

@@ -404,6 +404,8 @@ export const load: PageServerLoad = async () => {
 	];
 
 	return {
+		title: 'Demo',
+		description: 'Playground maplibre-gl-terradraw',
 		geojson
 	};
 };

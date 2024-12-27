@@ -4,7 +4,7 @@ import { test, expect } from '@playwright/test';
 test.describe('demo page test', () => {
 	test('landing page has expected title', async ({ page }) => {
 		await page.goto('/demo');
-		await expect(page).toHaveTitle(/Maplibre GL Terra Draw/);
+		await expect(page).toHaveTitle(/Demo/);
 	});
 
 	test('demo page has expected to have map class', async ({ page }) => {

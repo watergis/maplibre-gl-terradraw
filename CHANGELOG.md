@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 0.7.2
+
+### Patch Changes
+
+- dd174c9: chore: updated teraddraw to beta.11
+
 ## 0.7.1
 
 ### Patch Changes

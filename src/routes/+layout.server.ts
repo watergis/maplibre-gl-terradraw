@@ -1,16 +1,16 @@
 import type { LayoutServerLoad } from './$types.js';
 
-// const getTitle = (body: string) => {
-// 	const match = body.match(/<title>([^<]*)<\/title>/);
-// 	if (!match || typeof match[1] !== 'string') return '';
-// 	return match[1];
-// };
+const getTitle = (body: string) => {
+	const match = body.match(/<title>([^<]*)<\/title>/);
+	if (!match || typeof match[1] !== 'string') return '';
+	return match[1];
+};
 
-// const getDescription = (body: string) => {
-// 	const match = body.match(/<meta\s+property="og:description"\s+content="([^"]+)"\s*\/?>/);
-// 	if (!match || typeof match[1] !== 'string') return '';
-// 	return match[1];
-// };
+const getDescription = (body: string) => {
+	const match = body.match(/<meta\s+property="og:description"\s+content="([^"]+)"\s*\/?>/);
+	if (!match || typeof match[1] !== 'string') return '';
+	return match[1];
+};
 
 export const load: LayoutServerLoad = async ({ fetch }) => {
 	const packageName = '@watergis/maplibre-gl-terradraw';
@@ -26,23 +26,23 @@ export const load: LayoutServerLoad = async ({ fetch }) => {
 
 	const version = await getVersion();
 
-	// const items = ['measure-control', 'add-geojson', 'select-event', 'drawing-option'];
-	// const examples = [];
-	// for (const item of items) {
-	// 	const res = await fetch(`/assets/examples/${item}.html`);
-	// 	if (!res.ok) continue;
-	// 	const html = await res.text();
+	const items = ['measure-control', 'add-geojson', 'select-event', 'drawing-option'];
+	const examples = [];
+	for (const item of items) {
+		const res = await fetch(`/api/examples/${item}`);
+		if (!res.ok) continue;
+		const html = await res.text();
 
-	// 	const title = getTitle(html);
-	// 	const description = getDescription(html);
+		const title = getTitle(html);
+		const description = getDescription(html);
 
-	// 	examples.push({
-	// 		href: `/examples/${item}`,
-	// 		title: title,
-	// 		image: `/assets/images/${item}.webp`,
-	// 		description: description
-	// 	});
-	// }
+		examples.push({
+			href: `/examples/${item}`,
+			title: title,
+			image: `/assets/images/${item}.webp`,
+			description: description
+		});
+	}
 
 	return {
 		metadata: {
@@ -65,6 +65,6 @@ export const load: LayoutServerLoad = async ({ fetch }) => {
 				icon: 'fa-brands fa-github'
 			}
 		],
-		examples: [] as { href: string; title: string; image: string; description: string }[]
+		examples: examples
 	};
 };

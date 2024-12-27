@@ -1,6 +1,5 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types.js';
-const base = '/assets/examples';
 
 const getTitle = (body: string) => {
 	const match = body.match(/<title>([^<]*)<\/title>/);
@@ -17,7 +16,7 @@ const getDescription = (body: string) => {
 export const load: PageServerLoad = async ({ params, fetch }) => {
 	const slug = params.slug;
 
-	const filePath = `${base}/${slug}.html`;
+	const filePath = `/api/examples/${slug}`;
 
 	const res = await fetch(filePath);
 	if (!res.ok) {

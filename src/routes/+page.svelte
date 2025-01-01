@@ -78,11 +78,9 @@
 			choose MaplibreMeasureControl.
 		</p>
 
-		<SlideToggle
-			name="is-measure"
-			bind:checked={isMeasure}
-			label="Enable to use MaplibreMeasureControl instead of default control."
-		/>
+		<SlideToggle name="is-measure" bind:checked={isMeasure}>
+			Enable to use MaplibreMeasureControl instead of default control.
+		</SlideToggle>
 
 		<h4 class="h4 pt-6">Choose options for demo</h4>
 		<p>Your chosen options are automatically applied at the demo and the below usage code.</p>

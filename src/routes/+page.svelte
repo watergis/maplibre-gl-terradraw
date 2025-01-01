@@ -9,8 +9,8 @@
 		SlideToggle
 	} from '@skeletonlabs/skeleton';
 	import type { PageData } from './$types.js';
-	import { AvailableModes } from '$lib/constants/AvailableModes.js';
 	import { onMount } from 'svelte';
+	import { AvailableMeasureModes, AvailableModes } from '$lib/index.js';
 
 	interface Props {
 		data: PageData;
@@ -25,10 +25,12 @@
 	let importTypeTabSet: string = $state(importTypeTabs[0].value);
 
 	let availableMode: string[] = AvailableModes as unknown as string[];
+	let availableMeasureMode: string[] = AvailableMeasureModes as unknown as string[];
 	let selectedModes: string[] = $state([]);
 	let isOpen = $state(true);
 
 	let packageManager = $state('npm');
+	let isMeasure = $state(false);
 
 	onMount(() => {
 		if (selectedModes.length === 0) {
@@ -61,11 +63,24 @@
 			class="btn variant-filled-primary capitalize"
 			href="{selectedModes.length === 0
 				? ''
-				: `/demo?modes=${selectedModes.join(',')}`}&open={isOpen}"
+				: `/demo?modes=${(!isMeasure
+						? selectedModes
+						: selectedModes.filter((x) => x !== 'point')
+					).join(',')}`}&open={isOpen}&measure={isMeasure}"
 			tabindex={selectedModes.length === 0 ? 0 : -1}
 		>
 			Open DEMO ({data.metadata.version})
 		</a>
+
+		<h4 class="h4 pt-6">Choose control type</h4>
+		<p>
+			Default control is MaplibreTerradrawControl. If you want to use measure control, enable to
+			choose MaplibreMeasureControl.
+		</p>
+
+		<SlideToggle name="is-measure" bind:checked={isMeasure}>
+			Enable to use MaplibreMeasureControl instead of default control.
+		</SlideToggle>
 
 		<h4 class="h4 pt-6">Choose options for demo</h4>
 		<p>Your chosen options are automatically applied at the demo and the below usage code.</p>
@@ -76,7 +91,7 @@
 				? 'Select at least a mode. '
 				: ''}Select TerraDraw modes to be added"
 			bind:value={selectedModes}
-			whitelist={availableMode}
+			whitelist={!isMeasure ? availableMode : availableMeasureMode}
 		/>
 
 		<p>
@@ -136,7 +151,17 @@
 				language="ts"
 				lineNumbers
 				code={data.codes.npm
-					.replace('{modes}', selectedModes.map((m) => `'${m}'`).join(','))
+					.replace(
+						/MaplibreTerradrawControl/g,
+						!isMeasure ? 'MaplibreTerradrawControl' : 'MaplibreMeasureControl'
+					)
+					.replace(
+						'{modes}',
+						(!isMeasure
+							? selectedModes.map((m) => `'${m}'`)
+							: selectedModes.filter((x) => x !== 'point').map((m) => `'${m}'`)
+						).join(',')
+					)
 					.replace('{open}', `${isOpen}`)}
 			/>
 		</div>
@@ -148,7 +173,17 @@
 				language="html"
 				lineNumbers
 				code={data.codes.cdn
-					.replace('{modes}', selectedModes.map((m) => `'${m}'`).join(','))
+					.replace(
+						/MaplibreTerradrawControl\(/g,
+						!isMeasure ? 'MaplibreTerradrawControl(' : 'MaplibreMeasureControl('
+					)
+					.replace(
+						'{modes}',
+						(!isMeasure
+							? selectedModes.map((m) => `'${m}'`)
+							: selectedModes.filter((x) => x !== 'point').map((m) => `'${m}'`)
+						).join(',')
+					)
 					.replace('{open}', `${isOpen}`)}
 			/>
 		</div>

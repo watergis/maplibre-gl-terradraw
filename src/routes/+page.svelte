@@ -31,7 +31,7 @@
 	let isOpen = $state(true);
 
 	let packageManager = $state('npm');
-	let controlType: 'default' | 'measure' = $state('default');
+	let isMeasure = $state(false);
 
 	onMount(() => {
 		if (selectedModes.length === 0) {
@@ -64,10 +64,10 @@
 			class="btn variant-filled-primary capitalize"
 			href="{selectedModes.length === 0
 				? ''
-				: `/demo?modes=${(controlType === 'default'
+				: `/demo?modes=${(!isMeasure
 						? selectedModes
 						: selectedModes.filter((x) => x !== 'point')
-					).join(',')}`}&open={isOpen}&measure={controlType === 'measure'}"
+					).join(',')}`}&open={isOpen}&measure={isMeasure}"
 			tabindex={selectedModes.length === 0 ? 0 : -1}
 		>
 			Open DEMO ({data.metadata.version})
@@ -75,18 +75,15 @@
 
 		<h4 class="h4 pt-6">Choose control type</h4>
 		<p>
-			Default control is MaplibreTerradrawControl. If you want to use measure control, choose
-			MaplibreMeasureControl.
+			Default control is MaplibreTerradrawControl. If you want to use measure control, enable to
+			choose MaplibreMeasureControl.
 		</p>
 
-		<RadioGroup active="variant-filled-primary" hover="hover:variant-soft-primary">
-			<RadioItem bind:group={controlType} name="justify" value={'default'}
-				>MaplibreTerradrawControl</RadioItem
-			>
-			<RadioItem bind:group={controlType} name="justify" value={'measure'}
-				>MaplibreMeasureControl</RadioItem
-			>
-		</RadioGroup>
+		<SlideToggle
+			name="is-measure"
+			bind:checked={isMeasure}
+			label="Enable to use MaplibreMeasureControl instead of default control."
+		/>
 
 		<h4 class="h4 pt-6">Choose options for demo</h4>
 		<p>Your chosen options are automatically applied at the demo and the below usage code.</p>
@@ -97,7 +94,7 @@
 				? 'Select at least a mode. '
 				: ''}Select TerraDraw modes to be added"
 			bind:value={selectedModes}
-			whitelist={controlType === 'default' ? availableMode : availableMeasureMode}
+			whitelist={!isMeasure ? availableMode : availableMeasureMode}
 		/>
 
 		<p>
@@ -159,11 +156,11 @@
 				code={data.codes.npm
 					.replace(
 						/MaplibreTerradrawControl/g,
-						controlType === 'default' ? 'MaplibreTerradrawControl' : 'MaplibreMeasureControl'
+						!isMeasure ? 'MaplibreTerradrawControl' : 'MaplibreMeasureControl'
 					)
 					.replace(
 						'{modes}',
-						(controlType === 'default'
+						(!isMeasure
 							? selectedModes.map((m) => `'${m}'`)
 							: selectedModes.filter((x) => x !== 'point').map((m) => `'${m}'`)
 						).join(',')
@@ -181,11 +178,11 @@
 				code={data.codes.cdn
 					.replace(
 						/MaplibreTerradrawControl\(/g,
-						controlType === 'default' ? 'MaplibreTerradrawControl(' : 'MaplibreMeasureControl('
+						!isMeasure ? 'MaplibreTerradrawControl(' : 'MaplibreMeasureControl('
 					)
 					.replace(
 						'{modes}',
-						(controlType === 'default'
+						(!isMeasure
 							? selectedModes.map((m) => `'${m}'`)
 							: selectedModes.filter((x) => x !== 'point').map((m) => `'${m}'`)
 						).join(',')

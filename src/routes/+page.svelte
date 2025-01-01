@@ -9,9 +9,8 @@
 		SlideToggle
 	} from '@skeletonlabs/skeleton';
 	import type { PageData } from './$types.js';
-	import { AvailableModes } from '$lib/constants/AvailableModes.js';
 	import { onMount } from 'svelte';
-	import { AvailableMeasureModes } from '$lib/index.js';
+	import { AvailableMeasureModes, AvailableModes } from '$lib/index.js';
 
 	interface Props {
 		data: PageData;

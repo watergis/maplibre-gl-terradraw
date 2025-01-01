@@ -1,14 +1,21 @@
 <script lang="ts">
 	import { CodeBlock } from '@skeletonlabs/skeleton';
 	import type { PageData } from './$types.js';
+	import { afterNavigate } from '$app/navigation';
 
 	type Props = {
 		data: PageData;
 	};
 	const { data }: Props = $props();
+
+	let titleElement: HTMLElement | undefined = $state();
+
+	afterNavigate(() => {
+		titleElement?.scrollIntoView();
+	});
 </script>
 
-<h4 class="h3 px-4 py-5">{data.title}</h4>
+<h4 class="h3 px-4 py-5" bind:this={titleElement}>{data.title}</h4>
 
 <div class="px-4 pb-4">
 	{data.description}

@@ -79,7 +79,7 @@
 		</p>
 
 		<SlideToggle name="is-measure" bind:checked={isMeasure}>
-			Enable to use MaplibreMeasureControl instead of default control.
+			{isMeasure ? 'Use MaplibreMeasureControl' : 'Use MaplibreTerradrawControl'}
 		</SlideToggle>
 
 		<h4 class="h4 pt-6">Choose options for demo</h4>

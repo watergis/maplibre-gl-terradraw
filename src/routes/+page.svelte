@@ -11,6 +11,7 @@
 	import type { PageData } from './$types.js';
 	import { AvailableModes } from '$lib/constants/AvailableModes.js';
 	import { onMount } from 'svelte';
+	import { AvailableMeasureModes } from '$lib/index.js';
 
 	interface Props {
 		data: PageData;
@@ -25,10 +26,12 @@
 	let importTypeTabSet: string = $state(importTypeTabs[0].value);
 
 	let availableMode: string[] = AvailableModes as unknown as string[];
+	let availableMeasureMode: string[] = AvailableMeasureModes as unknown as string[];
 	let selectedModes: string[] = $state([]);
 	let isOpen = $state(true);
 
 	let packageManager = $state('npm');
+	let controlType: 'default' | 'measure' = $state('default');
 
 	onMount(() => {
 		if (selectedModes.length === 0) {
@@ -61,11 +64,29 @@
 			class="btn variant-filled-primary capitalize"
 			href="{selectedModes.length === 0
 				? ''
-				: `/demo?modes=${selectedModes.join(',')}`}&open={isOpen}"
+				: `/demo?modes=${(controlType === 'default'
+						? selectedModes
+						: selectedModes.filter((x) => x !== 'point')
+					).join(',')}`}&open={isOpen}&measure={controlType === 'measure'}"
 			tabindex={selectedModes.length === 0 ? 0 : -1}
 		>
 			Open DEMO ({data.metadata.version})
 		</a>
+
+		<h4 class="h4 pt-6">Choose control type</h4>
+		<p>
+			Default control is MaplibreTerradrawControl. If you want to use measure control, choose
+			MaplibreMeasureControl.
+		</p>
+
+		<RadioGroup active="variant-filled-primary" hover="hover:variant-soft-primary">
+			<RadioItem bind:group={controlType} name="justify" value={'default'}
+				>MaplibreTerradrawControl</RadioItem
+			>
+			<RadioItem bind:group={controlType} name="justify" value={'measure'}
+				>MaplibreMeasureControl</RadioItem
+			>
+		</RadioGroup>
 
 		<h4 class="h4 pt-6">Choose options for demo</h4>
 		<p>Your chosen options are automatically applied at the demo and the below usage code.</p>
@@ -76,7 +97,7 @@
 				? 'Select at least a mode. '
 				: ''}Select TerraDraw modes to be added"
 			bind:value={selectedModes}
-			whitelist={availableMode}
+			whitelist={controlType === 'default' ? availableMode : availableMeasureMode}
 		/>
 
 		<p>
@@ -136,7 +157,17 @@
 				language="ts"
 				lineNumbers
 				code={data.codes.npm
-					.replace('{modes}', selectedModes.map((m) => `'${m}'`).join(','))
+					.replace(
+						/MaplibreTerradrawControl/g,
+						controlType === 'default' ? 'MaplibreTerradrawControl' : 'MaplibreMeasureControl'
+					)
+					.replace(
+						'{modes}',
+						(controlType === 'default'
+							? selectedModes.map((m) => `'${m}'`)
+							: selectedModes.filter((x) => x !== 'point').map((m) => `'${m}'`)
+						).join(',')
+					)
 					.replace('{open}', `${isOpen}`)}
 			/>
 		</div>
@@ -148,7 +179,17 @@
 				language="html"
 				lineNumbers
 				code={data.codes.cdn
-					.replace('{modes}', selectedModes.map((m) => `'${m}'`).join(','))
+					.replace(
+						/MaplibreTerradrawControl\(/g,
+						controlType === 'default' ? 'MaplibreTerradrawControl(' : 'MaplibreMeasureControl('
+					)
+					.replace(
+						'{modes}',
+						(controlType === 'default'
+							? selectedModes.map((m) => `'${m}'`)
+							: selectedModes.filter((x) => x !== 'point').map((m) => `'${m}'`)
+						).join(',')
+					)
 					.replace('{open}', `${isOpen}`)}
 			/>
 		</div>

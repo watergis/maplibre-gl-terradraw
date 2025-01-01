@@ -5,12 +5,15 @@
 		MaplibreTerradrawControl,
 		type TerradrawMode,
 		AvailableModes,
-		getDefaultModeOptions
+		getDefaultModeOptions,
+		AvailableMeasureModes,
+		MaplibreMeasureControl,
+		type MeasureControlMode
 	} from '$lib/index.js';
 	import '../../scss/maplibre-gl-terradraw.scss';
 	import type { PageData } from './$types.js';
 	import { CodeBlock } from '@skeletonlabs/skeleton';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { untrack } from 'svelte';
 
 	interface Props {
@@ -46,24 +49,39 @@
 			);
 			map.addControl(new GlobeControl(), 'bottom-right');
 
-			const modes = $page.url.searchParams.get('modes') || '';
+			const measure = page.url.searchParams.get('measure') ?? 'false';
+			let isMeasure: boolean = measure === 'true';
+
+			const modes = page.url.searchParams.get('modes') || '';
 			let terradrawModes: TerradrawMode[] = [];
 			if (modes.length > 0) {
 				terradrawModes = modes.split(',') as TerradrawMode[];
 			}
 			if (terradrawModes.length === 0) {
-				terradrawModes = ['render', ...AvailableModes.filter((m) => m !== 'render')];
+				terradrawModes = [
+					'render',
+					...(isMeasure ? AvailableMeasureModes : AvailableModes).filter((m) => m !== 'render')
+				];
 			}
 
-			const open = $page.url.searchParams.get('open') || 'true';
+			const open = page.url.searchParams.get('open') || 'true';
 			const isOpen = open === 'true' ? true : false;
 
-			const drawControl = new MaplibreTerradrawControl({
-				modes: terradrawModes,
-				open: isOpen,
-				modeOptions: getDefaultModeOptions()
-			});
-			map.addControl(drawControl, 'top-left');
+			let drawControl: MaplibreTerradrawControl;
+			if (isMeasure) {
+				drawControl = new MaplibreMeasureControl({
+					modes: terradrawModes as unknown as MeasureControlMode[],
+					open: isOpen
+				});
+				map.addControl(drawControl, 'top-left');
+			} else {
+				drawControl = new MaplibreTerradrawControl({
+					modes: terradrawModes,
+					open: isOpen,
+					modeOptions: getDefaultModeOptions()
+				});
+				map.addControl(drawControl, 'top-left');
+			}
 
 			const drawInstance = drawControl.getTerraDrawInstance();
 			drawInstance?.on('select', (id: string) => {

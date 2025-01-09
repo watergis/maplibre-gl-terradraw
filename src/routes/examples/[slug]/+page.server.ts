@@ -1,17 +1,6 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types.js';
-
-const getTitle = (body: string) => {
-	const match = body.match(/<title>([^<]*)<\/title>/);
-	if (!match || typeof match[1] !== 'string') return '';
-	return match[1];
-};
-
-const getDescription = (body: string) => {
-	const match = body.match(/<meta\s+property="og:description"\s+content="([^"]+)"\s*\/?>/);
-	if (!match || typeof match[1] !== 'string') return '';
-	return match[1];
-};
+import { getDescription, getTitle } from '../../helpers.js';
 
 export const load: PageServerLoad = async ({ params, fetch }) => {
 	const slug = params.slug;

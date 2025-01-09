@@ -1,30 +1,8 @@
+import { getDescription, getPackageInfo, getTitle } from './helpers.js';
 import type { LayoutServerLoad } from './$types.js';
 
-const getTitle = (body: string) => {
-	const match = body.match(/<title>([^<]*)<\/title>/);
-	if (!match || typeof match[1] !== 'string') return '';
-	return match[1];
-};
-
-const getDescription = (body: string) => {
-	const match = body.match(/<meta\s+property="og:description"\s+content="([^"]+)"\s*\/?>/);
-	if (!match || typeof match[1] !== 'string') return '';
-	return match[1];
-};
-
 export const load: LayoutServerLoad = async ({ fetch }) => {
-	const packageName = '@watergis/maplibre-gl-terradraw';
-
-	const getVersion = async () => {
-		const res = await fetch(`https://registry.npmjs.org/${packageName}/latest`);
-		if (!res.ok) {
-			return;
-		}
-		const json = await res.json();
-		return json.version;
-	};
-
-	const version = await getVersion();
+	const packageInfo = await getPackageInfo();
 
 	const items = [
 		'measure-control',
@@ -52,8 +30,8 @@ export const load: LayoutServerLoad = async ({ fetch }) => {
 
 	return {
 		metadata: {
-			packageName: packageName,
-			version,
+			packageName: packageInfo.packageName,
+			version: packageInfo.version,
 			title: 'Maplibre GL Terra Draw',
 			description:
 				'This plugin is to add controls to your Maplibre for drawing powered by Terra Draw library.',

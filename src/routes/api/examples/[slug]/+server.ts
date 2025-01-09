@@ -1,5 +1,6 @@
 import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types.js';
+import { getPackageInfo } from '../../../helpers.js';
 
 export const GET: RequestHandler = async ({ params, fetch, url }) => {
 	const slug = params.slug;
@@ -19,6 +20,9 @@ export const GET: RequestHandler = async ({ params, fetch, url }) => {
 			/https:\/\/cdn.jsdelivr.net\/npm\/@watergis\/maplibre-gl-terradraw@latest\//g,
 			'../../../'
 		);
+	} else {
+		const packageInfo = await getPackageInfo();
+		html = html.replace(/@latest/g, `@${packageInfo.version}`);
 	}
 
 	return new Response(html, {

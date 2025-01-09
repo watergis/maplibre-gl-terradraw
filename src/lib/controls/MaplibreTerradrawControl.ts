@@ -116,7 +116,7 @@ export class MaplibreTerradrawControl implements IControl {
 		this.isExpanded = this.options.open === true;
 
 		this.terradraw = new TerraDraw({
-			adapter: new TerraDrawMapLibreGLAdapter({ map }),
+			adapter: new TerraDrawMapLibreGLAdapter({ map, ...this.options.adapterOptions }),
 			modes: modes
 		});
 

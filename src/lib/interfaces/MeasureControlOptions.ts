@@ -26,6 +26,17 @@ export interface MeasureControlOptions {
 	modeOptions?: ModeOptions;
 
 	/**
+	 * TerraDrawMaplibreGLAdapter options. Please refer the default adapter settings at the below TerraDraw code.
+	 * https://github.com/JamesLMilner/terra-draw/blob/806e319d5680a3f69edeff7dd629da3f1b4ff9bf/src/adapters/common/base.adapter.ts#L28-L48
+	 */
+	adapterOptions?: {
+		coordinatePrecision?: number;
+		minPixelDragDistanceDrawing?: number;
+		minPixelDragDistance?: number;
+		minPixelDragDistanceSelecting?: number;
+	};
+
+	/**
 	 * Maplibre symbol layer specification (on line nodes) for line distance layer
 	 */
 	lineLayerLabelSpec?: SymbolLayerSpecification;

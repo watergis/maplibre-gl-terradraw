@@ -26,7 +26,13 @@ export const load: LayoutServerLoad = async ({ fetch }) => {
 
 	const version = await getVersion();
 
-	const items = ['measure-control', 'add-geojson', 'select-event', 'drawing-option'];
+	const items = [
+		'measure-control',
+		'add-geojson',
+		'select-event',
+		'drawing-option',
+		'coordinate-precision'
+	];
 	const examples = [];
 	for (const item of items) {
 		const res = await fetch(`/api/examples/${item}`);

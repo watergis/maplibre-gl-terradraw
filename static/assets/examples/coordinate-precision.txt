@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>Use different coordinate precisiion</title>
+		<meta
+			property="og:description"
+			content="TerraDraw usesd 9 digits as default coordinate precision. You can use different coordinate precision instead."
+		/>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
+		<script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+			}
+			html,
+			body,
+			#map {
+				height: 100%;
+			}
+
+			#overlay {
+				position: absolute;
+				top: 5px;
+				right: 5px;
+				width: 300px;
+				max-height: 300px;
+				overflow-y: auto;
+				background-color: rgba(255, 255, 255, 0.6);
+			}
+		</style>
+	</head>
+	<body>
+		<script src="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.umd.js"></script>
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.css"
+		/>
+		<div id="map"></div>
+
+		<div id="overlay"></div>
+
+		<script>
+			const map = new maplibregl.Map({
+				container: 'map',
+				style: 'https://demotiles.maplibre.org/style.json',
+				center: [0, 0],
+				zoom: 1,
+				maxPitch: 85
+			});
+
+			const drawControl = new MaplibreTerradrawControl.MaplibreTerradrawControl({
+				modes: ['point', 'linestring', 'polygon', 'select', 'delete'],
+				open: true,
+				adapterOptions: {
+					// change coordinate precision to 6 digits instead of 9
+					coordinatePrecision: 6
+				}
+			});
+			map.addControl(drawControl, 'top-left');
+
+			const drawInstance = drawControl.getTerraDrawInstance();
+			if (drawInstance) {
+				drawInstance.on('select', (id) => {
+					const snapshot = drawInstance.getSnapshot();
+					const features = snapshot?.find((feature) => feature.id === id);
+					selectedFeature = JSON.stringify(features);
+
+					const overlayElement = document.getElementById('overlay');
+					overlayElement.innerText = selectedFeature;
+				});
+			}
+		</script>
+	</body>
+</html>

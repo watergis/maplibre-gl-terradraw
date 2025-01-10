@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>Using custom icon</title>
+		<meta
+			property="og:description"
+			content="This plugin provides default icons for each TerraDraw mode button. You can change default icon if you would like to use your own."
+		/>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
+		<script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+			}
+			html,
+			body,
+			#map {
+				height: 100%;
+			}
+
+			/** Find class name from maplibre-gl-terradraw.css to overwrite */
+			.maplibregl-terradraw-add-polygon-button {
+				/** 
+				change to draw-polygon from fontawesome (https://fontawesome.com/v6/icons/draw-polygon?f=classic&s=solid)
+				1. copy SVG from somewhere or create your own
+				2. convert SVG to base64 data uri at https://www.svgviewer.dev/svg-to-data-uri
+				3. replace background with new data uri.
+				*/
+				background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NDggNTEyIj48IS0tIUZvbnQgQXdlc29tZSBGcmVlIDYuNy4yIGJ5IEBmb250YXdlc29tZSAtIGh0dHBzOi8vZm9udGF3ZXNvbWUuY29tIExpY2Vuc2UgLSBodHRwczovL2ZvbnRhd2Vzb21lLmNvbS9saWNlbnNlL2ZyZWUgQ29weXJpZ2h0IDIwMjUgRm9udGljb25zLCBJbmMuLS0+PHBhdGggZD0iTTk2IDE1MS40bDAgMjA5LjFjOS43IDUuNiAxNy44IDEzLjcgMjMuNCAyMy40bDIwOS4xIDBjMC0uMSAuMS0uMiAuMS0uM2wtNC41LTcuOS0zMi01NnMwIDAgMCAwYy0xLjQgLjEtMi44IC4xLTQuMiAuMWMtMzUuMyAwLTY0LTI4LjctNjQtNjRzMjguNy02NCA2NC02NGMxLjQgMCAyLjggMCA0LjIgLjFjMCAwIDAgMCAwIDBsMzItNTYgNC41LTcuOS0uMS0uMy0yMDkuMSAwYy01LjYgOS43LTEzLjcgMTcuOC0yMy40IDIzLjR6TTM4NC4zIDM1MmMzNS4yIC4yIDYzLjcgMjguNyA2My43IDY0YzAgMzUuMy0yOC43IDY0LTY0IDY0Yy0yMy43IDAtNDQuNC0xMi45LTU1LjQtMzJsLTIwOS4xIDBjLTExLjEgMTkuMS0zMS43IDMyLTU1LjQgMzJjLTM1LjMgMC02NC0yOC43LTY0LTY0YzAtMjMuNyAxMi45LTQ0LjQgMzItNTUuNGwwLTIwOS4xQzEyLjkgMTQwLjQgMCAxMTkuNyAwIDk2QzAgNjAuNyAyOC43IDMyIDY0IDMyYzIzLjcgMCA0NC40IDEyLjkgNTUuNCAzMmwyMDkuMSAwYzExLjEtMTkuMSAzMS43LTMyIDU1LjQtMzJjMzUuMyAwIDY0IDI4LjcgNjQgNjRjMCAzNS4zLTI4LjUgNjMuOC02My43IDY0bC00LjUgNy45LTMyIDU2LTIuMyA0YzQuMiA4LjUgNi41IDE4IDYuNSAyOC4xcy0yLjMgMTkuNi02LjUgMjguMWwyLjMgNCAzMiA1NiA0LjUgNy45eiIvPjwvc3ZnPg==')!important;
+				background-position: center!important;
+				background-repeat: no-repeat!important;
+				/**
+				You may need to adjust icon size to fit plugin control button.
+				*/
+				background-size: 80%!important;
+			}
+		</style>
+	</head>
+	<body>
+		<script src="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.umd.js"></script>
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.css"
+		/>
+		<div id="map"></div>
+
+		<script>
+			const map = new maplibregl.Map({
+				container: 'map',
+				style: 'https://demotiles.maplibre.org/style.json',
+				center: [0, 0],
+				zoom: 1,
+				maxPitch: 85
+			});
+
+			const drawControl = new MaplibreTerradrawControl.MaplibreTerradrawControl({
+				modes: ['polygon','delete'],
+				open: true
+			});
+			map.addControl(drawControl, 'top-left');
+		</script>
+	</body>
+</html>

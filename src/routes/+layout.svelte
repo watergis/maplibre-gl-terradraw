@@ -73,12 +73,12 @@
 	<meta property="og:description" content={page.data.description} />
 	<meta name="twitter:description" content={page.data.description} />
 	<meta property="og:title" content={page.data.title} />
-	<meta property="og:image" content="/assets/plugin-overview.png" />
+	<meta property="og:image" content={page.data.socialImage} />
 	<meta property="og:image:width" content="1200" />
 	<meta property="og:image:height" content="630" />
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content="Maplibre GL Terra Draw" />
-	<meta name="twitter:image" content="/assets/plugin-overview.png" />
+	<meta name="twitter:image" content={page.data.socialImage} />
 	<meta property="og:url" content={page.url.href} />
 </svelte:head>
 

@@ -22,6 +22,7 @@ export const load: PageServerLoad = async ({ fetch, parent }) => {
 		title: 'Maplibre GL Terra Draw',
 		description:
 			'This plugin is to add controls to your MapLibre for sketching powered by Terra Draw library.',
+		socialImage: '/assets/plugin-overview.png',
 		codes: {
 			cdn: await getExample('cdn'),
 			npm: await getExample('npm')

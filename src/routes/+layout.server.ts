@@ -9,7 +9,8 @@ export const load: LayoutServerLoad = async ({ fetch }) => {
 		'add-geojson',
 		'select-event',
 		'drawing-option',
-		'coordinate-precision'
+		'coordinate-precision',
+		'custom-icon'
 	];
 	const examples = [];
 	for (const item of items) {

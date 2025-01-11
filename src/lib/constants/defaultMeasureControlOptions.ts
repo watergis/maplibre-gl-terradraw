@@ -137,11 +137,26 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 			],
 			'symbol-placement': 'point',
 			'text-font': ['Open Sans Semibold'],
-			'text-size': 12,
+			'text-size': [
+				'interpolate',
+				['linear'],
+				['zoom'],
+				5,
+				10,
+				10,
+				12.0,
+				13,
+				14.0,
+				14,
+				16.0,
+				18,
+				18.0
+			],
 			'text-overlap': 'always',
 			'text-variable-anchor': ['left', 'right', 'top', 'bottom'],
-			'text-radial-offset': 1,
-			'text-justify': 'center'
+			'text-radial-offset': 0.5,
+			'text-justify': 'center',
+			'text-letter-spacing': 0.05
 		},
 		paint: {
 			'text-halo-color': '#F7F7F7',
@@ -171,8 +186,23 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 			'text-field': ['concat', ['to-string', ['get', 'area']], ' ', ['get', 'unit']],
 			'symbol-placement': 'point',
 			'text-font': ['Open Sans Semibold'],
-			'text-size': 12,
-			'text-overlap': 'always'
+			'text-size': [
+				'interpolate',
+				['linear'],
+				['zoom'],
+				5,
+				10,
+				10,
+				12.0,
+				13,
+				14.0,
+				14,
+				16.0,
+				18,
+				18.0
+			],
+			'text-overlap': 'always',
+			'text-letter-spacing': 0.05
 		},
 		paint: {
 			'text-halo-color': '#F7F7F7',

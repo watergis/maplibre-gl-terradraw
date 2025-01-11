@@ -111,7 +111,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 		id: 'terradraw-measure-line-label',
 		type: 'symbol',
 		source: 'terradraw-measure-line-source',
-		filter: ['match', ['geometry-type'], ['Point'], true, false],
+		filter: ['==', '$type', 'Point'],
 		layout: {
 			'text-field': [
 				'concat',
@@ -149,7 +149,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 		id: 'terradraw-measure-line-node',
 		type: 'circle',
 		source: 'terradraw-measure-line-source',
-		filter: ['match', ['geometry-type'], ['Point'], true, false],
+		filter: ['==', '$type', 'Point'],
 		layout: {},
 		paint: {
 			'circle-radius': 5,
@@ -162,7 +162,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 		id: 'terradraw-measure-polygon-label',
 		type: 'symbol',
 		source: 'terradraw-measure-polygon-source',
-		filter: ['match', ['geometry-type'], ['Point'], true, false],
+		filter: ['==', '$type', 'Point'],
 		layout: {
 			'text-field': ['concat', ['to-string', ['get', 'area']], ' ', ['get', 'unit']],
 			'symbol-placement': 'point',

@@ -34,75 +34,79 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 	modeOptions: {
 		linestring: new TerraDrawLineStringMode({
 			styles: {
-				lineStringColor: '#000000',
+				lineStringColor: '#232E3D',
 				lineStringWidth: 2,
 				closingPointColor: '#FFFFFF',
-				closingPointWidth: 5,
-				closingPointOutlineColor: '#000000',
+				closingPointWidth: 3,
+				closingPointOutlineColor: '#232E3D',
 				closingPointOutlineWidth: 1
 			}
 		}),
 		polygon: new TerraDrawPolygonMode({
 			styles: {
-				fillColor: '#FFFFFF',
+				fillColor: '#EDEFF0',
 				fillOpacity: 0.7,
-				outlineColor: '#000000',
+				outlineColor: '#232E3D',
 				outlineWidth: 2,
-				closingPointColor: '#FFFFFF',
-				closingPointWidth: 5,
-				closingPointOutlineColor: '#000000',
+				closingPointColor: '#FAFAFA',
+				closingPointWidth: 3,
+				closingPointOutlineColor: '#232E3D',
 				closingPointOutlineWidth: 1
 			}
 		}),
 		rectangle: new TerraDrawRectangleMode({
 			styles: {
-				fillColor: '#FFFFFF',
+				fillColor: '#EDEFF0',
 				fillOpacity: 0.7,
-				outlineColor: '#000000',
+				outlineColor: '#232E3D',
 				outlineWidth: 2
 			}
 		}),
 		'angled-rectangle': new TerraDrawAngledRectangleMode({
 			styles: {
-				fillColor: '#FFFFFF',
+				fillColor: '#EDEFF0',
 				fillOpacity: 0.7,
-				outlineColor: '#000000',
+				outlineColor: '#232E3D',
 				outlineWidth: 2
 			}
 		}),
 		circle: new TerraDrawCircleMode({
 			styles: {
-				fillColor: '#FFFFFF',
+				fillColor: '#EDEFF0',
 				fillOpacity: 0.7,
-				outlineColor: '#000000',
+				outlineColor: '#232E3D',
 				outlineWidth: 2
 			}
 		}),
 		freehand: new TerraDrawFreehandMode({
 			styles: {
-				fillColor: '#FFFFFF',
+				fillColor: '#EDEFF0',
 				fillOpacity: 0.7,
-				outlineColor: '#000000',
-				outlineWidth: 2
+				outlineColor: '#232E3D',
+				outlineWidth: 2,
+				closingPointColor: '#FAFAFA',
+				closingPointWidth: 3,
+				closingPointOutlineColor: '#232E3D',
+				closingPointOutlineWidth: 1
 			}
 		}),
 		sensor: new TerraDrawSensorMode({
 			styles: {
-				fillColor: '#FFFFFF',
+				fillColor: '#EDEFF0',
 				fillOpacity: 0.7,
-				outlineColor: '#000000',
+				outlineColor: '#232E3D',
 				outlineWidth: 2,
-				centerPointColor: '#FFFFFF',
-				centerPointWidth: 5,
-				centerPointOutlineColor: '#000000',
+				centerPointColor: '#FAFAFA',
+				centerPointWidth: 3,
+				centerPointOutlineColor: '#232E3D',
 				centerPointOutlineWidth: 1
 			}
 		}),
 		sector: new TerraDrawSectorMode({
 			styles: {
-				fillColor: '#FFFFFF',
+				fillColor: '#EDEFF0',
 				fillOpacity: 0.7,
-				outlineColor: '#000000',
+				outlineColor: '#232E3D',
 				outlineWidth: 2
 			}
 		})
@@ -111,7 +115,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 		id: 'terradraw-measure-line-label',
 		type: 'symbol',
 		source: 'terradraw-measure-line-source',
-		filter: ['match', ['geometry-type'], ['Point'], true, false],
+		filter: ['==', '$type', 'Point'],
 		layout: {
 			'text-field': [
 				'concat',
@@ -132,27 +136,41 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 				]
 			],
 			'symbol-placement': 'point',
-			'text-font': ['Open Sans Semibold'],
-			'text-size': 12,
+			'text-size': [
+				'interpolate',
+				['linear'],
+				['zoom'],
+				5,
+				10,
+				10,
+				12.0,
+				13,
+				14.0,
+				14,
+				16.0,
+				18,
+				18.0
+			],
 			'text-overlap': 'always',
 			'text-variable-anchor': ['left', 'right', 'top', 'bottom'],
-			'text-radial-offset': 1,
-			'text-justify': 'center'
+			'text-radial-offset': 0.5,
+			'text-justify': 'center',
+			'text-letter-spacing': 0.05
 		},
 		paint: {
-			'text-halo-color': '#ffffff',
-			'text-halo-width': 10,
-			'text-color': '#000000'
+			'text-halo-color': '#F7F7F7',
+			'text-halo-width': 2,
+			'text-color': '#232E3D'
 		}
 	},
 	lineLayerNodeSpec: {
 		id: 'terradraw-measure-line-node',
 		type: 'circle',
 		source: 'terradraw-measure-line-source',
-		filter: ['match', ['geometry-type'], ['Point'], true, false],
+		filter: ['==', '$type', 'Point'],
 		layout: {},
 		paint: {
-			'circle-radius': 5,
+			'circle-radius': 3,
 			'circle-color': '#FFFFFF',
 			'circle-stroke-color': '#000000',
 			'circle-stroke-width': 1
@@ -162,18 +180,32 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 		id: 'terradraw-measure-polygon-label',
 		type: 'symbol',
 		source: 'terradraw-measure-polygon-source',
-		filter: ['match', ['geometry-type'], ['Point'], true, false],
+		filter: ['==', '$type', 'Point'],
 		layout: {
 			'text-field': ['concat', ['to-string', ['get', 'area']], ' ', ['get', 'unit']],
 			'symbol-placement': 'point',
-			'text-font': ['Open Sans Semibold'],
-			'text-size': 12,
-			'text-overlap': 'always'
+			'text-size': [
+				'interpolate',
+				['linear'],
+				['zoom'],
+				5,
+				10,
+				10,
+				12.0,
+				13,
+				14.0,
+				14,
+				16.0,
+				18,
+				18.0
+			],
+			'text-overlap': 'always',
+			'text-letter-spacing': 0.05
 		},
 		paint: {
-			'text-halo-color': '#ffffff',
-			'text-halo-width': 4,
-			'text-color': '#000000'
+			'text-halo-color': '#F7F7F7',
+			'text-halo-width': 2,
+			'text-color': '#232E3D'
 		}
 	}
 };

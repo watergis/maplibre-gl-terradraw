@@ -104,6 +104,12 @@
 				);
 				if (initData.length > 0) {
 					drawInstance?.addFeatures(initData);
+
+					if (isMeasure) {
+						map?.once('idle', () => {
+							(drawControl as MaplibreMeasureControl).recalc();
+						});
+					}
 				}
 			});
 		})

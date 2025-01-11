@@ -14,7 +14,8 @@ test.describe('each examples page test', () => {
 		'measure-control',
 		'select-event',
 		'coordinate-precision',
-		'custom-icon'
+		'custom-icon',
+		'query-elevation'
 	]) {
 		test(`${option} example page has expected to have title`, async ({ page }) => {
 			await page.goto(`/examples/${option}`);

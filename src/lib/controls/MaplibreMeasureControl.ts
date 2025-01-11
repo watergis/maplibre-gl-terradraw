@@ -50,7 +50,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 */
 	public onAdd(map: Map): HTMLElement {
 		this.controlContainer = super.onAdd(map);
-		map.once('load', this.registerMesureControl.bind(this));
 		return this.controlContainer;
 	}
 
@@ -61,6 +60,49 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	public onRemove(): void {
 		this.unregisterMesureControl();
 		super.onRemove();
+	}
+
+	/**
+	 * Activate Terra Draw to start drawing
+	 */
+	public activate() {
+		super.activate();
+		this.registerMesureControl();
+	}
+
+	/**
+	 * Recalculate area and distance in TerraDraw snapshot
+	 *
+	 * if you use `addFeatures` to restore GeoJSON features to TerraDraw, this recalc method needs to be called to re-measure again.
+	 *
+	 * For example, the below code is an example usage.
+	 * ```
+	 * drawInstance?.addFeatures(initData);
+	 * map?.once('idle', ()=>{
+	 *   drawControl.recalc()
+	 * })
+	 * ```
+	 */
+	public recalc() {
+		const drawInstance = this.getTerraDrawInstance();
+		if (drawInstance) {
+			this.registerMesureControl();
+
+			const snapshot = drawInstance.getSnapshot();
+			for (const feature of snapshot) {
+				const id: string = feature.id as string;
+				const geometryType = feature.geometry.type;
+				const mode = feature.properties.mode as TerradrawMode;
+				if (mode === 'linestring' && geometryType === 'LineString') {
+					this.measureLine(id);
+				} else if (
+					!['point', 'linestring', 'select', 'render'].includes(mode) &&
+					geometryType === 'Polygon'
+				) {
+					this.measurePolygon(id);
+				}
+			}
+		}
 	}
 
 	/**
@@ -119,35 +161,41 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			const drawInstance = this.getTerraDrawInstance();
 			if (drawInstance) {
 				// subscribe change event of TerraDraw to calc distance
-				drawInstance.on('change', (ids: string[]) => {
-					if (!this.map) return;
-					const drawInstance = this.getTerraDrawInstance();
-					if (!drawInstance) return;
-					const snapshot = drawInstance.getSnapshot();
-					for (const id of ids) {
-						const feature = snapshot?.find((f) => f.id === id);
-						if (feature) {
-							const geometryType = feature.geometry.type;
-							const mode = feature.properties.mode as TerradrawMode;
-							if (mode === 'linestring' && geometryType === 'LineString') {
-								this.measureLine(id);
-							} else if (
-								!['point', 'linestring', 'select', 'render'].includes(mode) &&
-								geometryType === 'Polygon'
-							) {
-								this.measurePolygon(id);
-							}
-						} else {
-							// if editing ID does not exist, delete all related features from measure layers
-							this.clearMeasureFeatures(id, this.lineLayerNodeSpec.source);
-							this.clearMeasureFeatures(id, this.lineLayerLabelSpec.source);
-							this.clearMeasureFeatures(id, this.polygonLayerSpec.source);
-						}
-					}
-				});
+				drawInstance.on('change', this.handleTerradrawFeatureChanged.bind(this));
 
 				// subscribe feature-deleted event for the plugin control
 				this.on('feature-deleted', this.onFeatureDeleted.bind(this));
+			}
+		}
+	}
+
+	/**
+	 * Handle change event of TerraDraw
+	 * @param ids Feature IDs
+	 */
+	private handleTerradrawFeatureChanged(ids: string[]) {
+		if (!this.map) return;
+		const drawInstance = this.getTerraDrawInstance();
+		if (!drawInstance) return;
+		const snapshot = drawInstance.getSnapshot();
+		for (const id of ids) {
+			const feature = snapshot.find((f) => f.id === id);
+			if (feature) {
+				const geometryType = feature.geometry.type;
+				const mode = feature.properties.mode as TerradrawMode;
+				if (mode === 'linestring' && geometryType === 'LineString') {
+					this.measureLine(id);
+				} else if (
+					!['point', 'linestring', 'select', 'render'].includes(mode) &&
+					geometryType === 'Polygon'
+				) {
+					this.measurePolygon(id);
+				}
+			} else {
+				// if editing ID does not exist, delete all related features from measure layers
+				this.clearMeasureFeatures(id, this.lineLayerNodeSpec.source);
+				this.clearMeasureFeatures(id, this.lineLayerLabelSpec.source);
+				this.clearMeasureFeatures(id, this.polygonLayerSpec.source);
 			}
 		}
 	}
@@ -326,7 +374,15 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				(this.map.getSource(this.polygonLayerSpec.source) as GeoJSONSource)?.setData(
 					geojsonSource.data
 				);
+
 				this.map.moveLayer(this.polygonLayerSpec.id);
+
+				if (this.map.getLayer(this.lineLayerLabelSpec.id)) {
+					this.map.moveLayer(this.lineLayerLabelSpec.id);
+				}
+				if (this.map.getLayer(this.lineLayerNodeSpec.id)) {
+					this.map.moveLayer(this.lineLayerNodeSpec.id);
+				}
 			}
 		}
 	}
@@ -339,6 +395,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		if (!this.map) return;
 		const drawInstance = this.getTerraDrawInstance();
 		if (!drawInstance) return;
+
 		const snapshot = drawInstance.getSnapshot();
 		let feature = snapshot?.find((f) => f.id === id && f.geometry.type === 'LineString');
 		if (feature) {
@@ -417,6 +474,11 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				(this.map.getSource(this.lineLayerLabelSpec.source) as GeoJSONSource)?.setData(
 					geojsonSource.data
 				);
+
+				if (this.map.getLayer(this.polygonLayerSpec.id)) {
+					this.map.moveLayer(this.polygonLayerSpec.id);
+				}
+
 				this.map.moveLayer(this.lineLayerLabelSpec.id);
 				this.map.moveLayer(this.lineLayerNodeSpec.id);
 			}

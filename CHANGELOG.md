@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 0.8.2
+
+### Patch Changes
+
+- 8375993: feat: add `computeElevation` option in MeasureControl to enable querying elevation from raster-dem source.
+
 ## 0.8.1
 
 ### Patch Changes

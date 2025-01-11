@@ -10,7 +10,8 @@ export const load: LayoutServerLoad = async ({ fetch }) => {
 		'select-event',
 		'drawing-option',
 		'coordinate-precision',
-		'custom-icon'
+		'custom-icon',
+		'query-elevation'
 	];
 	const examples = [];
 	for (const item of items) {

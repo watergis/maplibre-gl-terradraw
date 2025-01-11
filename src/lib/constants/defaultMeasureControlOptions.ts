@@ -136,7 +136,6 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 				]
 			],
 			'symbol-placement': 'point',
-			'text-font': ['Open Sans Semibold'],
 			'text-size': [
 				'interpolate',
 				['linear'],
@@ -185,7 +184,6 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 		layout: {
 			'text-field': ['concat', ['to-string', ['get', 'area']], ' ', ['get', 'unit']],
 			'symbol-placement': 'point',
-			'text-font': ['Open Sans Semibold'],
 			'text-size': [
 				'interpolate',
 				['linear'],

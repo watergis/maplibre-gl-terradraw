@@ -123,6 +123,12 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 					['==', ['get', 'total'], 0],
 					'',
 					['concat', '\n(', ['to-string', ['get', 'total']], ' ', ['get', 'unit'], ')']
+				],
+				[
+					'case',
+					['all', ['has', 'elevation'], ['>', ['get', 'elevation'], 0]],
+					['concat', '\nAlt. ', ['to-string', ['floor', ['get', 'elevation']]], ' m'],
+					''
 				]
 			],
 			'symbol-placement': 'point',

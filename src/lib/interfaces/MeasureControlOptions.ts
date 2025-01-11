@@ -46,4 +46,34 @@ export interface MeasureControlOptions {
 	 * Maplibre symbol layer specification (centroid) for polygon area layer
 	 */
 	polygonLayerSpec?: SymbolLayerSpecification;
+
+	/**
+	 * Compute elevation for each node in linestring measure mode.
+	 * This is an optional parameter and default is False. If true, the property of `elevation` is added to TerraDraw feature.
+	 * As default, an elevation is not shown in label if it is negative value (The data is added to the feature property though).
+	 * If you wish to show negative value of altitude, you may need to edit your own `lineLayerLabelSpec` style spec.
+	 *
+	 * This feature uses `queryTerrainElevation` function of maplibre-gl, thus you have to add and enable raster-dem source in maplibre style in advance.
+	 * 
+	 * For instance, the below code is to add Terrarium source from [AWS](https://registry.opendata.aws/terrain-tiles/)
+	 * ```
+	 * map?.addSource('terrarium', {
+	 *   type: 'raster-dem',
+	 *   attribution: '&copy; <a href="https://github.com/tilezen/joerd/blob/master/docs/attribution.md" target="_blank" rel="noopener">Tilezen Joerd</a>',
+	 *   tiles: [
+	 *     'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'
+	 *   ],
+	 *   minzoom:0, maxzoom: 5, tileSize: 256,
+	 *   encoding: 'terrarium',
+	 *   bounds: [-180, -90, 180, 90]
+	 * })
+	 * map?.setTerrain({source: 'terrarium', exaggeration: 1})
+	 * ```
+	 * 
+	 * The plugin control is just querying elevation from maplibre style's DEM source.
+	 * Hence, the elevation's accuracy may not be good and queried elevation might be different each zoom level.
+	 *
+
+	 */
+	computeElevation?: boolean;
 }

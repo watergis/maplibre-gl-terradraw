@@ -2,6 +2,7 @@ import type { CircleLayerSpecification, SymbolLayerSpecification } from 'maplibr
 import type { ModeOptions } from './ModeOptions.js';
 import type { MeasureControlMode } from './MeasureControlMode.js';
 import type { TerraDrawExtend } from 'terra-draw';
+import type { DistanceUnit } from './DistanceUnit.js';
 
 /**
  * MeasureControl Plugin control constructor options
@@ -46,6 +47,21 @@ export interface MeasureControlOptions {
 	 * Maplibre symbol layer specification (centroid) for polygon area layer
 	 */
 	polygonLayerSpec?: SymbolLayerSpecification;
+
+	/**
+	 * The unit of distance can be degrees, radians, miles, or kilometers (default 'kilometers')
+	 */
+	distanceUnit?: DistanceUnit;
+
+	/**
+	 * The precision of distance value. It will be set different value dwhen distance unit is changed. Using setter to override the value if you want.
+	 */
+	distancePrecision?: number;
+
+	/**
+	 * The precision of area value. Using setter to override the value if you want.
+	 */
+	areaPrecision?: number;
 
 	/**
 	 * Compute elevation for each node in linestring measure mode.

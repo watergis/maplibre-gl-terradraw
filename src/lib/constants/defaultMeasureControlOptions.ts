@@ -207,5 +207,9 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 			'text-halo-width': 2,
 			'text-color': '#232E3D'
 		}
-	}
+	},
+	computeElevation: false,
+	distanceUnit: 'kilometers',
+	distancePrecision: 2,
+	areaPrecision: 2
 };

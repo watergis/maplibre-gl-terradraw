@@ -3,6 +3,7 @@ import type { ModeOptions } from './ModeOptions.js';
 import type { MeasureControlMode } from './MeasureControlMode.js';
 import type { TerraDrawExtend } from 'terra-draw';
 import type { DistanceUnit } from './DistanceUnit.js';
+import type { AreaUnit } from './AreaUnit.js';
 
 /**
  * MeasureControl Plugin control constructor options
@@ -57,6 +58,11 @@ export interface MeasureControlOptions {
 	 * The precision of distance value. It will be set different value dwhen distance unit is changed. Using setter to override the value if you want.
 	 */
 	distancePrecision?: number;
+
+	/**
+	 * The unit of area can be metric (m², ha, km²) or imperial (acre, mi²). Default is metric
+	 */
+	areaUnit?: AreaUnit;
 
 	/**
 	 * The precision of area value. Using setter to override the value if you want.

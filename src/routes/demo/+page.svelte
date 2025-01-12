@@ -10,7 +10,8 @@
 		MaplibreMeasureControl,
 		type MeasureControlMode,
 		type DistanceUnit,
-		getDistanceUnitName
+		getDistanceUnitName,
+		type AreaUnit
 	} from '$lib/index.js';
 	import '../../scss/maplibre-gl-terradraw.scss';
 	import type { PageData } from './$types.js';
@@ -39,6 +40,7 @@
 	let selectedFeature = $state('');
 	let distanceUnit: DistanceUnit = $state('kilometers');
 	let distancePrecision: number = $state(2);
+	let areaUnit: AreaUnit = $state('metric');
 	let areaPrecision: number = $state(2);
 
 	let drawControl: MaplibreTerradrawControl;
@@ -55,6 +57,14 @@
 		if (drawControl) {
 			if (isMeasure) {
 				(drawControl as MaplibreMeasureControl).distancePrecision = distancePrecision;
+			}
+		}
+	};
+
+	const handleAreaUnitChanged = () => {
+		if (drawControl) {
+			if (isMeasure) {
+				(drawControl as MaplibreMeasureControl).areaUnit = areaUnit;
 			}
 		}
 	};
@@ -161,7 +171,7 @@
 		<div class="overlay p-2 bg-gray-100 dark:bg-gray-800 text-black dark:text-white">
 			<Accordion autocollapse>
 				{#if isMeasure}
-					<AccordionItem open>
+					<AccordionItem>
 						{#snippet summary()}
 							<p>Distance unit</p>
 						{/snippet}
@@ -174,6 +184,23 @@
 										value={unit}
 										on:change={handleDistanceUnitChanged}
 										>{getDistanceUnitName(unit as DistanceUnit)}</RadioItem
+									>
+								{/each}
+							</RadioGroup>
+						{/snippet}
+					</AccordionItem>
+					<AccordionItem>
+						{#snippet summary()}
+							<p>Area unit</p>
+						{/snippet}
+						{#snippet content()}
+							<RadioGroup>
+								{#each ['metric', 'imperial'] as unit}
+									<RadioItem
+										bind:group={areaUnit}
+										name="justify"
+										value={unit}
+										on:change={handleAreaUnitChanged}>{unit}</RadioItem
 									>
 								{/each}
 							</RadioGroup>

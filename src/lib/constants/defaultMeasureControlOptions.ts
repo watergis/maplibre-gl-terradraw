@@ -211,5 +211,6 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 	computeElevation: false,
 	distanceUnit: 'kilometers',
 	distancePrecision: 2,
+	areaUnit: 'metric',
 	areaPrecision: 2
 };

@@ -11,17 +11,59 @@ import { distance } from '@turf/distance';
 import { area } from '@turf/area';
 import { centroid } from '@turf/centroid';
 import { defaultMeasureControlOptions } from '../constants/index.js';
-import type { MeasureControlOptions, TerradrawMode } from '../interfaces/index.js';
+import type { DistanceUnit, MeasureControlOptions, TerradrawMode } from '../interfaces/index.js';
 import type { GeoJSONStoreFeatures } from 'terra-draw';
+import { getDistanceUnitName } from '../helpers/index.js';
 
 /**
  * Maplibre GL Terra Draw Measure Control
  */
 export class MaplibreMeasureControl extends MaplibreTerradrawControl {
-	private lineLayerLabelSpec: SymbolLayerSpecification;
-	private lineLayerNodeSpec: CircleLayerSpecification;
-	private polygonLayerSpec: SymbolLayerSpecification;
-	private computeElevation: boolean;
+	private measureOptions: MeasureControlOptions;
+
+	/**
+	 * The unit of distance can be degrees, radians, miles, or kilometers (default 'kilometers')
+	 * The measuring result will be recalculated once new value is set
+	 */
+	get distanceUnit() {
+		return this.measureOptions.distanceUnit ?? 'kilometers';
+	}
+	set distanceUnit(value: DistanceUnit) {
+		const isSame = this.measureOptions.distanceUnit === value;
+		this.measureOptions.distanceUnit = value;
+
+		if (this.measureOptions.distanceUnit === 'degrees') {
+			this.distancePrecision = 6;
+		} else {
+			this.distancePrecision = 2;
+		}
+
+		if (!isSame) this.recalc();
+	}
+
+	/**
+	 * The precision of distance value. It will be set different value dwhen distance unit is changed. Using setter to override the value if you want.
+	 */
+	get distancePrecision() {
+		return this.measureOptions.distancePrecision ?? 2;
+	}
+	set distancePrecision(value: number) {
+		const isSame = this.measureOptions.distancePrecision === value;
+		this.measureOptions.distancePrecision = value;
+		if (!isSame) this.recalc();
+	}
+
+	/**
+	 * The precision of area value. Using setter to override the value if you want.
+	 */
+	get areaPrecision() {
+		return this.measureOptions.areaPrecision ?? 2;
+	}
+	set areaPrecision(value: number) {
+		const isSame = this.measureOptions.areaPrecision === value;
+		this.measureOptions.areaPrecision = value;
+		if (!isSame) this.recalc();
+	}
 
 	/**
 	 * Constructor
@@ -37,10 +79,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			open: measureOptions.open,
 			modeOptions: measureOptions.modeOptions
 		});
-		this.lineLayerLabelSpec = measureOptions.lineLayerLabelSpec as SymbolLayerSpecification;
-		this.lineLayerNodeSpec = measureOptions.lineLayerNodeSpec as CircleLayerSpecification;
-		this.polygonLayerSpec = measureOptions.polygonLayerSpec as SymbolLayerSpecification;
-		this.computeElevation = measureOptions.computeElevation ?? false;
+		this.measureOptions = measureOptions;
 	}
 
 	/**
@@ -115,21 +154,32 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 
 		if (lineModes && lineModes.length > 0) {
 			// add GeoJSON source for distance label
-			if (!this.map.getSource(this.lineLayerLabelSpec.source)) {
-				this.map.addSource(this.lineLayerLabelSpec.source, {
-					type: 'geojson',
-					data: { type: 'FeatureCollection', features: [] }
-				});
+			if (
+				!this.map.getSource(
+					(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source
+				)
+			) {
+				this.map.addSource(
+					(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source,
+					{
+						type: 'geojson',
+						data: { type: 'FeatureCollection', features: [] }
+					}
+				);
 			}
 
 			// add GeoJSON layer for distance label node appearance
-			if (!this.map.getLayer(this.lineLayerNodeSpec.id)) {
-				this.map.addLayer(this.lineLayerNodeSpec);
+			if (
+				!this.map.getLayer((this.measureOptions.lineLayerNodeSpec as CircleLayerSpecification).id)
+			) {
+				this.map.addLayer(this.measureOptions.lineLayerNodeSpec as CircleLayerSpecification);
 			}
 
 			// add GeoJSON layer for distance label appearance
-			if (!this.map.getLayer(this.lineLayerLabelSpec.id)) {
-				this.map.addLayer(this.lineLayerLabelSpec);
+			if (
+				!this.map.getLayer((this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).id)
+			) {
+				this.map.addLayer(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification);
 			}
 		}
 
@@ -146,14 +196,23 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		);
 		if (polygonModes && polygonModes.length > 0) {
 			// add GeoJSON source for distance label
-			if (!this.map.getSource(this.polygonLayerSpec.source)) {
-				this.map.addSource(this.polygonLayerSpec.source, {
-					type: 'geojson',
-					data: { type: 'FeatureCollection', features: [] }
-				});
+			if (
+				!this.map.getSource(
+					(this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).source
+				)
+			) {
+				this.map.addSource(
+					(this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).source,
+					{
+						type: 'geojson',
+						data: { type: 'FeatureCollection', features: [] }
+					}
+				);
 			} // add GeoJSON layer for polygon area label appearance
-			if (!this.map.getLayer(this.polygonLayerSpec.id)) {
-				this.map.addLayer(this.polygonLayerSpec);
+			if (
+				!this.map.getLayer((this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).id)
+			) {
+				this.map.addLayer(this.measureOptions.polygonLayerSpec as SymbolLayerSpecification);
 			}
 		}
 
@@ -193,9 +252,18 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				}
 			} else {
 				// if editing ID does not exist, delete all related features from measure layers
-				this.clearMeasureFeatures(id, this.lineLayerNodeSpec.source);
-				this.clearMeasureFeatures(id, this.lineLayerLabelSpec.source);
-				this.clearMeasureFeatures(id, this.polygonLayerSpec.source);
+				this.clearMeasureFeatures(
+					id,
+					(this.measureOptions.lineLayerNodeSpec as CircleLayerSpecification).source
+				);
+				this.clearMeasureFeatures(
+					id,
+					(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source
+				);
+				this.clearMeasureFeatures(
+					id,
+					(this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).source
+				);
 			}
 		}
 	}
@@ -206,20 +274,32 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	private unregisterMesureControl() {
 		this.off('feature-deleted', this.onFeatureDeleted.bind(this));
 		if (!this.map) return;
-		if (this.map.getLayer(this.lineLayerLabelSpec.id)) {
-			this.map.removeLayer(this.lineLayerLabelSpec.id);
+		if (
+			this.map.getLayer((this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).id)
+		) {
+			this.map.removeLayer((this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).id);
 		}
-		if (this.map.getLayer(this.lineLayerNodeSpec.id)) {
-			this.map.removeLayer(this.lineLayerNodeSpec.id);
+		if (this.map.getLayer((this.measureOptions.lineLayerNodeSpec as CircleLayerSpecification).id)) {
+			this.map.removeLayer((this.measureOptions.lineLayerNodeSpec as CircleLayerSpecification).id);
 		}
-		if (this.map.getLayer(this.polygonLayerSpec.id)) {
-			this.map.removeLayer(this.polygonLayerSpec.id);
+		if (this.map.getLayer((this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).id)) {
+			this.map.removeLayer((this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).id);
 		}
-		if (this.map.getSource(this.lineLayerLabelSpec.source)) {
-			this.map.removeSource(this.lineLayerLabelSpec.source);
+		if (
+			this.map.getSource(
+				(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source
+			)
+		) {
+			this.map.removeSource(
+				(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source
+			);
 		}
-		if (this.map.getSource(this.polygonLayerSpec.source)) {
-			this.map.removeSource(this.polygonLayerSpec.source);
+		if (
+			this.map.getSource((this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).source)
+		) {
+			this.map.removeSource(
+				(this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).source
+			);
 		}
 	}
 
@@ -271,7 +351,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			outputUnit = 'km2';
 		}
 
-		outputArea = parseFloat(outputArea.toFixed(2));
+		outputArea = parseFloat(outputArea.toFixed(this.areaPrecision));
 
 		feature.properties.area = outputArea;
 		feature.properties.unit = outputUnit;
@@ -295,7 +375,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		for (let i = 0; i < coordinates.length - 1; i++) {
 			const start = coordinates[i];
 			const end = coordinates[i + 1];
-			const result = distance(start, end, { units: 'kilometers' });
+			const result = distance(start, end, { units: this.distanceUnit });
 			totalDistance += result;
 
 			// segment
@@ -303,11 +383,11 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			segment.id = `${segment.id}-${i}`;
 			segment.geometry.coordinates = [start, end];
 			segment.properties.originalId = feature.id;
-			segment.properties.distance = parseFloat(result.toFixed(2));
-			segment.properties.total = parseFloat(totalDistance.toFixed(2));
-			segment.properties.unit = 'km';
+			segment.properties.distance = parseFloat(result.toFixed(this.distancePrecision));
+			segment.properties.total = parseFloat(totalDistance.toFixed(this.distancePrecision));
+			segment.properties.unit = getDistanceUnitName(this.distanceUnit);
 
-			if (this.computeElevation === true) {
+			if (this.measureOptions.computeElevation === true) {
 				const elevation_start = this.map?.queryTerrainElevation(start as LngLatLike);
 				if (elevation_start) {
 					segment.properties.elevation_start = elevation_start;
@@ -342,7 +422,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		let feature = snapshot?.find((f) => f.id === id && f.geometry.type === 'Polygon');
 		if (feature) {
 			const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
-				this.polygonLayerSpec.source
+				(this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).source
 			] as GeoJSONSourceSpecification;
 			if (geojsonSource) {
 				// delete old nodes
@@ -371,17 +451,27 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					geojsonSource.data.features.push(point);
 				}
 				// update GeoJSON source with new data
-				(this.map.getSource(this.polygonLayerSpec.source) as GeoJSONSource)?.setData(
-					geojsonSource.data
-				);
+				(
+					this.map.getSource(
+						(this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).source
+					) as GeoJSONSource
+				)?.setData(geojsonSource.data);
 
-				this.map.moveLayer(this.polygonLayerSpec.id);
+				this.map.moveLayer((this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).id);
 
-				if (this.map.getLayer(this.lineLayerLabelSpec.id)) {
-					this.map.moveLayer(this.lineLayerLabelSpec.id);
+				if (
+					this.map.getLayer((this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).id)
+				) {
+					this.map.moveLayer(
+						(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).id
+					);
 				}
-				if (this.map.getLayer(this.lineLayerNodeSpec.id)) {
-					this.map.moveLayer(this.lineLayerNodeSpec.id);
+				if (
+					this.map.getLayer((this.measureOptions.lineLayerNodeSpec as CircleLayerSpecification).id)
+				) {
+					this.map.moveLayer(
+						(this.measureOptions.lineLayerNodeSpec as CircleLayerSpecification).id
+					);
 				}
 			}
 		}
@@ -400,7 +490,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		let feature = snapshot?.find((f) => f.id === id && f.geometry.type === 'LineString');
 		if (feature) {
 			const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
-				this.lineLayerLabelSpec.source
+				(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source
 			] as GeoJSONSourceSpecification;
 			if (geojsonSource) {
 				// delete old nodes
@@ -471,16 +561,20 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				}
 
 				// update GeoJSON source with new data
-				(this.map.getSource(this.lineLayerLabelSpec.source) as GeoJSONSource)?.setData(
-					geojsonSource.data
-				);
+				(
+					this.map.getSource(
+						(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source
+					) as GeoJSONSource
+				)?.setData(geojsonSource.data);
 
-				if (this.map.getLayer(this.polygonLayerSpec.id)) {
-					this.map.moveLayer(this.polygonLayerSpec.id);
+				if (
+					this.map.getLayer((this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).id)
+				) {
+					this.map.moveLayer((this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).id);
 				}
 
-				this.map.moveLayer(this.lineLayerLabelSpec.id);
-				this.map.moveLayer(this.lineLayerNodeSpec.id);
+				this.map.moveLayer((this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).id);
+				this.map.moveLayer((this.measureOptions.lineLayerNodeSpec as CircleLayerSpecification).id);
 			}
 		}
 	}
@@ -492,7 +586,10 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		if (!this.map) return;
 		const drawInstance = this.getTerraDrawInstance();
 		if (drawInstance) {
-			const sourceIds = [this.lineLayerLabelSpec.source, this.polygonLayerSpec.source];
+			const sourceIds = [
+				(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source,
+				(this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).source
+			];
 			for (const src of sourceIds) {
 				const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
 					src
@@ -513,22 +610,46 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 							ids.includes(f.properties?.originalId)
 						);
 					}
-					if (src === this.lineLayerLabelSpec.source) {
-						(this.map.getSource(this.lineLayerLabelSpec.source) as GeoJSONSource)?.setData(
-							geojsonSource.data
-						);
-						if (this.map.getLayer(this.lineLayerNodeSpec.id)) {
-							this.map.moveLayer(this.lineLayerNodeSpec.id);
+					if (src === (this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source) {
+						(
+							this.map.getSource(
+								(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source
+							) as GeoJSONSource
+						)?.setData(geojsonSource.data);
+						if (
+							this.map.getLayer(
+								(this.measureOptions.lineLayerNodeSpec as CircleLayerSpecification).id
+							)
+						) {
+							this.map.moveLayer(
+								(this.measureOptions.lineLayerNodeSpec as CircleLayerSpecification).id
+							);
 						}
-						if (this.map.getLayer(this.lineLayerLabelSpec.id)) {
-							this.map.moveLayer(this.lineLayerLabelSpec.id);
+						if (
+							this.map.getLayer(
+								(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).id
+							)
+						) {
+							this.map.moveLayer(
+								(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).id
+							);
 						}
-					} else if (src === this.polygonLayerSpec.source) {
-						(this.map.getSource(this.polygonLayerSpec.source) as GeoJSONSource)?.setData(
-							geojsonSource.data
-						);
-						if (this.map.getLayer(this.polygonLayerSpec.id)) {
-							this.map.moveLayer(this.polygonLayerSpec.id);
+					} else if (
+						src === (this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).source
+					) {
+						(
+							this.map.getSource(
+								(this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).source
+							) as GeoJSONSource
+						)?.setData(geojsonSource.data);
+						if (
+							this.map.getLayer(
+								(this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).id
+							)
+						) {
+							this.map.moveLayer(
+								(this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).id
+							);
 						}
 					}
 				}

@@ -5,3 +5,4 @@ export * from './MeasureControlOptions.js';
 export * from './ModeOptions.js';
 export * from './TerradrawMode.js';
 export * from './TerradrawModeClass.js';
+export * from './DistanceUnit.js';

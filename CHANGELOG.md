@@ -1,5 +1,13 @@
 # @watergis/maplibre-gl-terradraw
 
+## 0.8.4
+
+### Patch Changes
+
+- c561a3d: fix: add distanceUnit, distancePrecision and areaPrecision properties to able to change measure unit and precision value in MeasureControl.
+- 4e4f037: chore: updated dependencies.
+- d8b3ca2: feat: add areaUnit property to switch unit in area either metric or imperial.
+
 ## 0.8.3
 
 ### Patch Changes

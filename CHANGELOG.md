@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 0.8.5
+
+### Patch Changes
+
+- 4ade13a: refactor: moved getDistanceUnitName to MeasureControl class
+
 ## 0.8.4
 
 ### Patch Changes

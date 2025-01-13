@@ -10,7 +10,6 @@
 		MaplibreMeasureControl,
 		type MeasureControlMode,
 		type DistanceUnit,
-		getDistanceUnitName,
 		type AreaUnit
 	} from '$lib/index.js';
 	import '../../scss/maplibre-gl-terradraw.scss';
@@ -183,8 +182,17 @@
 										name="justify"
 										value={unit}
 										on:change={handleDistanceUnitChanged}
-										>{getDistanceUnitName(unit as DistanceUnit)}</RadioItem
 									>
+										{#if unit === 'miles'}
+											{'mi'}
+										{:else if unit === 'degrees'}
+											{'°'}
+										{:else if unit === 'radians'}
+											{'rad'}
+										{:else}
+											{'km'}
+										{/if}
+									</RadioItem>
 								{/each}
 							</RadioGroup>
 						{/snippet}

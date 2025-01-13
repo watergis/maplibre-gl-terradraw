@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.0.0
+
+### Major Changes
+
+- 323da77: feat: upgrade TerraDraw tp v1.0.0 from beta. Drop support of maplibre v2 and v3 since it is no longer supported by TerraDraw.
+
 ## 0.8.5
 
 ### Patch Changes

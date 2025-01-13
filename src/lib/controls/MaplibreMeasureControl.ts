@@ -18,7 +18,6 @@ import type {
 	TerradrawMode
 } from '../interfaces/index.js';
 import type { GeoJSONStoreFeatures } from 'terra-draw';
-import { getDistanceUnitName } from '../helpers/index.js';
 
 /**
  * Maplibre GL Terra Draw Measure Control
@@ -397,6 +396,23 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	}
 
 	/**
+	 * Get the equivalent unit name for displaying
+	 * @param distanceUnit distance unit
+	 * @returns Unit name for displaying
+	 */
+	private getDistanceUnitName(distanceUnit: DistanceUnit) {
+		if (distanceUnit === 'degrees') {
+			return '°';
+		} else if (distanceUnit === 'miles') {
+			return 'mi';
+		} else if (distanceUnit === 'radians') {
+			return 'rad';
+		} else {
+			return 'km';
+		}
+	}
+
+	/**
 	 * Caclulate distance for each segment on a given feature
 	 * @param feature LineString GeoJSON feature
 	 * @returns The returning feature will contain `segments`, `distance`, `unit` properties. `segments` will have multiple point features.
@@ -422,7 +438,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			segment.properties.originalId = feature.id;
 			segment.properties.distance = parseFloat(result.toFixed(this.distancePrecision));
 			segment.properties.total = parseFloat(totalDistance.toFixed(this.distancePrecision));
-			segment.properties.unit = getDistanceUnitName(this.distanceUnit);
+			segment.properties.unit = this.getDistanceUnitName(this.distanceUnit);
 
 			if (this.measureOptions.computeElevation === true) {
 				const elevation_start = this.map?.queryTerrainElevation(start as LngLatLike);

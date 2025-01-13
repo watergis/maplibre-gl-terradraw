@@ -1,10 +1,6 @@
 import type { ControlPosition, IControl, Map } from 'maplibre-gl';
-import {
-	type GeoJSONStoreFeatures,
-	TerraDraw,
-	TerraDrawMapLibreGLAdapter,
-	TerraDrawRenderMode
-} from 'terra-draw';
+import { type GeoJSONStoreFeatures, TerraDraw, TerraDrawRenderMode } from 'terra-draw';
+import { TerraDrawMapLibreGLAdapter } from 'terra-draw-maplibre-gl-adapter';
 import type {
 	TerradrawControlOptions,
 	EventType,

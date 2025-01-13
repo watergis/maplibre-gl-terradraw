@@ -82,7 +82,7 @@ importers:
         version: 1.10.3
       maplibre-gl:
         specifier: ^5.0.0
-        version: 5.0.0
+        version: 5.0.1
       postcss:
         specifier: ^8.4.49
         version: 8.4.49
@@ -469,8 +469,8 @@ packages:
     resolution: {integrity: sha512-Es6WcD0nO5l+2BOQS4uLfNPYQaNDfbot3X1XUoloz+x0mPDS3eeORZJl06HXjwBG1fOGwCRnzK88LMdxKRrd6Q==}
     engines: {node: '>=6.0.0'}
 
-  '@maplibre/maplibre-gl-style-spec@22.0.1':
-    resolution: {integrity: sha512-V7bSw7Ui6+NhpeeuYqGoqamvKuy+3+uCvQ/t4ZJkwN8cx527CAlQQQ2kp+w5R9q+Tw6bUAH+fsq+mPEkicgT8g==}
+  '@maplibre/maplibre-gl-style-spec@23.0.0':
+    resolution: {integrity: sha512-Q3L4TTs/cAuebQolBrDvfoLj3f/9C+wo2qiup9paye+e77IXoAAoZnR+2M/qEiZWAPfPZWuARLx81a5PN5LTUw==}
     hasBin: true
 
   '@nodelib/fs.scandir@2.1.5':
@@ -1648,8 +1648,8 @@ packages:
   magic-string@0.30.17:
     resolution: {integrity: sha512-sNPKHvyjVf7gyjwS4xGTaW/mCnF8wnjtifKBEhxfZ7E/S8tQ0rssrwGNn6q8JH/ohItJfSQp9mBtQYuTlH5QnA==}
 
-  maplibre-gl@5.0.0:
-    resolution: {integrity: sha512-WG8IYFK2gfJYXvWjlqg1yavo/YO/JlNkblAJMt19sjIafP5oJzTgXFiOLUIYkjtrv5pKiAWuSYsx4CD3ithJqw==}
+  maplibre-gl@5.0.1:
+    resolution: {integrity: sha512-kNvod1Tq0BcZvn43UAciA3DrzaEGmowqMoI6nh3kUo9rf+7m89mFJI9dELxkWzJ/N9Pgnkp7xF1jzTP08PGpCw==}
     engines: {node: '>=16.14.0', npm: '>=8.1.0'}
 
   markdown-it@14.1.0:
@@ -2931,7 +2931,7 @@ snapshots:
 
   '@mapbox/whoots-js@3.1.0': {}
 
-  '@maplibre/maplibre-gl-style-spec@22.0.1':
+  '@maplibre/maplibre-gl-style-spec@23.0.0':
     dependencies:
       '@mapbox/jsonlint-lines-primitives': 2.0.2
       '@mapbox/unitbezier': 0.0.1
@@ -4098,7 +4098,7 @@ snapshots:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.0
 
-  maplibre-gl@5.0.0:
+  maplibre-gl@5.0.1:
     dependencies:
       '@mapbox/geojson-rewind': 0.5.2
       '@mapbox/jsonlint-lines-primitives': 2.0.2
@@ -4107,7 +4107,7 @@ snapshots:
       '@mapbox/unitbezier': 0.0.1
       '@mapbox/vector-tile': 1.3.1
       '@mapbox/whoots-js': 3.1.0
-      '@maplibre/maplibre-gl-style-spec': 22.0.1
+      '@maplibre/maplibre-gl-style-spec': 23.0.0
       '@types/geojson': 7946.0.15
       '@types/geojson-vt': 3.2.5
       '@types/mapbox__point-geometry': 0.1.4

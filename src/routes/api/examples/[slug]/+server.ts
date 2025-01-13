@@ -17,7 +17,7 @@ export const GET: RequestHandler = async ({ params, fetch, url }) => {
 	if (url.hostname === 'localhost') {
 		// if localhost, use CDN file from local, otherwise use from jsdelivr
 		html = html.replace(
-			/https:\/\/cdn.jsdelivr.net\/npm\/@watergis\/maplibre-gl-terradraw@latest\//g,
+			/https:\/\/cdn\.jsdelivr\.net\/npm\/@watergis\/maplibre-gl-terradraw@latest\//g,
 			'../../../'
 		);
 	} else {

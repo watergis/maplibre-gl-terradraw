@@ -1,6 +1,6 @@
-import type { PageServerLoad } from './$types.js';
+import type { PageLoad } from './$types.js';
 
-export const load: PageServerLoad = async () => {
+export const load: PageLoad = async () => {
 	return {
 		title: 'MaplibreGL TerraDraw docs API',
 		description: 'Playground maplibre-gl-terradraw',

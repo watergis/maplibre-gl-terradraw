@@ -4,7 +4,7 @@ import { defineConfig } from 'vite';
 export default defineConfig({
 	plugins: [sveltekit()],
 	ssr: {
-		noExternal: ['maplibre-gl', 'swagger-ui-dist']
+		noExternal: ['maplibre-gl']
 	},
 	server: {
 		fs: {
@@ -17,9 +17,5 @@ export default defineConfig({
 				api: 'modern-compiler'
 			}
 		}
-	},
-	esbuild: {
-		platform: 'node',
-		exclude: ['path', 'tty', 'util', 'os']
 	}
 });

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { SwaggerUIBundle } from 'swagger-ui-dist';
 	import 'swagger-ui-dist/swagger-ui.css';
 	import type { PageData } from './$types.js';
 	import { onMount } from 'svelte';
@@ -13,8 +12,9 @@
 
 	let swaggerDiv: HTMLDivElement | undefined = $state();
 
-	onMount(() => {
+	onMount(async () => {
 		if (swaggerDiv) {
+			const { SwaggerUIBundle } = await import('swagger-ui-dist');
 			SwaggerUIBundle({
 				url: data.openapiJson,
 				domNode: swaggerDiv,

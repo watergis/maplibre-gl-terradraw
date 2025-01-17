@@ -1,5 +1,4 @@
 import { sveltekit } from '@sveltejs/kit/vite';
-import { resolve } from 'path';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
@@ -17,11 +16,6 @@ export default defineConfig({
 			scss: {
 				api: 'modern-compiler'
 			}
-		}
-	},
-	resolve: {
-		alias: {
-			$api: resolve('./src/api')
 		}
 	}
 });

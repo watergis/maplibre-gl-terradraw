@@ -4,7 +4,7 @@ import { defineConfig } from 'vite';
 export default defineConfig({
 	plugins: [sveltekit()],
 	ssr: {
-		noExternal: 'maplibre-gl'
+		noExternal: ['maplibre-gl', 'swagger-ui-dist']
 	},
 	server: {
 		fs: {

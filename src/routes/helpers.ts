@@ -1,3 +1,13 @@
+export const ExampleIds = [
+	'measure-control',
+	'add-geojson',
+	'select-event',
+	'drawing-option',
+	'coordinate-precision',
+	'custom-icon',
+	'query-elevation'
+];
+
 export const getTitle = (body: string) => {
 	const match = body.match(/<title>([^<]*)<\/title>/);
 	if (!match || typeof match[1] !== 'string') return '';

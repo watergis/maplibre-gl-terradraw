@@ -1,6 +1,6 @@
 import { error, z, type RouteModifier } from 'sveltekit-api';
 import { type RequestEvent } from '@sveltejs/kit';
-import { ExampleIds, getPackageInfo } from '../../../routes/helpers.js';
+import { ExampleIds, getPackageInfo } from '../../helpers.js';
 
 export const Output = z.string().describe('HTML documentation for an example');
 

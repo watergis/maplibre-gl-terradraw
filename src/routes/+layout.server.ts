@@ -1,4 +1,4 @@
-import { ExampleIds, getDescription, getPackageInfo, getTitle } from './helpers.js';
+import { ExampleIds, getDescription, getPackageInfo, getTitle } from '$api/helpers.js';
 import type { LayoutServerLoad } from './$types.js';
 
 export const load: LayoutServerLoad = async ({ fetch }) => {

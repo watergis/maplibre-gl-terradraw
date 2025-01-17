@@ -17,5 +17,9 @@ export default defineConfig({
 				api: 'modern-compiler'
 			}
 		}
+	},
+	esbuild: {
+		platform: 'node',
+		exclude: ['path', 'tty', 'util', 'os']
 	}
 });

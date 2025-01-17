@@ -3,6 +3,7 @@
 	import { SwaggerUIBundle } from 'swagger-ui-dist';
 	import 'swagger-ui-dist/swagger-ui.css';
 	import type { PageData } from './$types.js';
+	import { onMount } from 'svelte';
 
 	interface Props {
 		data: PageData;
@@ -12,7 +13,7 @@
 
 	let swaggerDiv: HTMLDivElement | undefined = $state();
 
-	$effect(() => {
+	onMount(() => {
 		if (swaggerDiv) {
 			SwaggerUIBundle({
 				url: data.openapiJson,

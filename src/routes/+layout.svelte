@@ -23,13 +23,8 @@
 	hljs.registerLanguage('shell', shell);
 	storeHighlightJs.set(hljs);
 
-	// Floating UI for Popups
-	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
-	import { storePopup } from '@skeletonlabs/skeleton';
 	import type { PageData } from './$types.js';
 	import { page } from '$app/state';
-
-	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
 	let year = new Date().getFullYear();
 

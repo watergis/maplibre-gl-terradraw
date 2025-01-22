@@ -1,20 +1,11 @@
-import { getDescription, getPackageInfo, getTitle } from './helpers.js';
+import { exampleIds, getDescription, getPackageInfo, getTitle } from './helpers.js';
 import type { LayoutServerLoad } from './$types.js';
 
 export const load: LayoutServerLoad = async ({ fetch }) => {
 	const packageInfo = await getPackageInfo();
 
-	const items = [
-		'measure-control',
-		'add-geojson',
-		'select-event',
-		'drawing-option',
-		'coordinate-precision',
-		'custom-icon',
-		'query-elevation'
-	];
 	const examples = [];
-	for (const item of items) {
+	for (const item of exampleIds) {
 		const res = await fetch(`/api/examples/${item}`);
 		if (!res.ok) continue;
 		const html = await res.text();

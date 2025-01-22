@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>Customising drawing style</title>
+		<meta
+			property="og:description"
+			content="The plugin use default color styling provided by TerraDraw. This example shows you how to customise drawing style."
+		/>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
+		<script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+			}
+			html,
+			body,
+			#map {
+				height: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<script src="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.umd.js"></script>
+		<script src="https://unpkg.com/terra-draw@1.0.0-beta.0/dist/terra-draw.umd.js"></script>
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.css"
+		/>
+		<div id="map"></div>
+
+		<script>
+			const map = new maplibregl.Map({
+				container: 'map',
+				style: 'https://demotiles.maplibre.org/style.json',
+				center: [0, 0],
+				zoom: 1,
+				maxPitch: 85
+			});
+
+			const drawControl = new MaplibreTerradrawControl.MaplibreTerradrawControl({
+				modes: ['point', 'linestring', 'polygon', 'delete'],
+				open: true,
+				// change drawing style to red
+				// see this official guide how to customise style.
+				// https://github.com/JamesLMilner/terra-draw/blob/main/guides/5.STYLING.md
+				modeOptions: {
+					point: new terraDraw.TerraDrawPointMode({
+						styles: {
+							pointColor: '#FF0000',
+							pointWidth: 3,
+							pointOutlineColor: '#FF0000',
+							pointOutlineWidth: 1
+						}
+					}),
+					linestring: new terraDraw.TerraDrawLineStringMode({
+						styles: {
+							lineStringColor: '#FF0000',
+							lineStringWidth: 2,
+							closingPointColor: '#FFFFFF',
+							closingPointWidth: 3,
+							closingPointOutlineColor: '#FF0000',
+							closingPointOutlineWidth: 1
+						}
+					}),
+					polygon: new terraDraw.TerraDrawPolygonMode({
+						styles: {
+							fillColor: '#F5AEAE',
+							fillOpacity: 0.7,
+							outlineColor: '#FF0000',
+							outlineWidth: 2,
+							closingPointColor: '#FAFAFA',
+							closingPointWidth: 3,
+							closingPointOutlineColor: '#FF0000',
+							closingPointOutlineWidth: 1
+						}
+					}),
+				}
+			});
+			map.addControl(drawControl, 'top-left');
+		</script>
+	</body>
+</html>

@@ -75,7 +75,7 @@
 		"sass-embedded": "^1.83.4",
 		"svelte": "^5.19.1",
 		"svelte-check": "^4.1.4",
-		"tailwindcss": "^3.4.17",
+		"tailwindcss": "^4.0.0",
 		"terra-draw": "^1.0.0",
 		"terra-draw-maplibre-gl-adapter": "^1.0.1",
 		"typedoc": "^0.27.6",

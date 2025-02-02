@@ -23,7 +23,7 @@
 	hljs.registerLanguage('shell', shell);
 	storeHighlightJs.set(hljs);
 
-	import type { PageData } from './$types.js';
+	import type { PageData } from './$types';
 	import { page } from '$app/state';
 
 	let year = new Date().getFullYear();

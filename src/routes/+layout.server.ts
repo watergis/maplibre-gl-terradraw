@@ -1,5 +1,5 @@
-import { exampleIds, getDescription, getPackageInfo, getTitle } from './helpers.js';
-import type { LayoutServerLoad } from './$types.js';
+import { exampleIds, getDescription, getPackageInfo, getTitle } from './helpers';
+import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async ({ fetch }) => {
 	const packageInfo = await getPackageInfo();

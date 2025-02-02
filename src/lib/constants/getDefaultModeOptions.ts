@@ -1,5 +1,5 @@
 import type { MapGeoJSONFeature } from 'maplibre-gl';
-import type { ModeOptions } from '../interfaces/ModeOptions.js';
+import type { ModeOptions } from '../interfaces/ModeOptions';
 import {
 	TerraDrawAngledRectangleMode,
 	TerraDrawCircleMode,

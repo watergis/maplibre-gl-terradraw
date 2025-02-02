@@ -6,8 +6,8 @@ import type {
 	EventType,
 	TerradrawMode,
 	TerradrawModeClass
-} from '../interfaces/index.js';
-import { defaultControlOptions, getDefaultModeOptions } from '../constants/index.js';
+} from '../interfaces';
+import { defaultControlOptions, getDefaultModeOptions } from '../constants';
 
 /**
  * Maplibre GL Terra Draw Control
@@ -322,7 +322,7 @@ export class MaplibreTerradrawControl implements IControl {
 						// if feature is selected, delete only selected feature
 						const currentMode = this.terradraw.getMode();
 						this.terradraw.setMode(this.defaultMode);
-						const ids = selected.map((f) => f.id);
+						const ids = selected.map((f) => f.id) as [string | number];
 						this.terradraw.removeFeatures(ids);
 						this.terradraw.setMode(currentMode);
 						this.dispatchEvent('feature-deleted');

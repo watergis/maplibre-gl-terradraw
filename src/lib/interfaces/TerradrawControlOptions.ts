@@ -1,6 +1,8 @@
-import type { ModeOptions } from './ModeOptions.js';
-import type { TerradrawMode } from './TerradrawMode.js';
-import type { TerraDrawExtend } from 'terra-draw';
+import type { ModeOptions } from './ModeOptions';
+import type { TerradrawMode } from './TerradrawMode';
+import { TerraDrawExtend } from 'terra-draw';
+
+type BaseAdapterConfig = TerraDrawExtend.BaseAdapterConfig;
 
 /**
  * Terradraw Control Plugin control constructor options
@@ -29,5 +31,5 @@ export interface TerradrawControlOptions {
 	 * TerraDrawMaplibreGLAdapter options. Please refer the default adapter settings (BaseAdapterConfig) at the below TerraDraw code.
 	 * https://github.com/JamesLMilner/terra-draw/blob/806e319d5680a3f69edeff7dd629da3f1b4ff9bf/src/adapters/common/base.adapter.ts#L28-L48
 	 */
-	adapterOptions?: TerraDrawExtend.BaseAdapterConfig;
+	adapterOptions?: BaseAdapterConfig;
 }

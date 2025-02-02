@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { CodeBlock } from '@skeletonlabs/skeleton';
-	import type { PageData } from './$types.js';
+	import type { PageData } from './$types';
 	import { afterNavigate } from '$app/navigation';
 
 	type Props = {

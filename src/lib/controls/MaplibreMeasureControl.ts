@@ -6,17 +6,12 @@ import type {
 	Map,
 	SymbolLayerSpecification
 } from 'maplibre-gl';
-import { MaplibreTerradrawControl } from './MaplibreTerradrawControl.js';
+import { MaplibreTerradrawControl } from './MaplibreTerradrawControl';
 import { distance } from '@turf/distance';
 import { area } from '@turf/area';
 import { centroid } from '@turf/centroid';
-import { defaultMeasureControlOptions } from '../constants/index.js';
-import type {
-	AreaUnit,
-	DistanceUnit,
-	MeasureControlOptions,
-	TerradrawMode
-} from '../interfaces/index.js';
+import { defaultMeasureControlOptions } from '../constants';
+import type { AreaUnit, DistanceUnit, MeasureControlOptions, TerradrawMode } from '../interfaces';
 import type { GeoJSONStoreFeatures } from 'terra-draw';
 
 /**
@@ -237,6 +232,8 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			const drawInstance = this.getTerraDrawInstance();
 			if (drawInstance) {
 				// subscribe change event of TerraDraw to calc distance
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
 				drawInstance.on('change', this.handleTerradrawFeatureChanged.bind(this));
 
 				// subscribe feature-deleted event for the plugin control
@@ -249,7 +246,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * Handle change event of TerraDraw
 	 * @param ids Feature IDs
 	 */
-	private handleTerradrawFeatureChanged(ids: string[]) {
+	private handleTerradrawFeatureChanged(ids: [string | number]) {
 		if (!this.map) return;
 		const drawInstance = this.getTerraDrawInstance();
 		if (!drawInstance) return;
@@ -326,7 +323,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * @param sourceId source ID to delete
 	 * @returns void
 	 */
-	private clearMeasureFeatures(id: string, sourceId: string) {
+	private clearMeasureFeatures(id: string | number, sourceId: string) {
 		if (!this.map) return;
 		const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
 			sourceId
@@ -466,7 +463,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * measure polygon area for given feature ID
 	 * @param id terradraw feature id
 	 */
-	private measurePolygon(id: string) {
+	private measurePolygon(id: string | number) {
 		if (!this.map) return;
 		const drawInstance = this.getTerraDrawInstance();
 		if (!drawInstance) return;
@@ -534,7 +531,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * measure line distance for given feature ID
 	 * @param id terradraw feature id
 	 */
-	private measureLine(id: string) {
+	private measureLine(id: string | number) {
 		if (!this.map) return;
 		const drawInstance = this.getTerraDrawInstance();
 		if (!drawInstance) return;

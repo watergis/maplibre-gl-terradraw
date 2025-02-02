@@ -1,4 +1,4 @@
-import type { TerradrawModeClass } from './TerradrawModeClass.js';
+import type { TerradrawModeClass } from './TerradrawModeClass';
 
 /**
  * Map for between mode name and TerraDraw mode class instance

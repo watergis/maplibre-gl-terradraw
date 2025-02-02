@@ -8,7 +8,7 @@ import {
 	TerraDrawSectorMode,
 	TerraDrawSensorMode
 } from 'terra-draw';
-import type { MeasureControlOptions } from '../interfaces/MeasureControlOptions.js';
+import type { MeasureControlOptions } from '../interfaces/MeasureControlOptions';
 
 /**
  * Default MeasureControl options

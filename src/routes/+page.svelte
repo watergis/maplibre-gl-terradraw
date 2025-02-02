@@ -8,9 +8,9 @@
 		TabGroup,
 		SlideToggle
 	} from '@skeletonlabs/skeleton';
-	import type { PageData } from './$types.js';
+	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
-	import { AvailableMeasureModes, AvailableModes } from '$lib/index.js';
+	import { AvailableMeasureModes, AvailableModes } from '$lib';
 
 	interface Props {
 		data: PageData;

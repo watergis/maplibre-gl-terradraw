@@ -1,2 +1,2 @@
-export * from './MaplibreTerradrawControl.js';
-export * from './MaplibreMeasureControl.js';
+export * from './MaplibreTerradrawControl';
+export * from './MaplibreMeasureControl';

@@ -24,6 +24,7 @@
 	} from '@skeletonlabs/skeleton';
 	import { page } from '$app/state';
 	import { untrack } from 'svelte';
+	import type { GeoJSONStoreFeatures } from 'terra-draw';
 
 	interface Props {
 		data: PageData;
@@ -133,7 +134,7 @@
 			}
 
 			const drawInstance = drawControl.getTerraDrawInstance();
-			drawInstance?.on('select', (id: string) => {
+			drawInstance?.on('select', (id: string | number) => {
 				const snapshot = drawInstance.getSnapshot();
 				const feature = snapshot?.find((feature) => feature.id === id);
 				selectedFeature = JSON.stringify(feature, null, 4);
@@ -150,7 +151,7 @@
 			map.once('load', () => {
 				const initData = data.geojson.filter((f) =>
 					(terradrawModes as string[]).includes(f.properties.mode)
-				);
+				) as GeoJSONStoreFeatures[];
 				if (initData.length > 0) {
 					drawInstance?.addFeatures(initData);
 

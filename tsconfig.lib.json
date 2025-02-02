@@ -9,7 +9,7 @@
 		"experimentalDecorators": true,
 		"lib": ["dom", "ESNext"],
 		"module": "ESNext",
-		"moduleResolution": "node",
+		"moduleResolution": "bundler",
 		"outDir": "./dist",
 		"preserveConstEnums": true,
 		"removeComments": true,

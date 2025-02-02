@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.0.1
+
+### Patch Changes
+
+- 2fd9f81: fix: changed moduleResolution to bundler for typescript.
+
 ## 1.0.0
 
 ### Major Changes

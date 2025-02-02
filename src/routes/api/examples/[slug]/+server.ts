@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
-import type { RequestHandler } from './$types.js';
-import { getPackageInfo } from '../../../helpers.js';
+import type { RequestHandler } from './$types';
+import { getPackageInfo } from '../../../helpers';
 
 export const GET: RequestHandler = async ({ params, fetch, url }) => {
 	const slug = params.slug;

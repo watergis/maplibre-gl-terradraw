@@ -1,4 +1,4 @@
-import { AvailableModes } from '../constants/AvailableModes.js';
+import { AvailableModes } from '../constants/AvailableModes';
 
 /**
  * Terra Draw drawing mode

@@ -1,4 +1,4 @@
-import type { AvailableMeasureModes } from '../constants/AvailableMeasureModes.js';
+import type { AvailableMeasureModes } from '../constants/AvailableMeasureModes';
 
 /**
  * Terra Draw Measure control mode

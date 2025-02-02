@@ -6,17 +6,12 @@ import type {
 	Map,
 	SymbolLayerSpecification
 } from 'maplibre-gl';
-import { MaplibreTerradrawControl } from './MaplibreTerradrawControl.js';
+import { MaplibreTerradrawControl } from './MaplibreTerradrawControl';
 import { distance } from '@turf/distance';
 import { area } from '@turf/area';
 import { centroid } from '@turf/centroid';
-import { defaultMeasureControlOptions } from '../constants/index.js';
-import type {
-	AreaUnit,
-	DistanceUnit,
-	MeasureControlOptions,
-	TerradrawMode
-} from '../interfaces/index.js';
+import { defaultMeasureControlOptions } from '../constants';
+import type { AreaUnit, DistanceUnit, MeasureControlOptions, TerradrawMode } from '../interfaces';
 import type { GeoJSONStoreFeatures } from 'terra-draw';
 
 /**

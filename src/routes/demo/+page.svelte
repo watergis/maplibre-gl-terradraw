@@ -11,9 +11,9 @@
 		type MeasureControlMode,
 		type DistanceUnit,
 		type AreaUnit
-	} from '$lib/index.js';
+	} from '$lib';
 	import '../../scss/maplibre-gl-terradraw.scss';
-	import type { PageData } from './$types.js';
+	import type { PageData } from './$types';
 	import {
 		Accordion,
 		AccordionItem,

@@ -1,5 +1,5 @@
-import type { ModeOptions } from './ModeOptions.js';
-import type { TerradrawMode } from './TerradrawMode.js';
+import type { ModeOptions } from './ModeOptions';
+import type { TerradrawMode } from './TerradrawMode';
 import { TerraDrawExtend } from 'terra-draw';
 
 type BaseAdapterConfig = TerraDrawExtend.BaseAdapterConfig;

@@ -1,4 +1,4 @@
-import type { TerradrawControlOptions } from '../interfaces/TerradrawControlOptions.js';
+import type { TerradrawControlOptions } from '../interfaces/TerradrawControlOptions';
 
 /**
  * Default control options

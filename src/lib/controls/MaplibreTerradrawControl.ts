@@ -6,8 +6,8 @@ import type {
 	EventType,
 	TerradrawMode,
 	TerradrawModeClass
-} from '../interfaces/index.js';
-import { defaultControlOptions, getDefaultModeOptions } from '../constants/index.js';
+} from '../interfaces';
+import { defaultControlOptions, getDefaultModeOptions } from '../constants';
 
 /**
  * Maplibre GL Terra Draw Control

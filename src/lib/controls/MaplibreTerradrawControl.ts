@@ -16,7 +16,49 @@ export class MaplibreTerradrawControl implements IControl {
 	protected controlContainer?: HTMLElement;
 	protected map?: Map;
 	protected modeButtons: { [key: string]: HTMLButtonElement } = {};
-	protected isExpanded = false;
+	protected _isExpanded = false;
+
+	/**
+	 * get the state of whether the control is expanded or collapsed
+	 */
+	public get isExpanded(): boolean {
+		return this._isExpanded;
+	}
+
+	/**
+	 * set the state of the control either expanded or collapsed.
+	 * terradraw mode will be reset if the state is changed.
+	 * either `expanded` or `collapsed` event is dispatched when changed
+	 */
+	public set isExpanded(value: boolean) {
+		this._isExpanded = value;
+		const controls = document.getElementsByClassName('maplibregl-terradraw-add-control');
+		for (let i = 0; i < controls.length; i++) {
+			const item = controls.item(i);
+			if (!item) continue;
+			if (this.isExpanded) {
+				item.classList.remove('hidden');
+			} else {
+				item.classList.add('hidden');
+			}
+		}
+		const addButton = document.getElementsByClassName('maplibregl-terradraw-render-button');
+		if (addButton && addButton.length > 0) {
+			if (this.isExpanded) {
+				addButton.item(0)?.classList.add('enabled');
+			} else {
+				addButton.item(0)?.classList.remove('enabled');
+				this.resetActiveMode();
+			}
+		}
+		this.toggleDeleteSelectionButton();
+		this.toggleButtonsWhenNoFeature();
+		if (this.isExpanded) {
+			this.dispatchEvent('expanded');
+		} else {
+			this.dispatchEvent('collapsed');
+		}
+	}
 
 	protected terradraw?: TerraDraw;
 	protected options: TerradrawControlOptions = defaultControlOptions;
@@ -228,27 +270,6 @@ export class MaplibreTerradrawControl implements IControl {
 	 */
 	protected toggleEditor() {
 		if (!this.terradraw) return;
-		const controls = document.getElementsByClassName('maplibregl-terradraw-add-control');
-		for (let i = 0; i < controls.length; i++) {
-			const item = controls.item(i);
-			if (!item) continue;
-			if (this.isExpanded) {
-				item.classList.add('hidden');
-			} else {
-				item.classList.remove('hidden');
-			}
-		}
-		const addButton = document.getElementsByClassName('maplibregl-terradraw-render-button');
-		if (addButton && addButton.length > 0) {
-			if (this.isExpanded) {
-				addButton.item(0)?.classList.remove('enabled');
-				this.resetActiveMode();
-			} else {
-				addButton.item(0)?.classList.add('enabled');
-			}
-		}
-		this.toggleDeleteSelectionButton();
-		this.toggleButtonsWhenNoFeature();
 		this.isExpanded = !this.isExpanded;
 	}
 

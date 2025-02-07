@@ -1,5 +1,36 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.1.0
+
+### Minor Changes
+
+- 8bd3c19: feat: make `isExpanded` as a property of MaplibreTerradrawContro to allow users to get or set the state.
+
+  ```ts
+  const drawControl = new MaplibreTerradrawControl();
+
+  // get the state of isExpanded
+  console.log(drawControl.isExpanded);
+
+  // expand tool
+  drawControl.isExpanded = true;
+
+  // collapse tool
+  drawControl.isExpanded = false;
+
+  // subscribe expanded/collapsed events
+  drawControl.on('expanded', () => {
+  	console.log('expanded');
+  });
+  drawControl.on('collapsed', () => {
+  	console.log('collapsed');
+  });
+  ```
+
+### Patch Changes
+
+- 9f9c425: chore: update terra-draw to v1.1.0
+
 ## 1.0.1
 
 ### Patch Changes

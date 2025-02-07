@@ -44,6 +44,7 @@
 	},
 	"devDependencies": {
 		"@changesets/cli": "^2.27.12",
+		"@eslint/js": "^9.19.0",
 		"@playwright/test": "^1.50.0",
 		"@skeletonlabs/skeleton": "^2.11.0",
 		"@skeletonlabs/tw-plugin": "^0.4.1",

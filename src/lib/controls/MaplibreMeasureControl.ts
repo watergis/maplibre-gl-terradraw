@@ -238,12 +238,37 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				// @ts-ignore
 				drawInstance.on('change', this.handleTerradrawFeatureChanged.bind(this));
 				drawInstance.on('finish', this.handleTerradrawFeatureReady.bind(this));
+				drawInstance.on('deselect', this.handleTerradrawDeselect.bind(this));
 
 				// subscribe feature-deleted event for the plugin control
 				this.on('feature-deleted', this.onFeatureDeleted.bind(this));
 			}
 		}
 	}
+
+	/**
+	 * Handle deselect event of terradraw
+	 * @param id Feature ID
+	 */
+	private handleTerradrawDeselect = () => {
+		if (!this.map) return;
+		if (
+			this.measureOptions.computeElevation === true &&
+			this.measureOptions.terrainSource !== undefined
+		) {
+			const drawInstance = this.getTerraDrawInstance();
+			if (!drawInstance) return;
+			const snapshot = drawInstance.getSnapshot();
+			const features = snapshot.filter(
+				(f) => f.properties.mode === 'linestring' && f.geometry.type === 'LineString'
+			);
+			if (features.length > 0) {
+				for (const f of features) {
+					this.computeElevationByFeatureID(f.id as string);
+				}
+			}
+		}
+	};
 
 	/**
 	 * Handle finish event of terradraw. It will be called after finishing adding a feature

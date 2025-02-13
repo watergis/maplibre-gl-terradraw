@@ -50,6 +50,9 @@ importers:
       '@types/node':
         specifier: ^22.13.1
         version: 22.13.1
+      '@watergis/terrain-rgb':
+        specifier: ^2.1.0
+        version: 2.1.0
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.20(postcss@8.5.1)
@@ -838,6 +841,10 @@ packages:
   '@typescript-eslint/visitor-keys@8.23.0':
     resolution: {integrity: sha512-oWWhcWDLwDfu++BGTZcmXWqpwtkwb5o7fxUIGksMQQDSdPW9prsSnfIOZMlsj4vBOSrcnjIUZMiIjODgGosFhQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@watergis/terrain-rgb@2.1.0':
+    resolution: {integrity: sha512-kOTH7ce3EGhkmFDJCjNql0RSFLtKaTvTy9j9sNjoTUtAcZNuA22HwzLjqom38JgNLzLskYYxdUyPptLlNtenFg==}
+    engines: {pnpm: ^10.0.0}
 
   acorn-jsx-walk@2.0.0:
     resolution: {integrity: sha512-uuo6iJj4D4ygkdzd6jPtcxs8vZgDX9YFIkqczGImoypX2fQ4dVImmu3UzA4ynixCIMTrEOWW+95M2HuBaCEOVA==}
@@ -3275,6 +3282,8 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 8.23.0
       eslint-visitor-keys: 4.2.0
+
+  '@watergis/terrain-rgb@2.1.0': {}
 
   acorn-jsx-walk@2.0.0: {}
 

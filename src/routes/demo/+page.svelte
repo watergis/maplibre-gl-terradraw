@@ -121,7 +121,8 @@
 					open: isOpen,
 					distanceUnit: distanceUnit,
 					distancePrecision,
-					areaPrecision
+					areaPrecision,
+					computeElevation: true
 				});
 				map.addControl(drawControl, 'top-left');
 			} else {

@@ -209,6 +209,14 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 		}
 	},
 	computeElevation: false,
+	terrainSource: {
+		url: 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png',
+		encoding: 'terrarium',
+		tileSize: 256,
+		minzoom: 5,
+		maxzoom: 15,
+		tms: false
+	},
 	distanceUnit: 'kilometers',
 	distancePrecision: 2,
 	areaUnit: 'metric',

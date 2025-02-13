@@ -13,6 +13,7 @@ import { centroid } from '@turf/centroid';
 import { defaultMeasureControlOptions } from '../constants';
 import type { AreaUnit, DistanceUnit, MeasureControlOptions, TerradrawMode } from '../interfaces';
 import type { GeoJSONStoreFeatures } from 'terra-draw';
+import { TerrainRGB, Terrarium } from '@watergis/terrain-rgb';
 
 /**
  * Maplibre GL Terra Draw Measure Control
@@ -236,11 +237,66 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				// @ts-ignore
 				drawInstance.on('change', this.handleTerradrawFeatureChanged.bind(this));
 
+				drawInstance.on('finish', this.handleTerradrawFeatureReady.bind(this));
+
 				// subscribe feature-deleted event for the plugin control
 				this.on('feature-deleted', this.onFeatureDeleted.bind(this));
 			}
 		}
 	}
+
+	private handleTerradrawFeatureReady = this.debounce((id: string | number) => {
+		if (!this.map) return;
+
+		if (this.measureOptions.computeElevation === true) {
+			const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
+				(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source
+			] as GeoJSONSourceSpecification;
+			if (geojsonSource) {
+				if (
+					typeof geojsonSource.data !== 'string' &&
+					geojsonSource.data.type === 'FeatureCollection'
+				) {
+					const points: GeoJSONStoreFeatures[] = geojsonSource.data.features.filter(
+						(f) => f.properties?.originalId === id && f.geometry.type === 'Point'
+					) as unknown as GeoJSONStoreFeatures[];
+					if (points && points.length > 0) {
+						this.queryTerrainElevation(points as GeoJSONStoreFeatures[]).then((updatedFeatures) => {
+							if (!this.map) return;
+							const newGeoJsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
+								(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source
+							] as GeoJSONSourceSpecification;
+							if (newGeoJsonSource) {
+								if (
+									typeof newGeoJsonSource.data !== 'string' &&
+									newGeoJsonSource.data.type === 'FeatureCollection'
+								) {
+									const ids = updatedFeatures.map((f) => f.id);
+									if (
+										typeof newGeoJsonSource.data !== 'string' &&
+										newGeoJsonSource.data.type === 'FeatureCollection'
+									) {
+										newGeoJsonSource.data.features = [
+											...(newGeoJsonSource.data.features = newGeoJsonSource.data.features.filter(
+												(f) =>
+													!(ids.includes(f.properties?.originalId) && f.geometry.type === 'Point')
+											)),
+											...updatedFeatures
+										];
+										(
+											this.map.getSource(
+												(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source
+											) as GeoJSONSource
+										)?.setData(newGeoJsonSource.data);
+									}
+								}
+							}
+						});
+					}
+				}
+			}
+		}
+	}, 300);
 
 	/**
 	 * Handle change event of TerraDraw
@@ -410,6 +466,46 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	}
 
 	/**
+	 * Query terrain elvation for point features
+	 * @param point Point GeoJSON features
+	 * @returns point features after adding elevation property
+	 */
+	private async queryTerrainElevation(points: GeoJSONStoreFeatures[]) {
+		if (!this.map) return points;
+		for (const point of points) {
+			if (point.geometry.type !== 'Point') continue;
+			let elevation: number | null = null;
+			if (this.measureOptions && this.measureOptions.terrainSource) {
+				const options = this.measureOptions.terrainSource;
+				const url = options.url;
+				const encoding = options.encoding ?? 'mapbox';
+				const tileSize = options.tileSize ?? 512;
+				const minzoom = options.minzoom ?? 5;
+				const maxzoom = options.maxzoom ?? 15;
+				const tms = options.tms ?? false;
+
+				if (encoding === 'mapbox') {
+					const terrainrgb = new TerrainRGB(url, tileSize, minzoom, maxzoom, tms);
+					elevation = await terrainrgb.getElevation(
+						point.geometry.coordinates as number[],
+						maxzoom
+					);
+				} else {
+					const terrarium = new Terrarium(url, tileSize, minzoom, maxzoom, tms);
+					elevation = await terrarium.getElevation(point.geometry.coordinates as number[], maxzoom);
+				}
+			} else {
+				elevation = this.map.queryTerrainElevation(point.geometry.coordinates as LngLatLike);
+			}
+
+			if (elevation) {
+				point.properties.elevation = elevation;
+			}
+		}
+		return points;
+	}
+
+	/**
 	 * Caclulate distance for each segment on a given feature
 	 * @param feature LineString GeoJSON feature
 	 * @returns The returning feature will contain `segments`, `distance`, `unit` properties. `segments` will have multiple point features.
@@ -436,19 +532,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			segment.properties.distance = parseFloat(result.toFixed(this.distancePrecision));
 			segment.properties.total = parseFloat(totalDistance.toFixed(this.distancePrecision));
 			segment.properties.unit = this.getDistanceUnitName(this.distanceUnit);
-
-			if (this.measureOptions.computeElevation === true) {
-				const elevation_start = this.map?.queryTerrainElevation(start as LngLatLike);
-				if (elevation_start) {
-					segment.properties.elevation_start = elevation_start;
-				}
-
-				const elevation_end = this.map?.queryTerrainElevation(end as LngLatLike);
-				if (elevation_end) {
-					segment.properties.elevation_end = elevation_end;
-				}
-			}
-
 			segments.push(segment);
 		}
 
@@ -580,10 +663,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 						startNode.properties.distance = 0;
 						startNode.properties.total = 0;
 
-						if (segment.properties.elevation_start) {
-							startNode.properties.elevation = segment.properties.elevation_start;
-						}
-
 						if (
 							typeof geojsonSource.data !== 'string' &&
 							geojsonSource.data.type === 'FeatureCollection'
@@ -597,10 +676,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 						type: 'Point',
 						coordinates: end
 					};
-
-					if (segment.properties.elevation_end) {
-						endNode.properties.elevation = segment.properties.elevation_end;
-					}
 
 					if (
 						typeof geojsonSource.data !== 'string' &&

@@ -588,7 +588,10 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			segment.properties.total = parseFloat(totalDistance.toFixed(this.distancePrecision));
 			segment.properties.unit = this.getDistanceUnitName(this.distanceUnit);
 
-			if (this.measureOptions.computeElevation === true && this.measureOptions === undefined) {
+			if (
+				this.measureOptions.computeElevation === true &&
+				this.measureOptions.terrainSource === undefined
+			) {
 				const elevation_start = this.map?.queryTerrainElevation(start as LngLatLike);
 				if (elevation_start) {
 					segment.properties.elevation_start = elevation_start;

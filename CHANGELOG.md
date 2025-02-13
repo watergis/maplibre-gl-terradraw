@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.2.1
+
+### Patch Changes
+
+- 6c8e120: fix: fixed bug of not computing elevation from maplibre terrain source.
+
 ## 1.2.0
 
 ### Minor Changes

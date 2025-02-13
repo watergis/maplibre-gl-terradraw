@@ -23,7 +23,7 @@
 		</style>
 	</head>
 	<body>
-		<script src="../../../dist/maplibre-gl-terradraw.umd.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.umd.js"></script>
 		<link
 			rel="stylesheet"
 			href="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.css"

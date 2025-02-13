@@ -101,7 +101,8 @@
 				modes: ['linestring', 'delete', 'download'],
 				open: true,
 				// enable the flag to compute elevation
-				computeElevation: true
+				computeElevation: true,
+				terrainSource: undefined,
 			});
 			map.addControl(drawControl, 'top-left');
 			map.addControl(new maplibregl.NavigationControl({

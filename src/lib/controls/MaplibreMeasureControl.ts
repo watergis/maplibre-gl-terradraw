@@ -1,10 +1,10 @@
-import type {
-	CircleLayerSpecification,
-	GeoJSONSource,
-	GeoJSONSourceSpecification,
-	LngLatLike,
+import {
 	Map,
-	SymbolLayerSpecification
+	type CircleLayerSpecification,
+	type GeoJSONSource,
+	type GeoJSONSourceSpecification,
+	type LngLatLike,
+	type SymbolLayerSpecification
 } from 'maplibre-gl';
 import { MaplibreTerradrawControl } from './MaplibreTerradrawControl';
 import { distance } from '@turf/distance';
@@ -237,7 +237,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
 				drawInstance.on('change', this.handleTerradrawFeatureChanged.bind(this));
-
 				drawInstance.on('finish', this.handleTerradrawFeatureReady.bind(this));
 
 				// subscribe feature-deleted event for the plugin control
@@ -466,9 +465,20 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 									];
 
 									// delete duplicate points
-									newGeoJsonSource.data.features = Array.from(
-										new Set(newGeoJsonSource.data.features)
-									);
+									const featureMap: { [key: string | number]: GeoJSONStoreFeatures } = {};
+									newGeoJsonSource.data.features.forEach((feature) => {
+										const id = feature.id as string | number;
+
+										if (!featureMap[id]) {
+											featureMap[id] = feature as GeoJSONStoreFeatures;
+										} else {
+											const existingFeature = featureMap[id];
+											if (!existingFeature.properties.elevation && feature.properties?.elevation) {
+												featureMap[id] = feature as GeoJSONStoreFeatures;
+											}
+										}
+									});
+									newGeoJsonSource.data.features = Array.from(Object.values(featureMap));
 
 									// update features
 									(

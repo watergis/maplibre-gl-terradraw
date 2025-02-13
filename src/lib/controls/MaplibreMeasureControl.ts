@@ -498,8 +498,8 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			promises.push(
 				new Promise((resolve: (feature: GeoJSONStoreFeatures) => void) => {
 					if (point.geometry.type !== 'Point') resolve(point);
-					if (this.measureOptions && this.measureOptions.terrainSource) {
-						const options = this.measureOptions.terrainSource;
+					const options = this.measureOptions.terrainSource;
+					if (options) {
 						const url = options.url;
 						const encoding = options.encoding ?? 'mapbox';
 						const tileSize = options.tileSize ?? 512;
@@ -517,10 +517,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 								resolve(point);
 							});
 					} else {
-						const elevation = this.map?.queryTerrainElevation(
-							point.geometry.coordinates as LngLatLike
-						) as number;
-						if (elevation) point.properties.elevation = elevation;
 						resolve(point);
 					}
 				})
@@ -556,6 +552,19 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			segment.properties.distance = parseFloat(result.toFixed(this.distancePrecision));
 			segment.properties.total = parseFloat(totalDistance.toFixed(this.distancePrecision));
 			segment.properties.unit = this.getDistanceUnitName(this.distanceUnit);
+
+			if (this.measureOptions.computeElevation === true && this.measureOptions === undefined) {
+				const elevation_start = this.map?.queryTerrainElevation(start as LngLatLike);
+				if (elevation_start) {
+					segment.properties.elevation_start = elevation_start;
+				}
+
+				const elevation_end = this.map?.queryTerrainElevation(end as LngLatLike);
+				if (elevation_end) {
+					segment.properties.elevation_end = elevation_end;
+				}
+			}
+
 			segments.push(segment);
 		}
 
@@ -687,6 +696,10 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 						startNode.properties.distance = 0;
 						startNode.properties.total = 0;
 
+						if (segment.properties.elevation_start) {
+							startNode.properties.elevation = segment.properties.elevation_start;
+						}
+
 						if (
 							typeof geojsonSource.data !== 'string' &&
 							geojsonSource.data.type === 'FeatureCollection'
@@ -700,6 +713,10 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 						type: 'Point',
 						coordinates: end
 					};
+
+					if (segment.properties.elevation_end) {
+						endNode.properties.elevation = segment.properties.elevation_end;
+					}
 
 					if (
 						typeof geojsonSource.data !== 'string' &&

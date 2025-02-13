@@ -75,8 +75,8 @@ export interface MeasureControlOptions {
 	 * As default, an elevation is not shown in label if it is negative value (The data is added to the feature property though).
 	 * If you wish to show negative value of altitude, you may need to edit your own `lineLayerLabelSpec` style spec.
 	 *
-	 * This feature uses `queryTerrainElevation` function of maplibre-gl, thus you have to add and enable raster-dem source in maplibre style in advance.
-	 * 
+	 * If terrainSource is set, this feature uses `queryTerrainElevation` function of maplibre-gl, thus you have to add and enable raster-dem source in maplibre style in advance.
+	 *
 	 * For instance, the below code is to add Terrarium source from [AWS](https://registry.opendata.aws/terrain-tiles/)
 	 * ```
 	 * map?.addSource('terrarium', {
@@ -91,11 +91,51 @@ export interface MeasureControlOptions {
 	 * })
 	 * map?.setTerrain({source: 'terrarium', exaggeration: 1})
 	 * ```
-	 * 
+	 *
 	 * The plugin control is just querying elevation from maplibre style's DEM source.
 	 * Hence, the elevation's accuracy may not be good and queried elevation might be different each zoom level.
 	 *
-
+	 * If terrainSource is set to use either terrainRGB or terrarium source, the plugin will try to fetch elevation directly from DEM tiles.
 	 */
 	computeElevation?: boolean;
+
+	/**
+	 * terrain source either terrain RGB or terrarium formats for computing elevation
+	 * If undefined is set to this option, the plugin tries to fetch elevation enabled terrain of maplibre.
+	 * As default, terrarium source from AWS is set.
+	 */
+	terrainSource?: {
+		/**
+		 * URL for terrain RGB or terrarium raster tilesets.
+		 *
+		 * For example, URL should be like the below.
+		 * https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png
+		 */
+		url: string;
+
+		/**
+		 * The encoding used by this source. Mapbox Terrain RGB is used by default.
+		 *
+		 * `terrarium`: Terrarium format PNG tiles. See https://aws.amazon.com/es/public-datasets/terrain/ for more info.
+		 * `mapbox`: Mapbox Terrain RGB tiles. See https://www.mapbox.com/help/access-elevation-data/#mapbox-terrain-rgb for more info.
+		 */
+		encoding?: 'terrarium' | 'mapbox';
+
+		/**
+		 * size of tile. 256 or 512. Defaults to 512.
+		 */
+		tileSize?: 256 | 512;
+		/**
+		 * minzoom for terrain RGB raster tilesets. default is 5
+		 */
+		minzoom?: number;
+		/**
+		 * maxzoom for terrain RGB raster tilesets. default is 15
+		 */
+		maxzoom?: number;
+		/**
+		 * whether it is Tile Map Service. Default is false
+		 */
+		tms?: boolean;
+	};
 }

@@ -1,10 +1,10 @@
-import type {
-	CircleLayerSpecification,
-	GeoJSONSource,
-	GeoJSONSourceSpecification,
-	LngLatLike,
+import {
 	Map,
-	SymbolLayerSpecification
+	type CircleLayerSpecification,
+	type GeoJSONSource,
+	type GeoJSONSourceSpecification,
+	type LngLatLike,
+	type SymbolLayerSpecification
 } from 'maplibre-gl';
 import { MaplibreTerradrawControl } from './MaplibreTerradrawControl';
 import { distance } from '@turf/distance';
@@ -13,6 +13,7 @@ import { centroid } from '@turf/centroid';
 import { defaultMeasureControlOptions } from '../constants';
 import type { AreaUnit, DistanceUnit, MeasureControlOptions, TerradrawMode } from '../interfaces';
 import type { GeoJSONStoreFeatures } from 'terra-draw';
+import { TerrainRGB, Terrarium } from '@watergis/terrain-rgb';
 
 /**
  * Maplibre GL Terra Draw Measure Control
@@ -146,6 +147,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				const mode = feature.properties.mode as TerradrawMode;
 				if (mode === 'linestring' && geometryType === 'LineString') {
 					this.measureLine(id);
+					this.computeElevationByFeatureID(id);
 				} else if (
 					!['point', 'linestring', 'select', 'render'].includes(mode) &&
 					geometryType === 'Polygon'
@@ -235,12 +237,47 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
 				drawInstance.on('change', this.handleTerradrawFeatureChanged.bind(this));
+				drawInstance.on('finish', this.handleTerradrawFeatureReady.bind(this));
+				drawInstance.on('deselect', this.handleTerradrawDeselect.bind(this));
 
 				// subscribe feature-deleted event for the plugin control
 				this.on('feature-deleted', this.onFeatureDeleted.bind(this));
 			}
 		}
 	}
+
+	/**
+	 * Handle deselect event of terradraw
+	 * @param id Feature ID
+	 */
+	private handleTerradrawDeselect = () => {
+		if (!this.map) return;
+		if (
+			this.measureOptions.computeElevation === true &&
+			this.measureOptions.terrainSource !== undefined
+		) {
+			const drawInstance = this.getTerraDrawInstance();
+			if (!drawInstance) return;
+			const snapshot = drawInstance.getSnapshot();
+			const features = snapshot.filter(
+				(f) => f.properties.mode === 'linestring' && f.geometry.type === 'LineString'
+			);
+			if (features.length > 0) {
+				for (const f of features) {
+					this.computeElevationByFeatureID(f.id as string);
+				}
+			}
+		}
+	};
+
+	/**
+	 * Handle finish event of terradraw. It will be called after finishing adding a feature
+	 * @param id Feature ID
+	 */
+	private handleTerradrawFeatureReady = this.debounce((id: string | number) => {
+		if (!this.map) return;
+		this.computeElevationByFeatureID(id);
+	}, 300);
 
 	/**
 	 * Handle change event of TerraDraw
@@ -410,6 +447,120 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	}
 
 	/**
+	 * Compute elevation by a LineString feature ID
+	 * @param id FeatureID
+	 */
+	private computeElevationByFeatureID = async (id: string | number) => {
+		if (!this.map) return;
+		if (this.measureOptions.computeElevation === true) {
+			const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
+				(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source
+			] as GeoJSONSourceSpecification;
+			if (geojsonSource) {
+				if (
+					typeof geojsonSource.data !== 'string' &&
+					geojsonSource.data.type === 'FeatureCollection'
+				) {
+					const points: GeoJSONStoreFeatures[] = geojsonSource.data.features.filter(
+						(f) => f.properties?.originalId === id && f.geometry.type === 'Point'
+					) as unknown as GeoJSONStoreFeatures[];
+					if (points && points.length > 0) {
+						const updatedFeatures = await this.queryTerrainElevation(
+							points as GeoJSONStoreFeatures[]
+						);
+						const newGeoJsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
+							(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source
+						] as GeoJSONSourceSpecification;
+						if (newGeoJsonSource) {
+							if (
+								typeof newGeoJsonSource.data !== 'string' &&
+								newGeoJsonSource.data.type === 'FeatureCollection'
+							) {
+								const ids = updatedFeatures.map((f) => f.id);
+								if (
+									typeof newGeoJsonSource.data !== 'string' &&
+									newGeoJsonSource.data.type === 'FeatureCollection'
+								) {
+									newGeoJsonSource.data.features = [
+										...(newGeoJsonSource.data.features = newGeoJsonSource.data.features.filter(
+											(f) =>
+												!(ids.includes(f.properties?.originalId) && f.geometry.type === 'Point')
+										)),
+										...updatedFeatures
+									];
+
+									// delete duplicate points
+									const featureMap: { [key: string | number]: GeoJSONStoreFeatures } = {};
+									newGeoJsonSource.data.features.forEach((feature) => {
+										const id = feature.id as string | number;
+
+										if (!featureMap[id]) {
+											featureMap[id] = feature as GeoJSONStoreFeatures;
+										} else {
+											const existingFeature = featureMap[id];
+											if (!existingFeature.properties.elevation && feature.properties?.elevation) {
+												featureMap[id] = feature as GeoJSONStoreFeatures;
+											}
+										}
+									});
+									newGeoJsonSource.data.features = Array.from(Object.values(featureMap));
+
+									// update features
+									(
+										this.map.getSource(
+											(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source
+										) as GeoJSONSource
+									)?.setData(newGeoJsonSource.data);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	};
+
+	/**
+	 * Query terrain elvation for point features
+	 * @param point Point GeoJSON features
+	 * @returns point features after adding elevation property
+	 */
+	private async queryTerrainElevation(points: GeoJSONStoreFeatures[]) {
+		if (!this.map) return points;
+
+		const promises: Promise<GeoJSONStoreFeatures>[] = [];
+		for (const point of points) {
+			promises.push(
+				new Promise((resolve: (feature: GeoJSONStoreFeatures) => void) => {
+					if (point.geometry.type !== 'Point') resolve(point);
+					const options = this.measureOptions.terrainSource;
+					if (options) {
+						const url = options.url;
+						const encoding = options.encoding ?? 'mapbox';
+						const tileSize = options.tileSize ?? 512;
+						const minzoom = options.minzoom ?? 5;
+						const maxzoom = options.maxzoom ?? 15;
+						const tms = options.tms ?? false;
+
+						(encoding === 'mapbox'
+							? new TerrainRGB(url, tileSize, minzoom, maxzoom, tms)
+							: new Terrarium(url, tileSize, minzoom, maxzoom, tms)
+						)
+							.getElevation(point.geometry.coordinates as number[], maxzoom)
+							.then((elevation) => {
+								if (elevation) point.properties.elevation = elevation;
+								resolve(point);
+							});
+					} else {
+						resolve(point);
+					}
+				})
+			);
+		}
+		return await Promise.all(promises);
+	}
+
+	/**
 	 * Caclulate distance for each segment on a given feature
 	 * @param feature LineString GeoJSON feature
 	 * @returns The returning feature will contain `segments`, `distance`, `unit` properties. `segments` will have multiple point features.
@@ -437,7 +588,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			segment.properties.total = parseFloat(totalDistance.toFixed(this.distancePrecision));
 			segment.properties.unit = this.getDistanceUnitName(this.distanceUnit);
 
-			if (this.measureOptions.computeElevation === true) {
+			if (this.measureOptions.computeElevation === true && this.measureOptions === undefined) {
 				const elevation_start = this.map?.queryTerrainElevation(start as LngLatLike);
 				if (elevation_start) {
 					segment.properties.elevation_start = elevation_start;

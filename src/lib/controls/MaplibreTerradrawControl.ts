@@ -472,4 +472,20 @@ export class MaplibreTerradrawControl implements IControl {
 	protected capitalize(value: string) {
 		return value.charAt(0).toUpperCase() + value.slice(1);
 	}
+
+	/**
+	 * debounce
+	 * @param callback callback function
+	 * @param delay millisecond to delay
+	 */
+	protected debounce = <T extends (...args: Parameters<T>) => unknown>(
+		callback: T,
+		delay = 250
+	): ((...args: Parameters<T>) => void) => {
+		let timeoutId: number;
+		return (...args) => {
+			clearTimeout(timeoutId);
+			timeoutId = setTimeout(() => callback(...args), delay) as unknown as number;
+		};
+	};
 }

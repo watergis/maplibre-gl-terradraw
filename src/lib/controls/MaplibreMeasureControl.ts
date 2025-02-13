@@ -147,6 +147,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				const mode = feature.properties.mode as TerradrawMode;
 				if (mode === 'linestring' && geometryType === 'LineString') {
 					this.measureLine(id);
+					this.computeElevationByFeatureID(id);
 				} else if (
 					!['point', 'linestring', 'select', 'render'].includes(mode) &&
 					geometryType === 'Polygon'
@@ -245,57 +246,13 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		}
 	}
 
+	/**
+	 * Handle finish event of terradraw. It will be called after finishing adding a feature
+	 * @param id Feature ID
+	 */
 	private handleTerradrawFeatureReady = this.debounce((id: string | number) => {
 		if (!this.map) return;
-
-		if (this.measureOptions.computeElevation === true) {
-			const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
-				(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source
-			] as GeoJSONSourceSpecification;
-			if (geojsonSource) {
-				if (
-					typeof geojsonSource.data !== 'string' &&
-					geojsonSource.data.type === 'FeatureCollection'
-				) {
-					const points: GeoJSONStoreFeatures[] = geojsonSource.data.features.filter(
-						(f) => f.properties?.originalId === id && f.geometry.type === 'Point'
-					) as unknown as GeoJSONStoreFeatures[];
-					if (points && points.length > 0) {
-						this.queryTerrainElevation(points as GeoJSONStoreFeatures[]).then((updatedFeatures) => {
-							if (!this.map) return;
-							const newGeoJsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
-								(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source
-							] as GeoJSONSourceSpecification;
-							if (newGeoJsonSource) {
-								if (
-									typeof newGeoJsonSource.data !== 'string' &&
-									newGeoJsonSource.data.type === 'FeatureCollection'
-								) {
-									const ids = updatedFeatures.map((f) => f.id);
-									if (
-										typeof newGeoJsonSource.data !== 'string' &&
-										newGeoJsonSource.data.type === 'FeatureCollection'
-									) {
-										newGeoJsonSource.data.features = [
-											...(newGeoJsonSource.data.features = newGeoJsonSource.data.features.filter(
-												(f) =>
-													!(ids.includes(f.properties?.originalId) && f.geometry.type === 'Point')
-											)),
-											...updatedFeatures
-										];
-										(
-											this.map.getSource(
-												(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source
-											) as GeoJSONSource
-										)?.setData(newGeoJsonSource.data);
-									}
-								}
-							}
-						});
-					}
-				}
-			}
-		}
+		this.computeElevationByFeatureID(id);
 	}, 300);
 
 	/**
@@ -466,43 +423,110 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	}
 
 	/**
+	 * Compute elevation by a LineString feature ID
+	 * @param id FeatureID
+	 */
+	private computeElevationByFeatureID = async (id: string | number) => {
+		if (!this.map) return;
+		if (this.measureOptions.computeElevation === true) {
+			const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
+				(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source
+			] as GeoJSONSourceSpecification;
+			if (geojsonSource) {
+				if (
+					typeof geojsonSource.data !== 'string' &&
+					geojsonSource.data.type === 'FeatureCollection'
+				) {
+					const points: GeoJSONStoreFeatures[] = geojsonSource.data.features.filter(
+						(f) => f.properties?.originalId === id && f.geometry.type === 'Point'
+					) as unknown as GeoJSONStoreFeatures[];
+					if (points && points.length > 0) {
+						const updatedFeatures = await this.queryTerrainElevation(
+							points as GeoJSONStoreFeatures[]
+						);
+						const newGeoJsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
+							(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source
+						] as GeoJSONSourceSpecification;
+						if (newGeoJsonSource) {
+							if (
+								typeof newGeoJsonSource.data !== 'string' &&
+								newGeoJsonSource.data.type === 'FeatureCollection'
+							) {
+								const ids = updatedFeatures.map((f) => f.id);
+								if (
+									typeof newGeoJsonSource.data !== 'string' &&
+									newGeoJsonSource.data.type === 'FeatureCollection'
+								) {
+									newGeoJsonSource.data.features = [
+										...(newGeoJsonSource.data.features = newGeoJsonSource.data.features.filter(
+											(f) =>
+												!(ids.includes(f.properties?.originalId) && f.geometry.type === 'Point')
+										)),
+										...updatedFeatures
+									];
+
+									// delete duplicate points
+									newGeoJsonSource.data.features = Array.from(
+										new Set(newGeoJsonSource.data.features)
+									);
+
+									// update features
+									(
+										this.map.getSource(
+											(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source
+										) as GeoJSONSource
+									)?.setData(newGeoJsonSource.data);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	};
+
+	/**
 	 * Query terrain elvation for point features
 	 * @param point Point GeoJSON features
 	 * @returns point features after adding elevation property
 	 */
 	private async queryTerrainElevation(points: GeoJSONStoreFeatures[]) {
 		if (!this.map) return points;
+
+		const promises: Promise<GeoJSONStoreFeatures>[] = [];
 		for (const point of points) {
-			if (point.geometry.type !== 'Point') continue;
-			let elevation: number | null = null;
-			if (this.measureOptions && this.measureOptions.terrainSource) {
-				const options = this.measureOptions.terrainSource;
-				const url = options.url;
-				const encoding = options.encoding ?? 'mapbox';
-				const tileSize = options.tileSize ?? 512;
-				const minzoom = options.minzoom ?? 5;
-				const maxzoom = options.maxzoom ?? 15;
-				const tms = options.tms ?? false;
+			promises.push(
+				new Promise((resolve: (feature: GeoJSONStoreFeatures) => void) => {
+					if (point.geometry.type !== 'Point') resolve(point);
+					if (this.measureOptions && this.measureOptions.terrainSource) {
+						const options = this.measureOptions.terrainSource;
+						const url = options.url;
+						const encoding = options.encoding ?? 'mapbox';
+						const tileSize = options.tileSize ?? 512;
+						const minzoom = options.minzoom ?? 5;
+						const maxzoom = options.maxzoom ?? 15;
+						const tms = options.tms ?? false;
 
-				if (encoding === 'mapbox') {
-					const terrainrgb = new TerrainRGB(url, tileSize, minzoom, maxzoom, tms);
-					elevation = await terrainrgb.getElevation(
-						point.geometry.coordinates as number[],
-						maxzoom
-					);
-				} else {
-					const terrarium = new Terrarium(url, tileSize, minzoom, maxzoom, tms);
-					elevation = await terrarium.getElevation(point.geometry.coordinates as number[], maxzoom);
-				}
-			} else {
-				elevation = this.map.queryTerrainElevation(point.geometry.coordinates as LngLatLike);
-			}
-
-			if (elevation) {
-				point.properties.elevation = elevation;
-			}
+						(encoding === 'mapbox'
+							? new TerrainRGB(url, tileSize, minzoom, maxzoom, tms)
+							: new Terrarium(url, tileSize, minzoom, maxzoom, tms)
+						)
+							.getElevation(point.geometry.coordinates as number[], maxzoom)
+							.then((elevation) => {
+								if (elevation) point.properties.elevation = elevation;
+								resolve(point);
+							});
+					} else {
+						const elevation = this.map?.queryTerrainElevation(
+							point.geometry.coordinates as LngLatLike
+						) as number;
+						if (elevation) point.properties.elevation = elevation;
+						resolve(point);
+					}
+				})
+			);
 		}
-		return points;
+		return await Promise.all(promises);
 	}
 
 	/**

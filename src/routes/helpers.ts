@@ -5,7 +5,8 @@ export const exampleIds = [
 	'drawing-option',
 	'coordinate-precision',
 	'custom-icon',
-	'query-elevation',
+	'query-elevation-terrain',
+	'query-elevation-terrainrgb',
 	'change-style'
 ];
 

@@ -92,6 +92,9 @@
 	"peerDependenciesMeta": {
 		"terradraw": {
 			"optional": true
+		},
+		"terra-draw-maplibre-gl-adapter": {
+			"optional": true
 		}
 	},
 	"repository": {

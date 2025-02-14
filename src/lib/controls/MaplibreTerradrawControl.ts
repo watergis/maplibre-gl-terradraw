@@ -1,4 +1,4 @@
-import type { ControlPosition, IControl, Map } from 'maplibre-gl';
+import type { ControlPosition, IControl, Map, StyleSpecification } from 'maplibre-gl';
 import { type GeoJSONStoreFeatures, TerraDraw, TerraDrawRenderMode } from 'terra-draw';
 import { TerraDrawMapLibreGLAdapter } from 'terra-draw-maplibre-gl-adapter';
 import type {
@@ -8,6 +8,7 @@ import type {
 	TerradrawModeClass
 } from '../interfaces';
 import { defaultControlOptions, getDefaultModeOptions } from '../constants';
+import { capitalize, cleanMaplibreStyle, TERRADRAW_SOURCE_IDS } from '../helpers';
 
 /**
  * Maplibre GL Terra Draw Control
@@ -306,7 +307,7 @@ export class MaplibreTerradrawControl implements IControl {
 				btn.classList.add('enabled');
 			}
 			btn.type = 'button';
-			btn.title = this.capitalize('expand or collapse drawing tool');
+			btn.title = capitalize('expand or collapse drawing tool');
 			btn.addEventListener('click', this.toggleEditor.bind(this));
 		} else {
 			btn.classList.add('maplibregl-terradraw-add-control');
@@ -314,7 +315,7 @@ export class MaplibreTerradrawControl implements IControl {
 			if (!this.isExpanded) {
 				btn.classList.add('hidden');
 			}
-			btn.title = this.capitalize(mode.replace(/-/g, ' '));
+			btn.title = capitalize(mode.replace(/-/g, ' '));
 
 			if (mode === 'delete') {
 				btn.classList.add(`maplibregl-terradraw-${mode}-button`);
@@ -397,6 +398,28 @@ export class MaplibreTerradrawControl implements IControl {
 	}
 
 	/**
+	 * clean maplibre style to filter only for terradraw related layers or without them.
+	 * If options are not set, returns original style given to the function.
+	 *
+	 * This can be useful incase users only want to get terradraw related layers or without it.
+	 *
+	 * Usage:
+	 * `cleanStyle(map.getStyle, { excludeTerraDrawLayers: true})`
+	 * `cleanStyle(map.getStyle, { onlyTerraDrawLayers: true})`
+	 *
+	 * @param style maplibre style spec
+	 * @param options.excludeTerraDrawLayers return maplibre style without terradraw layers and sources
+	 * @param options.onlyTerraDrawLayers return maplibre style with only terradraw layers and sources
+	 * @returns
+	 */
+	public cleanStyle(
+		style: StyleSpecification,
+		options?: { excludeTerraDrawLayers?: boolean; onlyTerraDrawLayers?: boolean }
+	) {
+		return cleanMaplibreStyle(style, options, TERRADRAW_SOURCE_IDS);
+	}
+
+	/**
 	 * Download button click event handler
 	 */
 	protected handleDownload() {
@@ -463,29 +486,4 @@ export class MaplibreTerradrawControl implements IControl {
 			}
 		}
 	}
-
-	/**
-	 * Capitalzie string value
-	 * @param value string value
-	 * @returns string
-	 */
-	protected capitalize(value: string) {
-		return value.charAt(0).toUpperCase() + value.slice(1);
-	}
-
-	/**
-	 * debounce
-	 * @param callback callback function
-	 * @param delay millisecond to delay
-	 */
-	protected debounce = <T extends (...args: Parameters<T>) => unknown>(
-		callback: T,
-		delay = 250
-	): ((...args: Parameters<T>) => void) => {
-		let timeoutId: number;
-		return (...args) => {
-			clearTimeout(timeoutId);
-			timeoutId = setTimeout(() => callback(...args), delay) as unknown as number;
-		};
-	};
 }

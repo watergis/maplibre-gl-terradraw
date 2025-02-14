@@ -5,41 +5,46 @@
  -->
 <!-- Title: dependency&#45;cruiser output Pages: 1 -->
 <svg width="971pt" height="469pt"
- viewBox="0.00 0.00 970.50 468.88" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 464.88)">
+ viewBox="0.00 0.00 970.50 469.03" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 465.03)">
 <title>dependency&#45;cruiser output</title>
-<polygon fill="white" stroke="none" points="-4,4 -4,-464.88 966.5,-464.88 966.5,4 -4,4"/>
+<polygon fill="white" stroke="none" points="-4,4 -4,-465.03 966.5,-465.03 966.5,4 -4,4"/>
 <g id="clust1" class="cluster">
 <title>cluster_src</title>
-<path fill="#ffffff" stroke="black" stroke-width="2" d="M20,-8.88C20,-8.88 942.5,-8.88 942.5,-8.88 948.5,-8.88 954.5,-14.88 954.5,-20.88 954.5,-20.88 954.5,-440.88 954.5,-440.88 954.5,-446.88 948.5,-452.88 942.5,-452.88 942.5,-452.88 20,-452.88 20,-452.88 14,-452.88 8,-446.88 8,-440.88 8,-440.88 8,-20.88 8,-20.88 8,-14.88 14,-8.88 20,-8.88"/>
-<text text-anchor="middle" x="481.25" y="-440.33" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="9.00">src</text>
+<path fill="#ffffff" stroke="black" stroke-width="2" d="M20,-9.03C20,-9.03 942.5,-9.03 942.5,-9.03 948.5,-9.03 954.5,-15.03 954.5,-21.03 954.5,-21.03 954.5,-441.03 954.5,-441.03 954.5,-447.03 948.5,-453.03 942.5,-453.03 942.5,-453.03 20,-453.03 20,-453.03 14,-453.03 8,-447.03 8,-441.03 8,-441.03 8,-21.03 8,-21.03 8,-15.03 14,-9.03 20,-9.03"/>
+<text text-anchor="middle" x="481.25" y="-440.48" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="9.00">src</text>
 </g>
 <g id="clust2" class="cluster">
 <title>cluster_src/lib</title>
-<path fill="#ffffff" stroke="black" stroke-width="2" d="M28,-16.88C28,-16.88 934.5,-16.88 934.5,-16.88 940.5,-16.88 946.5,-22.88 946.5,-28.88 946.5,-28.88 946.5,-414.88 946.5,-414.88 946.5,-420.88 940.5,-426.88 934.5,-426.88 934.5,-426.88 28,-426.88 28,-426.88 22,-426.88 16,-420.88 16,-414.88 16,-414.88 16,-28.88 16,-28.88 16,-22.88 22,-16.88 28,-16.88"/>
-<text text-anchor="middle" x="481.25" y="-414.33" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="9.00">lib</text>
+<path fill="#ffffff" stroke="black" stroke-width="2" d="M28,-17.03C28,-17.03 934.5,-17.03 934.5,-17.03 940.5,-17.03 946.5,-23.03 946.5,-29.03 946.5,-29.03 946.5,-415.03 946.5,-415.03 946.5,-421.03 940.5,-427.03 934.5,-427.03 934.5,-427.03 28,-427.03 28,-427.03 22,-427.03 16,-421.03 16,-415.03 16,-415.03 16,-29.03 16,-29.03 16,-23.03 22,-17.03 28,-17.03"/>
+<text text-anchor="middle" x="481.25" y="-414.48" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="9.00">lib</text>
 </g>
 <g id="clust3" class="cluster">
 <title>cluster_src/lib/constants</title>
-<path fill="#ffffff" stroke="black" stroke-width="2" d="M461.25,-228.88C461.25,-228.88 670.5,-228.88 670.5,-228.88 676.5,-228.88 682.5,-234.88 682.5,-240.88 682.5,-240.88 682.5,-388.88 682.5,-388.88 682.5,-394.88 676.5,-400.88 670.5,-400.88 670.5,-400.88 461.25,-400.88 461.25,-400.88 455.25,-400.88 449.25,-394.88 449.25,-388.88 449.25,-388.88 449.25,-240.88 449.25,-240.88 449.25,-234.88 455.25,-228.88 461.25,-228.88"/>
-<text text-anchor="middle" x="565.88" y="-388.33" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="9.00">constants</text>
+<path fill="#ffffff" stroke="black" stroke-width="2" d="M461.25,-229.03C461.25,-229.03 670.5,-229.03 670.5,-229.03 676.5,-229.03 682.5,-235.03 682.5,-241.03 682.5,-241.03 682.5,-389.03 682.5,-389.03 682.5,-395.03 676.5,-401.03 670.5,-401.03 670.5,-401.03 461.25,-401.03 461.25,-401.03 455.25,-401.03 449.25,-395.03 449.25,-389.03 449.25,-389.03 449.25,-241.03 449.25,-241.03 449.25,-235.03 455.25,-229.03 461.25,-229.03"/>
+<text text-anchor="middle" x="565.88" y="-388.48" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="9.00">constants</text>
 </g>
 <g id="clust4" class="cluster">
 <title>cluster_src/lib/controls</title>
-<path fill="#ffffff" stroke="black" stroke-width="2" d="M98,-164.88C98,-164.88 429.25,-164.88 429.25,-164.88 435.25,-164.88 441.25,-170.88 441.25,-176.88 441.25,-176.88 441.25,-218.88 441.25,-218.88 441.25,-224.88 435.25,-230.88 429.25,-230.88 429.25,-230.88 98,-230.88 98,-230.88 92,-230.88 86,-224.88 86,-218.88 86,-218.88 86,-176.88 86,-176.88 86,-170.88 92,-164.88 98,-164.88"/>
-<text text-anchor="middle" x="263.62" y="-218.33" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="9.00">controls</text>
+<path fill="#ffffff" stroke="black" stroke-width="2" d="M98,-171.03C98,-171.03 429.25,-171.03 429.25,-171.03 435.25,-171.03 441.25,-177.03 441.25,-183.03 441.25,-183.03 441.25,-225.03 441.25,-225.03 441.25,-231.03 435.25,-237.03 429.25,-237.03 429.25,-237.03 98,-237.03 98,-237.03 92,-237.03 86,-231.03 86,-225.03 86,-225.03 86,-183.03 86,-183.03 86,-177.03 92,-171.03 98,-171.03"/>
+<text text-anchor="middle" x="263.62" y="-224.48" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="9.00">controls</text>
 </g>
 <g id="clust5" class="cluster">
+<title>cluster_src/lib/helpers</title>
+<path fill="#ffffff" stroke="black" stroke-width="2" d="M98,-255.03C98,-255.03 272.38,-255.03 272.38,-255.03 278.38,-255.03 284.38,-261.03 284.38,-267.03 284.38,-267.03 284.38,-355.03 284.38,-355.03 284.38,-361.03 278.38,-367.03 272.38,-367.03 272.38,-367.03 98,-367.03 98,-367.03 92,-367.03 86,-361.03 86,-355.03 86,-355.03 86,-267.03 86,-267.03 86,-261.03 92,-255.03 98,-255.03"/>
+<text text-anchor="middle" x="185.19" y="-354.48" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="9.00">helpers</text>
+</g>
+<g id="clust6" class="cluster">
 <title>cluster_src/lib/interfaces</title>
-<path fill="#ffffff" stroke="black" stroke-width="2" d="M461.25,-24.88C461.25,-24.88 926.5,-24.88 926.5,-24.88 932.5,-24.88 938.5,-30.88 938.5,-36.88 938.5,-36.88 938.5,-208.88 938.5,-208.88 938.5,-214.88 932.5,-220.88 926.5,-220.88 926.5,-220.88 461.25,-220.88 461.25,-220.88 455.25,-220.88 449.25,-214.88 449.25,-208.88 449.25,-208.88 449.25,-36.88 449.25,-36.88 449.25,-30.88 455.25,-24.88 461.25,-24.88"/>
-<text text-anchor="middle" x="693.88" y="-208.33" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="9.00">interfaces</text>
+<path fill="#ffffff" stroke="black" stroke-width="2" d="M461.25,-25.03C461.25,-25.03 926.5,-25.03 926.5,-25.03 932.5,-25.03 938.5,-31.03 938.5,-37.03 938.5,-37.03 938.5,-209.03 938.5,-209.03 938.5,-215.03 932.5,-221.03 926.5,-221.03 926.5,-221.03 461.25,-221.03 461.25,-221.03 455.25,-221.03 449.25,-215.03 449.25,-209.03 449.25,-209.03 449.25,-37.03 449.25,-37.03 449.25,-31.03 455.25,-25.03 461.25,-25.03"/>
+<text text-anchor="middle" x="693.88" y="-208.48" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="9.00">interfaces</text>
 </g>
 <!-- src/lib/constants/AvailableMeasureModes.ts -->
 <g id="node1" class="node">
 <title>src/lib/constants/AvailableMeasureModes.ts</title>
 <g id="a_node1"><a xlink:href="src/lib/constants/AvailableMeasureModes.ts" xlink:title="AvailableMeasureModes.ts">
-<path fill="#ddfeff" stroke="black" d="M656.96,-254.76C656.96,-254.76 541.79,-254.76 541.79,-254.76 538.83,-254.76 535.88,-251.8 535.88,-248.84 535.88,-248.84 535.88,-242.93 535.88,-242.93 535.88,-239.97 538.83,-237.01 541.79,-237.01 541.79,-237.01 656.96,-237.01 656.96,-237.01 659.92,-237.01 662.88,-239.97 662.88,-242.93 662.88,-242.93 662.88,-248.84 662.88,-248.84 662.88,-251.8 659.92,-254.76 656.96,-254.76"/>
-<text text-anchor="start" x="543.88" y="-242.21" font-family="Helvetica,sans-Serif" font-size="9.00">AvailableMeasureModes.ts</text>
+<path fill="#ddfeff" stroke="black" d="M656.96,-254.91C656.96,-254.91 541.79,-254.91 541.79,-254.91 538.83,-254.91 535.88,-251.95 535.88,-248.99 535.88,-248.99 535.88,-243.07 535.88,-243.07 535.88,-240.11 538.83,-237.16 541.79,-237.16 541.79,-237.16 656.96,-237.16 656.96,-237.16 659.92,-237.16 662.88,-240.11 662.88,-243.07 662.88,-243.07 662.88,-248.99 662.88,-248.99 662.88,-251.95 659.92,-254.91 656.96,-254.91"/>
+<text text-anchor="start" x="543.88" y="-242.36" font-family="Helvetica,sans-Serif" font-size="9.00">AvailableMeasureModes.ts</text>
 </a>
 </g>
 </g>
@@ -47,8 +52,8 @@
 <g id="node2" class="node">
 <title>src/lib/constants/AvailableModes.ts</title>
 <g id="a_node2"><a xlink:href="src/lib/constants/AvailableModes.ts" xlink:title="AvailableModes.ts">
-<path fill="#ddfeff" stroke="black" d="M638.96,-374.76C638.96,-374.76 559.79,-374.76 559.79,-374.76 556.83,-374.76 553.88,-371.8 553.88,-368.84 553.88,-368.84 553.88,-362.93 553.88,-362.93 553.88,-359.97 556.83,-357.01 559.79,-357.01 559.79,-357.01 638.96,-357.01 638.96,-357.01 641.92,-357.01 644.88,-359.97 644.88,-362.93 644.88,-362.93 644.88,-368.84 644.88,-368.84 644.88,-371.8 641.92,-374.76 638.96,-374.76"/>
-<text text-anchor="start" x="561.88" y="-362.21" font-family="Helvetica,sans-Serif" font-size="9.00">AvailableModes.ts</text>
+<path fill="#ddfeff" stroke="black" d="M638.96,-374.91C638.96,-374.91 559.79,-374.91 559.79,-374.91 556.83,-374.91 553.88,-371.95 553.88,-368.99 553.88,-368.99 553.88,-363.07 553.88,-363.07 553.88,-360.11 556.83,-357.16 559.79,-357.16 559.79,-357.16 638.96,-357.16 638.96,-357.16 641.92,-357.16 644.88,-360.11 644.88,-363.07 644.88,-363.07 644.88,-368.99 644.88,-368.99 644.88,-371.95 641.92,-374.91 638.96,-374.91"/>
+<text text-anchor="start" x="561.88" y="-362.36" font-family="Helvetica,sans-Serif" font-size="9.00">AvailableModes.ts</text>
 </a>
 </g>
 </g>
@@ -56,8 +61,8 @@
 <g id="node3" class="node">
 <title>src/lib/constants/defaultControlOptions.ts</title>
 <g id="a_node3"><a xlink:href="src/lib/constants/defaultControlOptions.ts" xlink:title="defaultControlOptions.ts">
-<path fill="#ddfeff" stroke="black" d="M650.58,-284.76C650.58,-284.76 548.17,-284.76 548.17,-284.76 545.21,-284.76 542.25,-281.8 542.25,-278.84 542.25,-278.84 542.25,-272.93 542.25,-272.93 542.25,-269.97 545.21,-267.01 548.17,-267.01 548.17,-267.01 650.58,-267.01 650.58,-267.01 653.54,-267.01 656.5,-269.97 656.5,-272.93 656.5,-272.93 656.5,-278.84 656.5,-278.84 656.5,-281.8 653.54,-284.76 650.58,-284.76"/>
-<text text-anchor="start" x="550.25" y="-272.21" font-family="Helvetica,sans-Serif" font-size="9.00">defaultControlOptions.ts</text>
+<path fill="#ddfeff" stroke="black" d="M650.58,-284.91C650.58,-284.91 548.17,-284.91 548.17,-284.91 545.21,-284.91 542.25,-281.95 542.25,-278.99 542.25,-278.99 542.25,-273.07 542.25,-273.07 542.25,-270.11 545.21,-267.16 548.17,-267.16 548.17,-267.16 650.58,-267.16 650.58,-267.16 653.54,-267.16 656.5,-270.11 656.5,-273.07 656.5,-273.07 656.5,-278.99 656.5,-278.99 656.5,-281.95 653.54,-284.91 650.58,-284.91"/>
+<text text-anchor="start" x="550.25" y="-272.36" font-family="Helvetica,sans-Serif" font-size="9.00">defaultControlOptions.ts</text>
 </a>
 </g>
 </g>
@@ -65,53 +70,53 @@
 <g id="node4" class="node">
 <title>src/lib/interfaces/TerradrawControlOptions.ts</title>
 <g id="a_node4"><a xlink:href="src/lib/interfaces/TerradrawControlOptions.ts" xlink:title="TerradrawControlOptions.ts">
-<path fill="#ddfeff" stroke="black" d="M657.33,-180.76C657.33,-180.76 541.42,-180.76 541.42,-180.76 538.46,-180.76 535.5,-177.8 535.5,-174.84 535.5,-174.84 535.5,-168.93 535.5,-168.93 535.5,-165.97 538.46,-163.01 541.42,-163.01 541.42,-163.01 657.33,-163.01 657.33,-163.01 660.29,-163.01 663.25,-165.97 663.25,-168.93 663.25,-168.93 663.25,-174.84 663.25,-174.84 663.25,-177.8 660.29,-180.76 657.33,-180.76"/>
-<text text-anchor="start" x="543.5" y="-168.21" font-family="Helvetica,sans-Serif" font-size="9.00">TerradrawControlOptions.ts</text>
+<path fill="#ddfeff" stroke="black" d="M657.33,-180.91C657.33,-180.91 541.42,-180.91 541.42,-180.91 538.46,-180.91 535.5,-177.95 535.5,-174.99 535.5,-174.99 535.5,-169.07 535.5,-169.07 535.5,-166.11 538.46,-163.16 541.42,-163.16 541.42,-163.16 657.33,-163.16 657.33,-163.16 660.29,-163.16 663.25,-166.11 663.25,-169.07 663.25,-169.07 663.25,-174.99 663.25,-174.99 663.25,-177.95 660.29,-180.91 657.33,-180.91"/>
+<text text-anchor="start" x="543.5" y="-168.36" font-family="Helvetica,sans-Serif" font-size="9.00">TerradrawControlOptions.ts</text>
 </a>
 </g>
 </g>
 <!-- src/lib/constants/defaultControlOptions.ts&#45;&gt;src/lib/interfaces/TerradrawControlOptions.ts -->
 <g id="edge1" class="edge">
 <title>src/lib/constants/defaultControlOptions.ts&#45;&gt;src/lib/interfaces/TerradrawControlOptions.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M542.09,-274.58C531.45,-271.22 522.27,-265.2 517.75,-254.88 504.39,-224.38 542.05,-198.75 570.59,-184.37"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="571.41,-186.3 575.88,-181.79 569.57,-182.53 571.41,-186.3"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M542.09,-274.73C531.45,-271.36 522.27,-265.35 517.75,-255.03 504.39,-224.52 542.05,-198.9 570.59,-184.51"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="571.41,-186.45 575.88,-181.94 569.57,-182.67 571.41,-186.45"/>
 </g>
 <!-- src/lib/interfaces/ModeOptions.ts -->
 <g id="node8" class="node">
 <title>src/lib/interfaces/ModeOptions.ts</title>
 <g id="a_node8"><a xlink:href="src/lib/interfaces/ModeOptions.ts" xlink:title="ModeOptions.ts">
-<path fill="#ddfeff" stroke="black" d="M781.58,-161.76C781.58,-161.76 713.67,-161.76 713.67,-161.76 710.71,-161.76 707.75,-158.8 707.75,-155.84 707.75,-155.84 707.75,-149.93 707.75,-149.93 707.75,-146.97 710.71,-144.01 713.67,-144.01 713.67,-144.01 781.58,-144.01 781.58,-144.01 784.54,-144.01 787.5,-146.97 787.5,-149.93 787.5,-149.93 787.5,-155.84 787.5,-155.84 787.5,-158.8 784.54,-161.76 781.58,-161.76"/>
-<text text-anchor="start" x="715.75" y="-149.21" font-family="Helvetica,sans-Serif" font-size="9.00">ModeOptions.ts</text>
+<path fill="#ddfeff" stroke="black" d="M781.58,-161.91C781.58,-161.91 713.67,-161.91 713.67,-161.91 710.71,-161.91 707.75,-158.95 707.75,-155.99 707.75,-155.99 707.75,-150.07 707.75,-150.07 707.75,-147.11 710.71,-144.16 713.67,-144.16 713.67,-144.16 781.58,-144.16 781.58,-144.16 784.54,-144.16 787.5,-147.11 787.5,-150.07 787.5,-150.07 787.5,-155.99 787.5,-155.99 787.5,-158.95 784.54,-161.91 781.58,-161.91"/>
+<text text-anchor="start" x="715.75" y="-149.36" font-family="Helvetica,sans-Serif" font-size="9.00">ModeOptions.ts</text>
 </a>
 </g>
 </g>
 <!-- src/lib/interfaces/TerradrawControlOptions.ts&#45;&gt;src/lib/interfaces/ModeOptions.ts -->
-<g id="edge25" class="edge">
+<g id="edge29" class="edge">
 <title>src/lib/interfaces/TerradrawControlOptions.ts&#45;&gt;src/lib/interfaces/ModeOptions.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M663.67,-163.66C675.83,-162.08 688.36,-160.45 699.88,-158.96"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="700.11,-161.04 705.79,-158.19 699.57,-156.88 700.11,-161.04"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M663.67,-163.81C675.83,-162.23 688.36,-160.6 699.88,-159.1"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="700.11,-161.19 705.79,-158.34 699.57,-157.03 700.11,-161.19"/>
 </g>
 <!-- src/lib/interfaces/TerradrawMode.ts -->
-<g id="node20" class="node">
+<g id="node24" class="node">
 <title>src/lib/interfaces/TerradrawMode.ts</title>
-<g id="a_node20"><a xlink:href="src/lib/interfaces/TerradrawMode.ts" xlink:title="TerradrawMode.ts">
-<path fill="#ddfeff" stroke="black" d="M786.46,-194.76C786.46,-194.76 708.79,-194.76 708.79,-194.76 705.83,-194.76 702.88,-191.8 702.88,-188.84 702.88,-188.84 702.88,-182.93 702.88,-182.93 702.88,-179.97 705.83,-177.01 708.79,-177.01 708.79,-177.01 786.46,-177.01 786.46,-177.01 789.42,-177.01 792.38,-179.97 792.38,-182.93 792.38,-182.93 792.38,-188.84 792.38,-188.84 792.38,-191.8 789.42,-194.76 786.46,-194.76"/>
-<text text-anchor="start" x="710.88" y="-182.21" font-family="Helvetica,sans-Serif" font-size="9.00">TerradrawMode.ts</text>
+<g id="a_node24"><a xlink:href="src/lib/interfaces/TerradrawMode.ts" xlink:title="TerradrawMode.ts">
+<path fill="#ddfeff" stroke="black" d="M786.46,-194.91C786.46,-194.91 708.79,-194.91 708.79,-194.91 705.83,-194.91 702.88,-191.95 702.88,-188.99 702.88,-188.99 702.88,-183.07 702.88,-183.07 702.88,-180.11 705.83,-177.16 708.79,-177.16 708.79,-177.16 786.46,-177.16 786.46,-177.16 789.42,-177.16 792.38,-180.11 792.38,-183.07 792.38,-183.07 792.38,-188.99 792.38,-188.99 792.38,-191.95 789.42,-194.91 786.46,-194.91"/>
+<text text-anchor="start" x="710.88" y="-182.36" font-family="Helvetica,sans-Serif" font-size="9.00">TerradrawMode.ts</text>
 </a>
 </g>
 </g>
 <!-- src/lib/interfaces/TerradrawControlOptions.ts&#45;&gt;src/lib/interfaces/TerradrawMode.ts -->
-<g id="edge26" class="edge">
+<g id="edge30" class="edge">
 <title>src/lib/interfaces/TerradrawControlOptions.ts&#45;&gt;src/lib/interfaces/TerradrawMode.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M663.67,-177.94C674.23,-178.95 685.07,-179.99 695.29,-180.97"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="694.92,-183.04 701.09,-181.53 695.32,-178.86 694.92,-183.04"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M663.67,-178.09C674.23,-179.1 685.07,-180.14 695.29,-181.12"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="694.92,-183.19 701.09,-181.67 695.32,-179.01 694.92,-183.19"/>
 </g>
 <!-- src/lib/constants/defaultMeasureControlOptions.ts -->
 <g id="node5" class="node">
 <title>src/lib/constants/defaultMeasureControlOptions.ts</title>
 <g id="a_node5"><a xlink:href="src/lib/constants/defaultMeasureControlOptions.ts" xlink:title="defaultMeasureControlOptions.ts">
-<path fill="#ddfeff" stroke="black" d="M668.58,-314.76C668.58,-314.76 530.17,-314.76 530.17,-314.76 527.21,-314.76 524.25,-311.8 524.25,-308.84 524.25,-308.84 524.25,-302.93 524.25,-302.93 524.25,-299.97 527.21,-297.01 530.17,-297.01 530.17,-297.01 668.58,-297.01 668.58,-297.01 671.54,-297.01 674.5,-299.97 674.5,-302.93 674.5,-302.93 674.5,-308.84 674.5,-308.84 674.5,-311.8 671.54,-314.76 668.58,-314.76"/>
-<text text-anchor="start" x="532.25" y="-302.21" font-family="Helvetica,sans-Serif" font-size="9.00">defaultMeasureControlOptions.ts</text>
+<path fill="#ddfeff" stroke="black" d="M668.58,-314.91C668.58,-314.91 530.17,-314.91 530.17,-314.91 527.21,-314.91 524.25,-311.95 524.25,-308.99 524.25,-308.99 524.25,-303.07 524.25,-303.07 524.25,-300.11 527.21,-297.16 530.17,-297.16 530.17,-297.16 668.58,-297.16 668.58,-297.16 671.54,-297.16 674.5,-300.11 674.5,-303.07 674.5,-303.07 674.5,-308.99 674.5,-308.99 674.5,-311.95 671.54,-314.91 668.58,-314.91"/>
+<text text-anchor="start" x="532.25" y="-302.36" font-family="Helvetica,sans-Serif" font-size="9.00">defaultMeasureControlOptions.ts</text>
 </a>
 </g>
 </g>
@@ -119,316 +124,376 @@
 <g id="node6" class="node">
 <title>src/lib/interfaces/MeasureControlOptions.ts</title>
 <g id="a_node6"><a xlink:href="src/lib/interfaces/MeasureControlOptions.ts" xlink:title="MeasureControlOptions.ts">
-<path fill="#ddfeff" stroke="black" d="M654.71,-122.76C654.71,-122.76 544.04,-122.76 544.04,-122.76 541.08,-122.76 538.12,-119.8 538.12,-116.84 538.12,-116.84 538.12,-110.93 538.12,-110.93 538.12,-107.97 541.08,-105.01 544.04,-105.01 544.04,-105.01 654.71,-105.01 654.71,-105.01 657.67,-105.01 660.62,-107.97 660.62,-110.93 660.62,-110.93 660.62,-116.84 660.62,-116.84 660.62,-119.8 657.67,-122.76 654.71,-122.76"/>
-<text text-anchor="start" x="546.12" y="-110.21" font-family="Helvetica,sans-Serif" font-size="9.00">MeasureControlOptions.ts</text>
+<path fill="#ddfeff" stroke="black" d="M654.71,-122.91C654.71,-122.91 544.04,-122.91 544.04,-122.91 541.08,-122.91 538.12,-119.95 538.12,-116.99 538.12,-116.99 538.12,-111.07 538.12,-111.07 538.12,-108.11 541.08,-105.16 544.04,-105.16 544.04,-105.16 654.71,-105.16 654.71,-105.16 657.67,-105.16 660.62,-108.11 660.62,-111.07 660.62,-111.07 660.62,-116.99 660.62,-116.99 660.62,-119.95 657.67,-122.91 654.71,-122.91"/>
+<text text-anchor="start" x="546.12" y="-110.36" font-family="Helvetica,sans-Serif" font-size="9.00">MeasureControlOptions.ts</text>
 </a>
 </g>
 </g>
 <!-- src/lib/constants/defaultMeasureControlOptions.ts&#45;&gt;src/lib/interfaces/MeasureControlOptions.ts -->
 <g id="edge2" class="edge">
 <title>src/lib/constants/defaultMeasureControlOptions.ts&#45;&gt;src/lib/interfaces/MeasureControlOptions.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M526.82,-296.7C523,-293.59 519.86,-289.71 517.75,-284.88 512.31,-272.47 512.31,-175.3 517.75,-162.88 525.47,-145.24 543.08,-133.51 559.97,-125.96"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="560.51,-128.01 565.24,-123.75 558.89,-124.13 560.51,-128.01"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M526.82,-296.85C523,-293.74 519.86,-289.86 517.75,-285.03 512.31,-272.61 512.31,-175.45 517.75,-163.03 525.47,-145.39 543.08,-133.65 559.97,-126.1"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="560.51,-128.15 565.24,-123.9 558.89,-124.28 560.51,-128.15"/>
 </g>
 <!-- src/lib/interfaces/MeasureControlOptions.ts&#45;&gt;src/lib/interfaces/ModeOptions.ts -->
-<g id="edge23" class="edge">
+<g id="edge27" class="edge">
 <title>src/lib/interfaces/MeasureControlOptions.ts&#45;&gt;src/lib/interfaces/ModeOptions.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M635.41,-123.23C656.13,-128.75 682.52,-135.79 704.4,-141.62"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="703.83,-143.64 710.16,-143.16 704.91,-139.59 703.83,-143.64"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M635.41,-123.37C656.13,-128.9 682.52,-135.94 704.4,-141.77"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="703.83,-143.79 710.16,-143.31 704.91,-139.73 703.83,-143.79"/>
 </g>
 <!-- src/lib/interfaces/AreaUnit.ts -->
-<g id="node15" class="node">
+<g id="node19" class="node">
 <title>src/lib/interfaces/AreaUnit.ts</title>
-<g id="a_node15"><a xlink:href="src/lib/interfaces/AreaUnit.ts" xlink:title="AreaUnit.ts">
-<path fill="#ddfeff" stroke="black" d="M772.21,-131.76C772.21,-131.76 723.04,-131.76 723.04,-131.76 720.08,-131.76 717.12,-128.8 717.12,-125.84 717.12,-125.84 717.12,-119.93 717.12,-119.93 717.12,-116.97 720.08,-114.01 723.04,-114.01 723.04,-114.01 772.21,-114.01 772.21,-114.01 775.17,-114.01 778.12,-116.97 778.12,-119.93 778.12,-119.93 778.12,-125.84 778.12,-125.84 778.12,-128.8 775.17,-131.76 772.21,-131.76"/>
-<text text-anchor="start" x="725.12" y="-119.21" font-family="Helvetica,sans-Serif" font-size="9.00">AreaUnit.ts</text>
+<g id="a_node19"><a xlink:href="src/lib/interfaces/AreaUnit.ts" xlink:title="AreaUnit.ts">
+<path fill="#ddfeff" stroke="black" d="M772.21,-131.91C772.21,-131.91 723.04,-131.91 723.04,-131.91 720.08,-131.91 717.12,-128.95 717.12,-125.99 717.12,-125.99 717.12,-120.07 717.12,-120.07 717.12,-117.11 720.08,-114.16 723.04,-114.16 723.04,-114.16 772.21,-114.16 772.21,-114.16 775.17,-114.16 778.12,-117.11 778.12,-120.07 778.12,-120.07 778.12,-125.99 778.12,-125.99 778.12,-128.95 775.17,-131.91 772.21,-131.91"/>
+<text text-anchor="start" x="725.12" y="-119.36" font-family="Helvetica,sans-Serif" font-size="9.00">AreaUnit.ts</text>
 </a>
 </g>
 </g>
 <!-- src/lib/interfaces/MeasureControlOptions.ts&#45;&gt;src/lib/interfaces/AreaUnit.ts -->
-<g id="edge20" class="edge">
+<g id="edge24" class="edge">
 <title>src/lib/interfaces/MeasureControlOptions.ts&#45;&gt;src/lib/interfaces/AreaUnit.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M660.7,-117.6C677.19,-118.61 694.57,-119.68 709.35,-120.59"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="709.19,-122.68 715.31,-120.96 709.45,-118.49 709.19,-122.68"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M660.7,-117.74C677.19,-118.76 694.57,-119.83 709.35,-120.74"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="709.19,-122.83 715.31,-121.1 709.45,-118.64 709.19,-122.83"/>
 </g>
 <!-- src/lib/interfaces/DistanceUnit.ts -->
-<g id="node16" class="node">
+<g id="node20" class="node">
 <title>src/lib/interfaces/DistanceUnit.ts</title>
-<g id="a_node16"><a xlink:href="src/lib/interfaces/DistanceUnit.ts" xlink:title="DistanceUnit.ts">
-<path fill="#ddfeff" stroke="black" d="M780.46,-69.76C780.46,-69.76 714.79,-69.76 714.79,-69.76 711.83,-69.76 708.88,-66.8 708.88,-63.84 708.88,-63.84 708.88,-57.93 708.88,-57.93 708.88,-54.97 711.83,-52.01 714.79,-52.01 714.79,-52.01 780.46,-52.01 780.46,-52.01 783.42,-52.01 786.38,-54.97 786.38,-57.93 786.38,-57.93 786.38,-63.84 786.38,-63.84 786.38,-66.8 783.42,-69.76 780.46,-69.76"/>
-<text text-anchor="start" x="716.88" y="-57.21" font-family="Helvetica,sans-Serif" font-size="9.00">DistanceUnit.ts</text>
+<g id="a_node20"><a xlink:href="src/lib/interfaces/DistanceUnit.ts" xlink:title="DistanceUnit.ts">
+<path fill="#ddfeff" stroke="black" d="M780.46,-69.91C780.46,-69.91 714.79,-69.91 714.79,-69.91 711.83,-69.91 708.88,-66.95 708.88,-63.99 708.88,-63.99 708.88,-58.07 708.88,-58.07 708.88,-55.11 711.83,-52.16 714.79,-52.16 714.79,-52.16 780.46,-52.16 780.46,-52.16 783.42,-52.16 786.38,-55.11 786.38,-58.07 786.38,-58.07 786.38,-63.99 786.38,-63.99 786.38,-66.95 783.42,-69.91 780.46,-69.91"/>
+<text text-anchor="start" x="716.88" y="-57.36" font-family="Helvetica,sans-Serif" font-size="9.00">DistanceUnit.ts</text>
 </a>
 </g>
 </g>
 <!-- src/lib/interfaces/MeasureControlOptions.ts&#45;&gt;src/lib/interfaces/DistanceUnit.ts -->
-<g id="edge21" class="edge">
+<g id="edge25" class="edge">
 <title>src/lib/interfaces/MeasureControlOptions.ts&#45;&gt;src/lib/interfaces/DistanceUnit.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M661,-110.23C668.82,-107.71 676.26,-104.07 682.5,-98.88 690.18,-92.5 683.2,-84.7 690.5,-77.88 693.82,-74.79 697.69,-72.25 701.82,-70.18"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="702.42,-72.21 707.08,-67.89 700.74,-68.36 702.42,-72.21"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M661,-110.37C668.82,-107.86 676.26,-104.22 682.5,-99.03 690.18,-92.64 683.2,-84.84 690.5,-78.03 693.82,-74.93 697.69,-72.4 701.82,-70.32"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="702.42,-72.35 707.08,-68.03 700.74,-68.5 702.42,-72.35"/>
 </g>
 <!-- src/lib/interfaces/MeasureControlMode.ts -->
-<g id="node18" class="node">
+<g id="node22" class="node">
 <title>src/lib/interfaces/MeasureControlMode.ts</title>
-<g id="a_node18"><a xlink:href="src/lib/interfaces/MeasureControlMode.ts" xlink:title="MeasureControlMode.ts">
-<path fill="#ddfeff" stroke="black" d="M798.83,-101.76C798.83,-101.76 696.42,-101.76 696.42,-101.76 693.46,-101.76 690.5,-98.8 690.5,-95.84 690.5,-95.84 690.5,-89.93 690.5,-89.93 690.5,-86.97 693.46,-84.01 696.42,-84.01 696.42,-84.01 798.83,-84.01 798.83,-84.01 801.79,-84.01 804.75,-86.97 804.75,-89.93 804.75,-89.93 804.75,-95.84 804.75,-95.84 804.75,-98.8 801.79,-101.76 798.83,-101.76"/>
-<text text-anchor="start" x="698.5" y="-89.21" font-family="Helvetica,sans-Serif" font-size="9.00">MeasureControlMode.ts</text>
+<g id="a_node22"><a xlink:href="src/lib/interfaces/MeasureControlMode.ts" xlink:title="MeasureControlMode.ts">
+<path fill="#ddfeff" stroke="black" d="M798.83,-101.91C798.83,-101.91 696.42,-101.91 696.42,-101.91 693.46,-101.91 690.5,-98.95 690.5,-95.99 690.5,-95.99 690.5,-90.07 690.5,-90.07 690.5,-87.11 693.46,-84.16 696.42,-84.16 696.42,-84.16 798.83,-84.16 798.83,-84.16 801.79,-84.16 804.75,-87.11 804.75,-90.07 804.75,-90.07 804.75,-95.99 804.75,-95.99 804.75,-98.95 801.79,-101.91 798.83,-101.91"/>
+<text text-anchor="start" x="698.5" y="-89.36" font-family="Helvetica,sans-Serif" font-size="9.00">MeasureControlMode.ts</text>
 </a>
 </g>
 </g>
 <!-- src/lib/interfaces/MeasureControlOptions.ts&#45;&gt;src/lib/interfaces/MeasureControlMode.ts -->
-<g id="edge22" class="edge">
+<g id="edge26" class="edge">
 <title>src/lib/interfaces/MeasureControlOptions.ts&#45;&gt;src/lib/interfaces/MeasureControlMode.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M660.7,-105.22C668.02,-104.17 675.52,-103.09 682.88,-102.04"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="683.05,-104.13 688.69,-101.2 682.46,-99.98 683.05,-104.13"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M660.7,-105.37C668.02,-104.32 675.52,-103.24 682.88,-102.18"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="683.05,-104.28 688.69,-101.35 682.46,-100.12 683.05,-104.28"/>
 </g>
 <!-- src/lib/constants/getDefaultModeOptions.ts -->
 <g id="node7" class="node">
 <title>src/lib/constants/getDefaultModeOptions.ts</title>
 <g id="a_node7"><a xlink:href="src/lib/constants/getDefaultModeOptions.ts" xlink:title="getDefaultModeOptions.ts">
-<path fill="#ddfeff" stroke="black" d="M654.33,-344.76C654.33,-344.76 544.42,-344.76 544.42,-344.76 541.46,-344.76 538.5,-341.8 538.5,-338.84 538.5,-338.84 538.5,-332.93 538.5,-332.93 538.5,-329.97 541.46,-327.01 544.42,-327.01 544.42,-327.01 654.33,-327.01 654.33,-327.01 657.29,-327.01 660.25,-329.97 660.25,-332.93 660.25,-332.93 660.25,-338.84 660.25,-338.84 660.25,-341.8 657.29,-344.76 654.33,-344.76"/>
-<text text-anchor="start" x="546.5" y="-332.21" font-family="Helvetica,sans-Serif" font-size="9.00">getDefaultModeOptions.ts</text>
+<path fill="#ddfeff" stroke="black" d="M654.33,-344.91C654.33,-344.91 544.42,-344.91 544.42,-344.91 541.46,-344.91 538.5,-341.95 538.5,-338.99 538.5,-338.99 538.5,-333.07 538.5,-333.07 538.5,-330.11 541.46,-327.16 544.42,-327.16 544.42,-327.16 654.33,-327.16 654.33,-327.16 657.29,-327.16 660.25,-330.11 660.25,-333.07 660.25,-333.07 660.25,-338.99 660.25,-338.99 660.25,-341.95 657.29,-344.91 654.33,-344.91"/>
+<text text-anchor="start" x="546.5" y="-332.36" font-family="Helvetica,sans-Serif" font-size="9.00">getDefaultModeOptions.ts</text>
 </a>
 </g>
 </g>
 <!-- src/lib/constants/getDefaultModeOptions.ts&#45;&gt;src/lib/interfaces/ModeOptions.ts -->
 <g id="edge3" class="edge">
 <title>src/lib/constants/getDefaultModeOptions.ts&#45;&gt;src/lib/interfaces/ModeOptions.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M660.57,-334.59C668.94,-331.85 676.66,-327.52 682.5,-320.88 704.55,-295.83 670.12,-197.32 690.5,-170.88 693.33,-167.21 696.91,-164.28 700.9,-161.94"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="701.62,-163.92 706.08,-159.38 699.77,-160.15 701.62,-163.92"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M660.57,-334.73C668.94,-331.99 676.66,-327.67 682.5,-321.03 704.55,-295.97 670.12,-197.47 690.5,-171.03 693.33,-167.36 696.91,-164.43 700.9,-162.08"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="701.62,-164.07 706.08,-159.53 699.77,-160.3 701.62,-164.07"/>
 </g>
 <!-- src/lib/interfaces/TerradrawModeClass.ts -->
-<g id="node19" class="node">
+<g id="node23" class="node">
 <title>src/lib/interfaces/TerradrawModeClass.ts</title>
-<g id="a_node19"><a xlink:href="src/lib/interfaces/TerradrawModeClass.ts" xlink:title="TerradrawModeClass.ts">
-<path fill="#ddfeff" stroke="black" d="M924.58,-104.76C924.58,-104.76 823.67,-104.76 823.67,-104.76 820.71,-104.76 817.75,-101.8 817.75,-98.84 817.75,-98.84 817.75,-92.93 817.75,-92.93 817.75,-89.97 820.71,-87.01 823.67,-87.01 823.67,-87.01 924.58,-87.01 924.58,-87.01 927.54,-87.01 930.5,-89.97 930.5,-92.93 930.5,-92.93 930.5,-98.84 930.5,-98.84 930.5,-101.8 927.54,-104.76 924.58,-104.76"/>
-<text text-anchor="start" x="825.75" y="-92.21" font-family="Helvetica,sans-Serif" font-size="9.00">TerradrawModeClass.ts</text>
+<g id="a_node23"><a xlink:href="src/lib/interfaces/TerradrawModeClass.ts" xlink:title="TerradrawModeClass.ts">
+<path fill="#ddfeff" stroke="black" d="M924.58,-104.91C924.58,-104.91 823.67,-104.91 823.67,-104.91 820.71,-104.91 817.75,-101.95 817.75,-98.99 817.75,-98.99 817.75,-93.07 817.75,-93.07 817.75,-90.11 820.71,-87.16 823.67,-87.16 823.67,-87.16 924.58,-87.16 924.58,-87.16 927.54,-87.16 930.5,-90.11 930.5,-93.07 930.5,-93.07 930.5,-98.99 930.5,-98.99 930.5,-101.95 927.54,-104.91 924.58,-104.91"/>
+<text text-anchor="start" x="825.75" y="-92.36" font-family="Helvetica,sans-Serif" font-size="9.00">TerradrawModeClass.ts</text>
 </a>
 </g>
 </g>
 <!-- src/lib/interfaces/ModeOptions.ts&#45;&gt;src/lib/interfaces/TerradrawModeClass.ts -->
-<g id="edge24" class="edge">
+<g id="edge28" class="edge">
 <title>src/lib/interfaces/ModeOptions.ts&#45;&gt;src/lib/interfaces/TerradrawModeClass.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M787.77,-143.99C793.56,-142.23 799.38,-140.19 804.75,-137.88 822.57,-130.22 841.23,-118.47 854.54,-109.35"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="855.66,-111.13 859.38,-105.97 853.26,-107.68 855.66,-111.13"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M787.77,-144.14C793.56,-142.37 799.38,-140.34 804.75,-138.03 822.57,-130.37 841.23,-118.62 854.54,-109.5"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="855.66,-111.28 859.38,-106.12 853.26,-107.83 855.66,-111.28"/>
 </g>
 <!-- src/lib/constants/index.ts -->
 <g id="node9" class="node">
 <title>src/lib/constants/index.ts</title>
 <g id="a_node9"><a xlink:href="src/lib/constants/index.ts" xlink:title="index.ts">
-<path fill="#ddfeff" stroke="black" d="M505.33,-269.76C505.33,-269.76 463.17,-269.76 463.17,-269.76 460.21,-269.76 457.25,-266.8 457.25,-263.84 457.25,-263.84 457.25,-257.93 457.25,-257.93 457.25,-254.97 460.21,-252.01 463.17,-252.01 463.17,-252.01 505.33,-252.01 505.33,-252.01 508.29,-252.01 511.25,-254.97 511.25,-257.93 511.25,-257.93 511.25,-263.84 511.25,-263.84 511.25,-266.8 508.29,-269.76 505.33,-269.76"/>
-<text text-anchor="start" x="468.5" y="-257.21" font-family="Helvetica,sans-Serif" font-size="9.00">index.ts</text>
+<path fill="#ddfeff" stroke="black" d="M505.33,-269.91C505.33,-269.91 463.17,-269.91 463.17,-269.91 460.21,-269.91 457.25,-266.95 457.25,-263.99 457.25,-263.99 457.25,-258.07 457.25,-258.07 457.25,-255.11 460.21,-252.16 463.17,-252.16 463.17,-252.16 505.33,-252.16 505.33,-252.16 508.29,-252.16 511.25,-255.11 511.25,-258.07 511.25,-258.07 511.25,-263.99 511.25,-263.99 511.25,-266.95 508.29,-269.91 505.33,-269.91"/>
+<text text-anchor="start" x="468.5" y="-257.36" font-family="Helvetica,sans-Serif" font-size="9.00">index.ts</text>
 </a>
 </g>
 </g>
 <!-- src/lib/constants/index.ts&#45;&gt;src/lib/constants/AvailableMeasureModes.ts -->
 <g id="edge4" class="edge">
 <title>src/lib/constants/index.ts&#45;&gt;src/lib/constants/AvailableMeasureModes.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M511.49,-257.4C516.74,-256.71 522.49,-255.95 528.45,-255.16"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="534.81,-256.43 528.59,-255.14 534.26,-252.27 534.81,-256.43"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M511.49,-257.55C516.74,-256.86 522.49,-256.09 528.45,-255.3"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="534.81,-256.58 528.59,-255.28 534.26,-252.41 534.81,-256.58"/>
 </g>
 <!-- src/lib/constants/index.ts&#45;&gt;src/lib/constants/AvailableModes.ts -->
 <g id="edge5" class="edge">
 <title>src/lib/constants/index.ts&#45;&gt;src/lib/constants/AvailableModes.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M486.44,-270.22C489.32,-288.7 498.45,-329.98 524.25,-350.88 530.71,-356.11 538.5,-359.67 546.58,-362.07"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="551.91,-365.61 546.62,-362.08 552.96,-361.54 551.91,-365.61"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M486.44,-270.37C489.32,-288.85 498.45,-330.13 524.25,-351.03 530.71,-356.26 538.5,-359.82 546.58,-362.22"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="551.91,-365.76 546.62,-362.23 552.96,-361.69 551.91,-365.76"/>
 </g>
 <!-- src/lib/constants/index.ts&#45;&gt;src/lib/constants/defaultControlOptions.ts -->
 <g id="edge6" class="edge">
 <title>src/lib/constants/index.ts&#45;&gt;src/lib/constants/defaultControlOptions.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M511.49,-264.36C518.63,-265.31 526.68,-266.38 534.93,-267.47"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="540.63,-270.35 534.96,-267.47 541.18,-266.18 540.63,-270.35"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M511.49,-264.51C518.63,-265.46 526.68,-266.52 534.93,-267.62"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="540.63,-270.49 534.96,-267.62 541.18,-266.33 540.63,-270.49"/>
 </g>
 <!-- src/lib/constants/index.ts&#45;&gt;src/lib/constants/defaultMeasureControlOptions.ts -->
 <g id="edge7" class="edge">
 <title>src/lib/constants/index.ts&#45;&gt;src/lib/constants/defaultMeasureControlOptions.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M494.69,-270.16C502.12,-276.93 513.06,-285.78 524.25,-290.88 526.94,-292.11 529.73,-293.23 532.58,-294.27"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="537.71,-298.2 532.68,-294.3 539.04,-294.21 537.71,-298.2"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M494.69,-270.3C502.12,-277.07 513.06,-285.93 524.25,-291.03 526.94,-292.26 529.73,-293.38 532.58,-294.42"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="537.71,-298.34 532.68,-294.45 539.04,-294.36 537.71,-298.34"/>
 </g>
 <!-- src/lib/constants/index.ts&#45;&gt;src/lib/constants/getDefaultModeOptions.ts -->
 <g id="edge8" class="edge">
 <title>src/lib/constants/index.ts&#45;&gt;src/lib/constants/getDefaultModeOptions.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M488.45,-269.84C493.73,-283.21 505.55,-308.17 524.25,-320.88 526.63,-322.5 529.15,-323.96 531.76,-325.26"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="536.25,-329.54 531.62,-325.19 537.95,-325.7 536.25,-329.54"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M488.45,-269.99C493.73,-283.36 505.55,-308.32 524.25,-321.03 526.63,-322.65 529.15,-324.1 531.76,-325.4"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="536.25,-329.69 531.62,-325.34 537.95,-325.85 536.25,-329.69"/>
 </g>
 <!-- src/lib/controls/MaplibreMeasureControl.ts -->
 <g id="node10" class="node">
 <title>src/lib/controls/MaplibreMeasureControl.ts</title>
 <g id="a_node10"><a xlink:href="src/lib/controls/MaplibreMeasureControl.ts" xlink:title="MaplibreMeasureControl.ts">
-<path fill="#ddfeff" stroke="black" d="M282.08,-190.76C282.08,-190.76 166.92,-190.76 166.92,-190.76 163.96,-190.76 161,-187.8 161,-184.84 161,-184.84 161,-178.93 161,-178.93 161,-175.97 163.96,-173.01 166.92,-173.01 166.92,-173.01 282.08,-173.01 282.08,-173.01 285.04,-173.01 288,-175.97 288,-178.93 288,-178.93 288,-184.84 288,-184.84 288,-187.8 285.04,-190.76 282.08,-190.76"/>
-<text text-anchor="start" x="169" y="-178.21" font-family="Helvetica,sans-Serif" font-size="9.00">MaplibreMeasureControl.ts</text>
+<path fill="#ddfeff" stroke="black" d="M282.08,-196.91C282.08,-196.91 166.92,-196.91 166.92,-196.91 163.96,-196.91 161,-193.95 161,-190.99 161,-190.99 161,-185.07 161,-185.07 161,-182.11 163.96,-179.16 166.92,-179.16 166.92,-179.16 282.08,-179.16 282.08,-179.16 285.04,-179.16 288,-182.11 288,-185.07 288,-185.07 288,-190.99 288,-190.99 288,-193.95 285.04,-196.91 282.08,-196.91"/>
+<text text-anchor="start" x="169" y="-184.36" font-family="Helvetica,sans-Serif" font-size="9.00">MaplibreMeasureControl.ts</text>
 </a>
 </g>
 </g>
 <!-- src/lib/controls/MaplibreMeasureControl.ts&#45;&gt;src/lib/constants/index.ts -->
 <g id="edge9" class="edge">
 <title>src/lib/controls/MaplibreMeasureControl.ts&#45;&gt;src/lib/constants/index.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M280.06,-191.19C282.8,-192.29 285.46,-193.51 288,-194.88 295.19,-198.77 293.65,-204.31 301,-207.88 357.46,-235.37 383.78,-199.59 441.25,-224.88 451.88,-229.56 461.85,-237.86 469.4,-245.31"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="467.84,-246.72 473.51,-249.6 470.87,-243.81 467.84,-246.72"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M280.06,-197.34C282.8,-198.44 285.46,-199.66 288,-201.03 295.19,-204.91 293.65,-210.45 301,-214.03 357.46,-241.51 382.72,-208.3 441.25,-231.03 450.4,-234.58 459.4,-240.59 466.72,-246.29"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="465.1,-247.68 471.07,-249.87 467.77,-244.44 465.1,-247.68"/>
 </g>
 <!-- src/lib/interfaces/index.ts -->
 <g id="node11" class="node">
 <title>src/lib/interfaces/index.ts</title>
 <g id="a_node11"><a xlink:href="src/lib/interfaces/index.ts" xlink:title="index.ts">
-<path fill="#ddfeff" stroke="black" d="M505.33,-149.76C505.33,-149.76 463.17,-149.76 463.17,-149.76 460.21,-149.76 457.25,-146.8 457.25,-143.84 457.25,-143.84 457.25,-137.93 457.25,-137.93 457.25,-134.97 460.21,-132.01 463.17,-132.01 463.17,-132.01 505.33,-132.01 505.33,-132.01 508.29,-132.01 511.25,-134.97 511.25,-137.93 511.25,-137.93 511.25,-143.84 511.25,-143.84 511.25,-146.8 508.29,-149.76 505.33,-149.76"/>
-<text text-anchor="start" x="468.5" y="-137.21" font-family="Helvetica,sans-Serif" font-size="9.00">index.ts</text>
+<path fill="#ddfeff" stroke="black" d="M505.33,-151.91C505.33,-151.91 463.17,-151.91 463.17,-151.91 460.21,-151.91 457.25,-148.95 457.25,-145.99 457.25,-145.99 457.25,-140.07 457.25,-140.07 457.25,-137.11 460.21,-134.16 463.17,-134.16 463.17,-134.16 505.33,-134.16 505.33,-134.16 508.29,-134.16 511.25,-137.11 511.25,-140.07 511.25,-140.07 511.25,-145.99 511.25,-145.99 511.25,-148.95 508.29,-151.91 505.33,-151.91"/>
+<text text-anchor="start" x="468.5" y="-139.36" font-family="Helvetica,sans-Serif" font-size="9.00">index.ts</text>
 </a>
 </g>
 </g>
 <!-- src/lib/controls/MaplibreMeasureControl.ts&#45;&gt;src/lib/interfaces/index.ts -->
 <g id="edge10" class="edge">
 <title>src/lib/controls/MaplibreMeasureControl.ts&#45;&gt;src/lib/interfaces/index.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M288.24,-177.98C346.68,-174.13 426.9,-168.2 441.25,-163.88 448.89,-161.59 456.71,-157.78 463.5,-153.91"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="464.52,-155.75 468.59,-150.86 462.37,-152.14 464.52,-155.75"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M288.31,-184.34C346.8,-180.65 427.06,-174.85 441.25,-170.03 450.23,-166.98 459.2,-161.61 466.53,-156.46"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="467.47,-158.38 471.05,-153.13 464.98,-155 467.47,-158.38"/>
 </g>
 <!-- src/lib/controls/MaplibreTerradrawControl.ts -->
 <g id="node12" class="node">
 <title>src/lib/controls/MaplibreTerradrawControl.ts</title>
 <g id="a_node12"><a xlink:href="src/lib/controls/MaplibreTerradrawControl.ts" xlink:title="MaplibreTerradrawControl.ts">
-<path fill="#ddfeff" stroke="black" d="M427.33,-201.76C427.33,-201.76 306.92,-201.76 306.92,-201.76 303.96,-201.76 301,-198.8 301,-195.84 301,-195.84 301,-189.93 301,-189.93 301,-186.97 303.96,-184.01 306.92,-184.01 306.92,-184.01 427.33,-184.01 427.33,-184.01 430.29,-184.01 433.25,-186.97 433.25,-189.93 433.25,-189.93 433.25,-195.84 433.25,-195.84 433.25,-198.8 430.29,-201.76 427.33,-201.76"/>
-<text text-anchor="start" x="309" y="-189.21" font-family="Helvetica,sans-Serif" font-size="9.00">MaplibreTerradrawControl.ts</text>
+<path fill="#ddfeff" stroke="black" d="M427.33,-207.91C427.33,-207.91 306.92,-207.91 306.92,-207.91 303.96,-207.91 301,-204.95 301,-201.99 301,-201.99 301,-196.07 301,-196.07 301,-193.11 303.96,-190.16 306.92,-190.16 306.92,-190.16 427.33,-190.16 427.33,-190.16 430.29,-190.16 433.25,-193.11 433.25,-196.07 433.25,-196.07 433.25,-201.99 433.25,-201.99 433.25,-204.95 430.29,-207.91 427.33,-207.91"/>
+<text text-anchor="start" x="309" y="-195.36" font-family="Helvetica,sans-Serif" font-size="9.00">MaplibreTerradrawControl.ts</text>
 </a>
 </g>
 </g>
 <!-- src/lib/controls/MaplibreMeasureControl.ts&#45;&gt;src/lib/controls/MaplibreTerradrawControl.ts -->
 <g id="edge11" class="edge">
 <title>src/lib/controls/MaplibreMeasureControl.ts&#45;&gt;src/lib/controls/MaplibreTerradrawControl.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M288.41,-186.8C289.56,-186.89 290.72,-186.99 291.87,-187.08"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="291.58,-189.16 297.72,-187.53 291.9,-184.97 291.58,-189.16"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M288.41,-192.95C289.56,-193.04 290.72,-193.13 291.87,-193.22"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="291.58,-195.31 297.72,-193.68 291.9,-191.12 291.58,-195.31"/>
 </g>
 <!-- src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/TerradrawControlOptions.ts -->
-<g id="edge34" class="edge">
+<g id="edge38" class="edge">
 <title>src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/TerradrawControlOptions.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M511.59,-150C515.81,-151.36 520.13,-152.7 524.25,-153.88 532.69,-156.31 541.72,-158.69 550.48,-160.88"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="555.96,-164.39 550.64,-160.91 556.96,-160.31 555.96,-164.39"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M511.65,-150.62C515.86,-151.79 520.17,-152.96 524.25,-154.03 533.13,-156.36 542.64,-158.75 551.78,-160.99"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="557.22,-164.48 551.88,-161.02 558.21,-160.4 557.22,-164.48"/>
 </g>
 <!-- src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/MeasureControlOptions.ts -->
-<g id="edge32" class="edge">
+<g id="edge36" class="edge">
 <title>src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/MeasureControlOptions.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M511.49,-134.62C523.72,-131.7 538.63,-128.14 552.62,-124.8"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="558.92,-125.46 552.6,-124.81 557.94,-121.37 558.92,-125.46"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M511.65,-135.44C515.86,-134.28 520.17,-133.1 524.25,-132.03 533.13,-129.7 542.64,-127.31 551.78,-125.07"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="558.21,-125.66 551.88,-125.04 557.22,-121.58 558.21,-125.66"/>
 </g>
 <!-- src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/ModeOptions.ts -->
-<g id="edge33" class="edge">
+<g id="edge37" class="edge">
 <title>src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/ModeOptions.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M511.27,-142.08C555.47,-144.11 645.79,-148.25 700.79,-150.78"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="706.55,-153.15 700.66,-150.77 706.75,-148.95 706.55,-153.15"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M511.27,-144.03C555.47,-145.72 645.79,-149.17 700.79,-151.28"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="706.57,-153.6 700.65,-151.27 706.73,-149.4 706.57,-153.6"/>
 </g>
 <!-- src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/AreaUnit.ts -->
-<g id="edge28" class="edge">
+<g id="edge32" class="edge">
 <title>src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/AreaUnit.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M511.75,-139.55C549.63,-137.57 621.44,-133.6 682.5,-128.88 691.3,-128.2 700.76,-127.37 709.65,-126.55"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="715.83,-128.08 709.66,-126.55 715.44,-123.9 715.83,-128.08"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M511.75,-141.34C549.62,-138.88 621.43,-134.05 682.5,-129.03 691.38,-128.3 700.95,-127.44 709.91,-126.61"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="716.15,-128.13 709.98,-126.6 715.75,-123.95 716.15,-128.13"/>
 </g>
 <!-- src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/DistanceUnit.ts -->
-<g id="edge29" class="edge">
+<g id="edge33" class="edge">
 <title>src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/DistanceUnit.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M486.26,-131.51C488.82,-113.04 497.38,-72.2 524.25,-54.88 552.5,-36.68 645.13,-46 701.54,-53.84"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="707.29,-56.77 701.64,-53.85 707.88,-52.61 707.29,-56.77"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M486.08,-133.93C488.33,-115.12 496.43,-72.21 524.25,-54.03 552.39,-35.64 645.06,-45.49 701.51,-53.69"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="707.25,-56.66 701.62,-53.7 707.86,-52.5 707.25,-56.66"/>
 </g>
 <!-- src/lib/interfaces/EventTypes.ts -->
-<g id="node17" class="node">
+<g id="node21" class="node">
 <title>src/lib/interfaces/EventTypes.ts</title>
-<g id="a_node17"><a xlink:href="src/lib/interfaces/EventTypes.ts" xlink:title="EventTypes.ts">
-<path fill="#ddfeff" stroke="black" d="M629.96,-92.76C629.96,-92.76 568.79,-92.76 568.79,-92.76 565.83,-92.76 562.88,-89.8 562.88,-86.84 562.88,-86.84 562.88,-80.93 562.88,-80.93 562.88,-77.97 565.83,-75.01 568.79,-75.01 568.79,-75.01 629.96,-75.01 629.96,-75.01 632.92,-75.01 635.88,-77.97 635.88,-80.93 635.88,-80.93 635.88,-86.84 635.88,-86.84 635.88,-89.8 632.92,-92.76 629.96,-92.76"/>
-<text text-anchor="start" x="570.88" y="-80.21" font-family="Helvetica,sans-Serif" font-size="9.00">EventTypes.ts</text>
+<g id="a_node21"><a xlink:href="src/lib/interfaces/EventTypes.ts" xlink:title="EventTypes.ts">
+<path fill="#ddfeff" stroke="black" d="M629.96,-92.91C629.96,-92.91 568.79,-92.91 568.79,-92.91 565.83,-92.91 562.88,-89.95 562.88,-86.99 562.88,-86.99 562.88,-81.07 562.88,-81.07 562.88,-78.11 565.83,-75.16 568.79,-75.16 568.79,-75.16 629.96,-75.16 629.96,-75.16 632.92,-75.16 635.88,-78.11 635.88,-81.07 635.88,-81.07 635.88,-86.99 635.88,-86.99 635.88,-89.95 632.92,-92.91 629.96,-92.91"/>
+<text text-anchor="start" x="570.88" y="-80.36" font-family="Helvetica,sans-Serif" font-size="9.00">EventTypes.ts</text>
 </a>
 </g>
 </g>
 <!-- src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/EventTypes.ts -->
-<g id="edge30" class="edge">
+<g id="edge34" class="edge">
 <title>src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/EventTypes.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M491.23,-131.6C498.01,-121.86 510.02,-106.87 524.25,-98.88 533.74,-93.56 544.85,-90.12 555.54,-87.89"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="561.88,-88.84 555.6,-87.87 561.11,-84.71 561.88,-88.84"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M490.88,-133.68C497.53,-123.48 509.57,-107.49 524.25,-99.03 533.68,-93.6 544.76,-90.11 555.45,-87.88"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="561.8,-88.84 555.52,-87.87 561.03,-84.71 561.8,-88.84"/>
 </g>
 <!-- src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/MeasureControlMode.ts -->
-<g id="edge31" class="edge">
+<g id="edge35" class="edge">
 <title>src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/MeasureControlMode.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M487.06,-131.75C490.8,-115.67 501.04,-82.71 524.25,-68.88 554.46,-50.89 649.58,-56.51 682.5,-68.88 686.92,-70.55 686.37,-73.59 690.5,-75.88 693.98,-77.81 697.7,-79.55 701.52,-81.11"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="706.32,-85.17 701.45,-81.08 707.8,-81.25 706.32,-85.17"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M486.92,-133.91C490.48,-117.5 500.5,-83.36 524.25,-69.03 554.36,-50.86 649.58,-56.66 682.5,-69.03 686.92,-70.69 686.37,-73.74 690.5,-76.03 693.98,-77.96 697.7,-79.7 701.52,-81.26"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="706.32,-85.32 701.45,-81.23 707.8,-81.39 706.32,-85.32"/>
 </g>
 <!-- src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/TerradrawModeClass.ts -->
-<g id="edge36" class="edge">
+<g id="edge40" class="edge">
 <title>src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/TerradrawModeClass.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M485.61,-131.64C486.98,-111.12 493.48,-61.91 524.25,-40.88 627.2,29.46 687.04,-4.76 804.75,-45.88 826.13,-53.35 846.53,-69.93 859.39,-81.95"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="862.25,-87.61 859.38,-81.94 865.16,-84.58 862.25,-87.61"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M485.53,-133.92C486.72,-113.19 492.86,-62.64 524.25,-41.03 626.96,29.66 687.04,-4.9 804.75,-46.03 826.13,-53.5 846.53,-70.08 859.39,-82.1"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="862.25,-87.76 859.38,-82.09 865.16,-84.73 862.25,-87.76"/>
 </g>
 <!-- src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/TerradrawMode.ts -->
-<g id="edge35" class="edge">
+<g id="edge39" class="edge">
 <title>src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/TerradrawMode.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M489.81,-150.05C495.92,-161.15 507.91,-179.31 524.25,-186.88 581.4,-213.35 656.01,-205.68 702.62,-196.63"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="709.01,-197.49 702.71,-196.62 708.18,-193.37 709.01,-197.49"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M490.14,-152.18C496.42,-162.84 508.42,-179.91 524.25,-187.03 581.35,-212.72 655.35,-205.46 701.92,-196.69"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="708.29,-197.58 702,-196.67 707.48,-193.46 708.29,-197.58"/>
 </g>
 <!-- src/lib/controls/MaplibreTerradrawControl.ts&#45;&gt;src/lib/constants/index.ts -->
 <g id="edge12" class="edge">
 <title>src/lib/controls/MaplibreTerradrawControl.ts&#45;&gt;src/lib/constants/index.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M410.75,-202.25C421.2,-205.62 432.02,-210.07 441.25,-215.88 442.97,-216.97 457.43,-232.6 468.91,-245.14"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="467.24,-246.43 472.84,-249.44 470.34,-243.6 467.24,-246.43"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M408.95,-208.38C419.86,-211.8 431.36,-216.28 441.25,-222.03 451.87,-228.2 462.01,-237.49 469.67,-245.45"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="467.8,-246.53 473.42,-249.51 470.89,-243.68 467.8,-246.53"/>
 </g>
 <!-- src/lib/controls/MaplibreTerradrawControl.ts&#45;&gt;src/lib/interfaces/index.ts -->
 <g id="edge13" class="edge">
 <title>src/lib/controls/MaplibreTerradrawControl.ts&#45;&gt;src/lib/interfaces/index.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M412.83,-183.59C422.46,-180.79 432.4,-177.26 441.25,-172.88 450.81,-168.16 460.36,-161.12 467.93,-154.84"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="468.95,-156.73 472.15,-151.23 466.22,-153.54 468.95,-156.73"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M414.18,-189.77C423.43,-187 432.88,-183.47 441.25,-179.03 451.87,-173.4 462.14,-164.67 469.87,-157.22"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="470.94,-159.11 473.71,-153.39 467.98,-156.14 470.94,-159.11"/>
 </g>
 <!-- src/lib/controls/index.ts -->
 <g id="node13" class="node">
 <title>src/lib/controls/index.ts</title>
 <g id="a_node13"><a xlink:href="src/lib/controls/index.ts" xlink:title="index.ts">
-<path fill="#ddfeff" stroke="black" d="M142.08,-197.76C142.08,-197.76 99.92,-197.76 99.92,-197.76 96.96,-197.76 94,-194.8 94,-191.84 94,-191.84 94,-185.93 94,-185.93 94,-182.97 96.96,-180.01 99.92,-180.01 99.92,-180.01 142.08,-180.01 142.08,-180.01 145.04,-180.01 148,-182.97 148,-185.93 148,-185.93 148,-191.84 148,-191.84 148,-194.8 145.04,-197.76 142.08,-197.76"/>
-<text text-anchor="start" x="105.25" y="-185.21" font-family="Helvetica,sans-Serif" font-size="9.00">index.ts</text>
+<path fill="#ddfeff" stroke="black" d="M142.08,-210.91C142.08,-210.91 99.92,-210.91 99.92,-210.91 96.96,-210.91 94,-207.95 94,-204.99 94,-204.99 94,-199.07 94,-199.07 94,-196.11 96.96,-193.16 99.92,-193.16 99.92,-193.16 142.08,-193.16 142.08,-193.16 145.04,-193.16 148,-196.11 148,-199.07 148,-199.07 148,-204.99 148,-204.99 148,-207.95 145.04,-210.91 142.08,-210.91"/>
+<text text-anchor="start" x="105.25" y="-198.36" font-family="Helvetica,sans-Serif" font-size="9.00">index.ts</text>
 </a>
 </g>
 </g>
 <!-- src/lib/controls/index.ts&#45;&gt;src/lib/controls/MaplibreMeasureControl.ts -->
 <g id="edge14" class="edge">
 <title>src/lib/controls/index.ts&#45;&gt;src/lib/controls/MaplibreMeasureControl.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M148.4,-187.06C150.1,-186.95 151.84,-186.83 153.62,-186.7"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="159.8,-188.38 153.67,-186.7 159.51,-184.19 159.8,-188.38"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M148.4,-198.39C150.1,-198.16 151.84,-197.91 153.62,-197.67"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="159.95,-198.92 153.72,-197.66 159.37,-194.76 159.95,-198.92"/>
 </g>
 <!-- src/lib/controls/index.ts&#45;&gt;src/lib/controls/MaplibreTerradrawControl.ts -->
 <g id="edge15" class="edge">
 <title>src/lib/controls/index.ts&#45;&gt;src/lib/controls/MaplibreTerradrawControl.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M148.32,-195.04C152.54,-195.8 156.87,-196.47 161,-196.88 205.05,-201.36 254.69,-200.54 294.1,-198.52"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="299.95,-200.31 293.84,-198.53 299.72,-196.11 299.95,-200.31"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M148.43,-202.8C152.64,-202.9 156.94,-202.98 161,-203.03 217.44,-203.75 231.57,-204.47 288,-203.03 289.97,-202.98 291.97,-202.92 293.99,-202.86"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="299.99,-204.75 293.92,-202.86 299.84,-200.56 299.99,-204.75"/>
+</g>
+<!-- src/lib/helpers/capitalize.ts -->
+<g id="node14" class="node">
+<title>src/lib/helpers/capitalize.ts</title>
+<g id="a_node14"><a xlink:href="src/lib/helpers/capitalize.ts" xlink:title="capitalize.ts">
+<path fill="#ddfeff" stroke="black" d="M250.58,-340.91C250.58,-340.91 198.42,-340.91 198.42,-340.91 195.46,-340.91 192.5,-337.95 192.5,-334.99 192.5,-334.99 192.5,-329.07 192.5,-329.07 192.5,-326.11 195.46,-323.16 198.42,-323.16 198.42,-323.16 250.58,-323.16 250.58,-323.16 253.54,-323.16 256.5,-326.11 256.5,-329.07 256.5,-329.07 256.5,-334.99 256.5,-334.99 256.5,-337.95 253.54,-340.91 250.58,-340.91"/>
+<text text-anchor="start" x="200.5" y="-328.36" font-family="Helvetica,sans-Serif" font-size="9.00">capitalize.ts</text>
+</a>
+</g>
+</g>
+<!-- src/lib/helpers/cleanMaplibreStyle.ts -->
+<g id="node15" class="node">
+<title>src/lib/helpers/cleanMaplibreStyle.ts</title>
+<g id="a_node15"><a xlink:href="src/lib/helpers/cleanMaplibreStyle.ts" xlink:title="cleanMaplibreStyle.ts">
+<path fill="#ddfeff" stroke="black" d="M270.46,-280.91C270.46,-280.91 178.54,-280.91 178.54,-280.91 175.58,-280.91 172.62,-277.95 172.62,-274.99 172.62,-274.99 172.62,-269.07 172.62,-269.07 172.62,-266.11 175.58,-263.16 178.54,-263.16 178.54,-263.16 270.46,-263.16 270.46,-263.16 273.42,-263.16 276.38,-266.11 276.38,-269.07 276.38,-269.07 276.38,-274.99 276.38,-274.99 276.38,-277.95 273.42,-280.91 270.46,-280.91"/>
+<text text-anchor="start" x="180.62" y="-268.36" font-family="Helvetica,sans-Serif" font-size="9.00">cleanMaplibreStyle.ts</text>
+</a>
+</g>
+</g>
+<!-- src/lib/helpers/debounce.ts -->
+<g id="node16" class="node">
+<title>src/lib/helpers/debounce.ts</title>
+<g id="a_node16"><a xlink:href="src/lib/helpers/debounce.ts" xlink:title="debounce.ts">
+<path fill="#ddfeff" stroke="black" d="M251.71,-310.91C251.71,-310.91 197.29,-310.91 197.29,-310.91 194.33,-310.91 191.38,-307.95 191.38,-304.99 191.38,-304.99 191.38,-299.07 191.38,-299.07 191.38,-296.11 194.33,-293.16 197.29,-293.16 197.29,-293.16 251.71,-293.16 251.71,-293.16 254.67,-293.16 257.62,-296.11 257.62,-299.07 257.62,-299.07 257.62,-304.99 257.62,-304.99 257.62,-307.95 254.67,-310.91 251.71,-310.91"/>
+<text text-anchor="start" x="199.38" y="-298.36" font-family="Helvetica,sans-Serif" font-size="9.00">debounce.ts</text>
+</a>
+</g>
+</g>
+<!-- src/lib/helpers/index.ts -->
+<g id="node17" class="node">
+<title>src/lib/helpers/index.ts</title>
+<g id="a_node17"><a xlink:href="src/lib/helpers/index.ts" xlink:title="index.ts">
+<path fill="#ddfeff" stroke="black" d="M142.08,-295.91C142.08,-295.91 99.92,-295.91 99.92,-295.91 96.96,-295.91 94,-292.95 94,-289.99 94,-289.99 94,-284.07 94,-284.07 94,-281.11 96.96,-278.16 99.92,-278.16 99.92,-278.16 142.08,-278.16 142.08,-278.16 145.04,-278.16 148,-281.11 148,-284.07 148,-284.07 148,-289.99 148,-289.99 148,-292.95 145.04,-295.91 142.08,-295.91"/>
+<text text-anchor="start" x="105.25" y="-283.36" font-family="Helvetica,sans-Serif" font-size="9.00">index.ts</text>
+</a>
+</g>
+</g>
+<!-- src/lib/helpers/index.ts&#45;&gt;src/lib/helpers/capitalize.ts -->
+<g id="edge16" class="edge">
+<title>src/lib/helpers/index.ts&#45;&gt;src/lib/helpers/capitalize.ts</title>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M131.49,-296.19C138.95,-302.9 149.9,-311.73 161,-317.03 168.55,-320.64 177.04,-323.42 185.28,-325.55"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="190.64,-329 185.3,-325.55 191.62,-324.91 190.64,-329"/>
+</g>
+<!-- src/lib/helpers/index.ts&#45;&gt;src/lib/helpers/cleanMaplibreStyle.ts -->
+<g id="edge17" class="edge">
+<title>src/lib/helpers/index.ts&#45;&gt;src/lib/helpers/cleanMaplibreStyle.ts</title>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M148.4,-283.13C153.72,-282.34 159.51,-281.49 165.43,-280.61"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="171.75,-281.8 165.5,-280.6 171.13,-277.65 171.75,-281.8"/>
+</g>
+<!-- src/lib/helpers/index.ts&#45;&gt;src/lib/helpers/debounce.ts -->
+<g id="edge18" class="edge">
+<title>src/lib/helpers/index.ts&#45;&gt;src/lib/helpers/debounce.ts</title>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M148.4,-290.93C159.3,-292.54 172.17,-294.44 184.14,-296.21"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="189.77,-299.17 184.14,-296.21 190.38,-295.01 189.77,-299.17"/>
 </g>
 <!-- src/lib/index.ts -->
-<g id="node14" class="node">
+<g id="node18" class="node">
 <title>src/lib/index.ts</title>
-<g id="a_node14"><a xlink:href="src/lib/index.ts" xlink:title="index.ts">
-<path fill="#ddfeff" stroke="black" d="M72.08,-197.76C72.08,-197.76 29.92,-197.76 29.92,-197.76 26.96,-197.76 24,-194.8 24,-191.84 24,-191.84 24,-185.93 24,-185.93 24,-182.97 26.96,-180.01 29.92,-180.01 29.92,-180.01 72.08,-180.01 72.08,-180.01 75.04,-180.01 78,-182.97 78,-185.93 78,-185.93 78,-191.84 78,-191.84 78,-194.8 75.04,-197.76 72.08,-197.76"/>
-<text text-anchor="start" x="35.25" y="-185.21" font-family="Helvetica,sans-Serif" font-size="9.00">index.ts</text>
+<g id="a_node18"><a xlink:href="src/lib/index.ts" xlink:title="index.ts">
+<path fill="#ddfeff" stroke="black" d="M72.08,-232.91C72.08,-232.91 29.92,-232.91 29.92,-232.91 26.96,-232.91 24,-229.95 24,-226.99 24,-226.99 24,-221.07 24,-221.07 24,-218.11 26.96,-215.16 29.92,-215.16 29.92,-215.16 72.08,-215.16 72.08,-215.16 75.04,-215.16 78,-218.11 78,-221.07 78,-221.07 78,-226.99 78,-226.99 78,-229.95 75.04,-232.91 72.08,-232.91"/>
+<text text-anchor="start" x="35.25" y="-220.36" font-family="Helvetica,sans-Serif" font-size="9.00">index.ts</text>
 </a>
 </g>
 </g>
 <!-- src/lib/index.ts&#45;&gt;src/lib/constants/index.ts -->
-<g id="edge16" class="edge">
+<g id="edge19" class="edge">
 <title>src/lib/index.ts&#45;&gt;src/lib/constants/index.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M55.98,-198.03C61.17,-208.72 71.36,-225.96 86,-233.88 206.51,-299.06 378.52,-279.5 450.07,-267.35"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="456.45,-268.36 450.18,-267.33 455.73,-264.23 456.45,-268.36"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M68.47,-233.35C73.89,-235.98 80.05,-238.54 86,-240.03 94.78,-242.24 355.94,-254.93 449.94,-259.44"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="455.84,-261.83 449.95,-259.44 456.04,-257.63 455.84,-261.83"/>
 </g>
 <!-- src/lib/index.ts&#45;&gt;src/lib/interfaces/index.ts -->
-<g id="edge18" class="edge">
+<g id="edge22" class="edge">
 <title>src/lib/index.ts&#45;&gt;src/lib/interfaces/index.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M60.54,-179.58C66.89,-173.35 76.13,-165.62 86,-161.88 213.38,-113.65 380.28,-127.27 450.19,-136.07"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="455.79,-138.91 450.1,-136.06 456.32,-134.74 455.79,-138.91"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M54.58,-214.96C58.79,-202.01 68.48,-178.63 86,-168.03 203.71,-96.83 378.58,-121.25 450.52,-135.63"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="455.76,-138.84 450.3,-135.58 456.6,-134.73 455.76,-138.84"/>
 </g>
 <!-- src/lib/index.ts&#45;&gt;src/lib/controls/index.ts -->
-<g id="edge17" class="edge">
+<g id="edge20" class="edge">
 <title>src/lib/index.ts&#45;&gt;src/lib/controls/index.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M78.49,-188.88C81.34,-188.88 84.27,-188.88 87.18,-188.88"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="92.92,-190.98 86.92,-188.88 92.92,-186.78 92.92,-190.98"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M78.49,-215.46C81.34,-214.54 84.27,-213.59 87.18,-212.65"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="93.62,-212.77 87.26,-212.62 92.32,-208.78 93.62,-212.77"/>
+</g>
+<!-- src/lib/index.ts&#45;&gt;src/lib/helpers/index.ts -->
+<g id="edge21" class="edge">
+<title>src/lib/index.ts&#45;&gt;src/lib/helpers/index.ts</title>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M56.01,-233.03C61.36,-244.11 71.84,-262.83 86,-274.03 86.57,-274.48 87.16,-274.92 87.76,-275.34"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="91.56,-280.07 87.5,-275.18 93.72,-276.47 91.56,-280.07"/>
 </g>
 <!-- src/lib/interfaces/MeasureControlMode.ts&#45;&gt;src/lib/constants/AvailableMeasureModes.ts -->
-<g id="edge19" class="edge">
+<g id="edge23" class="edge">
 <title>src/lib/interfaces/MeasureControlMode.ts&#45;&gt;src/lib/constants/AvailableMeasureModes.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M696.64,-102.2C694.37,-103.82 692.3,-105.7 690.5,-107.88 674.07,-127.82 698.93,-203.94 682.5,-223.88 678.87,-228.29 674.46,-231.87 669.6,-234.76"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="668.91,-232.76 664.55,-237.39 670.85,-236.48 668.91,-232.76"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M696.64,-102.35C694.37,-103.97 692.3,-105.85 690.5,-108.03 674.07,-127.97 698.93,-204.09 682.5,-224.03 678.87,-228.44 674.46,-232.01 669.6,-234.91"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="668.91,-232.9 664.55,-237.53 670.85,-236.63 668.91,-232.9"/>
 </g>
 <!-- src/lib/interfaces/TerradrawMode.ts&#45;&gt;src/lib/constants/AvailableModes.ts -->
-<g id="edge27" class="edge">
+<g id="edge31" class="edge">
 <title>src/lib/interfaces/TerradrawMode.ts&#45;&gt;src/lib/constants/AvailableModes.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M746.05,-195.15C743.74,-223.47 732.73,-309.39 682.5,-350.88 674.38,-357.59 664.26,-361.7 653.92,-364.14"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="653.68,-362.05 648.19,-365.25 654.48,-366.17 653.68,-362.05"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M746.05,-195.3C743.74,-223.61 732.73,-309.54 682.5,-351.03 674.38,-357.74 664.26,-361.85 653.92,-364.29"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="653.68,-362.2 648.19,-365.4 654.48,-366.32 653.68,-362.2"/>
 </g>
 </g>
 </svg>

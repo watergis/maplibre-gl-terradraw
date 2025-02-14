@@ -145,7 +145,7 @@
 
 			<h3 class="h3 pt-6 pb-4">Usage</h3>
 
-			<p>Copy and past the below code.</p>
+			<p>Copy and paste the below code.</p>
 
 			<CodeBlock
 				language="ts"

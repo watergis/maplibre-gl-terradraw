@@ -1,5 +1,12 @@
 /**
  * The list of available Terra Draw drawing modes for MaplibreMeasureControl
+ *
+ * `render` is a special mode and this is appeared as toggle button to expand/collapse the tool.
+ * If you always want the tool to be visible, `render` can be removed and set `open` property of the constructor as true.
+ *
+ * `delete-selection` button is only appeared, when the select button is active.
+ *
+ * If no drawing feature is in TerraDraw, `delete` and `download` are disabled.
  */
 export const AvailableMeasureModes = [
 	'render',

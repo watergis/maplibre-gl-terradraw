@@ -42,6 +42,7 @@
 	let distancePrecision: number = $state(2);
 	let areaUnit: AreaUnit = $state('metric');
 	let areaPrecision: number = $state(2);
+	let computeElevation: 'enabled' | 'disabled' = $state('enabled');
 
 	let drawControl: MaplibreTerradrawControl;
 
@@ -73,6 +74,14 @@
 		if (drawControl) {
 			if (isMeasure) {
 				(drawControl as MaplibreMeasureControl).areaPrecision = areaPrecision;
+			}
+		}
+	};
+
+	const handleComputeElevationChanged = () => {
+		if (drawControl) {
+			if (isMeasure) {
+				(drawControl as MaplibreMeasureControl).computeElevation = computeElevation === 'enabled';
 			}
 		}
 	};
@@ -122,7 +131,7 @@
 					distanceUnit: distanceUnit,
 					distancePrecision,
 					areaPrecision,
-					computeElevation: true
+					computeElevation: computeElevation === 'enabled'
 				});
 				map.addControl(drawControl, 'top-left');
 			} else {
@@ -250,6 +259,25 @@
 									<div class="text-xs">{areaPrecision}</div>
 								</div>
 							</RangeSlider>
+						{/snippet}
+					</AccordionItem>
+					<AccordionItem>
+						{#snippet summary()}
+							<p>Compute elevation</p>
+						{/snippet}
+						{#snippet content()}
+							<RadioGroup>
+								{#each ['enabled', 'disabled'] as option}
+									<RadioItem
+										bind:group={computeElevation}
+										name="justify"
+										value={option}
+										on:change={handleComputeElevationChanged}
+									>
+										{option}
+									</RadioItem>
+								{/each}
+							</RadioGroup>
 						{/snippet}
 					</AccordionItem>
 				{/if}

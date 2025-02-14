@@ -81,6 +81,19 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	}
 
 	/**
+	 * The flag of whether computing elevation. Default is false.
+	 * Using setter to override the value if you want.
+	 */
+	get computeElevation() {
+		return this.measureOptions.computeElevation ?? false;
+	}
+	set computeElevation(value: boolean) {
+		const isSame = this.measureOptions.computeElevation === value;
+		this.measureOptions.computeElevation = value;
+		if (!isSame) this.recalc();
+	}
+
+	/**
 	 * Constructor
 	 * @param options Plugin control options
 	 */
@@ -284,10 +297,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 */
 	private handleTerradrawDeselect = () => {
 		if (!this.map) return;
-		if (
-			this.measureOptions.computeElevation === true &&
-			this.measureOptions.terrainSource !== undefined
-		) {
+		if (this.computeElevation === true && this.measureOptions.terrainSource !== undefined) {
 			const drawInstance = this.getTerraDrawInstance();
 			if (!drawInstance) return;
 			const snapshot = drawInstance.getSnapshot();
@@ -484,7 +494,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 */
 	private computeElevationByFeatureID = async (id: string | number) => {
 		if (!this.map) return;
-		if (this.measureOptions.computeElevation === true) {
+		if (this.computeElevation === true) {
 			const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
 				(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source
 			] as GeoJSONSourceSpecification;
@@ -621,10 +631,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			segment.properties.total = parseFloat(totalDistance.toFixed(this.distancePrecision));
 			segment.properties.unit = this.getDistanceUnitName(this.distanceUnit);
 
-			if (
-				this.measureOptions.computeElevation === true &&
-				this.measureOptions.terrainSource === undefined
-			) {
+			if (this.computeElevation === true && this.measureOptions.terrainSource === undefined) {
 				const elevation_start = this.map?.queryTerrainElevation(start as LngLatLike);
 				if (elevation_start) {
 					segment.properties.elevation_start = elevation_start;

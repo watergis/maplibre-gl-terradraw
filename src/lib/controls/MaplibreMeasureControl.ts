@@ -550,7 +550,8 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 							.then((elevation) => {
 								if (elevation) point.properties.elevation = elevation;
 								resolve(point);
-							});
+							})
+							.catch(() => resolve(point));
 					} else {
 						resolve(point);
 					}

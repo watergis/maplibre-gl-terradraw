@@ -1,4 +1,4 @@
-import type { ControlPosition, IControl, Map } from 'maplibre-gl';
+import type { ControlPosition, IControl, Map, StyleSpecification } from 'maplibre-gl';
 import { type GeoJSONStoreFeatures, TerraDraw, TerraDrawRenderMode } from 'terra-draw';
 import { TerraDrawMapLibreGLAdapter } from 'terra-draw-maplibre-gl-adapter';
 import type {
@@ -394,6 +394,52 @@ export class MaplibreTerradrawControl implements IControl {
 		}
 		fc.features = fc.features.filter((f) => f.properties.selected === true);
 		return fc;
+	}
+
+	/**
+	 * clean maplibre style to filter only for terradraw related layers or without them.
+	 * If options are not set, returns original style given to the function.
+	 *
+	 * This can be useful incase users only want to get terradraw related layers or without it.
+	 *
+	 * Usage:
+	 * `cleanStyle(map.getStyle, { excludeTerraDrawLayers: true})`
+	 * `cleanStyle(map.getStyle, { onlyTerraDrawLayers: true})`
+	 *
+	 * @param style maplibre style spec
+	 * @param options.excludeTerraDrawLayers return maplibre style without terradraw layers and sources
+	 * @param options.onlyTerraDrawLayers return maplibre style with only terradraw layers and sources
+	 * @param sourceIds terradraw related source IDs (internally used)
+	 * @returns
+	 */
+	public cleanStyle(
+		style: StyleSpecification,
+		options?: { excludeTerraDrawLayers?: boolean; onlyTerraDrawLayers?: boolean },
+		sourceIds = ['td-point', 'td-linestring', 'td-polygon']
+	) {
+		const cloned: StyleSpecification = JSON.parse(JSON.stringify(style));
+		if (options) {
+			if (options.onlyTerraDrawLayers === true) {
+				cloned.layers = cloned.layers.filter((l) => {
+					return 'source' in l && sourceIds.includes(l.source);
+				});
+				Object.keys(cloned.sources).forEach((key) => {
+					if (!sourceIds.includes(key)) {
+						delete cloned.sources[key];
+					}
+				});
+			} else if (options.excludeTerraDrawLayers === true) {
+				cloned.layers = cloned.layers.filter((l) => {
+					return 'source' in l && !sourceIds.includes(l.source);
+				});
+				Object.keys(cloned.sources).forEach((key) => {
+					if (sourceIds.includes(key)) {
+						delete cloned.sources[key];
+					}
+				});
+			}
+		}
+		return cloned;
 	}
 
 	/**

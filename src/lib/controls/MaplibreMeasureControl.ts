@@ -4,6 +4,7 @@ import {
 	type GeoJSONSource,
 	type GeoJSONSourceSpecification,
 	type LngLatLike,
+	type StyleSpecification,
 	type SymbolLayerSpecification
 } from 'maplibre-gl';
 import { MaplibreTerradrawControl } from './MaplibreTerradrawControl';
@@ -156,6 +157,36 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				}
 			}
 		}
+	}
+
+	/**
+	 * clean maplibre style to filter only for terradraw related layers or without them.
+	 * If options are not set, returns original style given to the function.
+	 *
+	 * This can be useful incase users only want to get terradraw related layers or without it.
+	 *
+	 * Usage:
+	 * `cleanStyle(map.getStyle, { excludeTerraDrawLayers: true})`
+	 * `cleanStyle(map.getStyle, { onlyTerraDrawLayers: true})`
+	 *
+	 * @param style maplibre style spec
+	 * @param options.excludeTerraDrawLayers return maplibre style without terradraw layers and sources
+	 * @param options.onlyTerraDrawLayers return maplibre style with only terradraw layers and sources
+	 * @returns
+	 */
+	public cleanStyle(
+		style: StyleSpecification,
+		options?: { excludeTerraDrawLayers?: boolean; onlyTerraDrawLayers?: boolean }
+	) {
+		const sourceIds = ['td-point', 'td-linestring', 'td-polygon'];
+
+		const polygonSource = this.measureOptions.polygonLayerSpec?.source;
+		if (polygonSource) sourceIds.push(polygonSource);
+
+		const lineSource = this.measureOptions.lineLayerLabelSpec?.source;
+		if (lineSource) sourceIds.push(lineSource);
+
+		return super.cleanStyle(style, options, sourceIds);
 	}
 
 	/**

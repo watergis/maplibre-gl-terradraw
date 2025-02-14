@@ -8,7 +8,7 @@ import type {
 	TerradrawModeClass
 } from '../interfaces';
 import { defaultControlOptions, getDefaultModeOptions } from '../constants';
-import { capitalize, cleanMaplibreStyle, TERRADRAW_SOURCE_IDS } from '$lib/helpers';
+import { capitalize, cleanMaplibreStyle, TERRADRAW_SOURCE_IDS } from '../helpers';
 
 /**
  * Maplibre GL Terra Draw Control

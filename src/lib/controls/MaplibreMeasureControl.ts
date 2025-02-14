@@ -15,7 +15,7 @@ import { defaultMeasureControlOptions } from '../constants';
 import type { AreaUnit, DistanceUnit, MeasureControlOptions, TerradrawMode } from '../interfaces';
 import type { GeoJSONStoreFeatures } from 'terra-draw';
 import { TerrainRGB, Terrarium } from '@watergis/terrain-rgb';
-import { cleanMaplibreStyle, debounce, TERRADRAW_SOURCE_IDS } from '$lib/helpers';
+import { cleanMaplibreStyle, debounce, TERRADRAW_SOURCE_IDS } from '../helpers';
 
 /**
  * Maplibre GL Terra Draw Measure Control

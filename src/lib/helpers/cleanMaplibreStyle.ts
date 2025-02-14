@@ -1,4 +1,4 @@
-import { defaultMeasureControlOptions } from '$lib/constants';
+import { defaultMeasureControlOptions } from '../constants';
 import type { StyleSpecification } from 'maplibre-gl';
 
 export const TERRADRAW_SOURCE_IDS = ['td-point', 'td-linestring', 'td-polygon'];

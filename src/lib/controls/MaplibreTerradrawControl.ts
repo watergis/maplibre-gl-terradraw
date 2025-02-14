@@ -8,6 +8,7 @@ import type {
 	TerradrawModeClass
 } from '../interfaces';
 import { defaultControlOptions, getDefaultModeOptions } from '../constants';
+import { capitalize, cleanMaplibreStyle, TERRADRAW_SOURCE_IDS } from '$lib/helpers';
 
 /**
  * Maplibre GL Terra Draw Control
@@ -306,7 +307,7 @@ export class MaplibreTerradrawControl implements IControl {
 				btn.classList.add('enabled');
 			}
 			btn.type = 'button';
-			btn.title = this.capitalize('expand or collapse drawing tool');
+			btn.title = capitalize('expand or collapse drawing tool');
 			btn.addEventListener('click', this.toggleEditor.bind(this));
 		} else {
 			btn.classList.add('maplibregl-terradraw-add-control');
@@ -314,7 +315,7 @@ export class MaplibreTerradrawControl implements IControl {
 			if (!this.isExpanded) {
 				btn.classList.add('hidden');
 			}
-			btn.title = this.capitalize(mode.replace(/-/g, ' '));
+			btn.title = capitalize(mode.replace(/-/g, ' '));
 
 			if (mode === 'delete') {
 				btn.classList.add(`maplibregl-terradraw-${mode}-button`);
@@ -409,37 +410,13 @@ export class MaplibreTerradrawControl implements IControl {
 	 * @param style maplibre style spec
 	 * @param options.excludeTerraDrawLayers return maplibre style without terradraw layers and sources
 	 * @param options.onlyTerraDrawLayers return maplibre style with only terradraw layers and sources
-	 * @param sourceIds terradraw related source IDs (internally used)
 	 * @returns
 	 */
 	public cleanStyle(
 		style: StyleSpecification,
-		options?: { excludeTerraDrawLayers?: boolean; onlyTerraDrawLayers?: boolean },
-		sourceIds = ['td-point', 'td-linestring', 'td-polygon']
+		options?: { excludeTerraDrawLayers?: boolean; onlyTerraDrawLayers?: boolean }
 	) {
-		const cloned: StyleSpecification = JSON.parse(JSON.stringify(style));
-		if (options) {
-			if (options.onlyTerraDrawLayers === true) {
-				cloned.layers = cloned.layers.filter((l) => {
-					return 'source' in l && sourceIds.includes(l.source);
-				});
-				Object.keys(cloned.sources).forEach((key) => {
-					if (!sourceIds.includes(key)) {
-						delete cloned.sources[key];
-					}
-				});
-			} else if (options.excludeTerraDrawLayers === true) {
-				cloned.layers = cloned.layers.filter((l) => {
-					return 'source' in l && !sourceIds.includes(l.source);
-				});
-				Object.keys(cloned.sources).forEach((key) => {
-					if (sourceIds.includes(key)) {
-						delete cloned.sources[key];
-					}
-				});
-			}
-		}
-		return cloned;
+		return cleanMaplibreStyle(style, options, TERRADRAW_SOURCE_IDS);
 	}
 
 	/**
@@ -509,29 +486,4 @@ export class MaplibreTerradrawControl implements IControl {
 			}
 		}
 	}
-
-	/**
-	 * Capitalzie string value
-	 * @param value string value
-	 * @returns string
-	 */
-	protected capitalize(value: string) {
-		return value.charAt(0).toUpperCase() + value.slice(1);
-	}
-
-	/**
-	 * debounce
-	 * @param callback callback function
-	 * @param delay millisecond to delay
-	 */
-	protected debounce = <T extends (...args: Parameters<T>) => unknown>(
-		callback: T,
-		delay = 250
-	): ((...args: Parameters<T>) => void) => {
-		let timeoutId: number;
-		return (...args) => {
-			clearTimeout(timeoutId);
-			timeoutId = setTimeout(() => callback(...args), delay) as unknown as number;
-		};
-	};
 }

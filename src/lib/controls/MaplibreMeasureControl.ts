@@ -15,6 +15,7 @@ import { defaultMeasureControlOptions } from '../constants';
 import type { AreaUnit, DistanceUnit, MeasureControlOptions, TerradrawMode } from '../interfaces';
 import type { GeoJSONStoreFeatures } from 'terra-draw';
 import { TerrainRGB, Terrarium } from '@watergis/terrain-rgb';
+import { cleanMaplibreStyle, debounce, TERRADRAW_SOURCE_IDS } from '$lib/helpers';
 
 /**
  * Maplibre GL Terra Draw Measure Control
@@ -178,7 +179,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		style: StyleSpecification,
 		options?: { excludeTerraDrawLayers?: boolean; onlyTerraDrawLayers?: boolean }
 	) {
-		const sourceIds = ['td-point', 'td-linestring', 'td-polygon'];
+		const sourceIds = TERRADRAW_SOURCE_IDS;
 
 		const polygonSource = this.measureOptions.polygonLayerSpec?.source;
 		if (polygonSource) sourceIds.push(polygonSource);
@@ -186,7 +187,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		const lineSource = this.measureOptions.lineLayerLabelSpec?.source;
 		if (lineSource) sourceIds.push(lineSource);
 
-		return super.cleanStyle(style, options, sourceIds);
+		return cleanMaplibreStyle(style, options, sourceIds);
 	}
 
 	/**
@@ -305,7 +306,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * Handle finish event of terradraw. It will be called after finishing adding a feature
 	 * @param id Feature ID
 	 */
-	private handleTerradrawFeatureReady = this.debounce((id: string | number) => {
+	private handleTerradrawFeatureReady = debounce((id: string | number) => {
 		if (!this.map) return;
 		this.computeElevationByFeatureID(id);
 	}, 300);

@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.2.2
+
+### Patch Changes
+
+- 895be53: fix: updated terrain-rgb package, so the bundled package size can be reduced.
+
 ## 1.2.1
 
 ### Patch Changes

@@ -1,6 +1,7 @@
 export const exampleIds = [
 	'measure-control',
 	'add-geojson',
+	'add-geojson-customstyle',
 	'select-event',
 	'drawing-option',
 	'coordinate-precision',

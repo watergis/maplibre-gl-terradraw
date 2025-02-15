@@ -68,7 +68,6 @@
 							},
 							properties: {
 								mode: 'rectangle',
-								selected: true
 							}
 						}
 					];

@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>Adding GeoJSON feature to TerraDraw custom style</title>
+		<meta
+			property="og:description"
+			content="You can add GeoJSON features with custom style by using addFeatures() function in the TerraDraw instance which can be retrieved through getTerraDrawInstance() function."
+		/>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
+		<script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+			}
+			html,
+			body,
+			#map {
+				height: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<script src="https://unpkg.com/terra-draw@1.0.0/dist/terra-draw.umd.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.umd.js"></script>
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.css"
+		/>
+		<div id="map"></div>
+
+		<script>
+			const map = new maplibregl.Map({
+				container: 'map',
+				style: 'https://demotiles.maplibre.org/style.json',
+				center: [0, 0],
+				zoom: 1,
+				maxPitch: 85
+			});
+
+			const drawControl = new MaplibreTerradrawControl.MaplibreTerradrawControl({
+				modes: [
+					'render',
+					'angled-rectangle',
+					'sector',
+					'polygon',
+					'rectangle',
+					'circle',
+					'select',
+					'delete-selection'
+				],
+				open: true,
+				// custom terradraw layer style is following.
+				modeOptions: {
+					polygon: new terraDraw.TerraDrawPolygonMode({
+						styles: {
+							fillColor: '#F5AEAE',
+							fillOpacity: 0.7,
+							outlineColor: '#FF0000',
+							outlineWidth: 2,
+							closingPointColor: '#FAFAFA',
+							closingPointWidth: 3,
+							closingPointOutlineColor: '#FF0000',
+							closingPointOutlineWidth: 1
+						}
+					}),
+					rectangle: new terraDraw.TerraDrawRectangleMode({
+						styles: {
+							fillColor: '#F5AEAE',
+							fillOpacity: 0.7,
+							outlineColor: '#FF0000',
+							outlineWidth: 2,
+							closingPointColor: '#FAFAFA',
+							closingPointWidth: 3,
+							closingPointOutlineColor: '#FF0000',
+							closingPointOutlineWidth: 1
+						}
+					}),
+					circle: new terraDraw.TerraDrawCircleMode({
+						styles: {
+							fillColor: '#F5AEAE',
+							fillOpacity: 0.7,
+							outlineColor: '#FF0000',
+							outlineWidth: 2,
+							closingPointColor: '#FAFAFA',
+							closingPointWidth: 3,
+							closingPointOutlineColor: '#FF0000',
+							closingPointOutlineWidth: 1
+						}
+					})
+				}
+			});
+			map.addControl(drawControl, 'top-right');
+
+			// geojson features should be added after style is being loaded.
+			map.once('load', () => {
+				const drawInstance = drawControl.getTerraDrawInstance();
+				if (drawInstance) {
+					// geojson data to be added
+					const geojson = [
+						{
+							id: '6b438f48-f6da-4649-9212-76f5a1506296',
+							type: 'Feature',
+							geometry: {
+								type: 'Polygon',
+								coordinates: [
+									[
+										[26.938972246, 25.217617825],
+										[-4.045232861, 25.217617825],
+										[-4.045232861, -7.839055615],
+										[26.938972246, -7.839055615],
+										[26.938972246, 25.217617825]
+									]
+								]
+							},
+							properties: {
+								// make sure you put terradraw mode for geojson
+								mode: 'polygon',
+							}
+						}
+					];
+					drawInstance?.addFeatures(geojson);
+
+					// after adding features, need some time to allow maplibre to load data
+					// inside idle event, export style to console to check.
+					map.once('idle', ()=>{
+						console.log(map.getStyle())
+					})
+				}
+			});
+		</script>
+	</body>
+</html>

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {
+		Autocomplete,
 		CodeBlock,
 		InputChip,
 		RadioGroup,
@@ -23,6 +24,7 @@
 	];
 	let importTypeTabSet: string = $state(importTypeTabs[0].value);
 
+	let inputChip = $state('');
 	let availableMode: string[] = AvailableModes as unknown as string[];
 	let availableMeasureMode: string[] = AvailableMeasureModes as unknown as string[];
 	let selectedModes: string[] = $state([]);
@@ -38,6 +40,14 @@
 					: selectedModes.filter((x) => x !== 'point')
 				).join(',')}&open=${isOpen}&measure=${controlType === 'default' ? 'false' : 'true'}`
 	);
+	let selectedAvailableModes = $derived(
+		controlType === 'default' ? availableMode : availableMeasureMode
+	);
+
+	const onInputChipSelect = (e: { detail: { value: string } }) => {
+		const value = e.detail.value;
+		selectedModes.push(value);
+	};
 
 	onMount(() => {
 		controlType = 'default';
@@ -93,20 +103,32 @@
 
 		<h4 class="h4 pt-6">Choose options for demo</h4>
 		<p>Your chosen options are automatically applied at the demo and the below usage code.</p>
-
-		<InputChip
-			name="terradraw-modes"
-			placeholder="{selectedModes.length === 0
-				? 'Select at least a mode. '
-				: ''}Select TerraDraw modes to be added"
-			bind:value={selectedModes}
-			whitelist={controlType === 'default' ? availableMode : availableMeasureMode}
-		/>
-
 		<p>
 			By default, all Terra Draw modes will be added to the control. However, you might want to
 			remove some drawing modes from your app.
 		</p>
+
+		{#key controlType}
+			<InputChip
+				bind:input={inputChip}
+				name="terradraw-modes"
+				placeholder="{selectedModes.length === 0
+					? 'Select at least a mode. '
+					: ''}Select TerraDraw modes to be added"
+				bind:value={selectedModes}
+				whitelist={selectedAvailableModes}
+			/>
+			<div class="card w-full max-w-sm max-h-48 p-4 overflow-y-auto" tabindex="-1">
+				<Autocomplete
+					bind:input={inputChip}
+					options={selectedAvailableModes.map((m) => {
+						return { label: m, value: m, keywords: m };
+					})}
+					denylist={selectedModes}
+					on:selection={onInputChipSelect}
+				/>
+			</div>
+		{/key}
 
 		<h4 class="h4 pt-6">Choose default open mode</h4>
 

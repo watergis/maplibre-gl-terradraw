@@ -29,6 +29,7 @@ export const load: LayoutServerLoad = async ({ fetch }) => {
 			description:
 				'This plugin is to add controls to your Maplibre for drawing powered by Terra Draw library.',
 			author: 'JinIgarashi',
+			contact: 'https://jin-igarashi.me',
 			licenses: [
 				'The source code is licensed MIT',
 				'The website content is licensed CC BY NC SA 4.0.'

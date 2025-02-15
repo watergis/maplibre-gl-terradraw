@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { AppShell, AppBar, LightSwitch } from '@skeletonlabs/skeleton';
+	import { AppBar, LightSwitch } from '@skeletonlabs/skeleton';
 	import { autoModeWatcher } from '@skeletonlabs/skeleton';
 	import '../app.postcss';
 
@@ -77,10 +77,8 @@
 	<meta property="og:url" content={page.url.href} />
 </svelte:head>
 
-<!-- App Shell -->
-<AppShell>
-	{#snippet header()}
-		<!-- App Bar -->
+<div class="h-screen grid grid-rows-[auto_1fr_auto]">
+	<header class="sticky top-0 z-10">
 		<AppBar>
 			{#snippet lead()}
 				<div class="flex items-center">
@@ -119,7 +117,7 @@
 				</div>
 			{/snippet}
 		</AppBar>
-	{/snippet}
+	</header>
 
 	<Drawer>
 		<h2 class="p-4">{data.metadata.title}</h2>
@@ -158,11 +156,19 @@
 		</nav>
 	</Drawer>
 
-	{@render children?.()}
+	<main class="overflow-y-auto">
+		{@render children?.()}
+	</main>
 
-	{#snippet footer()}
+	<footer class="">
 		<div class="space-y-2 py-4">
-			<p class="flex justify-center space-x-2">©{year} {data.metadata.author}</p>
+			<p class="flex justify-center space-x-2">
+				<a
+					class="text-blue-600 visited:text-purple-600"
+					href={data.metadata.contact}
+					target="_blank">©{year} {data.metadata.author}</a
+				>
+			</p>
 		</div>
-	{/snippet}
-</AppShell>
+	</footer>
+</div>

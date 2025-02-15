@@ -5,8 +5,7 @@
 		RadioGroup,
 		RadioItem,
 		Tab,
-		TabGroup,
-		SlideToggle
+		TabGroup
 	} from '@skeletonlabs/skeleton';
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
@@ -27,12 +26,22 @@
 	let availableMode: string[] = AvailableModes as unknown as string[];
 	let availableMeasureMode: string[] = AvailableMeasureModes as unknown as string[];
 	let selectedModes: string[] = $state([]);
-	let isOpen = $state(true);
+	let isOpen: boolean | undefined = $state();
 
 	let packageManager = $state('npm');
-	let isMeasure = $state(false);
+	let controlType: 'default' | 'measure' | undefined = $state();
+	let demoUrl = $derived(
+		selectedModes.length === 0
+			? ''
+			: `/demo?modes=${(controlType
+					? selectedModes
+					: selectedModes.filter((x) => x !== 'point')
+				).join(',')}&open=${isOpen}&measure=${controlType === 'default' ? 'false' : 'true'}`
+	);
 
 	onMount(() => {
+		controlType = 'default';
+		isOpen = true;
 		if (selectedModes.length === 0) {
 			selectedModes = ['render', ...availableMode.filter((m) => m !== 'render')];
 		}
@@ -61,12 +70,7 @@
 
 		<a
 			class="btn variant-filled-primary capitalize"
-			href="{selectedModes.length === 0
-				? ''
-				: `/demo?modes=${(!isMeasure
-						? selectedModes
-						: selectedModes.filter((x) => x !== 'point')
-					).join(',')}`}&open={isOpen}&measure={isMeasure}"
+			href={demoUrl}
 			tabindex={selectedModes.length === 0 ? 0 : -1}
 		>
 			Open DEMO ({data.metadata.version})
@@ -78,9 +82,14 @@
 			choose MaplibreMeasureControl.
 		</p>
 
-		<SlideToggle name="is-measure" bind:checked={isMeasure}>
-			{isMeasure ? 'Use MaplibreMeasureControl' : 'Use MaplibreTerradrawControl'}
-		</SlideToggle>
+		<RadioGroup active="variant-filled-primary" hover="hover:variant-soft-primary">
+			<RadioItem bind:group={controlType} name="justify" value={'default'}>
+				Default Control
+			</RadioItem>
+			<RadioItem bind:group={controlType} name="justify" value={' measure'}>
+				Measure Control
+			</RadioItem>
+		</RadioGroup>
 
 		<h4 class="h4 pt-6">Choose options for demo</h4>
 		<p>Your chosen options are automatically applied at the demo and the below usage code.</p>
@@ -91,7 +100,7 @@
 				? 'Select at least a mode. '
 				: ''}Select TerraDraw modes to be added"
 			bind:value={selectedModes}
-			whitelist={!isMeasure ? availableMode : availableMeasureMode}
+			whitelist={controlType === 'default' ? availableMode : availableMeasureMode}
 		/>
 
 		<p>
@@ -99,9 +108,12 @@
 			remove some drawing modes from your app.
 		</p>
 
-		<SlideToggle name="slide" bind:checked={isOpen}
-			>{isOpen ? 'Open' : 'Close'} drawing editor as default</SlideToggle
-		>
+		<h4 class="h4 pt-6">Choose default open mode</h4>
+
+		<RadioGroup active="variant-filled-primary" hover="hover:variant-soft-primary">
+			<RadioItem bind:group={isOpen} name="justify" value={true}>Open as default</RadioItem>
+			<RadioItem bind:group={isOpen} name="justify" value={false}>Close as default</RadioItem>
+		</RadioGroup>
 
 		<p>
 			if you want the drawing tool to be always expanded, simplely remove `render` mode from
@@ -153,11 +165,11 @@
 				code={data.codes.npm
 					.replace(
 						/MaplibreTerradrawControl/g,
-						!isMeasure ? 'MaplibreTerradrawControl' : 'MaplibreMeasureControl'
+						controlType === 'default' ? 'MaplibreTerradrawControl' : 'MaplibreMeasureControl'
 					)
 					.replace(
 						'{modes}',
-						(!isMeasure
+						(controlType === 'default'
 							? selectedModes.map((m) => `'${m}'`)
 							: selectedModes.filter((x) => x !== 'point').map((m) => `'${m}'`)
 						).join(',')
@@ -175,11 +187,11 @@
 				code={data.codes.cdn
 					.replace(
 						/MaplibreTerradrawControl\(/g,
-						!isMeasure ? 'MaplibreTerradrawControl(' : 'MaplibreMeasureControl('
+						controlType === 'default' ? 'MaplibreTerradrawControl(' : 'MaplibreMeasureControl('
 					)
 					.replace(
 						'{modes}',
-						(!isMeasure
+						(controlType === 'default'
 							? selectedModes.map((m) => `'${m}'`)
 							: selectedModes.filter((x) => x !== 'point').map((m) => `'${m}'`)
 						).join(',')

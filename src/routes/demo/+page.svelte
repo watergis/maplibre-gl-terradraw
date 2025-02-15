@@ -120,6 +120,9 @@
 					...(isMeasure ? AvailableMeasureModes : AvailableModes).filter((m) => m !== 'render')
 				];
 			}
+			if (isMeasure) {
+				terradrawModes = terradrawModes.filter((m) => m !== 'point');
+			}
 
 			const open = page.url.searchParams.get('open') || 'true';
 			const isOpen = open === 'true' ? true : false;

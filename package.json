@@ -119,15 +119,5 @@
 	"bugs": {
 		"url": "https://github.com/watergis/maplibre-gl-terradraw/issues"
 	},
-	"homepage": "https://github.com/watergis/maplibre-gl-terradraw#readme",
-	"engines": {
-		"pnpm": "^10.0.0"
-	},
-	"pnpm": {
-		"onlyBuiltDependencies": [
-			"@parcel/watcher",
-			"esbuild",
-			"lefthook"
-		]
-	}
+	"homepage": "https://github.com/watergis/maplibre-gl-terradraw#readme"
 }

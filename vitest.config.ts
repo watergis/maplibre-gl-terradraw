@@ -7,6 +7,7 @@ export default defineConfig({
 		include: ['src/lib/**/*.{test,spec}.{js,ts}'],
 		globals: true,
 		environment: 'jsdom',
+		setupFiles: ['./setupTest.ts'],
 		coverage: {
 			include: ['src/lib/**/*.{js,ts}'],
 			exclude: ['src/lib/**/index.{js,ts}', 'src/lib/interfaces/**/*.{js,ts}'],

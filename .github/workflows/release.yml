@@ -11,6 +11,7 @@ env:
   CI: true
   PNPM_CACHE_FOLDER: .pnpm-store
   NODE_VERSION: 22
+  PNPM_VERSION: 10
 
 jobs:
   release:
@@ -29,7 +30,7 @@ jobs:
           fetch-depth: 0
       - uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2 #v4
         with:
-          version: 10
+          version: ${{env.PNPM_VERSION}}
       - name: Setup Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
         with:
@@ -61,7 +62,7 @@ jobs:
 
       - uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2 #v4
         with:
-          version: 10
+          version: ${{env.PNPM_VERSION}}
       - name: Setup Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
         with:

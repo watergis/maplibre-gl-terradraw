@@ -16,6 +16,27 @@ env:
   PNPM_CACHE_FOLDER: .pnpm-store
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20, 22]
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2 #v4
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+      - name: install dependencies
+        run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm check
+      - name: build typedoc
+        run: pnpm typedoc
+
   build:
     runs-on: ubuntu-latest
     strategy:
@@ -32,17 +53,35 @@ jobs:
           cache: pnpm
       - name: install dependencies
         run: pnpm install --frozen-lockfile
-
-      - run: pnpm lint
-      - run: pnpm check
-
-      - name: build typedoc
-        run: pnpm typedoc
-
       - name: build
         run: pnpm build
 
-  test:
+  vitest-test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2 #v4
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+      - name: install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Run vitest
+        run: pnpm test:vitest:coverage
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: vitest-report
+          path: coverage/
+          retention-days: 30
+
+  playwright-test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     strategy:

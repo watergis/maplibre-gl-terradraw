@@ -55,6 +55,7 @@
 		"@sveltejs/vite-plugin-svelte": "^5.0.3",
 		"@tailwindcss/forms": "^0.5.10",
 		"@tailwindcss/typography": "^0.5.16",
+		"@testing-library/jest-dom": "^6.6.3",
 		"@turf/area": "^7.2.0",
 		"@turf/centroid": "^7.2.0",
 		"@turf/distance": "^7.2.0",

@@ -1,0 +1,10 @@
+{
+	"recommendations": [
+		"dbaeumer.vscode-eslint",
+		"ghmcadams.lintlens",
+		"esbenp.prettier-vscode",
+		"svelte.svelte-vscode",
+		"ardenivanov.svelte-intellisense",
+		"fivethree.vscode-svelte-snippets"
+	]
+}

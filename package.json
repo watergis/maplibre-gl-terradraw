@@ -38,7 +38,7 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"release": "changeset publish",
-		"typedoc": "typedoc --entryPointStrategy Expand src/lib --out docs --exclude '**/*+(index|.test).ts'",
+		"typedoc": "typedoc --entryPointStrategy Expand src/lib --out docs --exclude '**/*+(index|.test).ts' --excludeReferences",
 		"typedoc:serve": "serve ./docs",
 		"depcruise": "depcruise src/lib --include-only '^src/lib' --output-type dot | dot -T svg > dependency-graph.svg",
 		"test": "npm run test:vitest && npm run test:playwright",

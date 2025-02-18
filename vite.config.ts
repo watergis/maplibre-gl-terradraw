@@ -9,7 +9,8 @@ export default defineConfig({
 	server: {
 		fs: {
 			allow: ['./dist']
-		}
+		},
+		host: true
 	},
 	css: {
 		preprocessorOptions: {

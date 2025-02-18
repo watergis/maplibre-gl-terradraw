@@ -38,6 +38,7 @@ If you want to check typedoc documentation, please execute the following command
 
 ```shell
 pnpm typedoc
+pnpm typedoc:serve # open port 3000
 ```
 
 ### Test

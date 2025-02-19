@@ -366,7 +366,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * Handle change event of TerraDraw
 	 * @param ids Feature IDs
 	 */
-	private handleTerradrawFeatureChanged = debounce((ids: [string | number]) => {
+	private handleTerradrawFeatureChanged(ids: [string | number]) {
 		if (!this.map) return;
 		const drawInstance = this.getTerraDrawInstance();
 		if (!drawInstance) return;
@@ -406,7 +406,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				);
 			}
 		}
-	}, 300);
+	}
 
 	/**
 	 * Unregister measure control related maplibre sources and layers

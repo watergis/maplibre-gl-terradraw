@@ -98,7 +98,7 @@
 			});
 
 			const drawControl = new MaplibreTerradrawControl.MaplibreMeasureControl({
-				modes: ['linestring', 'delete', 'download'],
+				modes: ['point', 'linestring', 'delete', 'download'],
 				open: true,
 				// enable the flag to compute elevation
 				computeElevation: true,

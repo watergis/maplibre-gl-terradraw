@@ -3,9 +3,11 @@ import {
 	TerraDrawCircleMode,
 	TerraDrawFreehandMode,
 	TerraDrawLineStringMode,
+	TerraDrawPointMode,
 	TerraDrawPolygonMode,
 	TerraDrawRectangleMode,
 	TerraDrawSectorMode,
+	TerraDrawSelectMode,
 	TerraDrawSensorMode
 } from 'terra-draw';
 import type { MeasureControlOptions } from '../interfaces/MeasureControlOptions';
@@ -16,6 +18,7 @@ import type { MeasureControlOptions } from '../interfaces/MeasureControlOptions'
 export const defaultMeasureControlOptions: MeasureControlOptions = {
 	modes: [
 		'render',
+		'point',
 		'linestring',
 		'polygon',
 		'rectangle',
@@ -32,6 +35,14 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 	open: false,
 	// see styling parameters of Terra Draw at https://github.com/JamesLMilner/terra-draw/blob/main/guides/5.STYLING.md
 	modeOptions: {
+		point: new TerraDrawPointMode({
+			styles: {
+				pointColor: '#FFFFFF',
+				pointWidth: 5,
+				pointOutlineColor: '#232E3D',
+				pointOutlineWidth: 1
+			}
+		}),
 		linestring: new TerraDrawLineStringMode({
 			styles: {
 				lineStringColor: '#232E3D',
@@ -109,7 +120,148 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 				outlineColor: '#232E3D',
 				outlineWidth: 2
 			}
+		}),
+		select: new TerraDrawSelectMode({
+			flags: {
+				point: {
+					feature: {
+						draggable: false
+					}
+				},
+				polygon: {
+					feature: {
+						draggable: true,
+						rotateable: true,
+						scaleable: true,
+						coordinates: {
+							midpoints: true,
+							draggable: true,
+							deletable: true
+						}
+					}
+				},
+				linestring: {
+					feature: {
+						draggable: true,
+						rotateable: true,
+						scaleable: true,
+						coordinates: {
+							midpoints: true,
+							draggable: true,
+							deletable: true
+						}
+					}
+				},
+				freehand: {
+					feature: {
+						draggable: true,
+						coordinates: {
+							midpoints: true,
+							draggable: true,
+							deletable: true
+						}
+					}
+				},
+				circle: {
+					feature: {
+						draggable: true,
+						coordinates: {
+							midpoints: true,
+							draggable: true,
+							deletable: true
+						}
+					}
+				},
+				rectangle: {
+					feature: {
+						draggable: true,
+						rotateable: true,
+						scaleable: true,
+						coordinates: {
+							midpoints: true,
+							draggable: true,
+							deletable: true
+						}
+					}
+				},
+				'angled-rectangle': {
+					feature: {
+						draggable: true,
+						rotateable: true,
+						scaleable: true,
+						coordinates: {
+							midpoints: true,
+							draggable: true,
+							deletable: true
+						}
+					}
+				},
+				sensor: {
+					feature: {
+						draggable: true,
+						rotateable: true,
+						scaleable: true,
+						coordinates: {
+							midpoints: true,
+							draggable: true,
+							deletable: true
+						}
+					}
+				},
+				sector: {
+					feature: {
+						draggable: true,
+						rotateable: true,
+						scaleable: true,
+						coordinates: {
+							midpoints: true,
+							draggable: true,
+							deletable: true
+						}
+					}
+				}
+			}
 		})
+	},
+	pointLayerLabelSpec: {
+		id: 'terradraw-measure-point-label',
+		type: 'symbol',
+		source: 'terradraw-measure-point-source',
+		filter: ['all', ['==', '$type', 'Point'], ['==', 'mode', 'point']],
+		layout: {
+			'text-field': [
+				'case',
+				['all', ['has', 'elevation'], ['>', ['get', 'elevation'], 0]],
+				['concat', 'Alt. ', ['to-string', ['floor', ['get', 'elevation']]], ' m'],
+				''
+			],
+			'symbol-placement': 'point',
+			'text-size': [
+				'interpolate',
+				['linear'],
+				['zoom'],
+				5,
+				10,
+				10,
+				12.0,
+				13,
+				14.0,
+				14,
+				16.0,
+				18,
+				18.0
+			],
+			'text-overlap': 'always',
+			'text-variable-anchor': ['left', 'right', 'top', 'bottom'],
+			'text-radial-offset': 0.5,
+			'text-justify': 'center',
+			'text-letter-spacing': 0.05
+		},
+		paint: {
+			'text-halo-color': '#F7F7F7',
+			'text-halo-width': 2,
+			'text-color': '#232E3D'
+		}
 	},
 	lineLayerLabelSpec: {
 		id: 'terradraw-measure-line-label',

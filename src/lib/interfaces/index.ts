@@ -1,6 +1,5 @@
 export * from './TerradrawControlOptions';
 export * from './EventTypes';
-export * from './MeasureControlMode';
 export * from './MeasureControlOptions';
 export * from './ModeOptions';
 export * from './TerradrawMode';

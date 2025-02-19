@@ -42,6 +42,7 @@
 			// select TerraDraw modes you want to add. All TerraDraw modes except point are supported. select and delete-selection are not supported by MeasureControl
 			const drawControl = new MaplibreTerradrawControl.MaplibreMeasureControl({
 				modes: [
+					'point',
 					'linestring',
 					'polygon',
 					'rectangle',

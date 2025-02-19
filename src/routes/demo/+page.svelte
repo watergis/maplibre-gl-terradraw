@@ -1,19 +1,14 @@
 <script lang="ts">
-	import { GeolocateControl, Map, NavigationControl, GlobeControl } from 'maplibre-gl';
-	import 'maplibre-gl/dist/maplibre-gl.css';
+	import { page } from '$app/state';
 	import {
-		MaplibreTerradrawControl,
-		type TerradrawMode,
 		AvailableModes,
 		getDefaultModeOptions,
-		AvailableMeasureModes,
 		MaplibreMeasureControl,
-		type MeasureControlMode,
+		MaplibreTerradrawControl,
+		type AreaUnit,
 		type DistanceUnit,
-		type AreaUnit
+		type TerradrawMode
 	} from '$lib';
-	import '../../scss/maplibre-gl-terradraw.scss';
-	import type { PageData } from './$types';
 	import {
 		Accordion,
 		AccordionItem,
@@ -22,9 +17,12 @@
 		RadioItem,
 		RangeSlider
 	} from '@skeletonlabs/skeleton';
-	import { page } from '$app/state';
+	import { GeolocateControl, GlobeControl, Map, NavigationControl } from 'maplibre-gl';
+	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { untrack } from 'svelte';
 	import type { GeoJSONStoreFeatures } from 'terra-draw';
+	import '../../scss/maplibre-gl-terradraw.scss';
+	import type { PageData } from './$types';
 
 	interface Props {
 		data: PageData;
@@ -115,13 +113,7 @@
 				terradrawModes = modes.split(',') as TerradrawMode[];
 			}
 			if (terradrawModes.length === 0) {
-				terradrawModes = [
-					'render',
-					...(isMeasure ? AvailableMeasureModes : AvailableModes).filter((m) => m !== 'render')
-				];
-			}
-			if (isMeasure) {
-				terradrawModes = terradrawModes.filter((m) => m !== 'point');
+				terradrawModes = ['render', ...AvailableModes.filter((m) => m !== 'render')];
 			}
 
 			const open = page.url.searchParams.get('open') || 'true';
@@ -129,7 +121,7 @@
 
 			if (isMeasure) {
 				drawControl = new MaplibreMeasureControl({
-					modes: terradrawModes as unknown as MeasureControlMode[],
+					modes: terradrawModes,
 					open: isOpen,
 					distanceUnit: distanceUnit,
 					distancePrecision,

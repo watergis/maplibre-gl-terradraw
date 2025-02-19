@@ -1,9 +1,9 @@
 import type { CircleLayerSpecification, SymbolLayerSpecification } from 'maplibre-gl';
 import type { ModeOptions } from './ModeOptions';
-import type { MeasureControlMode } from './MeasureControlMode';
 import type { TerraDrawExtend } from 'terra-draw';
 import type { DistanceUnit } from './DistanceUnit';
 import type { AreaUnit } from './AreaUnit';
+import type { TerradrawMode } from './TerradrawMode';
 
 /**
  * MeasureControl Plugin control constructor options
@@ -13,11 +13,11 @@ export interface MeasureControlOptions {
 	 * Terradraw modes added to the control.
 	 * The mode will be added in the same order of the array.
 	 * Default is all modes in the below order:
-	 * ['render','linestring','polygon', 'rectangle','angled-rectangle','circle', 'freehand','sector','sensor', 'delete']
+	 * ['render','point','linestring','polygon', 'rectangle','angled-rectangle','circle', 'freehand','sector','sensor', 'delete']
 	 *
 	 * You can change the order of modes, or can get rid of some modes which you don't need for your app.
 	 */
-	modes?: MeasureControlMode[];
+	modes?: TerradrawMode[];
 	/**
 	 * Open editor as default if true. Default is false
 	 */
@@ -33,6 +33,11 @@ export interface MeasureControlOptions {
 	 * https://github.com/JamesLMilner/terra-draw/blob/806e319d5680a3f69edeff7dd629da3f1b4ff9bf/src/adapters/common/base.adapter.ts#L28-L48
 	 */
 	adapterOptions?: TerraDrawExtend.BaseAdapterConfig;
+
+	/**
+	 * Maplibre symbol layer specification (on points) for point layer
+	 */
+	pointLayerLabelSpec?: SymbolLayerSpecification;
 
 	/**
 	 * Maplibre symbol layer specification (on line nodes) for line distance layer

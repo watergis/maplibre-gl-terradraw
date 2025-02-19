@@ -5,7 +5,8 @@ export const TERRADRAW_SOURCE_IDS = ['td-point', 'td-linestring', 'td-polygon'];
 export const TERRADRAW_MEASURE_SOURCE_IDS = [
 	...TERRADRAW_SOURCE_IDS,
 	defaultMeasureControlOptions.polygonLayerSpec?.source as string,
-	defaultMeasureControlOptions.lineLayerLabelSpec?.source as string
+	defaultMeasureControlOptions.lineLayerLabelSpec?.source as string,
+	defaultMeasureControlOptions.pointLayerLabelSpec?.source as string
 ];
 
 /**

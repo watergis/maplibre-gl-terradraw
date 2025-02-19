@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { AvailableMeasureModes, AvailableModes } from '$lib';
+	import { AvailableModes } from '$lib';
 	import {
 		Autocomplete,
 		CodeBlock,
@@ -26,7 +26,6 @@
 
 	let inputChip = $state('');
 	let availableMode: string[] = AvailableModes as unknown as string[];
-	let availableMeasureMode: string[] = AvailableMeasureModes as unknown as string[];
 	let selectedModes: string[] = $state([]);
 	let isOpen: boolean | undefined = $state();
 
@@ -39,9 +38,6 @@
 					? selectedModes
 					: selectedModes.filter((x) => x !== 'point')
 				).join(',')}&open=${isOpen}&measure=${controlType === 'default' ? 'false' : 'true'}`
-	);
-	let selectedAvailableModes = $derived(
-		controlType === 'default' ? availableMode : availableMeasureMode
 	);
 
 	const onInputChipSelect = (e: { detail: { value: string } }) => {
@@ -116,12 +112,12 @@
 					? 'Select at least a mode. '
 					: ''}Select TerraDraw modes to be added"
 				bind:value={selectedModes}
-				whitelist={selectedAvailableModes}
+				whitelist={availableMode}
 			/>
 			<div class="card w-full max-w-sm max-h-48 p-4 overflow-y-auto" tabindex="-1">
 				<Autocomplete
 					bind:input={inputChip}
-					options={selectedAvailableModes.map((m) => {
+					options={availableMode.map((m) => {
 						return { label: m, value: m, keywords: m };
 					})}
 					denylist={selectedModes}

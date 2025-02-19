@@ -1,5 +1,15 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.3.0
+
+### Minor Changes
+
+- 3bf213a: feat: add support of `point` mode for MeasureControl. `point` queries or computes elevation from either maplibre terrain or raster DEM dataset directly depending on the settings. Because of this change, `AvailableMeasureModes` and `MeasureControlMode` were deleted since it will be the same with default control modes.
+
+### Patch Changes
+
+- 3bf213a: fix: fixed measure labels are not deleted when a selected feature is removed.
+
 ## 1.2.3
 
 ### Patch Changes

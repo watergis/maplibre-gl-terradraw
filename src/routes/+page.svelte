@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { AvailableMeasureModes, AvailableModes } from '$lib';
 	import {
 		Autocomplete,
 		CodeBlock,
@@ -8,9 +9,8 @@
 		Tab,
 		TabGroup
 	} from '@skeletonlabs/skeleton';
-	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
-	import { AvailableMeasureModes, AvailableModes } from '$lib';
+	import type { PageData } from './$types';
 
 	interface Props {
 		data: PageData;
@@ -126,6 +126,7 @@
 					})}
 					denylist={selectedModes}
 					on:selection={onInputChipSelect}
+					emptyState="All modes added"
 				/>
 			</div>
 		{/key}

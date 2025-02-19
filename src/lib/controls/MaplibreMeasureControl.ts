@@ -324,7 +324,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 
 	/**
 	 * Handle deselect event of terradraw
-	 * @param id Feature ID
 	 */
 	private handleTerradrawDeselect = () => {
 		if (!this.map) return;
@@ -1045,95 +1044,59 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	/**
 	 * Event definition when feature is deleted by terradraw
 	 */
-	private onFeatureDeleted() {
+	private onFeatureDeleted(args: unknown) {
 		if (!this.map) return;
 		const drawInstance = this.getTerraDrawInstance();
 		if (drawInstance) {
-			const sourceIds = [
-				(this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).source,
-				(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source,
-				(this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).source
+			let deletedIds: string[] = [];
+			if (typeof args === 'object' && args !== null && 'deletedIds' in args) {
+				deletedIds = (args as { deletedIds: string[] }).deletedIds;
+			}
+
+			const sources = [
+				this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification,
+				this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification,
+				this.measureOptions.polygonLayerSpec as SymbolLayerSpecification
 			];
-			for (const src of sourceIds) {
-				const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
-					src
-				] as GeoJSONSourceSpecification;
-				if (geojsonSource) {
-					// get IDs in current TerraDraw snapshot
-					const snapshot = drawInstance.getSnapshot();
-					const features = snapshot?.filter((feature) =>
-						['Point', 'LineString', 'Polygon'].includes(feature.geometry.type)
-					);
-					const ids: string[] = features.map((f) => f.id as string);
-					if (
-						typeof geojsonSource.data !== 'string' &&
-						geojsonSource.data.type === 'FeatureCollection'
-					) {
-						// Delete label features if originalId does not exist anymore.
-						geojsonSource.data.features = features.filter(
-							(f) =>
-								(f.properties?.originalId && ids.includes(f.properties.originalId as string)) ||
-								ids.includes(f.id as string)
-						);
+
+			if (deletedIds && deletedIds.length > 0) {
+				// delete only features by IDs
+				for (const src of sources) {
+					const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
+						src.source
+					] as GeoJSONSourceSpecification;
+					if (geojsonSource) {
+						if (
+							typeof geojsonSource.data !== 'string' &&
+							geojsonSource.data.type === 'FeatureCollection'
+						) {
+							// Delete label features if originalId does not exist anymore.
+							geojsonSource.data.features = geojsonSource.data.features.filter((f) => {
+								if (f.properties?.originalId) {
+									return !deletedIds.includes(f.properties.originalId);
+								} else {
+									return !deletedIds.includes(f.id as string);
+								}
+							});
+						}
+						(this.map.getSource(src.source) as GeoJSONSource)?.setData(geojsonSource.data);
 					}
-					if (src === (this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source) {
-						(
-							this.map.getSource(
-								(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source
-							) as GeoJSONSource
-						)?.setData(geojsonSource.data);
+				}
+			} else {
+				// delete all features
+				for (const src of sources) {
+					const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
+						src.source
+					] as GeoJSONSourceSpecification;
+					if (geojsonSource) {
 						if (
-							this.map.getLayer(
-								(this.measureOptions.lineLayerNodeSpec as CircleLayerSpecification).id
-							)
+							typeof geojsonSource.data !== 'string' &&
+							geojsonSource.data.type === 'FeatureCollection'
 						) {
-							this.map.moveLayer(
-								(this.measureOptions.lineLayerNodeSpec as CircleLayerSpecification).id
-							);
+							// Delete label features if originalId does not exist anymore.
+							geojsonSource.data.features = [];
 						}
-						if (
-							this.map.getLayer(
-								(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).id
-							)
-						) {
-							this.map.moveLayer(
-								(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).id
-							);
-						}
-					} else if (
-						src === (this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).source
-					) {
-						(
-							this.map.getSource(
-								(this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).source
-							) as GeoJSONSource
-						)?.setData(geojsonSource.data);
-						if (
-							this.map.getLayer(
-								(this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).id
-							)
-						) {
-							this.map.moveLayer(
-								(this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).id
-							);
-						}
-					} else if (
-						src === (this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).source
-					) {
-						(
-							this.map.getSource(
-								(this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).source
-							) as GeoJSONSource
-						)?.setData(geojsonSource.data);
-						if (
-							this.map.getLayer(
-								(this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).id
-							)
-						) {
-							this.map.moveLayer(
-								(this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).id
-							);
-						}
+						(this.map.getSource(src.source) as GeoJSONSource)?.setData(geojsonSource.data);
 					}
 				}
 			}

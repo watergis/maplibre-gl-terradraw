@@ -224,13 +224,18 @@ export class MaplibreTerradrawControl implements IControl {
 	/**
 	 * Dispatch an event. Pass the current snapshot of features and mode
 	 * @param event event type
+	 * @param args additional arguments
 	 */
-	protected dispatchEvent(event: EventType) {
+	protected dispatchEvent(event: EventType, args?: { [key: string]: unknown }) {
 		if (this.events[event]) {
 			this.events[event].forEach((callback) => {
 				const snapshot = this.terradraw?.getSnapshot();
 				const currentFeature = snapshot?.filter((f) => f.properties.selected === true);
-				callback({ feature: currentFeature, mode: this.terradraw?.getMode() as TerradrawMode });
+				callback({
+					feature: currentFeature,
+					mode: this.terradraw?.getMode() as TerradrawMode,
+					...args
+				});
 			});
 		}
 	}
@@ -342,12 +347,13 @@ export class MaplibreTerradrawControl implements IControl {
 
 					if (selected.length > 0) {
 						// if feature is selected, delete only selected feature
-						const currentMode = this.terradraw.getMode();
-						this.terradraw.setMode(this.defaultMode);
 						const ids = selected.map((f) => f.id) as [string | number];
+
 						this.terradraw.removeFeatures(ids);
-						this.terradraw.setMode(currentMode);
-						this.dispatchEvent('feature-deleted');
+						for (const id of ids) {
+							this.terradraw.deselectFeature(id);
+						}
+						this.dispatchEvent('feature-deleted', { deletedIds: ids as string[] });
 					}
 					this.toggleDeleteSelectionButton();
 					this.toggleButtonsWhenNoFeature();

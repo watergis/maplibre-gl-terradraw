@@ -952,38 +952,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	}
 
 	/**
-	 * Calculate area / distance and update a feature properties
-	 * @param feature GeoJSON feature
-	 * @returns updated GeoJSON feature
-	 */
-	private updateFeatureProperties = (feature: GeoJSONStoreFeatures) => {
-		if (!this.map) return feature;
-		if (!this.map.loaded()) return feature;
-		const geomType = feature.geometry.type;
-		if (geomType === 'LineString') {
-			feature = calcDistance(
-				feature,
-				this.distanceUnit,
-				this.distancePrecision,
-				this.map,
-				this.computeElevation,
-				this.measureOptions.terrainSource
-			);
-		} else if (geomType === 'Polygon') {
-			feature = calcArea(feature, this.areaUnit, this.areaPrecision);
-		} else if (geomType === 'Point') {
-			feature = queryElevationByPoint(
-				feature,
-				this.map,
-				this.computeElevation,
-				this.measureOptions.terrainSource
-			);
-		}
-
-		return feature;
-	};
-
-	/**
 	 * get GeoJSON features
 	 * @param onlySelected If true, returns only selected features. Default is false.
 	 * @returns FeatureCollection in GeoJSON format
@@ -994,7 +962,29 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		if (!this.terradraw) return fc;
 
 		for (let i = 0; i < fc.features.length; i++) {
-			fc.features[i] = this.updateFeatureProperties(fc.features[i]);
+			const feature = fc.features[i];
+			if (!this.map) continue;
+			if (!this.map.loaded()) continue;
+			const geomType = feature.geometry.type;
+			if (geomType === 'LineString') {
+				fc.features[i] = calcDistance(
+					feature,
+					this.distanceUnit,
+					this.distancePrecision,
+					this.map,
+					this.computeElevation,
+					this.measureOptions.terrainSource
+				);
+			} else if (geomType === 'Polygon') {
+				fc.features[i] = calcArea(feature, this.areaUnit, this.areaPrecision);
+			} else if (geomType === 'Point') {
+				fc.features[i] = queryElevationByPoint(
+					feature,
+					this.map,
+					this.computeElevation,
+					this.measureOptions.terrainSource
+				);
+			}
 		}
 		return fc;
 	}

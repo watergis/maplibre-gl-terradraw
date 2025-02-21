@@ -997,18 +997,19 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					typeof geojsonSource.data !== 'string' &&
 					geojsonSource.data.type === 'FeatureCollection'
 				) {
-					geojsonSource.data.features = geojsonSource.data.features.filter(
-						(f) => f.properties?.originalId !== id
-					);
+					geojsonSource.data.features = geojsonSource.data.features.filter((f) => f.id !== id);
 				}
 
 				feature = this.queryElevationByPoint(feature);
 
-				if (
-					typeof geojsonSource.data !== 'string' &&
-					geojsonSource.data.type === 'FeatureCollection'
-				) {
-					geojsonSource.data.features.push(feature);
+				// add elevation label feature if computeElevation is only enabled.
+				if (this.computeElevation === true) {
+					if (
+						typeof geojsonSource.data !== 'string' &&
+						geojsonSource.data.type === 'FeatureCollection'
+					) {
+						geojsonSource.data.features.push(feature);
+					}
 				}
 
 				// update GeoJSON source with new data

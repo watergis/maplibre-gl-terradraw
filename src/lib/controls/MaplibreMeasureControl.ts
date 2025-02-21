@@ -9,12 +9,12 @@ import {
 } from 'maplibre-gl';
 import { MaplibreTerradrawControl } from './MaplibreTerradrawControl';
 import { distance } from '@turf/distance';
-import { area } from '@turf/area';
 import { centroid } from '@turf/centroid';
 import { defaultMeasureControlOptions } from '../constants';
 import type { AreaUnit, DistanceUnit, MeasureControlOptions, TerradrawMode } from '../interfaces';
 import type { GeoJSONStoreFeatures } from 'terra-draw';
 import {
+	calcArea,
 	cleanMaplibreStyle,
 	debounce,
 	getDistanceUnitName,
@@ -491,54 +491,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	}
 
 	/**
-	 * Calculate area from polygon feature
-	 * @param feature Polygon GeoJSON feature
-	 * @returns  The returning feature will contain `area`,`unit` properties.
-	 */
-	private calcArea(feature: GeoJSONStoreFeatures) {
-		if (feature.geometry.type !== 'Polygon') return feature;
-		// caculate area in m2 by using turf/area
-		const result = area(feature.geometry);
-
-		// convert unit to ha or km2 if value is larger
-		let outputArea = result;
-		let outputUnit = 'm²';
-
-		if (this.areaUnit === 'metric') {
-			if (result >= 1000000) {
-				// 1 km² = 1,000,000 m²
-				outputArea = result / 1000000;
-				outputUnit = 'km²';
-			} else if (result >= 10000) {
-				// 1 ha = 10,000 m²
-				outputArea = result / 10000;
-				outputUnit = 'ha';
-			}
-		} else {
-			if (result >= 2589988.11) {
-				// 1 mi² = 2,589,988.11 m²
-				outputArea = result / 2589988.11;
-				outputUnit = 'mi²';
-			} else if (result >= 4046.856) {
-				// 1 acre = 4,046.856 m²
-				outputArea = result / 4046.856;
-				outputUnit = 'acre';
-			} else if (result >= 0.83612736) {
-				// 1 yd² = 0.83612736 m²
-				outputArea = result / 0.83612736;
-				outputUnit = 'yd²';
-			}
-		}
-
-		outputArea = parseFloat(outputArea.toFixed(this.areaPrecision));
-
-		feature.properties.area = outputArea;
-		feature.properties.unit = outputUnit;
-
-		return feature;
-	}
-
-	/**
 	 * Replace GeoJSON source with updated features for a given source ID
 	 * @param updatedFeatures Updated GeoJSON features
 	 * @param sourceId Source ID to update
@@ -766,7 +718,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				point.geometry = centroid(feature.geometry).geometry;
 				point.properties.originalId = feature.id;
 
-				feature = this.calcArea(feature);
+				feature = calcArea(feature, this.areaUnit, this.areaPrecision);
 				point.properties.area = feature.properties.area;
 				point.properties.unit = feature.properties.unit;
 
@@ -1065,7 +1017,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		if (geomType === 'LineString') {
 			feature = this.calcDistance(feature);
 		} else if (geomType === 'Polygon') {
-			feature = this.calcArea(feature);
+			feature = calcArea(feature, this.areaUnit, this.areaPrecision);
 		} else if (geomType === 'Point') {
 			feature = this.queryElevationByPoint(feature);
 		}

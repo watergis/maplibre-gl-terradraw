@@ -16,7 +16,24 @@ vi.mock('@watergis/terrain-rgb', () => {
 
 describe('queryElevationFromRasterDEM', () => {
 	let mockPoints: GeoJSONStoreFeatures[];
-	let mockTerrainSource: TerrainSource;
+
+	const terrarium: TerrainSource = {
+		url: 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png',
+		encoding: 'terrarium',
+		tileSize: 256,
+		minzoom: 5,
+		maxzoom: 15,
+		tms: false
+	};
+
+	const terrainRGB: TerrainSource = {
+		url: 'https://wasac.github.io/rw-terrain-webp/tiles/{z}/{x}/{y}.webp',
+		encoding: 'mapbox',
+		tileSize: 512,
+		minzoom: 5,
+		maxzoom: 15,
+		tms: false
+	};
 
 	beforeEach(() => {
 		mockPoints = [
@@ -29,15 +46,6 @@ describe('queryElevationFromRasterDEM', () => {
 				properties: {}
 			}
 		];
-
-		mockTerrainSource = {
-			url: 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png',
-			encoding: 'terrarium',
-			tileSize: 256,
-			minzoom: 5,
-			maxzoom: 15,
-			tms: false
-		};
 	});
 
 	it('should return points unchanged if no terrainSource is provided', async () => {
@@ -45,8 +53,13 @@ describe('queryElevationFromRasterDEM', () => {
 		expect(result[0]).toEqual(mockPoints[0]);
 	});
 
-	it('should add elevation property to point features when terrainSource is provided', async () => {
-		const result = await queryElevationFromRasterDEM(mockPoints, mockTerrainSource);
+	it('should add elevation property to point features from terrarium when terrainSource is provided', async () => {
+		const result = await queryElevationFromRasterDEM(mockPoints, terrarium);
+		expect(result[0].properties).toHaveProperty('elevation', 150);
+	});
+
+	it('should add elevation property to point features from terrainrgb when terrainSource is provided', async () => {
+		const result = await queryElevationFromRasterDEM(mockPoints, terrainRGB);
 		expect(result[0].properties).toHaveProperty('elevation', 150);
 	});
 
@@ -70,7 +83,7 @@ describe('queryElevationFromRasterDEM', () => {
 			}
 		];
 
-		const result = await queryElevationFromRasterDEM(nonPointFeatures, mockTerrainSource);
+		const result = await queryElevationFromRasterDEM(nonPointFeatures, terrarium);
 		expect(result[0]).toEqual(nonPointFeatures[0]);
 	});
 });

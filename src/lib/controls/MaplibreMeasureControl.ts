@@ -3,19 +3,23 @@ import {
 	type CircleLayerSpecification,
 	type GeoJSONSource,
 	type GeoJSONSourceSpecification,
-	type LngLatLike,
 	type StyleSpecification,
 	type SymbolLayerSpecification
 } from 'maplibre-gl';
 import { MaplibreTerradrawControl } from './MaplibreTerradrawControl';
-import { distance } from '@turf/distance';
-import { area } from '@turf/area';
 import { centroid } from '@turf/centroid';
 import { defaultMeasureControlOptions } from '../constants';
 import type { AreaUnit, DistanceUnit, MeasureControlOptions, TerradrawMode } from '../interfaces';
 import type { GeoJSONStoreFeatures } from 'terra-draw';
-import { TerrainRGB, Terrarium } from '@watergis/terrain-rgb';
-import { cleanMaplibreStyle, debounce, TERRADRAW_SOURCE_IDS } from '../helpers';
+import {
+	calcArea,
+	calcDistance,
+	cleanMaplibreStyle,
+	debounce,
+	queryElevationByPoint,
+	queryElevationFromRasterDEM,
+	TERRADRAW_SOURCE_IDS
+} from '../helpers';
 
 /**
  * Maplibre GL Terra Draw Measure Control
@@ -486,71 +490,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	}
 
 	/**
-	 * Calculate area from polygon feature
-	 * @param feature Polygon GeoJSON feature
-	 * @returns  The returning feature will contain `area`,`unit` properties.
-	 */
-	private calcArea(feature: GeoJSONStoreFeatures) {
-		if (feature.geometry.type !== 'Polygon') return feature;
-		// caculate area in m2 by using turf/area
-		const result = area(feature.geometry);
-
-		// convert unit to ha or km2 if value is larger
-		let outputArea = result;
-		let outputUnit = 'm²';
-
-		if (this.areaUnit === 'metric') {
-			if (result >= 1000000) {
-				// 1 km² = 1,000,000 m²
-				outputArea = result / 1000000;
-				outputUnit = 'km²';
-			} else if (result >= 10000) {
-				// 1 ha = 10,000 m²
-				outputArea = result / 10000;
-				outputUnit = 'ha';
-			}
-		} else {
-			if (result >= 2589988.11) {
-				// 1 mi² = 2,589,988.11 m²
-				outputArea = result / 2589988.11;
-				outputUnit = 'mi²';
-			} else if (result >= 4046.856) {
-				// 1 acre = 4,046.856 m²
-				outputArea = result / 4046.856;
-				outputUnit = 'acre';
-			} else if (result >= 0.83612736) {
-				// 1 yd² = 0.83612736 m²
-				outputArea = result / 0.83612736;
-				outputUnit = 'yd²';
-			}
-		}
-
-		outputArea = parseFloat(outputArea.toFixed(this.areaPrecision));
-
-		feature.properties.area = outputArea;
-		feature.properties.unit = outputUnit;
-
-		return feature;
-	}
-
-	/**
-	 * Get the equivalent unit name for displaying
-	 * @param distanceUnit distance unit
-	 * @returns Unit name for displaying
-	 */
-	private getDistanceUnitName(distanceUnit: DistanceUnit) {
-		if (distanceUnit === 'degrees') {
-			return '°';
-		} else if (distanceUnit === 'miles') {
-			return 'mi';
-		} else if (distanceUnit === 'radians') {
-			return 'rad';
-		} else {
-			return 'km';
-		}
-	}
-
-	/**
 	 * Replace GeoJSON source with updated features for a given source ID
 	 * @param updatedFeatures Updated GeoJSON features
 	 * @param sourceId Source ID to update
@@ -633,8 +572,9 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 						(f) => f.properties?.originalId === id && f.geometry.type === 'Point'
 					) as unknown as GeoJSONStoreFeatures[];
 					if (points && points.length > 0) {
-						const updatedFeatures = await this.queryTerrainElevation(
-							points as GeoJSONStoreFeatures[]
+						const updatedFeatures = await queryElevationFromRasterDEM(
+							points as GeoJSONStoreFeatures[],
+							this.measureOptions.terrainSource
 						);
 						this.replaceGeoJSONSource(
 							updatedFeatures,
@@ -666,8 +606,9 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 						(f) => f.id === id && f.geometry.type === 'Point' && f.properties?.mode === 'point'
 					) as unknown as GeoJSONStoreFeatures[];
 					if (points && points.length > 0) {
-						const updatedFeatures = await this.queryTerrainElevation(
-							points as GeoJSONStoreFeatures[]
+						const updatedFeatures = await queryElevationFromRasterDEM(
+							points as GeoJSONStoreFeatures[],
+							this.measureOptions.terrainSource
 						);
 						this.replaceGeoJSONSource(
 							updatedFeatures,
@@ -679,112 +620,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			}
 		}
 	};
-
-	/**
-	 * Query terrain elvation for point features
-	 * @param point Point GeoJSON features
-	 * @returns point features after adding elevation property
-	 */
-	private async queryTerrainElevation(points: GeoJSONStoreFeatures[]) {
-		if (!this.map) return points;
-
-		const promises: Promise<GeoJSONStoreFeatures>[] = [];
-		for (const point of points) {
-			promises.push(
-				new Promise((resolve: (feature: GeoJSONStoreFeatures) => void) => {
-					if (point.geometry.type !== 'Point') resolve(point);
-					const options = this.measureOptions.terrainSource;
-					if (options) {
-						const url = options.url;
-						const encoding = options.encoding ?? 'mapbox';
-						const tileSize = options.tileSize ?? 512;
-						const minzoom = options.minzoom ?? 5;
-						const maxzoom = options.maxzoom ?? 15;
-						const tms = options.tms ?? false;
-
-						(encoding === 'mapbox'
-							? new TerrainRGB(url, tileSize, minzoom, maxzoom, tms)
-							: new Terrarium(url, tileSize, minzoom, maxzoom, tms)
-						)
-							.getElevation(point.geometry.coordinates as number[], maxzoom)
-							.then((elevation) => {
-								if (elevation) point.properties.elevation = elevation;
-								resolve(point);
-							})
-							.catch(() => resolve(point));
-					} else {
-						resolve(point);
-					}
-				})
-			);
-		}
-		return await Promise.all(promises);
-	}
-
-	private queryElevationByPoint(feature: GeoJSONStoreFeatures) {
-		if (feature.geometry.type !== 'Point') return feature;
-
-		const coordinates: number[] = (feature as GeoJSONStoreFeatures).geometry
-			.coordinates as number[];
-
-		if (this.computeElevation === true && this.measureOptions.terrainSource === undefined) {
-			const elevation = this.map?.queryTerrainElevation(coordinates as LngLatLike);
-			if (elevation) {
-				feature.properties.elevation = elevation;
-			}
-		}
-		return feature;
-	}
-
-	/**
-	 * Caclulate distance for each segment on a given feature
-	 * @param feature LineString GeoJSON feature
-	 * @returns The returning feature will contain `segments`, `distance`, `unit` properties. `segments` will have multiple point features.
-	 */
-	private calcDistance(feature: GeoJSONStoreFeatures) {
-		if (feature.geometry.type !== 'LineString') return feature;
-		const coordinates: number[][] = (feature as GeoJSONStoreFeatures).geometry
-			.coordinates as number[][];
-
-		// calculate distance for each segment of LineString feature
-		let totalDistance = 0;
-		const segments: GeoJSONStoreFeatures[] = [];
-		for (let i = 0; i < coordinates.length - 1; i++) {
-			const start = coordinates[i];
-			const end = coordinates[i + 1];
-			const result = distance(start, end, { units: this.distanceUnit });
-			totalDistance += result;
-
-			// segment
-			const segment = JSON.parse(JSON.stringify(feature));
-			segment.id = `${segment.id}-${i}`;
-			segment.geometry.coordinates = [start, end];
-			segment.properties.originalId = feature.id;
-			segment.properties.distance = parseFloat(result.toFixed(this.distancePrecision));
-			segment.properties.total = parseFloat(totalDistance.toFixed(this.distancePrecision));
-			segment.properties.unit = this.getDistanceUnitName(this.distanceUnit);
-
-			if (this.computeElevation === true && this.measureOptions.terrainSource === undefined) {
-				const elevation_start = this.map?.queryTerrainElevation(start as LngLatLike);
-				if (elevation_start) {
-					segment.properties.elevation_start = elevation_start;
-				}
-
-				const elevation_end = this.map?.queryTerrainElevation(end as LngLatLike);
-				if (elevation_end) {
-					segment.properties.elevation_end = elevation_end;
-				}
-			}
-
-			segments.push(segment);
-		}
-
-		feature.properties.distance = segments[segments.length - 1].properties.total;
-		feature.properties.unit = segments[segments.length - 1].properties.unit;
-		feature.properties.segments = JSON.parse(JSON.stringify(segments));
-
-		return feature;
-	}
 
 	/**
 	 * measure polygon area for given feature ID
@@ -817,7 +652,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				point.geometry = centroid(feature.geometry).geometry;
 				point.properties.originalId = feature.id;
 
-				feature = this.calcArea(feature);
+				feature = calcArea(feature, this.areaUnit, this.areaPrecision);
 				point.properties.area = feature.properties.area;
 				point.properties.unit = feature.properties.unit;
 
@@ -890,7 +725,14 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					);
 				}
 
-				feature = this.calcDistance(feature);
+				feature = calcDistance(
+					feature,
+					this.distanceUnit,
+					this.distancePrecision,
+					this.map,
+					this.computeElevation,
+					this.measureOptions.terrainSource
+				);
 				const segments = feature.properties.segments as unknown as GeoJSONStoreFeatures[];
 				for (let i = 0; i < segments.length; i++) {
 					const segment = segments[i];
@@ -1000,7 +842,12 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					geojsonSource.data.features = geojsonSource.data.features.filter((f) => f.id !== id);
 				}
 
-				feature = this.queryElevationByPoint(feature);
+				feature = queryElevationByPoint(
+					feature,
+					this.map,
+					this.computeElevation,
+					this.measureOptions.terrainSource
+				);
 
 				// add elevation label feature if computeElevation is only enabled.
 				if (this.computeElevation === true) {
@@ -1105,26 +952,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	}
 
 	/**
-	 * Calculate area / distance and update a feature properties
-	 * @param feature GeoJSON feature
-	 * @returns updated GeoJSON feature
-	 */
-	private updateFeatureProperties = (feature: GeoJSONStoreFeatures) => {
-		if (!this.map) return feature;
-		if (!this.map.loaded()) return feature;
-		const geomType = feature.geometry.type;
-		if (geomType === 'LineString') {
-			feature = this.calcDistance(feature);
-		} else if (geomType === 'Polygon') {
-			feature = this.calcArea(feature);
-		} else if (geomType === 'Point') {
-			feature = this.queryElevationByPoint(feature);
-		}
-
-		return feature;
-	};
-
-	/**
 	 * get GeoJSON features
 	 * @param onlySelected If true, returns only selected features. Default is false.
 	 * @returns FeatureCollection in GeoJSON format
@@ -1135,7 +962,29 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		if (!this.terradraw) return fc;
 
 		for (let i = 0; i < fc.features.length; i++) {
-			fc.features[i] = this.updateFeatureProperties(fc.features[i]);
+			const feature = fc.features[i];
+			if (!this.map) continue;
+			if (!this.map.loaded()) continue;
+			const geomType = feature.geometry.type;
+			if (geomType === 'LineString') {
+				fc.features[i] = calcDistance(
+					feature,
+					this.distanceUnit,
+					this.distancePrecision,
+					this.map,
+					this.computeElevation,
+					this.measureOptions.terrainSource
+				);
+			} else if (geomType === 'Polygon') {
+				fc.features[i] = calcArea(feature, this.areaUnit, this.areaPrecision);
+			} else if (geomType === 'Point') {
+				fc.features[i] = queryElevationByPoint(
+					feature,
+					this.map,
+					this.computeElevation,
+					this.measureOptions.terrainSource
+				);
+			}
 		}
 		return fc;
 	}

@@ -14,7 +14,8 @@ vi.mock('maplibre-gl', () => {
 			getPaintProperty: vi.fn(),
 			setPaintProperty: vi.fn(),
 			getLayoutProperty: vi.fn(),
-			setLayoutProperty: vi.fn()
+			setLayoutProperty: vi.fn(),
+			queryTerrainElevation: vi.fn()
 		})),
 		GeolocateControl: vi.fn(),
 		NavigationControl: vi.fn()

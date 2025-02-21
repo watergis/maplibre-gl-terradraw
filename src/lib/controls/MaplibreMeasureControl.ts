@@ -18,6 +18,7 @@ import {
 	cleanMaplibreStyle,
 	debounce,
 	getDistanceUnitName,
+	queryElevationByPoint,
 	queryElevationFromRasterDEM,
 	TERRADRAW_SOURCE_IDS
 } from '../helpers';
@@ -622,21 +623,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		}
 	};
 
-	private queryElevationByPoint(feature: GeoJSONStoreFeatures) {
-		if (feature.geometry.type !== 'Point') return feature;
-
-		const coordinates: number[] = (feature as GeoJSONStoreFeatures).geometry
-			.coordinates as number[];
-
-		if (this.computeElevation === true && this.measureOptions.terrainSource === undefined) {
-			const elevation = this.map?.queryTerrainElevation(coordinates as LngLatLike);
-			if (elevation) {
-				feature.properties.elevation = elevation;
-			}
-		}
-		return feature;
-	}
-
 	/**
 	 * Caclulate distance for each segment on a given feature
 	 * @param feature LineString GeoJSON feature
@@ -901,7 +887,12 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					geojsonSource.data.features = geojsonSource.data.features.filter((f) => f.id !== id);
 				}
 
-				feature = this.queryElevationByPoint(feature);
+				feature = queryElevationByPoint(
+					feature,
+					this.map,
+					this.computeElevation,
+					this.measureOptions.terrainSource
+				);
 
 				// add elevation label feature if computeElevation is only enabled.
 				if (this.computeElevation === true) {
@@ -1019,7 +1010,12 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		} else if (geomType === 'Polygon') {
 			feature = calcArea(feature, this.areaUnit, this.areaPrecision);
 		} else if (geomType === 'Point') {
-			feature = this.queryElevationByPoint(feature);
+			feature = queryElevationByPoint(
+				feature,
+				this.map,
+				this.computeElevation,
+				this.measureOptions.terrainSource
+			);
 		}
 
 		return feature;

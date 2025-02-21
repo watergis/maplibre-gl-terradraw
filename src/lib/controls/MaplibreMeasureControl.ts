@@ -17,6 +17,7 @@ import type { GeoJSONStoreFeatures } from 'terra-draw';
 import {
 	cleanMaplibreStyle,
 	debounce,
+	getDistanceUnitName,
 	queryElevationFromRasterDEM,
 	TERRADRAW_SOURCE_IDS
 } from '../helpers';
@@ -538,23 +539,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	}
 
 	/**
-	 * Get the equivalent unit name for displaying
-	 * @param distanceUnit distance unit
-	 * @returns Unit name for displaying
-	 */
-	private getDistanceUnitName(distanceUnit: DistanceUnit) {
-		if (distanceUnit === 'degrees') {
-			return '°';
-		} else if (distanceUnit === 'miles') {
-			return 'mi';
-		} else if (distanceUnit === 'radians') {
-			return 'rad';
-		} else {
-			return 'km';
-		}
-	}
-
-	/**
 	 * Replace GeoJSON source with updated features for a given source ID
 	 * @param updatedFeatures Updated GeoJSON features
 	 * @param sourceId Source ID to update
@@ -727,7 +711,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			segment.properties.originalId = feature.id;
 			segment.properties.distance = parseFloat(result.toFixed(this.distancePrecision));
 			segment.properties.total = parseFloat(totalDistance.toFixed(this.distancePrecision));
-			segment.properties.unit = this.getDistanceUnitName(this.distanceUnit);
+			segment.properties.unit = getDistanceUnitName(this.distanceUnit);
 
 			if (this.computeElevation === true && this.measureOptions.terrainSource === undefined) {
 				const elevation_start = this.map?.queryTerrainElevation(start as LngLatLike);

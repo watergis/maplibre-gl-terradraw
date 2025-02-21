@@ -3,21 +3,19 @@ import {
 	type CircleLayerSpecification,
 	type GeoJSONSource,
 	type GeoJSONSourceSpecification,
-	type LngLatLike,
 	type StyleSpecification,
 	type SymbolLayerSpecification
 } from 'maplibre-gl';
 import { MaplibreTerradrawControl } from './MaplibreTerradrawControl';
-import { distance } from '@turf/distance';
 import { centroid } from '@turf/centroid';
 import { defaultMeasureControlOptions } from '../constants';
 import type { AreaUnit, DistanceUnit, MeasureControlOptions, TerradrawMode } from '../interfaces';
 import type { GeoJSONStoreFeatures } from 'terra-draw';
 import {
 	calcArea,
+	calcDistance,
 	cleanMaplibreStyle,
 	debounce,
-	getDistanceUnitName,
 	queryElevationByPoint,
 	queryElevationFromRasterDEM,
 	TERRADRAW_SOURCE_IDS
@@ -624,56 +622,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	};
 
 	/**
-	 * Caclulate distance for each segment on a given feature
-	 * @param feature LineString GeoJSON feature
-	 * @returns The returning feature will contain `segments`, `distance`, `unit` properties. `segments` will have multiple point features.
-	 */
-	private calcDistance(feature: GeoJSONStoreFeatures) {
-		if (feature.geometry.type !== 'LineString') return feature;
-		const coordinates: number[][] = (feature as GeoJSONStoreFeatures).geometry
-			.coordinates as number[][];
-
-		// calculate distance for each segment of LineString feature
-		let totalDistance = 0;
-		const segments: GeoJSONStoreFeatures[] = [];
-		for (let i = 0; i < coordinates.length - 1; i++) {
-			const start = coordinates[i];
-			const end = coordinates[i + 1];
-			const result = distance(start, end, { units: this.distanceUnit });
-			totalDistance += result;
-
-			// segment
-			const segment = JSON.parse(JSON.stringify(feature));
-			segment.id = `${segment.id}-${i}`;
-			segment.geometry.coordinates = [start, end];
-			segment.properties.originalId = feature.id;
-			segment.properties.distance = parseFloat(result.toFixed(this.distancePrecision));
-			segment.properties.total = parseFloat(totalDistance.toFixed(this.distancePrecision));
-			segment.properties.unit = getDistanceUnitName(this.distanceUnit);
-
-			if (this.computeElevation === true && this.measureOptions.terrainSource === undefined) {
-				const elevation_start = this.map?.queryTerrainElevation(start as LngLatLike);
-				if (elevation_start) {
-					segment.properties.elevation_start = elevation_start;
-				}
-
-				const elevation_end = this.map?.queryTerrainElevation(end as LngLatLike);
-				if (elevation_end) {
-					segment.properties.elevation_end = elevation_end;
-				}
-			}
-
-			segments.push(segment);
-		}
-
-		feature.properties.distance = segments[segments.length - 1].properties.total;
-		feature.properties.unit = segments[segments.length - 1].properties.unit;
-		feature.properties.segments = JSON.parse(JSON.stringify(segments));
-
-		return feature;
-	}
-
-	/**
 	 * measure polygon area for given feature ID
 	 * @param id terradraw feature id
 	 */
@@ -777,7 +725,14 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					);
 				}
 
-				feature = this.calcDistance(feature);
+				feature = calcDistance(
+					feature,
+					this.distanceUnit,
+					this.distancePrecision,
+					this.map,
+					this.computeElevation,
+					this.measureOptions.terrainSource
+				);
 				const segments = feature.properties.segments as unknown as GeoJSONStoreFeatures[];
 				for (let i = 0; i < segments.length; i++) {
 					const segment = segments[i];
@@ -1006,7 +961,14 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		if (!this.map.loaded()) return feature;
 		const geomType = feature.geometry.type;
 		if (geomType === 'LineString') {
-			feature = this.calcDistance(feature);
+			feature = calcDistance(
+				feature,
+				this.distanceUnit,
+				this.distancePrecision,
+				this.map,
+				this.computeElevation,
+				this.measureOptions.terrainSource
+			);
 		} else if (geomType === 'Polygon') {
 			feature = calcArea(feature, this.areaUnit, this.areaPrecision);
 		} else if (geomType === 'Point') {

@@ -1,4 +1,5 @@
 export * from './calcArea';
+export * from './calcDistance';
 export * from './convertAreaUnit';
 export * from './capitalize';
 export * from './cleanMaplibreStyle';

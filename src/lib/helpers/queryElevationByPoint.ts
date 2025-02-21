@@ -7,7 +7,7 @@ import { Map, type LngLatLike } from 'maplibre-gl';
  * @param feature point geojson feature
  * @param map Maplibre map instance
  * @param computeElevation compute elevation or not
- * @param terrainSource terrain source for computing elevation from raster DEM
+ * @param terrainSource terrain source for computing elevation from raster DEM. If terrainSource is undefined, going to to query elevation from maplibre terrain.
  * @returns geojson feature after computing
  */
 export const queryElevationByPoint = (

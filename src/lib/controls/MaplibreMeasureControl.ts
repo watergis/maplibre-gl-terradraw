@@ -14,8 +14,12 @@ import { centroid } from '@turf/centroid';
 import { defaultMeasureControlOptions } from '../constants';
 import type { AreaUnit, DistanceUnit, MeasureControlOptions, TerradrawMode } from '../interfaces';
 import type { GeoJSONStoreFeatures } from 'terra-draw';
-import { TerrainRGB, Terrarium } from '@watergis/terrain-rgb';
-import { cleanMaplibreStyle, debounce, TERRADRAW_SOURCE_IDS } from '../helpers';
+import {
+	cleanMaplibreStyle,
+	debounce,
+	queryElevationFromRasterDEM,
+	TERRADRAW_SOURCE_IDS
+} from '../helpers';
 
 /**
  * Maplibre GL Terra Draw Measure Control
@@ -633,8 +637,9 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 						(f) => f.properties?.originalId === id && f.geometry.type === 'Point'
 					) as unknown as GeoJSONStoreFeatures[];
 					if (points && points.length > 0) {
-						const updatedFeatures = await this.queryTerrainElevation(
-							points as GeoJSONStoreFeatures[]
+						const updatedFeatures = await queryElevationFromRasterDEM(
+							points as GeoJSONStoreFeatures[],
+							this.measureOptions.terrainSource
 						);
 						this.replaceGeoJSONSource(
 							updatedFeatures,
@@ -666,8 +671,9 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 						(f) => f.id === id && f.geometry.type === 'Point' && f.properties?.mode === 'point'
 					) as unknown as GeoJSONStoreFeatures[];
 					if (points && points.length > 0) {
-						const updatedFeatures = await this.queryTerrainElevation(
-							points as GeoJSONStoreFeatures[]
+						const updatedFeatures = await queryElevationFromRasterDEM(
+							points as GeoJSONStoreFeatures[],
+							this.measureOptions.terrainSource
 						);
 						this.replaceGeoJSONSource(
 							updatedFeatures,
@@ -679,47 +685,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			}
 		}
 	};
-
-	/**
-	 * Query terrain elvation for point features
-	 * @param point Point GeoJSON features
-	 * @returns point features after adding elevation property
-	 */
-	private async queryTerrainElevation(points: GeoJSONStoreFeatures[]) {
-		if (!this.map) return points;
-
-		const promises: Promise<GeoJSONStoreFeatures>[] = [];
-		for (const point of points) {
-			promises.push(
-				new Promise((resolve: (feature: GeoJSONStoreFeatures) => void) => {
-					if (point.geometry.type !== 'Point') resolve(point);
-					const options = this.measureOptions.terrainSource;
-					if (options) {
-						const url = options.url;
-						const encoding = options.encoding ?? 'mapbox';
-						const tileSize = options.tileSize ?? 512;
-						const minzoom = options.minzoom ?? 5;
-						const maxzoom = options.maxzoom ?? 15;
-						const tms = options.tms ?? false;
-
-						(encoding === 'mapbox'
-							? new TerrainRGB(url, tileSize, minzoom, maxzoom, tms)
-							: new Terrarium(url, tileSize, minzoom, maxzoom, tms)
-						)
-							.getElevation(point.geometry.coordinates as number[], maxzoom)
-							.then((elevation) => {
-								if (elevation) point.properties.elevation = elevation;
-								resolve(point);
-							})
-							.catch(() => resolve(point));
-					} else {
-						resolve(point);
-					}
-				})
-			);
-		}
-		return await Promise.all(promises);
-	}
 
 	private queryElevationByPoint(feature: GeoJSONStoreFeatures) {
 		if (feature.geometry.type !== 'Point') return feature;

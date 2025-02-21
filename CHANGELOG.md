@@ -1,5 +1,20 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.3.1
+
+### Patch Changes
+
+- 1d14866: chore: updated devDependencies.
+- e514d7f: refactor: moved following util functions from MeasureControl to helpers to reduce code size of the control.
+
+  - queryTerrainElevation
+  - getDistanceUnitName
+  - calcArea
+  - queryElevationByPoint
+  - calcDistance
+
+- 10b795e: fix: remove elevation label for point if computeElevation property is disabled.
+
 ## 1.3.0
 
 ### Minor Changes

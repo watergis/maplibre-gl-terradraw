@@ -10,7 +10,7 @@ import { MaplibreTerradrawControl } from './MaplibreTerradrawControl';
 import { centroid } from '@turf/centroid';
 import { defaultMeasureControlOptions } from '../constants';
 import type { AreaUnit, DistanceUnit, MeasureControlOptions, TerradrawMode } from '../interfaces';
-import type { GeoJSONStoreFeatures } from 'terra-draw';
+import { type GeoJSONStoreFeatures, TerraDrawExtend } from 'terra-draw';
 import {
 	calcArea,
 	calcDistance,
@@ -359,7 +359,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * Handle finish event of terradraw. It will be called after finishing adding a feature
 	 * @param id Feature ID
 	 */
-	private handleTerradrawFeatureReady = debounce((id: string | number) => {
+	private handleTerradrawFeatureReady = debounce((id: TerraDrawExtend.FeatureId) => {
 		if (!this.map) return;
 		this.computeElevationByLineFeatureID(id);
 		this.computeElevationByPointFeatureID(id);
@@ -369,8 +369,10 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * Handle change event of TerraDraw
 	 * @param ids Feature IDs
 	 */
-	private handleTerradrawFeatureChanged(ids: [string | number]) {
+	private handleTerradrawFeatureChanged(ids: TerraDrawExtend.FeatureId[], type: string) {
 		if (!this.map) return;
+		// skip if type is stylying. Do continue if type is create, update or delete.
+		if (type === 'stylying') return;
 		const drawInstance = this.getTerraDrawInstance();
 		if (!drawInstance) return;
 		const snapshot = drawInstance.getSnapshot();
@@ -468,7 +470,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * @param sourceId source ID to delete
 	 * @returns void
 	 */
-	private clearMeasureFeatures(id: string | number, sourceId: string) {
+	private clearMeasureFeatures(id: TerraDrawExtend.FeatureId, sourceId: string) {
 		if (!this.map) return;
 		const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
 			sourceId
@@ -531,9 +533,9 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					}
 
 					// delete duplicate points
-					const featureMap: { [key: string | number]: GeoJSONStoreFeatures } = {};
+					const featureMap: { [key: TerraDrawExtend.FeatureId]: GeoJSONStoreFeatures } = {};
 					newGeoJsonSource.data.features.forEach((feature) => {
-						const id = feature.id as string | number;
+						const id = feature.id as TerraDrawExtend.FeatureId;
 
 						if (!featureMap[id]) {
 							featureMap[id] = feature as GeoJSONStoreFeatures;
@@ -557,7 +559,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * Compute elevation by a LineString feature ID
 	 * @param id FeatureID
 	 */
-	private computeElevationByLineFeatureID = async (id: string | number) => {
+	private computeElevationByLineFeatureID = async (id: TerraDrawExtend.FeatureId) => {
 		if (!this.map) return;
 		if (this.computeElevation === true) {
 			const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
@@ -591,7 +593,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * Compute elevation by a Point feature ID
 	 * @param id FeatureID
 	 */
-	private computeElevationByPointFeatureID = async (id: string | number) => {
+	private computeElevationByPointFeatureID = async (id: TerraDrawExtend.FeatureId) => {
 		if (!this.map) return;
 		if (this.computeElevation === true) {
 			const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
@@ -625,7 +627,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * measure polygon area for given feature ID
 	 * @param id terradraw feature id
 	 */
-	private measurePolygon(id: string | number) {
+	private measurePolygon(id: TerraDrawExtend.FeatureId) {
 		if (!this.map) return;
 		const drawInstance = this.getTerraDrawInstance();
 		if (!drawInstance) return;
@@ -703,7 +705,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * measure line distance for given feature ID
 	 * @param id terradraw feature id
 	 */
-	private measureLine(id: string | number) {
+	private measureLine(id: TerraDrawExtend.FeatureId) {
 		if (!this.map) return;
 		const drawInstance = this.getTerraDrawInstance();
 		if (!drawInstance) return;
@@ -822,7 +824,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * measure point elevation for given feature ID
 	 * @param id terradraw feature id
 	 */
-	private measurePoint(id: string | number) {
+	private measurePoint(id: TerraDrawExtend.FeatureId) {
 		if (!this.map) return;
 		const drawInstance = this.getTerraDrawInstance();
 		if (!drawInstance) return;

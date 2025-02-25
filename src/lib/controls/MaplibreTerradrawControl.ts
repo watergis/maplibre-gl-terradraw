@@ -1,5 +1,10 @@
 import type { ControlPosition, IControl, Map, StyleSpecification } from 'maplibre-gl';
-import { type GeoJSONStoreFeatures, TerraDraw, TerraDrawRenderMode } from 'terra-draw';
+import {
+	type GeoJSONStoreFeatures,
+	TerraDraw,
+	TerraDrawExtend,
+	TerraDrawRenderMode
+} from 'terra-draw';
 import { TerraDrawMapLibreGLAdapter } from 'terra-draw-maplibre-gl-adapter';
 import type {
 	TerradrawControlOptions,
@@ -347,7 +352,7 @@ export class MaplibreTerradrawControl implements IControl {
 
 					if (selected.length > 0) {
 						// if feature is selected, delete only selected feature
-						const ids = selected.map((f) => f.id) as [string | number];
+						const ids = selected.map((f) => f.id) as TerraDrawExtend.FeatureId[];
 
 						this.terradraw.removeFeatures(ids);
 						for (const id of ids) {

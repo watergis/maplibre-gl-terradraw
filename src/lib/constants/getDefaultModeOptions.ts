@@ -25,9 +25,14 @@ export const getDefaultModeOptions = () => {
 			modeName: 'render',
 			styles: {}
 		}),
-		point: new TerraDrawPointMode(),
-		linestring: new TerraDrawLineStringMode(),
+		point: new TerraDrawPointMode({
+			editable: true
+		}),
+		linestring: new TerraDrawLineStringMode({
+			editable: true
+		}),
 		polygon: new TerraDrawPolygonMode({
+			editable: true,
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
 			validation: (feature: MapGeoJSONFeature, e: { updateType: string }) => {

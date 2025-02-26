@@ -36,6 +36,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 	// see styling parameters of Terra Draw at https://github.com/JamesLMilner/terra-draw/blob/main/guides/5.STYLING.md
 	modeOptions: {
 		point: new TerraDrawPointMode({
+			editable: true,
 			styles: {
 				pointColor: '#FFFFFF',
 				pointWidth: 5,
@@ -44,6 +45,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 			}
 		}),
 		linestring: new TerraDrawLineStringMode({
+			editable: true,
 			styles: {
 				lineStringColor: '#232E3D',
 				lineStringWidth: 2,
@@ -54,6 +56,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 			}
 		}),
 		polygon: new TerraDrawPolygonMode({
+			editable: true,
 			styles: {
 				fillColor: '#EDEFF0',
 				fillOpacity: 0.7,

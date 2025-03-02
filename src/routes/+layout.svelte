@@ -1,43 +1,20 @@
 <script lang="ts">
-	import { AppBar, LightSwitch } from '@skeletonlabs/skeleton';
-	import { autoModeWatcher } from '@skeletonlabs/skeleton';
-	import '../app.postcss';
-
-	// Highlight JS
-	import hljs from 'highlight.js/lib/core';
-	import 'highlight.js/styles/github-dark.css';
-	import { storeHighlightJs } from '@skeletonlabs/skeleton';
-	import xml from 'highlight.js/lib/languages/xml'; // for HTML
-	import css from 'highlight.js/lib/languages/css';
-	import javascript from 'highlight.js/lib/languages/javascript';
-	import typescript from 'highlight.js/lib/languages/typescript';
-	import json from 'highlight.js/lib/languages/json';
-	import shell from 'highlight.js/lib/languages/shell';
-	import { initializeStores, Drawer, getDrawerStore } from '@skeletonlabs/skeleton';
-
-	hljs.registerLanguage('xml', xml); // for HTML
-	hljs.registerLanguage('css', css);
-	hljs.registerLanguage('javascript', javascript);
-	hljs.registerLanguage('typescript', typescript);
-	hljs.registerLanguage('json', json);
-	hljs.registerLanguage('shell', shell);
-	storeHighlightJs.set(hljs);
-
-	import type { PageData } from './$types';
 	import { page } from '$app/state';
+	import { AppBar, Modal } from '@skeletonlabs/skeleton-svelte';
+	import '../app.css';
+	import type { PageData } from './$types';
 
 	let year = new Date().getFullYear();
 
-	initializeStores();
-
-	const drawerStore = getDrawerStore();
+	let drawerState = $state(false);
+	// const drawerStore = getDrawerStore();
 
 	const drawerOpen = () => {
-		drawerStore.open({});
+		drawerState = true;
 	};
 
 	const drawerClose = () => {
-		drawerStore.close();
+		drawerState = false;
 	};
 
 	interface Props {
@@ -46,10 +23,6 @@
 	}
 
 	let { data, children }: Props = $props();
-
-	$effect(() => {
-		autoModeWatcher();
-	});
 </script>
 
 <svelte:head>
@@ -100,61 +73,72 @@
 			{/snippet}
 			{#snippet trail()}
 				<div class="hidden md:inline-block">
-					<LightSwitch />
-				</div>
-				<div class="hidden md:inline-block">
 					{#each data.nav as link}
 						<a
-							class="btn btn-sm variant-ghost-surface ml-2"
+							type="button"
+							class="btn-icon btn-base rounded-full"
 							href={link.href}
 							target="_blank"
 							rel="noreferrer"
-							aria-label={link.icon}
+							aria-label={link.icon}><span><i class={link.icon}></i></span></a
 						>
-							<span><i class={link.icon}></i></span>
-						</a>
 					{/each}
 				</div>
 			{/snippet}
 		</AppBar>
 	</header>
 
-	<Drawer>
-		<h2 class="p-4">{data.metadata.title}</h2>
-		<hr />
+	<Modal
+		open={drawerState}
+		onOpenChange={(e) => (drawerState = e.open)}
+		triggerBase="btn preset-tonal"
+		contentBase="bg-surface-100-900 p-4 space-y-4 shadow-xl w-[480px] h-screen"
+		positionerJustify="justify-start"
+		positionerAlign=""
+		positionerPadding=""
+		transitionsPositionerIn={{ x: -480, duration: 200 }}
+		transitionsPositionerOut={{ x: -480, duration: 200 }}
+	>
+		{#snippet content()}
+			<h2 class="p-4">{data.metadata.title}</h2>
+			<hr />
 
-		<nav class="list-nav p-4">
-			<ul>
-				<li><a href="/" onclick={drawerClose}>Homepage</a></li>
-				<li><a href="/demo" onclick={drawerClose}>Demo</a></li>
-				<li><a href="/examples" onclick={drawerClose}>Examples</a></li>
-				<li>
-					<a href="https://watergis.github.io/maplibre-gl-terradraw" onclick={drawerClose}
-						>API Docs</a
-					>
-				</li>
-
-				<li>
-					<div class="flex items-center py-2">
-						<div class="px-4"><LightSwitch /></div>
-						{#each data.nav as link}
-							<a href={link.href} target="_blank" onclick={drawerClose} aria-label={link.icon}>
-								<span><i class={link.icon}></i></span>
-							</a>
-						{/each}
-					</div>
-				</li>
-				<li>
-					<p class="px-4 py-2">©{year} {data.metadata.author}</p>
-				</li>
-				{#each data.metadata.licenses as license}
+			<nav class="list-nav p-4">
+				<ul>
+					<li><a href="/" onclick={drawerClose}>Homepage</a></li>
+					<li><a href="/demo" onclick={drawerClose}>Demo</a></li>
+					<li><a href="/examples" onclick={drawerClose}>Examples</a></li>
 					<li>
-						<p class="px-4 py-2">{license}</p>
+						<a href="https://watergis.github.io/maplibre-gl-terradraw" onclick={drawerClose}
+							>API Docs</a
+						>
 					</li>
-				{/each}
-			</ul>
-		</nav>
-	</Drawer>
+
+					<li>
+						<div class="flex items-center py-2">
+							<!-- <div class="px-4"><LightSwitch /></div> -->
+							{#each data.nav as link}
+								<a href={link.href} target="_blank" onclick={drawerClose} aria-label={link.icon}>
+									<span><i class={link.icon}></i></span>
+								</a>
+							{/each}
+						</div>
+					</li>
+					<li>
+						<p class="px-4 py-2">©{year} {data.metadata.author}</p>
+					</li>
+					{#each data.metadata.licenses as license}
+						<li>
+							<p class="px-4 py-2">{license}</p>
+						</li>
+					{/each}
+				</ul>
+			</nav>
+			<footer>
+				<button type="button" class="btn preset-filled" onclick={drawerClose}>Close Menu</button>
+			</footer>
+		{/snippet}
+	</Modal>
 
 	<main class="overflow-y-auto">
 		{@render children?.()}

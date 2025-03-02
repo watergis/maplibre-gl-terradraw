@@ -9,19 +9,13 @@
 		type DistanceUnit,
 		type TerradrawMode
 	} from '$lib';
-	import {
-		Accordion,
-		AccordionItem,
-		CodeBlock,
-		RadioGroup,
-		RadioItem,
-		RangeSlider
-	} from '@skeletonlabs/skeleton';
+	import { Accordion, Segment, Slider } from '@skeletonlabs/skeleton-svelte';
 	import { GeolocateControl, GlobeControl, Map, NavigationControl } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { untrack } from 'svelte';
-	import type { GeoJSONStoreFeatures } from 'terra-draw';
+	import { type GeoJSONStoreFeatures } from 'terra-draw';
 	import '../../scss/maplibre-gl-terradraw.scss';
+	import CodeBlock from '../CodeBlock.svelte';
 	import type { PageData } from './$types';
 
 	interface Props {
@@ -37,9 +31,9 @@
 
 	let selectedFeature = $state('');
 	let distanceUnit: DistanceUnit = $state('kilometers');
-	let distancePrecision: number = $state(2);
+	let distancePrecision: number[] = $state([2]);
 	let areaUnit: AreaUnit = $state('metric');
-	let areaPrecision: number = $state(2);
+	let areaPrecision: number[] = $state([2]);
 	let computeElevation: 'enabled' | 'disabled' = $state('enabled');
 
 	let drawControl: MaplibreTerradrawControl;
@@ -55,7 +49,7 @@
 	const handleDistancePrecisionChanged = () => {
 		if (drawControl) {
 			if (isMeasure) {
-				(drawControl as MaplibreMeasureControl).distancePrecision = distancePrecision;
+				(drawControl as MaplibreMeasureControl).distancePrecision = distancePrecision[0];
 			}
 		}
 	};
@@ -71,7 +65,7 @@
 	const handleAreaPrecisionChanged = () => {
 		if (drawControl) {
 			if (isMeasure) {
-				(drawControl as MaplibreMeasureControl).areaPrecision = areaPrecision;
+				(drawControl as MaplibreMeasureControl).areaPrecision = areaPrecision[0];
 			}
 		}
 	};
@@ -124,8 +118,8 @@
 					modes: terradrawModes,
 					open: isOpen,
 					distanceUnit: distanceUnit,
-					distancePrecision,
-					areaPrecision,
+					distancePrecision: distancePrecision[0],
+					areaPrecision: areaPrecision[0],
 					computeElevation: computeElevation === 'enabled'
 				});
 				map.addControl(drawControl, 'top-left');
@@ -141,13 +135,15 @@
 			const drawInstance = drawControl.getTerraDrawInstance();
 			drawInstance?.on('select', (id: string | number) => {
 				const snapshot = drawInstance.getSnapshot();
-				const feature = snapshot?.find((feature) => feature.id === id);
+				const feature = snapshot?.find((feature: GeoJSONStoreFeatures) => feature.id === id);
 				selectedFeature = JSON.stringify(feature, null, 4);
 			});
 
 			drawInstance?.on('change', () => {
 				const snapshot = drawInstance.getSnapshot();
-				const selectedFeatures = snapshot.filter((f) => f.properties.selected === true);
+				const selectedFeatures = snapshot.filter(
+					(f: GeoJSONStoreFeatures) => f.properties.selected === true
+				);
 				if (selectedFeatures.length === 0) {
 					selectedFeature = '';
 				}
@@ -174,21 +170,22 @@
 <div class="map" bind:this={mapContainer}>
 	{#if isMeasure || selectedFeature.length > 0}
 		<div class="overlay p-2 bg-gray-100 dark:bg-gray-800 text-black dark:text-white">
-			<Accordion autocollapse>
+			<Accordion collapsible>
 				{#if isMeasure}
-					<AccordionItem>
-						{#snippet summary()}
+					<Accordion.Item value="distanceUnit">
+						{#snippet control()}
 							<p>Distance unit</p>
 						{/snippet}
-						{#snippet content()}
-							<RadioGroup>
+						{#snippet panel()}
+							<Segment
+								value={distanceUnit}
+								onValueChange={(e) => {
+									distanceUnit = e.value as DistanceUnit;
+									handleDistanceUnitChanged();
+								}}
+							>
 								{#each ['kilometers', 'miles', 'degrees', 'radians'] as unit}
-									<RadioItem
-										bind:group={distanceUnit}
-										name="justify"
-										value={unit}
-										on:change={handleDistanceUnitChanged}
-									>
+									<Segment.Item value={unit}>
 										{#if unit === 'miles'}
 											{'mi'}
 										{:else if unit === 'degrees'}
@@ -198,90 +195,94 @@
 										{:else}
 											{'km'}
 										{/if}
-									</RadioItem>
+									</Segment.Item>
 								{/each}
-							</RadioGroup>
+							</Segment>
 						{/snippet}
-					</AccordionItem>
-					<AccordionItem>
-						{#snippet summary()}
+					</Accordion.Item>
+					<Accordion.Item value="areaUnit">
+						{#snippet control()}
 							<p>Area unit</p>
 						{/snippet}
-						{#snippet content()}
-							<RadioGroup>
+						{#snippet panel()}
+							<Segment
+								value={areaUnit}
+								onValueChange={(e) => {
+									areaUnit = e.value as AreaUnit;
+									handleAreaUnitChanged();
+								}}
+							>
 								{#each ['metric', 'imperial'] as unit}
-									<RadioItem
-										bind:group={areaUnit}
-										name="justify"
-										value={unit}
-										on:change={handleAreaUnitChanged}>{unit}</RadioItem
-									>
+									<Segment.Item value={unit}>{unit}</Segment.Item>
 								{/each}
-							</RadioGroup>
+							</Segment>
 						{/snippet}
-					</AccordionItem>
-					<AccordionItem>
-						{#snippet summary()}
+					</Accordion.Item>
+					<Accordion.Item value="measurePrecision">
+						{#snippet control()}
 							<p>Measure precision</p>
 						{/snippet}
-						{#snippet content()}
-							<RangeSlider
+						{#snippet panel()}
+							<div class="flex justify-between items-center">
+								<div class="font-bold">Distance precision (Line)</div>
+								<div class="text-xs">{distancePrecision}</div>
+							</div>
+							<Slider
 								name="range-slider"
-								bind:value={distancePrecision}
+								value={distancePrecision}
 								min={0}
 								max={10}
 								step={1}
-								ticked
-								on:change={handleDistancePrecisionChanged}
-							>
-								<div class="flex justify-between items-center">
-									<div class="font-bold">Distance precision (Line)</div>
-									<div class="text-xs">{distancePrecision}</div>
-								</div>
-							</RangeSlider>
+								onValueChange={(e) => {
+									distancePrecision = e.value;
+									handleDistancePrecisionChanged();
+								}}
+							></Slider>
 
-							<RangeSlider
+							<div class="flex justify-between items-center">
+								<div class="font-bold">Area precision (Polygon)</div>
+								<div class="text-xs">{areaPrecision}</div>
+							</div>
+							<Slider
 								name="range-slider"
-								bind:value={areaPrecision}
+								value={areaPrecision}
 								min={0}
 								max={10}
 								step={1}
-								ticked
-								on:change={handleAreaPrecisionChanged}
-							>
-								<div class="flex justify-between items-center">
-									<div class="font-bold">Area precision (Polygon)</div>
-									<div class="text-xs">{areaPrecision}</div>
-								</div>
-							</RangeSlider>
+								onValueChange={(e) => {
+									areaPrecision = e.value;
+									handleAreaPrecisionChanged();
+								}}
+							></Slider>
 						{/snippet}
-					</AccordionItem>
-					<AccordionItem>
-						{#snippet summary()}
+					</Accordion.Item>
+					<Accordion.Item value="computeElevation">
+						{#snippet control()}
 							<p>Compute elevation</p>
 						{/snippet}
-						{#snippet content()}
-							<RadioGroup>
+						{#snippet panel()}
+							<Segment
+								value={computeElevation}
+								onValueChange={(e) => {
+									computeElevation = e.value as 'enabled' | 'disabled';
+									handleComputeElevationChanged();
+								}}
+							>
 								{#each ['enabled', 'disabled'] as option}
-									<RadioItem
-										bind:group={computeElevation}
-										name="justify"
-										value={option}
-										on:change={handleComputeElevationChanged}
-									>
+									<Segment.Item value={option}>
 										{option}
-									</RadioItem>
+									</Segment.Item>
 								{/each}
-							</RadioGroup>
+							</Segment>
 						{/snippet}
-					</AccordionItem>
+					</Accordion.Item>
 				{/if}
 				{#if selectedFeature.length > 0}
-					<AccordionItem open>
-						{#snippet summary()}
+					<Accordion.Item value="selectedFeature">
+						{#snippet control()}
 							<p>Selected feature</p>
 						{/snippet}
-						{#snippet content()}
+						{#snippet panel()}
 							<div class="p-2">
 								<p class="text-black">
 									For Polygon, use <b>ctrl+s</b> to resize the feature, and use <b>ctrl+r</b> to rotate
@@ -289,10 +290,10 @@
 								</p>
 							</div>
 							<div class="code-block">
-								<CodeBlock language="javascript" bind:code={selectedFeature}></CodeBlock>
+								<CodeBlock lang="js" code={selectedFeature}></CodeBlock>
 							</div>
 						{/snippet}
-					</AccordionItem>
+					</Accordion.Item>
 				{/if}
 			</Accordion>
 		</div>

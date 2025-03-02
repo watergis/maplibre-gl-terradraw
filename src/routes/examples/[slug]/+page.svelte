@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { CodeBlock } from '@skeletonlabs/skeleton';
-	import type { PageData } from './$types';
 	import { afterNavigate } from '$app/navigation';
+	import CodeBlock from '../../CodeBlock.svelte';
+	import type { PageData } from './$types';
 
 	type Props = {
 		data: PageData;
@@ -25,7 +25,7 @@
 
 <div class="contents">
 	<div class="py-4">
-		<CodeBlock language="html" lineNumbers code={data.html} />
+		<CodeBlock lang="html" code={data.html} />
 	</div>
 </div>
 

@@ -1,16 +1,9 @@
 <script lang="ts">
 	import { AvailableModes } from '$lib';
-	import {
-		Autocomplete,
-		CodeBlock,
-		InputChip,
-		RadioGroup,
-		RadioItem,
-		Tab,
-		TabGroup
-	} from '@skeletonlabs/skeleton';
+	import { Segment, Tabs, TagsInput } from '@skeletonlabs/skeleton-svelte';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
+	import CodeBlock from './CodeBlock.svelte';
 
 	interface Props {
 		data: PageData;
@@ -24,10 +17,9 @@
 	];
 	let importTypeTabSet: string = $state(importTypeTabs[0].value);
 
-	let inputChip = $state('');
 	let availableMode: string[] = AvailableModes as unknown as string[];
 	let selectedModes: string[] = $state([]);
-	let isOpen: boolean | undefined = $state();
+	let isOpen: 'true' | 'false' = $state('true');
 
 	let packageManager = $state('npm');
 	let controlType: 'default' | 'measure' | undefined = $state();
@@ -40,14 +32,14 @@
 				).join(',')}&open=${isOpen}&measure=${controlType === 'default' ? 'false' : 'true'}`
 	);
 
-	const onInputChipSelect = (e: { detail: { value: string } }) => {
-		const value = e.detail.value;
-		selectedModes.push(value);
-	};
+	// const onInputChipSelect = (e: { detail: { value: string } }) => {
+	// 	const value = e.detail.value;
+	// 	selectedModes.push(value);
+	// };
 
 	onMount(() => {
 		controlType = 'default';
-		isOpen = true;
+		isOpen = 'true';
 		if (selectedModes.length === 0) {
 			selectedModes = ['render', ...availableMode.filter((m) => m !== 'render')];
 		}
@@ -75,7 +67,7 @@
 		<h3 class="h3 pt-6 pb-4">Demo</h3>
 
 		<a
-			class="btn variant-filled-primary capitalize"
+			class="btn preset-filled-primary-500 capitalize"
 			href={demoUrl}
 			tabindex={selectedModes.length === 0 ? 0 : -1}
 		>
@@ -88,14 +80,16 @@
 			choose MaplibreMeasureControl.
 		</p>
 
-		<RadioGroup active="variant-filled-primary" hover="hover:variant-soft-primary">
-			<RadioItem bind:group={controlType} name="justify" value={'default'}>
-				Default Control
-			</RadioItem>
-			<RadioItem bind:group={controlType} name="justify" value={' measure'}>
-				Measure Control
-			</RadioItem>
-		</RadioGroup>
+		<Segment
+			name="controlType"
+			value={controlType}
+			onValueChange={(e) => {
+				controlType = e.value as 'default' | 'measure';
+			}}
+		>
+			<Segment.Item value={'default'}>Default Control</Segment.Item>
+			<Segment.Item value={' measure'}>Measure Control</Segment.Item>
+		</Segment>
 
 		<h4 class="h4 pt-6">Choose options for demo</h4>
 		<p>Your chosen options are automatically applied at the demo and the below usage code.</p>
@@ -105,16 +99,24 @@
 		</p>
 
 		{#key controlType}
-			<InputChip
-				bind:input={inputChip}
+			<TagsInput
 				name="terradraw-modes"
 				placeholder="{selectedModes.length === 0
 					? 'Select at least a mode. '
 					: ''}Select TerraDraw modes to be added"
-				bind:value={selectedModes}
-				whitelist={availableMode}
+				value={selectedModes}
+				onValueChange={(e) => {
+					let isValid = true;
+					e.value.forEach((v) => {
+						if (!availableMode.includes(v)) {
+							isValid = false;
+						}
+					});
+					if (!isValid) return;
+					selectedModes = e.value;
+				}}
 			/>
-			<div class="card w-full max-w-sm max-h-48 p-4 overflow-y-auto" tabindex="-1">
+			<!-- <div class="card w-full max-w-sm max-h-48 p-4 overflow-y-auto" tabindex="-1">
 				<Autocomplete
 					bind:input={inputChip}
 					options={availableMode.map((m) => {
@@ -124,100 +126,126 @@
 					on:selection={onInputChipSelect}
 					emptyState="All modes added"
 				/>
-			</div>
+			</div> -->
 		{/key}
 
 		<h4 class="h4 pt-6">Choose default open mode</h4>
 
-		<RadioGroup active="variant-filled-primary" hover="hover:variant-soft-primary">
-			<RadioItem bind:group={isOpen} name="justify" value={true}>Open as default</RadioItem>
-			<RadioItem bind:group={isOpen} name="justify" value={false}>Close as default</RadioItem>
-		</RadioGroup>
+		<Segment
+			name="isOpen"
+			value={isOpen}
+			onValueChange={(e) => {
+				isOpen = e.value as 'true' | 'false';
+			}}
+		>
+			<Segment.Item value={'true'}>Open as default</Segment.Item>
+			<Segment.Item value={'false'}>Close as default</Segment.Item>
+		</Segment>
 
 		<p>
 			if you want the drawing tool to be always expanded, simplely remove `render` mode from
 			constuctor options, then set `true` to `open` property.
 		</p>
 
-		<TabGroup>
-			{#each importTypeTabs as tab}
-				<Tab bind:group={importTypeTabSet} name={tab.value} value={tab.value}>{tab.label}</Tab>
-			{/each}
-		</TabGroup>
+		<Tabs
+			value={importTypeTabSet}
+			onValueChange={(e) => {
+				importTypeTabSet = e.value as string;
+			}}
+		>
+			{#snippet list()}
+				{#each importTypeTabs as tab}
+					<Tabs.Control value={tab.value}>{tab.label}</Tabs.Control>
+				{/each}
+			{/snippet}
+			{#snippet content()}
+				<Tabs.Panel value="npm">
+					<div class="p-2">
+						<h3 class="h3 pt-6 pb-4">Install</h3>
+						<p>Getting start with installing the package</p>
 
-		<div class="p-2" hidden={importTypeTabSet !== 'npm'}>
-			<h3 class="h3 pt-6 pb-4">Install</h3>
-			<p>Getting start with installing the package</p>
+						<Segment
+							name="packageManager"
+							value={packageManager}
+							onValueChange={(e) => {
+								packageManager = e.value as string;
+							}}
+						>
+							<Segment.Item value={'npm'}>npm</Segment.Item>
+							<Segment.Item value={'yarn'}>yarn</Segment.Item>
+							<Segment.Item value={'pnpm'}>pnpm</Segment.Item>
+							<Segment.Item value={'bun'}>bun</Segment.Item>
+						</Segment>
 
-			<RadioGroup active="variant-filled-primary" hover="hover:variant-soft-primary">
-				<RadioItem bind:group={packageManager} name="justify" value={'npm'}>npm</RadioItem>
-				<RadioItem bind:group={packageManager} name="justify" value={'yarn'}>yarn</RadioItem>
-				<RadioItem bind:group={packageManager} name="justify" value={'pnpm'}>pnpm</RadioItem>
-				<RadioItem bind:group={packageManager} name="justify" value={'bun'}>bun</RadioItem>
-			</RadioGroup>
+						<div class="pt-2">
+							{#if packageManager === 'npm'}
+								<CodeBlock
+									lang="console"
+									code={`npm install --save-dev ${data.metadata.packageName}`}
+								/>
+							{:else if packageManager === 'yarn'}
+								<CodeBlock lang="console" code={`yarn add --dev ${data.metadata.packageName}`} />
+							{:else if packageManager === 'pnpm'}
+								<CodeBlock
+									lang="console"
+									code={`pnpm add --save-dev ${data.metadata.packageName}`}
+								/>
+							{:else if packageManager === 'bun'}
+								<CodeBlock
+									lang="console"
+									code={`bun install --save-dev ${data.metadata.packageName}`}
+								/>
+							{/if}
+						</div>
 
-			<div class="pt-2">
-				{#if packageManager === 'npm'}
-					<CodeBlock
-						language="shell"
-						code={`npm install --save-dev ${data.metadata.packageName}`}
-					/>
-				{:else if packageManager === 'yarn'}
-					<CodeBlock language="shell" code={`yarn add --dev ${data.metadata.packageName}`} />
-				{:else if packageManager === 'pnpm'}
-					<CodeBlock language="shell" code={`pnpm add --save-dev ${data.metadata.packageName}`} />
-				{:else if packageManager === 'bun'}
-					<CodeBlock
-						language="shell"
-						code={`bun install --save-dev ${data.metadata.packageName}`}
-					/>
-				{/if}
-			</div>
+						<h3 class="h3 pt-6 pb-4">Usage</h3>
 
-			<h3 class="h3 pt-6 pb-4">Usage</h3>
+						<p>Copy and paste the below code.</p>
 
-			<p>Copy and paste the below code.</p>
+						<CodeBlock
+							lang="js"
+							code={data.codes.npm
+								.replace(
+									/MaplibreTerradrawControl/g,
+									controlType === 'default' ? 'MaplibreTerradrawControl' : 'MaplibreMeasureControl'
+								)
+								.replace(
+									'{modes}',
+									(controlType === 'default'
+										? selectedModes.map((m) => `'${m}'`)
+										: selectedModes.filter((x) => x !== 'point').map((m) => `'${m}'`)
+									).join(',')
+								)
+								.replace('{open}', `${isOpen}`)}
+						/>
+					</div>
+				</Tabs.Panel>
+				<Tabs.Panel value="cdn">
+					<div>
+						<h3 class="h3 pt-6">Usage</h3>
 
-			<CodeBlock
-				language="ts"
-				lineNumbers
-				code={data.codes.npm
-					.replace(
-						/MaplibreTerradrawControl/g,
-						controlType === 'default' ? 'MaplibreTerradrawControl' : 'MaplibreMeasureControl'
-					)
-					.replace(
-						'{modes}',
-						(controlType === 'default'
-							? selectedModes.map((m) => `'${m}'`)
-							: selectedModes.filter((x) => x !== 'point').map((m) => `'${m}'`)
-						).join(',')
-					)
-					.replace('{open}', `${isOpen}`)}
-			/>
-		</div>
-
-		<div hidden={importTypeTabSet !== 'cdn'}>
-			<h3 class="h3 pt-6">Usage</h3>
-
-			<CodeBlock
-				language="html"
-				lineNumbers
-				code={data.codes.cdn
-					.replace(
-						/MaplibreTerradrawControl\(/g,
-						controlType === 'default' ? 'MaplibreTerradrawControl(' : 'MaplibreMeasureControl('
-					)
-					.replace(
-						'{modes}',
-						(controlType === 'default'
-							? selectedModes.map((m) => `'${m}'`)
-							: selectedModes.filter((x) => x !== 'point').map((m) => `'${m}'`)
-						).join(',')
-					)
-					.replace('{open}', `${isOpen}`)}
-			/>
-		</div>
+						<CodeBlock
+							lang="html"
+							code={data.codes.cdn
+								.replace(
+									/MaplibreTerradrawControl\(/g,
+									controlType === 'default'
+										? 'MaplibreTerradrawControl('
+										: 'MaplibreMeasureControl('
+								)
+								.replace(
+									'{modes}',
+									(controlType === 'default'
+										? selectedModes.map((m) => `'${m}'`)
+										: selectedModes.filter((x) => x !== 'point').map((m) => `'${m}'`)
+									).join(',')
+								)
+								.replace('{open}', `${isOpen}`)}
+						/>
+					</div>
+				</Tabs.Panel>
+			{/snippet}
+		</Tabs>
 
 		<h3 class="h3 pt-6">API Documentation</h3>
 

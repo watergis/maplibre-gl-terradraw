@@ -31,7 +31,9 @@
 				"esbenp.prettier-vscode",
 				"svelte.svelte-vscode",
 				"ardenivanov.svelte-intellisense",
-				"fivethree.vscode-svelte-snippets"
+				"fivethree.vscode-svelte-snippets",
+				"github.vscode-github-actions",
+				"ms-azuretools.vscode-docker"
 			]
 		}
 	},

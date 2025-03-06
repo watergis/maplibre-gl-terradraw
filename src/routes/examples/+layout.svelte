@@ -15,7 +15,7 @@
 
 <div class="px-4">
 	<ol class="breadcrumb">
-		{#each breadcrumbs as bc, index}
+		{#each breadcrumbs as bc, index (bc.title)}
 			{#if index === breadcrumbs.length - 1}
 				<li>{bc.title}</li>
 			{:else}

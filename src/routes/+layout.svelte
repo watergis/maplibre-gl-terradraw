@@ -1,19 +1,18 @@
 <script lang="ts">
-	import { AppBar, LightSwitch } from '@skeletonlabs/skeleton';
-	import { autoModeWatcher } from '@skeletonlabs/skeleton';
+	import { AppBar, autoModeWatcher, LightSwitch } from '@skeletonlabs/skeleton';
 	import '../app.postcss';
-
 	// Highlight JS
-	import hljs from 'highlight.js/lib/core';
-	import 'highlight.js/styles/github-dark.css';
 	import { storeHighlightJs } from '@skeletonlabs/skeleton';
-	import xml from 'highlight.js/lib/languages/xml'; // for HTML
+	import hljs from 'highlight.js/lib/core';
+	import xml from 'highlight.js/lib/languages/xml';
+	import 'highlight.js/styles/github-dark.css';
+	// for HTML
+	import { Drawer, getDrawerStore, initializeStores } from '@skeletonlabs/skeleton';
 	import css from 'highlight.js/lib/languages/css';
 	import javascript from 'highlight.js/lib/languages/javascript';
-	import typescript from 'highlight.js/lib/languages/typescript';
 	import json from 'highlight.js/lib/languages/json';
 	import shell from 'highlight.js/lib/languages/shell';
-	import { initializeStores, Drawer, getDrawerStore } from '@skeletonlabs/skeleton';
+	import typescript from 'highlight.js/lib/languages/typescript';
 
 	hljs.registerLanguage('xml', xml); // for HTML
 	hljs.registerLanguage('css', css);
@@ -23,8 +22,8 @@
 	hljs.registerLanguage('shell', shell);
 	storeHighlightJs.set(hljs);
 
-	import type { PageData } from './$types';
 	import { page } from '$app/state';
+	import type { PageData } from './$types';
 
 	let year = new Date().getFullYear();
 
@@ -103,7 +102,7 @@
 					<LightSwitch />
 				</div>
 				<div class="hidden md:inline-block">
-					{#each data.nav as link}
+					{#each data.nav as link (link.href)}
 						<a
 							class="btn btn-sm variant-ghost-surface ml-2"
 							href={link.href}
@@ -137,7 +136,7 @@
 				<li>
 					<div class="flex items-center py-2">
 						<div class="px-4"><LightSwitch /></div>
-						{#each data.nav as link}
+						{#each data.nav as link (link.href)}
 							<a href={link.href} target="_blank" onclick={drawerClose} aria-label={link.icon}>
 								<span><i class={link.icon}></i></span>
 							</a>
@@ -147,7 +146,7 @@
 				<li>
 					<p class="px-4 py-2">©{year} {data.metadata.author}</p>
 				</li>
-				{#each data.metadata.licenses as license}
+				{#each data.metadata.licenses as license (license)}
 					<li>
 						<p class="px-4 py-2">{license}</p>
 					</li>

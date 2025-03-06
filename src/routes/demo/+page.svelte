@@ -182,7 +182,7 @@
 						{/snippet}
 						{#snippet content()}
 							<RadioGroup>
-								{#each ['kilometers', 'miles', 'degrees', 'radians'] as unit}
+								{#each ['kilometers', 'miles', 'degrees', 'radians'] as unit (unit)}
 									<RadioItem
 										bind:group={distanceUnit}
 										name="justify"
@@ -190,13 +190,13 @@
 										on:change={handleDistanceUnitChanged}
 									>
 										{#if unit === 'miles'}
-											{'mi'}
+											mi
 										{:else if unit === 'degrees'}
-											{'°'}
+											°
 										{:else if unit === 'radians'}
-											{'rad'}
+											rad
 										{:else}
-											{'km'}
+											km
 										{/if}
 									</RadioItem>
 								{/each}
@@ -209,7 +209,7 @@
 						{/snippet}
 						{#snippet content()}
 							<RadioGroup>
-								{#each ['metric', 'imperial'] as unit}
+								{#each ['metric', 'imperial'] as unit (unit)}
 									<RadioItem
 										bind:group={areaUnit}
 										name="justify"
@@ -262,7 +262,7 @@
 						{/snippet}
 						{#snippet content()}
 							<RadioGroup>
-								{#each ['enabled', 'disabled'] as option}
+								{#each ['enabled', 'disabled'] as option (option)}
 									<RadioItem
 										bind:group={computeElevation}
 										name="justify"

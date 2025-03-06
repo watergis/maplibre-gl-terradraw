@@ -89,12 +89,8 @@
 		</p>
 
 		<RadioGroup active="variant-filled-primary" hover="hover:variant-soft-primary">
-			<RadioItem bind:group={controlType} name="justify" value={'default'}>
-				Default Control
-			</RadioItem>
-			<RadioItem bind:group={controlType} name="justify" value={' measure'}>
-				Measure Control
-			</RadioItem>
+			<RadioItem bind:group={controlType} name="justify" value="default">Default Control</RadioItem>
+			<RadioItem bind:group={controlType} name="justify" value="measure">Measure Control</RadioItem>
 		</RadioGroup>
 
 		<h4 class="h4 pt-6">Choose options for demo</h4>
@@ -114,7 +110,11 @@
 				bind:value={selectedModes}
 				whitelist={availableMode}
 			/>
-			<div class="card w-full max-w-sm max-h-48 p-4 overflow-y-auto" tabindex="-1">
+			<div
+				class="card w-full max-w-sm max-h-48 p-4 overflow-y-auto"
+				tabindex="-1"
+				hidden={availableMode.length === selectedModes.length}
+			>
 				<Autocomplete
 					bind:input={inputChip}
 					options={availableMode.map((m) => {
@@ -140,7 +140,7 @@
 		</p>
 
 		<TabGroup>
-			{#each importTypeTabs as tab}
+			{#each importTypeTabs as tab (tab.value)}
 				<Tab bind:group={importTypeTabSet} name={tab.value} value={tab.value}>{tab.label}</Tab>
 			{/each}
 		</TabGroup>
@@ -150,10 +150,10 @@
 			<p>Getting start with installing the package</p>
 
 			<RadioGroup active="variant-filled-primary" hover="hover:variant-soft-primary">
-				<RadioItem bind:group={packageManager} name="justify" value={'npm'}>npm</RadioItem>
-				<RadioItem bind:group={packageManager} name="justify" value={'yarn'}>yarn</RadioItem>
-				<RadioItem bind:group={packageManager} name="justify" value={'pnpm'}>pnpm</RadioItem>
-				<RadioItem bind:group={packageManager} name="justify" value={'bun'}>bun</RadioItem>
+				<RadioItem bind:group={packageManager} name="justify" value="npm">npm</RadioItem>
+				<RadioItem bind:group={packageManager} name="justify" value="yarn">yarn</RadioItem>
+				<RadioItem bind:group={packageManager} name="justify" value="pnpm">pnpm</RadioItem>
+				<RadioItem bind:group={packageManager} name="justify" value="bun">bun</RadioItem>
 			</RadioGroup>
 
 			<div class="pt-2">
@@ -235,7 +235,7 @@
 
 		<div class="py-4">
 			<div class="flex flex-wrap gap-4">
-				{#each data.examples as custom}
+				{#each data.examples as custom (custom.title)}
 					<a
 						class="card card-hover sm:w-auto md:max-w-48 lg:max-w-64 xl:max-w-80"
 						href={custom.href}
@@ -253,7 +253,7 @@
 
 	<hr />
 	<div class="space-y-2 py-4">
-		{#each data.metadata.licenses as license}
+		{#each data.metadata.licenses as license (license)}
 			<p class="space-x-2">{license}</p>
 		{/each}
 	</div>

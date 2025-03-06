@@ -110,7 +110,11 @@
 				bind:value={selectedModes}
 				whitelist={availableMode}
 			/>
-			<div class="card w-full max-w-sm max-h-48 p-4 overflow-y-auto" tabindex="-1">
+			<div
+				class="card w-full max-w-sm max-h-48 p-4 overflow-y-auto"
+				tabindex="-1"
+				hidden={availableMode.length === selectedModes.length}
+			>
 				<Autocomplete
 					bind:input={inputChip}
 					options={availableMode.map((m) => {

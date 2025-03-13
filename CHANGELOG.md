@@ -1,5 +1,12 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.3.3
+
+### Patch Changes
+
+- accde43: chore: updated dependencies in package.json
+- 36d37e3: fix: fixed bug of not removing measure label when draw.removeFeatures to delete features from terra-draw. When the plugin updates altitude in source and feature no longer exists, it will not add measure label again.
+
 ## 1.3.2
 
 ### Patch Changes

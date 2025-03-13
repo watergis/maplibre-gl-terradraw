@@ -314,8 +314,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			const drawInstance = this.getTerraDrawInstance();
 			if (drawInstance) {
 				// subscribe change event of TerraDraw to calc distance
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-ignore
 				drawInstance.on('change', this.handleTerradrawFeatureChanged.bind(this));
 				drawInstance.on('finish', this.handleTerradrawFeatureReady.bind(this));
 				drawInstance.on('deselect', this.handleTerradrawDeselect.bind(this));
@@ -371,8 +369,24 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 */
 	private handleTerradrawFeatureChanged(ids: TerraDrawExtend.FeatureId[], type: string) {
 		if (!this.map) return;
-		// skip if type is stylying. Do continue if type is create, update or delete.
-		if (type === 'stylying') return;
+		// skip if type is styling. Do continue if type is create, update or delete.
+		if (type === 'styling') return;
+
+		const sources = [
+			this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification,
+			this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification,
+			this.measureOptions.lineLayerNodeSpec as CircleLayerSpecification,
+			this.measureOptions.polygonLayerSpec as SymbolLayerSpecification
+		];
+		const sourceIds = sources.map((src) => src.source);
+
+		if (type === 'delete') {
+			this.clearMeasureFeatures(sourceIds, ids);
+			return;
+		}
+
+		// type is create or update
+
 		const drawInstance = this.getTerraDrawInstance();
 		if (!drawInstance) return;
 		const snapshot = drawInstance.getSnapshot();
@@ -393,22 +407,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				}
 			} else {
 				// if editing ID does not exist, delete all related features from measure layers
-				this.clearMeasureFeatures(
-					id,
-					(this.measureOptions.lineLayerNodeSpec as CircleLayerSpecification).source
-				);
-				this.clearMeasureFeatures(
-					id,
-					(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source
-				);
-				this.clearMeasureFeatures(
-					id,
-					(this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).source
-				);
-				this.clearMeasureFeatures(
-					id,
-					(this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).source
-				);
+				this.clearMeasureFeatures(sourceIds, [id]);
 			}
 		}
 	}
@@ -466,27 +465,42 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 
 	/**
 	 * Clear GeoJSON feature related to measure control by TerraDraw feature ID
-	 * @param id feature ID
-	 * @param sourceId source ID to delete
+	 * @param sourceIds the array of source ID to delete
+	 * @param ids the array of feature ID. Optional, if undefined, delete all labels for source
 	 * @returns void
 	 */
-	private clearMeasureFeatures(id: TerraDrawExtend.FeatureId, sourceId: string) {
+	private clearMeasureFeatures(
+		sourceIds: string[],
+		ids: TerraDrawExtend.FeatureId[] | undefined = undefined
+	) {
 		if (!this.map) return;
-		const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
-			sourceId
-		] as GeoJSONSourceSpecification;
-		if (geojsonSource) {
-			// delete old nodes
-			if (
-				typeof geojsonSource.data !== 'string' &&
-				geojsonSource.data.type === 'FeatureCollection'
-			) {
-				geojsonSource.data.features = geojsonSource.data.features.filter(
-					(f) => f.properties?.originalId !== id
-				);
+		for (const sourceId of sourceIds) {
+			const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
+				sourceId
+			] as GeoJSONSourceSpecification;
+			if (geojsonSource) {
+				// delete old nodes
+				if (
+					typeof geojsonSource.data !== 'string' &&
+					geojsonSource.data.type === 'FeatureCollection'
+				) {
+					// if ids is undefined, delete all labels for the source
+					if (ids === undefined) {
+						geojsonSource.data.features = [];
+					} else {
+						// Delete label features if originalId does not exist anymore.
+						geojsonSource.data.features = geojsonSource.data.features.filter((f) => {
+							if (f.properties?.originalId) {
+								return !ids.includes(f.properties.originalId);
+							} else {
+								return !ids.includes(f.id as string);
+							}
+						});
+					}
 
-				// update GeoJSON source with new data
-				(this.map.getSource(sourceId) as GeoJSONSource)?.setData(geojsonSource.data);
+					// update GeoJSON source with new data
+					(this.map.getSource(sourceId) as GeoJSONSource)?.setData(geojsonSource.data);
+				}
 			}
 		}
 	}
@@ -511,7 +525,16 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				typeof newGeoJsonSource.data !== 'string' &&
 				newGeoJsonSource.data.type === 'FeatureCollection'
 			) {
-				const ids = updatedFeatures.map((f) => f.id);
+				// check if feature id still exist in terradraw
+				// in some conditions, features might already be deleted from terradraw
+				const updatedExistingFeatures: GeoJSONStoreFeatures[] = [];
+				for (const f of updatedFeatures) {
+					if (this.terradraw?.getSnapshotFeature(f.id as TerraDrawExtend.FeatureId)) {
+						updatedExistingFeatures.push(f);
+					}
+				}
+
+				const ids = updatedExistingFeatures.map((f) => f.id);
 				if (
 					typeof newGeoJsonSource.data !== 'string' &&
 					newGeoJsonSource.data.type === 'FeatureCollection'
@@ -521,14 +544,14 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 							...(newGeoJsonSource.data.features = newGeoJsonSource.data.features.filter(
 								(f) => !(ids.includes(f.properties?.originalId) && f.geometry.type === 'Point')
 							)),
-							...updatedFeatures
+							...updatedExistingFeatures
 						];
 					} else if (type === 'point') {
 						newGeoJsonSource.data.features = [
 							...(newGeoJsonSource.data.features = newGeoJsonSource.data.features.filter(
 								(f) => !(ids.includes(f.id) && f.geometry.type === 'Point')
 							)),
-							...updatedFeatures
+							...updatedExistingFeatures
 						];
 					}
 
@@ -578,6 +601,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 							points as GeoJSONStoreFeatures[],
 							this.measureOptions.terrainSource
 						);
+
 						this.replaceGeoJSONSource(
 							updatedFeatures,
 							(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source,
@@ -906,49 +930,16 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			const sources = [
 				this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification,
 				this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification,
+				this.measureOptions.lineLayerNodeSpec as CircleLayerSpecification,
 				this.measureOptions.polygonLayerSpec as SymbolLayerSpecification
 			];
-
+			const sourceIds = sources.map((src) => src.source);
 			if (deletedIds && deletedIds.length > 0) {
 				// delete only features by IDs
-				for (const src of sources) {
-					const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
-						src.source
-					] as GeoJSONSourceSpecification;
-					if (geojsonSource) {
-						if (
-							typeof geojsonSource.data !== 'string' &&
-							geojsonSource.data.type === 'FeatureCollection'
-						) {
-							// Delete label features if originalId does not exist anymore.
-							geojsonSource.data.features = geojsonSource.data.features.filter((f) => {
-								if (f.properties?.originalId) {
-									return !deletedIds.includes(f.properties.originalId);
-								} else {
-									return !deletedIds.includes(f.id as string);
-								}
-							});
-						}
-						(this.map.getSource(src.source) as GeoJSONSource)?.setData(geojsonSource.data);
-					}
-				}
+				this.clearMeasureFeatures(sourceIds, deletedIds);
 			} else {
 				// delete all features
-				for (const src of sources) {
-					const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
-						src.source
-					] as GeoJSONSourceSpecification;
-					if (geojsonSource) {
-						if (
-							typeof geojsonSource.data !== 'string' &&
-							geojsonSource.data.type === 'FeatureCollection'
-						) {
-							// Delete label features if originalId does not exist anymore.
-							geojsonSource.data.features = [];
-						}
-						(this.map.getSource(src.source) as GeoJSONSource)?.setData(geojsonSource.data);
-					}
-				}
+				this.clearMeasureFeatures(sourceIds, undefined);
 			}
 		}
 	}

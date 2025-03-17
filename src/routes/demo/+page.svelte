@@ -5,6 +5,7 @@
 		getDefaultModeOptions,
 		MaplibreMeasureControl,
 		MaplibreTerradrawControl,
+		roundFeatureCoordinates,
 		type AreaUnit,
 		type DistanceUnit,
 		type TerradrawMode
@@ -158,7 +159,13 @@
 					(terradrawModes as string[]).includes(f.properties.mode)
 				) as GeoJSONStoreFeatures[];
 				if (initData.length > 0) {
-					drawInstance?.addFeatures(initData);
+					const result = drawInstance?.addFeatures(roundFeatureCoordinates(initData));
+					if (result) {
+						const invalid = result.filter((res) => res.valid !== true);
+						if (invalid.length > 0) {
+							console.log(invalid);
+						}
+					}
 
 					if (isMeasure) {
 						map?.once('idle', () => {

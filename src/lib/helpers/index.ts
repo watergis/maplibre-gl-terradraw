@@ -7,3 +7,4 @@ export * from './debounce';
 export * from './getDistanceUnitName';
 export * from './queryElevationByPoint';
 export * from './queryElevationFromRasterDEM';
+export * from './roundFeatureCoordinates';

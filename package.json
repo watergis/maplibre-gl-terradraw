@@ -62,6 +62,7 @@
 		"@turf/centroid": "^7.2.0",
 		"@turf/distance": "^7.2.0",
 		"@types/eslint": "^9.6.1",
+		"@types/geojson": "^7946.0.16",
 		"@types/node": "^22.13.10",
 		"@vitest/coverage-v8": "^3.0.8",
 		"@watergis/terrain-rgb": "^2.1.1",

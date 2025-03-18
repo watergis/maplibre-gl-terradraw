@@ -50,7 +50,7 @@
 		"@changesets/cli": "^2.28.1",
 		"@eslint/js": "^9.22.0",
 		"@playwright/test": "^1.51.0",
-		"@skeletonlabs/skeleton": "^2.11.0",
+		"@skeletonlabs/skeleton": "^3.0.0",
 		"@skeletonlabs/tw-plugin": "^0.4.1",
 		"@sveltejs/adapter-auto": "^4.0.0",
 		"@sveltejs/kit": "^2.19.2",

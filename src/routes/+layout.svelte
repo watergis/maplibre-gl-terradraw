@@ -59,7 +59,7 @@
 	<meta property="og:url" content={page.url.href} />
 </svelte:head>
 
-<div class="h-svh grid grid-rows-[auto_1fr_auto]">
+<div class="h-dvh grid grid-rows-[auto_1fr_auto]">
 	<header class="sticky top-0 z-10">
 		<AppBar>
 			{#snippet lead()}
@@ -74,9 +74,8 @@
 		{@render children?.()}
 	</main>
 
-	<hr />
-
-	<footer class="w-full">
+	<footer>
+		<hr />
 		<div class="flex justify-between items-center px-2">
 			<p class="text-left w-full pl-4">
 				<a

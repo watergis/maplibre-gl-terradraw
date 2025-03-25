@@ -250,13 +250,6 @@
 			</div>
 		</div>
 	</div>
-
-	<hr />
-	<div class="space-y-2 py-4">
-		{#each data.metadata.licenses as license (license)}
-			<p class="space-x-2">{license}</p>
-		{/each}
-	</div>
 </div>
 
 <style lang="postcss">

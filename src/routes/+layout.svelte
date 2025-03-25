@@ -77,8 +77,8 @@
 	<hr />
 
 	<footer class="w-full">
-		<div class="flex flex-col md:flex-row justify-between items-center py-2 space-y-2 md:space-y-0">
-			<p class="text-center md:text-left w-full md:w-auto pl-4">
+		<div class="flex justify-between items-center px-2">
+			<p class="text-left w-full pl-4">
 				<a
 					class="text-blue-600 visited:text-purple-600"
 					href={data.metadata.contact}
@@ -89,7 +89,7 @@
 				</a>
 			</p>
 
-			<nav class="flex flex-wrap justify-center md:justify-end gap-2 w-full md:w-auto pr-4">
+			<nav class="flex flex-wrap justify-end gap-2 w-full pr-2">
 				{#each data.nav as link (link.href)}
 					<a
 						class="btn hover:preset-tonal px-2"

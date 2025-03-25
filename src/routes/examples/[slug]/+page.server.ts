@@ -26,20 +26,6 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
 		title,
 		description,
 		url: filePath,
-		socialImage: `/assets/images/${slug}.png`,
-		breadcrumbs: [
-			{
-				href: '/',
-				title: 'Home'
-			},
-			{
-				href: '/examples',
-				title: 'Examples'
-			},
-			{
-				href: `/examples/${slug}`,
-				title: title
-			}
-		]
+		socialImage: `/assets/images/${slug}.png`
 	};
 };

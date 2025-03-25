@@ -229,9 +229,7 @@
 			>.
 		</p>
 
-		<h3 class="h3 pt-6">
-			<a href="/examples" class="text-blue-600 visited:text-purple-600">Examples</a>
-		</h3>
+		<h3 class="h3 pt-6">Examples</h3>
 
 		<div class="py-4">
 			<div class="flex flex-wrap gap-4">
@@ -249,13 +247,6 @@
 				{/each}
 			</div>
 		</div>
-	</div>
-
-	<hr />
-	<div class="space-y-2 py-4">
-		{#each data.metadata.licenses as license (license)}
-			<p class="space-x-2">{license}</p>
-		{/each}
 	</div>
 </div>
 

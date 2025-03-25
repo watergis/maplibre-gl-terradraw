@@ -28,19 +28,15 @@ export const load: LayoutServerLoad = async ({ fetch }) => {
 			title: 'Maplibre GL Terra Draw',
 			description:
 				'This plugin is to add controls to your Maplibre for drawing powered by Terra Draw library.',
-			author: 'JinIgarashi',
-			contact: 'https://jin-igarashi.me',
-			licenses: [
-				'The source code is licensed MIT',
-				'The website content is licensed CC BY NC SA 4.0.'
-			]
+			author: 'Jin Igarashi',
+			contact: 'https://jin-igarashi.me'
 		},
 		style: 'https://demotiles.maplibre.org/style.json',
 		nav: [
-			{ href: 'https://twitter.com/j_igarashi', icon: 'fa-brands fa-x-twitter' },
+			{ href: 'https://twitter.com/j_igarashi', icon: 'fa-brands fa-x-twitter fa-lg' },
 			{
 				href: 'https://github.com/watergis/maplibre-gl-terradraw',
-				icon: 'fa-brands fa-github'
+				icon: 'fa-brands fa-github fa-lg'
 			}
 		],
 		examples: examples

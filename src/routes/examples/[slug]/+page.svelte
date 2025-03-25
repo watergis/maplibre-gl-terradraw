@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { afterNavigate } from '$app/navigation';
 	import { CodeBlock } from '@skeletonlabs/skeleton';
 	import type { PageData } from './$types';
-	import { afterNavigate } from '$app/navigation';
 
 	type Props = {
 		data: PageData;
@@ -15,9 +15,9 @@
 	});
 </script>
 
-<h4 class="h3 px-4 py-5" bind:this={titleElement}>{data.title}</h4>
+<h4 class="h3 py-5" bind:this={titleElement}>{data.title}</h4>
 
-<div class="px-4 pb-4">
+<div class="pb-4">
 	{data.description}
 </div>
 

@@ -229,9 +229,7 @@
 			>.
 		</p>
 
-		<h3 class="h3 pt-6">
-			<a href="/examples" class="text-blue-600 visited:text-purple-600">Examples</a>
-		</h3>
+		<h3 class="h3 pt-6">Examples</h3>
 
 		<div class="py-4">
 			<div class="flex flex-wrap gap-4">

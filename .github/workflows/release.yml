@@ -27,7 +27,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2 #v4
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4
       - name: Setup Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
         with:
@@ -57,7 +57,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2 #v4
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4
       - name: Setup Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
         with:

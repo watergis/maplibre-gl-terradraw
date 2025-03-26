@@ -18,6 +18,8 @@
 		RadioItem,
 		RangeSlider
 	} from '@skeletonlabs/skeleton';
+	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
+	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
 	import { GeolocateControl, GlobeControl, Map, NavigationControl } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { untrack } from 'svelte';
@@ -88,9 +90,10 @@
 	$effect(() =>
 		untrack(() => {
 			if (!mapContainer) return;
+
 			map = new Map({
 				container: mapContainer,
-				style: data.style,
+				style: data.styles[0].uri,
 				center: [18.28, 6.25],
 				zoom: 2.5,
 				maxPitch: 85
@@ -154,7 +157,11 @@
 				}
 			});
 
+			const styleSwitcherControl = new MaplibreStyleSwitcherControl(data.styles);
+			map.addControl(styleSwitcherControl, 'bottom-left');
+
 			map.once('load', () => {
+				styleSwitcherControl.initialise();
 				const initData = data.geojson.filter((f) =>
 					(terradrawModes as string[]).includes(f.properties.mode)
 				) as GeoJSONStoreFeatures[];

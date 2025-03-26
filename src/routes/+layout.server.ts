@@ -21,6 +21,29 @@ export const load: LayoutServerLoad = async ({ fetch }) => {
 		});
 	}
 
+	const styles = [
+		{
+			title: 'Maplibre',
+			uri: 'https://demotiles.maplibre.org/style.json',
+			image: '/assets/style-switcher/maplibre.webp'
+		},
+		{
+			title: 'Voyager',
+			uri: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
+			image: '/assets/style-switcher/voyager.webp'
+		},
+		{
+			title: 'Positron',
+			uri: 'https://tiles.basemaps.cartocdn.com/gl/positron-gl-style/style.json',
+			image: '/assets/style-switcher/positron.webp'
+		},
+		{
+			title: 'Dark',
+			uri: 'https://tiles.basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+			image: '/assets/style-switcher/dark.webp'
+		}
+	];
+
 	return {
 		metadata: {
 			packageName: packageInfo.packageName,
@@ -31,7 +54,7 @@ export const load: LayoutServerLoad = async ({ fetch }) => {
 			author: 'Jin Igarashi',
 			contact: 'https://jin-igarashi.me'
 		},
-		style: 'https://demotiles.maplibre.org/style.json',
+		styles: styles,
 		nav: [
 			{ href: 'https://twitter.com/j_igarashi', icon: 'fa-brands fa-x-twitter fa-lg' },
 			{

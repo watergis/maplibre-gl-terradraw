@@ -40,18 +40,18 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 			styles: {
 				pointColor: '#FFFFFF',
 				pointWidth: 5,
-				pointOutlineColor: '#232E3D',
+				pointOutlineColor: '#666666',
 				pointOutlineWidth: 1
 			}
 		}),
 		linestring: new TerraDrawLineStringMode({
 			editable: true,
 			styles: {
-				lineStringColor: '#232E3D',
+				lineStringColor: '#666666',
 				lineStringWidth: 2,
 				closingPointColor: '#FFFFFF',
 				closingPointWidth: 3,
-				closingPointOutlineColor: '#232E3D',
+				closingPointOutlineColor: '#666666',
 				closingPointOutlineWidth: 1
 			}
 		}),
@@ -60,11 +60,11 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 			styles: {
 				fillColor: '#EDEFF0',
 				fillOpacity: 0.7,
-				outlineColor: '#232E3D',
+				outlineColor: '#666666',
 				outlineWidth: 2,
 				closingPointColor: '#FAFAFA',
 				closingPointWidth: 3,
-				closingPointOutlineColor: '#232E3D',
+				closingPointOutlineColor: '#666666',
 				closingPointOutlineWidth: 1
 			}
 		}),
@@ -72,7 +72,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 			styles: {
 				fillColor: '#EDEFF0',
 				fillOpacity: 0.7,
-				outlineColor: '#232E3D',
+				outlineColor: '#666666',
 				outlineWidth: 2
 			}
 		}),
@@ -80,7 +80,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 			styles: {
 				fillColor: '#EDEFF0',
 				fillOpacity: 0.7,
-				outlineColor: '#232E3D',
+				outlineColor: '#666666',
 				outlineWidth: 2
 			}
 		}),
@@ -88,7 +88,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 			styles: {
 				fillColor: '#EDEFF0',
 				fillOpacity: 0.7,
-				outlineColor: '#232E3D',
+				outlineColor: '#666666',
 				outlineWidth: 2
 			}
 		}),
@@ -96,11 +96,11 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 			styles: {
 				fillColor: '#EDEFF0',
 				fillOpacity: 0.7,
-				outlineColor: '#232E3D',
+				outlineColor: '#666666',
 				outlineWidth: 2,
 				closingPointColor: '#FAFAFA',
 				closingPointWidth: 3,
-				closingPointOutlineColor: '#232E3D',
+				closingPointOutlineColor: '#666666',
 				closingPointOutlineWidth: 1
 			}
 		}),
@@ -108,11 +108,11 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 			styles: {
 				fillColor: '#EDEFF0',
 				fillOpacity: 0.7,
-				outlineColor: '#232E3D',
+				outlineColor: '#666666',
 				outlineWidth: 2,
 				centerPointColor: '#FAFAFA',
 				centerPointWidth: 3,
-				centerPointOutlineColor: '#232E3D',
+				centerPointOutlineColor: '#666666',
 				centerPointOutlineWidth: 1
 			}
 		}),
@@ -120,7 +120,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 			styles: {
 				fillColor: '#EDEFF0',
 				fillOpacity: 0.7,
-				outlineColor: '#232E3D',
+				outlineColor: '#666666',
 				outlineWidth: 2
 			}
 		}),

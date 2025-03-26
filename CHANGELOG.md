@@ -1,5 +1,12 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.3.5
+
+### Patch Changes
+
+- 4d16076: chore: updated terra-draw to v1.3.1, and maplibre adapter to 1.0.2
+- 3a3de6d: fix: changed line color of MeasureControl to grey, so it is visible in dark base style
+
 ## 1.3.4
 
 ### Patch Changes

@@ -1,7 +1,7 @@
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ fetch, parent }) => {
-	const { metadata, style } = await parent();
+	const { metadata, styles } = await parent();
 
 	const getExample = async (type: 'cdn' | 'npm') => {
 		if (type === 'cdn') {
@@ -14,7 +14,7 @@ export const load: PageServerLoad = async ({ fetch, parent }) => {
 		} else {
 			const res = await fetch(`/assets/maplibre-npm-example.txt`);
 			const text = await res.text();
-			return text.replace(/{style}/g, style);
+			return text.replace(/{style}/g, styles[0].uri);
 		}
 	};
 

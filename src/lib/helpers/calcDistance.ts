@@ -67,41 +67,38 @@ export const calcDistance = (
 
 	if (distanceUnit === 'kilometers') {
 		// convert kilometers to meters or centimeters if distance is small
-		// also round distance precision according to the config.
 		const metricDistance = convertMetricDistance(feature.properties.distance as number);
-		feature.properties.distance = metricDistance.distance.toFixed(distancePrecision);
+		feature.properties.distance = metricDistance.distance;
 		feature.properties.unit = metricDistance.unit;
 
 		(feature.properties.segments as unknown as GeoJSONStoreFeatures[]).forEach(
 			(segment: GeoJSONStoreFeatures) => {
 				const segmentDistance = convertMetricDistance(segment.properties.distance as number);
-				segment.properties.distance = segmentDistance.distance.toFixed(distancePrecision);
+				segment.properties.distance = segmentDistance.distance;
 				segment.properties.unit = segmentDistance.unit;
 
 				const segmentTotalDistance = convertMetricDistance(segment.properties.total as number);
-				segment.properties.total = parseFloat(
-					segmentTotalDistance.distance.toFixed(distancePrecision)
-				);
+				segment.properties.total = segmentTotalDistance.distance;
 				segment.properties.totalUnit = segmentTotalDistance.unit;
 			}
 		);
-	} else {
-		// round distance precision for other units
-		feature.properties.distance = parseFloat(
-			(feature.properties.distance as number).toFixed(distancePrecision)
-		);
-
-		(feature.properties.segments as unknown as GeoJSONStoreFeatures[]).forEach(
-			(segment: GeoJSONStoreFeatures) => {
-				segment.properties.distance = parseFloat(
-					(segment.properties.distance as number).toFixed(distancePrecision)
-				);
-				segment.properties.total = parseFloat(
-					(segment.properties.total as number).toFixed(distancePrecision)
-				);
-			}
-		);
 	}
+
+	//  round distance precision according to the config.
+	feature.properties.distance = parseFloat(
+		(feature.properties.distance as number).toFixed(distancePrecision)
+	);
+
+	(feature.properties.segments as unknown as GeoJSONStoreFeatures[]).forEach(
+		(segment: GeoJSONStoreFeatures) => {
+			segment.properties.distance = parseFloat(
+				(segment.properties.distance as number).toFixed(distancePrecision)
+			);
+			segment.properties.total = parseFloat(
+				(segment.properties.total as number).toFixed(distancePrecision)
+			);
+		}
+	);
 
 	return feature;
 };

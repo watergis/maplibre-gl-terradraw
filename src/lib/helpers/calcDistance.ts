@@ -3,6 +3,7 @@ import type { GeoJSONStoreFeatures } from 'terra-draw';
 import { getDistanceUnitName } from './getDistanceUnitName';
 import type { LngLatLike, Map } from 'maplibre-gl';
 import type { DistanceUnit, TerrainSource } from '../interfaces';
+import { convertMetricDistance } from './convertMetricDistance';
 
 /**
  * Caclulate distance for each segment on a given feature
@@ -40,9 +41,10 @@ export const calcDistance = (
 		segment.id = `${segment.id}-${i}`;
 		segment.geometry.coordinates = [start, end];
 		segment.properties.originalId = feature.id;
-		segment.properties.distance = parseFloat(result.toFixed(distancePrecision));
-		segment.properties.total = parseFloat(totalDistance.toFixed(distancePrecision));
+		segment.properties.distance = result;
+		segment.properties.total = totalDistance;
 		segment.properties.unit = getDistanceUnitName(distanceUnit);
+		segment.properties.totalUnit = getDistanceUnitName(distanceUnit);
 
 		if (computeElevation === true && terrainSource === undefined) {
 			const elevation_start = map?.queryTerrainElevation(start as LngLatLike);
@@ -62,6 +64,44 @@ export const calcDistance = (
 	feature.properties.distance = segments[segments.length - 1].properties.total;
 	feature.properties.unit = segments[segments.length - 1].properties.unit;
 	feature.properties.segments = JSON.parse(JSON.stringify(segments));
+
+	if (distanceUnit === 'kilometers') {
+		// convert kilometers to meters or centimeters if distance is small
+		// also round distance precision according to the config.
+		const metricDistance = convertMetricDistance(feature.properties.distance as number);
+		feature.properties.distance = metricDistance.distance.toFixed(distancePrecision);
+		feature.properties.unit = metricDistance.unit;
+
+		(feature.properties.segments as unknown as GeoJSONStoreFeatures[]).forEach(
+			(segment: GeoJSONStoreFeatures) => {
+				const segmentDistance = convertMetricDistance(segment.properties.distance as number);
+				segment.properties.distance = segmentDistance.distance.toFixed(distancePrecision);
+				segment.properties.unit = segmentDistance.unit;
+
+				const segmentTotalDistance = convertMetricDistance(segment.properties.total as number);
+				segment.properties.total = parseFloat(
+					segmentTotalDistance.distance.toFixed(distancePrecision)
+				);
+				segment.properties.totalUnit = segmentTotalDistance.unit;
+			}
+		);
+	} else {
+		// round distance precision for other units
+		feature.properties.distance = parseFloat(
+			(feature.properties.distance as number).toFixed(distancePrecision)
+		);
+
+		(feature.properties.segments as unknown as GeoJSONStoreFeatures[]).forEach(
+			(segment: GeoJSONStoreFeatures) => {
+				segment.properties.distance = parseFloat(
+					(segment.properties.distance as number).toFixed(distancePrecision)
+				);
+				segment.properties.total = parseFloat(
+					(segment.properties.total as number).toFixed(distancePrecision)
+				);
+			}
+		);
+	}
 
 	return feature;
 };

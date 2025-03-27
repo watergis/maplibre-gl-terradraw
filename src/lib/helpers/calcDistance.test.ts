@@ -55,6 +55,16 @@ describe('calcDistance', () => {
 		expect(result.properties).toHaveProperty('segments');
 		expect(Array.isArray(result.properties.segments)).toBe(true);
 		expect(Array.isArray(result.properties.segments) && result.properties.segments.length).toBe(2);
+
+		if (Array.isArray(result.properties.segments)) {
+			result.properties.segments.forEach((segment: unknown) => {
+				if (!segment || typeof segment !== 'object' || !('properties' in segment)) return;
+				expect(segment.properties).toHaveProperty('distance');
+				expect(segment.properties).toHaveProperty('total');
+				expect(segment.properties).toHaveProperty('unit');
+				expect(segment.properties).toHaveProperty('totalUnit');
+			});
+		}
 	});
 
 	it('should add elevation_start and elevation_end properties if computeElevation is true', () => {

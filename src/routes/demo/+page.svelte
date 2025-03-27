@@ -20,7 +20,13 @@
 	} from '@skeletonlabs/skeleton';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
-	import { GeolocateControl, GlobeControl, Map, NavigationControl } from 'maplibre-gl';
+	import {
+		GeolocateControl,
+		GlobeControl,
+		Map,
+		NavigationControl,
+		ScaleControl
+	} from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { untrack } from 'svelte';
 	import type { GeoJSONStoreFeatures } from 'terra-draw';
@@ -110,6 +116,7 @@
 				'bottom-right'
 			);
 			map.addControl(new GlobeControl(), 'bottom-right');
+			map.addControl(new ScaleControl(), 'bottom-left');
 
 			const modes = page.url.searchParams.get('modes') || '';
 			let terradrawModes: TerradrawMode[] = [];

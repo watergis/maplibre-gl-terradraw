@@ -281,7 +281,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 					'case',
 					['==', ['get', 'total'], 0],
 					'',
-					['concat', '\n(', ['to-string', ['get', 'total']], ' ', ['get', 'unit'], ')']
+					['concat', '\n(', ['to-string', ['get', 'total']], ' ', ['get', 'totalUnit'], ')']
 				],
 				[
 					'case',

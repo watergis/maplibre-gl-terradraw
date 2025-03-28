@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { AppBar } from '@skeletonlabs/skeleton';
-	import '../app.postcss';
+	import { AppBar } from '@skeletonlabs/skeleton-svelte';
+	import '../app.css';
 
 	import { page } from '$app/state';
 	import type { PageData } from './$types';

@@ -55,8 +55,6 @@
 		"@sveltejs/adapter-auto": "^5.0.0",
 		"@sveltejs/kit": "^2.20.2",
 		"@sveltejs/vite-plugin-svelte": "^5.0.3",
-		"@tailwindcss/forms": "^0.5.10",
-		"@tailwindcss/typography": "^0.5.16",
 		"@tailwindcss/vite": "^4.0.17",
 		"@testing-library/jest-dom": "^6.6.3",
 		"@turf/area": "^7.2.0",

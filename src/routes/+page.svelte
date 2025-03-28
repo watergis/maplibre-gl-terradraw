@@ -220,14 +220,20 @@
 			<div class="flex flex-wrap gap-4">
 				{#each data.examples as custom (custom.title)}
 					<a
-						class="card card-hover sm:w-auto md:max-w-48 lg:max-w-64 xl:max-w-80"
+						class="card preset-filled-surface-100-900 border-[1px] border-surface-200-800 card-hover divide-surface-200-800 block overflow-hidden sm:w-auto md:max-w-48 lg:max-w-64 xl:max-w-80"
 						href={custom.href}
 					>
-						<header class="card-header font-bold min-h-16">{custom.title}</header>
-						<section class="card-image p-4">
-							<img class="preview-image" src={custom.image} alt={custom.title} />
-						</section>
-						<footer class="card-footer"><p class="description">{custom.description}</p></footer>
+						<header class="aspect-[21/9] w-full">
+							<img class="preview-image pt-2" src={custom.image} alt={custom.title} />
+						</header>
+						<article class="space-y-4 p-4">
+							<div>
+								<h2 class="h6">{custom.title}</h2>
+							</div>
+							<p class="description opacity-60">
+								{custom.description}
+							</p>
+						</article>
 					</a>
 				{/each}
 			</div>

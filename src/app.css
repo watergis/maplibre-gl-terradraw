@@ -16,3 +16,8 @@ body {
 @import '@skeletonlabs/skeleton/themes/wintry';
 
 @source '../node_modules/@skeletonlabs/skeleton-svelte/dist';
+
+html,
+body {
+	@apply h-full;
+}

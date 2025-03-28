@@ -13,7 +13,6 @@
 	import {
 		Accordion,
 		AccordionItem,
-		CodeBlock,
 		RadioGroup,
 		RadioItem,
 		RangeSlider
@@ -31,6 +30,7 @@
 	import { untrack } from 'svelte';
 	import type { GeoJSONStoreFeatures } from 'terra-draw';
 	import '../../scss/maplibre-gl-terradraw.scss';
+	import CodeBlock from '../CodeBlock.svelte';
 	import type { PageData } from './$types';
 
 	interface Props {
@@ -310,7 +310,7 @@
 								</p>
 							</div>
 							<div class="code-block">
-								<CodeBlock language="javascript" bind:code={selectedFeature}></CodeBlock>
+								<CodeBlock lang="js" bind:code={selectedFeature}></CodeBlock>
 							</div>
 						{/snippet}
 					</AccordionItem>

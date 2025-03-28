@@ -2,7 +2,6 @@
 	import { AvailableModes } from '$lib';
 	import {
 		Autocomplete,
-		CodeBlock,
 		InputChip,
 		RadioGroup,
 		RadioItem,
@@ -11,6 +10,7 @@
 	} from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
+	import CodeBlock from './CodeBlock.svelte';
 
 	interface Props {
 		data: PageData;
@@ -158,19 +158,13 @@
 
 			<div class="pt-2">
 				{#if packageManager === 'npm'}
-					<CodeBlock
-						language="shell"
-						code={`npm install --save-dev ${data.metadata.packageName}`}
-					/>
+					<CodeBlock lang="console" code={`npm install --save-dev ${data.metadata.packageName}`} />
 				{:else if packageManager === 'yarn'}
-					<CodeBlock language="shell" code={`yarn add --dev ${data.metadata.packageName}`} />
+					<CodeBlock lang="console" code={`yarn add --dev ${data.metadata.packageName}`} />
 				{:else if packageManager === 'pnpm'}
-					<CodeBlock language="shell" code={`pnpm add --save-dev ${data.metadata.packageName}`} />
+					<CodeBlock lang="console" code={`pnpm add --save-dev ${data.metadata.packageName}`} />
 				{:else if packageManager === 'bun'}
-					<CodeBlock
-						language="shell"
-						code={`bun install --save-dev ${data.metadata.packageName}`}
-					/>
+					<CodeBlock lang="console" code={`bun install --save-dev ${data.metadata.packageName}`} />
 				{/if}
 			</div>
 
@@ -179,8 +173,7 @@
 			<p>Copy and paste the below code.</p>
 
 			<CodeBlock
-				language="ts"
-				lineNumbers
+				lang="js"
 				code={data.codes.npm
 					.replace(
 						/MaplibreTerradrawControl/g,
@@ -201,8 +194,7 @@
 			<h3 class="h3 pt-6">Usage</h3>
 
 			<CodeBlock
-				language="html"
-				lineNumbers
+				lang="html"
 				code={data.codes.cdn
 					.replace(
 						/MaplibreTerradrawControl\(/g,

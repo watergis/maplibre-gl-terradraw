@@ -40,7 +40,7 @@
 	<meta property="og:url" content={page.url.href} />
 </svelte:head>
 
-<div class="h-dvh grid grid-rows-[auto_1fr_auto]">
+<div class="h-screen grid grid-rows-[auto_1fr_auto]">
 	<header class="sticky top-0 z-10">
 		<AppBar>
 			{#snippet lead()}

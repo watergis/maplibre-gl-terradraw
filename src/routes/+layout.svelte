@@ -38,6 +38,13 @@
 	<meta name="twitter:title" content="Maplibre GL Terra Draw" />
 	<meta name="twitter:image" content={page.data.socialImage} />
 	<meta property="og:url" content={page.url.href} />
+
+	<style>
+		html,
+		body {
+			@apply h-full;
+		}
+	</style>
 </svelte:head>
 
 <div class="h-dvh grid grid-rows-[auto_1fr_auto]">

@@ -47,7 +47,7 @@
 	</style>
 </svelte:head>
 
-<div class="h-dvh grid grid-rows-[auto_1fr_auto]">
+<div class="h-dvh">
 	<header class="sticky top-0 z-10">
 		<AppBar>
 			{#snippet lead()}

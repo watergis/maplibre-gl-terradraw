@@ -1,25 +1,6 @@
 <script lang="ts">
 	import { AppBar } from '@skeletonlabs/skeleton';
 	import '../app.postcss';
-	// Highlight JS
-	import { storeHighlightJs } from '@skeletonlabs/skeleton';
-	import hljs from 'highlight.js/lib/core';
-	import xml from 'highlight.js/lib/languages/xml';
-	import 'highlight.js/styles/github-dark.css';
-	// for HTML
-	import css from 'highlight.js/lib/languages/css';
-	import javascript from 'highlight.js/lib/languages/javascript';
-	import json from 'highlight.js/lib/languages/json';
-	import shell from 'highlight.js/lib/languages/shell';
-	import typescript from 'highlight.js/lib/languages/typescript';
-
-	hljs.registerLanguage('xml', xml); // for HTML
-	hljs.registerLanguage('css', css);
-	hljs.registerLanguage('javascript', javascript);
-	hljs.registerLanguage('typescript', typescript);
-	hljs.registerLanguage('json', json);
-	hljs.registerLanguage('shell', shell);
-	storeHighlightJs.set(hljs);
 
 	import { page } from '$app/state';
 	import type { PageData } from './$types';

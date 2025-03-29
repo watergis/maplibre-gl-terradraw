@@ -17,9 +17,9 @@
 	});
 </script>
 
-<h4 class="h3 py-5" bind:this={titleElement}>{data.title}</h4>
+<h4 class="h3 py-5 px-4" bind:this={titleElement}>{data.title}</h4>
 
-<div class="pb-4">
+<div class="pb-4 px-4">
 	{data.description}
 </div>
 

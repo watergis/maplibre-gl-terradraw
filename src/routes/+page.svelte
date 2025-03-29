@@ -3,7 +3,7 @@
 	import { Segment, Tabs, TagsInput } from '@skeletonlabs/skeleton-svelte';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
-	// import CodeBlock from './CodeBlock.svelte';
+	import CodeBlock from './CodeBlock.svelte';
 
 	interface Props {
 		data: PageData;
@@ -146,19 +146,19 @@
 
 					<div class="pt-2">
 						{#if packageManager === 'npm'}
-							<!-- <CodeBlock
+							<CodeBlock
 								lang="console"
 								code={`npm install --save-dev ${data.metadata.packageName}`}
-							/> -->
+							/>
 						{:else if packageManager === 'yarn'}
-							<!-- <CodeBlock lang="console" code={`yarn add --dev ${data.metadata.packageName}`} /> -->
+							<CodeBlock lang="console" code={`yarn add --dev ${data.metadata.packageName}`} />
 						{:else if packageManager === 'pnpm'}
-							<!-- <CodeBlock lang="console" code={`pnpm add --save-dev ${data.metadata.packageName}`} /> -->
+							<CodeBlock lang="console" code={`pnpm add --save-dev ${data.metadata.packageName}`} />
 						{:else if packageManager === 'bun'}
-							<!-- <CodeBlock
+							<CodeBlock
 								lang="console"
 								code={`bun install --save-dev ${data.metadata.packageName}`}
-							/> -->
+							/>
 						{/if}
 					</div>
 
@@ -166,7 +166,7 @@
 
 					<p>Copy and paste the below code.</p>
 
-					<!-- <CodeBlock
+					<CodeBlock
 						lang="js"
 						code={data.codes.npm
 							.replace(
@@ -181,12 +181,12 @@
 								).join(',')
 							)
 							.replace('{open}', openValue)}
-					/> -->
+					/>
 				</Tabs.Panel>
 				<Tabs.Panel value="cdn">
 					<h3 class="h3 pt-6">Usage</h3>
 
-					<!-- <CodeBlock
+					<CodeBlock
 						lang="html"
 						code={data.codes.cdn
 							.replace(
@@ -201,7 +201,7 @@
 								).join(',')
 							)
 							.replace('{open}', openValue)}
-					/> -->
+					/>
 				</Tabs.Panel>
 			{/snippet}
 		</Tabs>

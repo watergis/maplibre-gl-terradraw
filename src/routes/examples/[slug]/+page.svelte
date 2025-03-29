@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { afterNavigate } from '$app/navigation';
-	import CodeBlock from '../../CodeBlock.svelte';
 	import type { PageData } from './$types';
 
 	type Props = {
@@ -26,7 +25,8 @@
 <iframe class="map-iframe" src={data.url} title={data.title}></iframe>
 
 <div class="p-4">
-	<CodeBlock lang="html" code={data.html} />
+	{data.html}
+	<!-- <CodeBlock lang="html" code={data.html} /> -->
 </div>
 
 <footer class="bg-gray-200 p-4">

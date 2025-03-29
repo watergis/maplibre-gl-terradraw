@@ -1,5 +1,5 @@
 <script module lang="ts">
-	import { createHighlighterCoreSync, type HighlighterCore } from 'shiki/core';
+	import { createHighlighterCoreSync } from 'shiki/core';
 	import { createJavaScriptRegexEngine } from 'shiki/engine/javascript';
 	// Themes
 	// https://shiki.style/themes
@@ -10,7 +10,7 @@
 	import css from 'shiki/langs/css.mjs';
 	import html from 'shiki/langs/html.mjs';
 	import js from 'shiki/langs/javascript.mjs';
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
 	interface CodeBlockProps {
 		code?: string;
@@ -27,7 +27,14 @@
 		preClasses?: string;
 	}
 
-	let shiki: HighlighterCore | undefined = $state();
+	// https://shiki.style/guide/sync-usage
+	const shiki = createHighlighterCoreSync({
+		engine: createJavaScriptRegexEngine(),
+		// Implement your import theme.
+		themes: [themeDarkPlus],
+		// Implement your imported and supported languages.
+		langs: [console, html, css, js]
+	});
 </script>
 
 <script lang="ts">
@@ -61,24 +68,7 @@
 	};
 
 	onMount(() => {
-		if (!shiki) {
-			// https://shiki.style/guide/sync-usage
-			shiki = createHighlighterCoreSync({
-				engine: createJavaScriptRegexEngine(),
-				// Implement your import theme.
-				themes: [themeDarkPlus],
-				// Implement your imported and supported languages.
-				langs: [console, html, css, js]
-			});
-		}
-
 		generatedHtml = shiki.codeToHtml(code, { lang, theme });
-	});
-	onDestroy(() => {
-		if (shiki) {
-			shiki.dispose();
-			shiki = undefined;
-		}
 	});
 </script>
 

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
 	import { afterNavigate } from '$app/navigation';
 	import CodeBlock from '../../CodeBlock.svelte';
 	import type { PageData } from './$types';
@@ -28,9 +27,7 @@
 
 <div class="contents">
 	<div class="w-full p-4">
-		{#if browser}
-			<CodeBlock lang="html" code={data.html} />
-		{/if}
+		<CodeBlock lang="html" code={data.html} />
 	</div>
 </div>
 
@@ -45,6 +42,12 @@
 
 <style lang="scss">
 	.map-iframe {
+		position: relative;
+		width: 100%;
+		height: 50vh;
+	}
+
+	.contents {
 		position: relative;
 		width: 100%;
 		height: 50vh;

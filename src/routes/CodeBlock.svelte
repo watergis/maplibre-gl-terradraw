@@ -6,11 +6,11 @@
 	import themeDarkPlus from 'shiki/themes/dark-plus.mjs';
 	// Languages
 	// https://shiki.style/languages
+	import { browser } from '$app/environment';
 	import console from 'shiki/langs/console.mjs';
 	import css from 'shiki/langs/css.mjs';
 	import html from 'shiki/langs/html.mjs';
 	import js from 'shiki/langs/javascript.mjs';
-	import { onMount } from 'svelte';
 
 	interface CodeBlockProps {
 		code?: string;
@@ -67,8 +67,10 @@
 		});
 	};
 
-	onMount(() => {
-		generatedHtml = shiki.codeToHtml(code, { lang, theme });
+	$effect(() => {
+		if (browser) {
+			generatedHtml = shiki.codeToHtml(code, { lang, theme });
+		}
 	});
 </script>
 

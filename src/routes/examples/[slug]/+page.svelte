@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { afterNavigate } from '$app/navigation';
 	import CodeBlock from '../../CodeBlock.svelte';
 	import type { PageData } from './$types';
@@ -27,7 +28,9 @@
 
 <div class="contents">
 	<div class="w-full p-4">
-		<CodeBlock lang="html" code={data.html} />
+		{#if browser}
+			<CodeBlock lang="html" code={data.html} />
+		{/if}
 	</div>
 </div>
 

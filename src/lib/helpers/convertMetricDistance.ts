@@ -4,7 +4,7 @@
  * - If the value is less than 1 km but 1 meter or more, it returns the value in meters.
  * - If the value is less than 1 meter, it returns the value in centimeters.
  *
- * @param value - The distance in kilometers.
+ * @param distance - The distance in kilometers.
  * @returns the converted value and unit.
  */
 export const convertMetricDistance = (

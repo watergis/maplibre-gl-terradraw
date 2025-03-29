@@ -44,7 +44,7 @@
 		lang = 'console',
 		theme = 'dark-plus',
 		// Base Style Props
-		base = ' overflow-hidden',
+		base = 'overflow-hidden',
 		rounded = 'rounded-sm',
 		shadow = '',
 		classes = '',

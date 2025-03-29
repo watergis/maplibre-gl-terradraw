@@ -93,3 +93,10 @@
 	<!-- eslint-disable svelte/no-at-html-tags -->
 	{@html generatedHtml}
 </div>
+
+<style lang="scss">
+	.group {
+		width: 100%;
+		height: 100%;
+	}
+</style>

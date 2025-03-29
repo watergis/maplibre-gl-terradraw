@@ -1,4 +1,4 @@
-<script lang="ts">
+<script module lang="ts">
 	import { createHighlighterCoreSync, type HighlighterCore } from 'shiki/core';
 	import { createJavaScriptRegexEngine } from 'shiki/engine/javascript';
 	// Themes
@@ -27,6 +27,10 @@
 		preClasses?: string;
 	}
 
+	let shiki: HighlighterCore | undefined = $state();
+</script>
+
+<script lang="ts">
 	let {
 		code = '',
 		lang = 'console',
@@ -56,8 +60,6 @@
 		});
 	};
 
-	let shiki: HighlighterCore | undefined = $state();
-
 	onMount(() => {
 		if (!shiki) {
 			// https://shiki.style/guide/sync-usage
@@ -75,6 +77,7 @@
 	onDestroy(() => {
 		if (shiki) {
 			shiki.dispose();
+			shiki = undefined;
 		}
 	});
 </script>

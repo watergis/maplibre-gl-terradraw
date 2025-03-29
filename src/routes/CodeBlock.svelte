@@ -1,5 +1,3 @@
-<!-- @component Code Block based on: https://shiki.style/ -->
-
 <script lang="ts">
 	import { createHighlighterCoreSync } from 'shiki/core';
 	import { createJavaScriptRegexEngine } from 'shiki/engine/javascript';
@@ -40,42 +38,44 @@
 	let {
 		code = '',
 		lang = 'console',
-		theme = 'dark-plus',
+		theme = 'dark-plus'
 		// Base Style Props
-		base = 'overflow-hidden',
-		rounded = 'rounded-sm',
-		shadow = '',
-		classes = '',
-		// Pre Style Props
-		preBase = '',
-		prePadding = '[&>pre]:p-4',
-		preClasses = ''
+		// base = 'overflow-hidden',
+		// rounded = 'rounded-sm',
+		// shadow = '',
+		// classes = '',
+		// // Pre Style Props
+		// preBase = '',
+		// prePadding = '[&>pre]:p-4',
+		// preClasses = ''
 	}: CodeBlockProps = $props();
 
 	// Shiki convert to HTML
 	const generatedHtml = shiki.codeToHtml(code, { lang, theme });
 
-	let copied = $state(false);
-	let timeout: ReturnType<typeof setTimeout>;
+	// let copied = $state(false);
+	// let timeout: ReturnType<typeof setTimeout>;
 
-	const copyToClipboard = () => {
-		navigator.clipboard.writeText(code).then(() => {
-			copied = true;
-			clearTimeout(timeout);
-			timeout = setTimeout(() => (copied = false), 2000);
-		});
-	};
+	// const copyToClipboard = () => {
+	// 	navigator.clipboard.writeText(code).then(() => {
+	// 		copied = true;
+	// 		clearTimeout(timeout);
+	// 		timeout = setTimeout(() => (copied = false), 2000);
+	// 	});
+	// };
 </script>
 
-<div class="group relative {base} {rounded} {shadow} {classes} {preBase} {prePadding} {preClasses}">
-	<button
+<!-- <div class="group relative {base} {rounded} {shadow} {classes} {preBase} {prePadding} {preClasses}"> -->
+<!-- <button
 		class="absolute top-2 right-2 bg-white/10 hover:bg-white/20 text-sm text-white px-2 py-1 rounded transition transition-opacity opacity-0 group-hover:opacity-100"
 		onclick={copyToClipboard}
 	>
 		{copied ? 'Copied' : 'Copy'}
 	</button>
 
-	<!-- Output Shiki's Generated HTML -->
-	<!-- eslint-disable svelte/no-at-html-tags -->
-	{@html generatedHtml}
-</div>
+	{@html generatedHtml} -->
+<!-- </div> -->
+
+<!-- Output Shiki's Generated HTML -->
+<!-- eslint-disable svelte/no-at-html-tags -->
+{@html generatedHtml}

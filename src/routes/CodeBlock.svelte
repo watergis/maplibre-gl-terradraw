@@ -1,6 +1,6 @@
 <!-- @component Code Block based on: https://shiki.style/ -->
 
-<script module lang="ts">
+<script lang="ts">
 	import { createHighlighterCoreSync } from 'shiki/core';
 	import { createJavaScriptRegexEngine } from 'shiki/engine/javascript';
 	// Themes
@@ -22,7 +22,7 @@
 		langs: [console, html, css, js]
 	});
 
-	export interface CodeBlockProps {
+	interface CodeBlockProps {
 		code?: string;
 		lang?: 'console' | 'html' | 'css' | 'js';
 		theme?: 'dark-plus';
@@ -36,11 +36,9 @@
 		prePadding?: string;
 		preClasses?: string;
 	}
-</script>
 
-<script lang="ts">
 	let {
-		code = $bindable(''),
+		code = '',
 		lang = 'console',
 		theme = 'dark-plus',
 		// Base Style Props
@@ -57,25 +55,25 @@
 	// Shiki convert to HTML
 	const generatedHtml = shiki.codeToHtml(code, { lang, theme });
 
-	// let copied = $state(false);
-	// let timeout: ReturnType<typeof setTimeout>;
+	let copied = $state(false);
+	let timeout: ReturnType<typeof setTimeout>;
 
-	// function copyToClipboard() {
-	// 	navigator.clipboard.writeText(code).then(() => {
-	// 		copied = true;
-	// 		clearTimeout(timeout);
-	// 		timeout = setTimeout(() => (copied = false), 2000);
-	// 	});
-	// }
+	const copyToClipboard = () => {
+		navigator.clipboard.writeText(code).then(() => {
+			copied = true;
+			clearTimeout(timeout);
+			timeout = setTimeout(() => (copied = false), 2000);
+		});
+	};
 </script>
 
-<div class=" {base} {rounded} {shadow} {classes} {preBase} {prePadding} {preClasses}">
-	<!-- <button
+<div class="group relative {base} {rounded} {shadow} {classes} {preBase} {prePadding} {preClasses}">
+	<button
 		class="absolute top-2 right-2 bg-white/10 hover:bg-white/20 text-sm text-white px-2 py-1 rounded transition transition-opacity opacity-0 group-hover:opacity-100"
 		onclick={copyToClipboard}
 	>
 		{copied ? 'Copied' : 'Copy'}
-	</button> -->
+	</button>
 
 	<!-- Output Shiki's Generated HTML -->
 	<!-- eslint-disable svelte/no-at-html-tags -->

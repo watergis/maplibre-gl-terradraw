@@ -320,7 +320,7 @@
 								</p>
 							</div>
 							<div class="code-block">
-								<CodeBlock lang="js" bind:code={selectedFeature}></CodeBlock>
+								<CodeBlock lang="js" code={selectedFeature}></CodeBlock>
 							</div>
 						{/snippet}
 					</Accordion.Item>

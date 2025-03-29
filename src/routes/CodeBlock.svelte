@@ -1,8 +1,6 @@
-<!-- @component Code Block based on: https://shiki.style/ -->
-
-<script module lang="ts">
+<script lang="ts">
 	import { createHighlighterCoreSync } from 'shiki/core';
-	import { createJavaScriptRegexEngine } from 'shiki/engine/javascript';
+	import { createOnigurumaEngine } from 'shiki/engine/oniguruma';
 	// Themes
 	// https://shiki.style/themes
 	import themeDarkPlus from 'shiki/themes/dark-plus.mjs';
@@ -12,17 +10,9 @@
 	import css from 'shiki/langs/css.mjs';
 	import html from 'shiki/langs/html.mjs';
 	import js from 'shiki/langs/javascript.mjs';
+	import { untrack } from 'svelte';
 
-	// https://shiki.style/guide/sync-usage
-	const shiki = createHighlighterCoreSync({
-		engine: createJavaScriptRegexEngine(),
-		// Implement your import theme.
-		themes: [themeDarkPlus],
-		// Implement your imported and supported languages.
-		langs: [console, html, css, js]
-	});
-
-	export interface CodeBlockProps {
+	interface CodeBlockProps {
 		code?: string;
 		lang?: 'console' | 'html' | 'css' | 'js';
 		theme?: 'dark-plus';
@@ -36,11 +26,9 @@
 		prePadding?: string;
 		preClasses?: string;
 	}
-</script>
 
-<script lang="ts">
 	let {
-		code = $bindable(''),
+		code = '',
 		lang = 'console',
 		theme = 'dark-plus',
 		// Base Style Props
@@ -55,18 +43,34 @@
 	}: CodeBlockProps = $props();
 
 	// Shiki convert to HTML
-	const generatedHtml = shiki.codeToHtml(code, { lang, theme });
+	let generatedHtml = $state('');
 
 	let copied = $state(false);
 	let timeout: ReturnType<typeof setTimeout>;
 
-	function copyToClipboard() {
+	const copyToClipboard = () => {
 		navigator.clipboard.writeText(code).then(() => {
 			copied = true;
 			clearTimeout(timeout);
 			timeout = setTimeout(() => (copied = false), 2000);
 		});
-	}
+	};
+
+	$effect(() => {
+		untrack(async () => {
+			const engine = await createOnigurumaEngine(import('shiki/wasm'));
+
+			// https://shiki.style/guide/sync-usage
+			const shiki = createHighlighterCoreSync({
+				engine,
+				// Implement your import theme.
+				themes: [themeDarkPlus],
+				// Implement your imported and supported languages.
+				langs: [console, html, css, js]
+			});
+			generatedHtml = shiki.codeToHtml(code, { lang, theme });
+		});
+	});
 </script>
 
 <div class="group relative {base} {rounded} {shadow} {classes} {preBase} {prePadding} {preClasses}">
@@ -77,7 +81,6 @@
 		{copied ? 'Copied' : 'Copy'}
 	</button>
 
-	<!-- Output Shiki's Generated HTML -->
 	<!-- eslint-disable svelte/no-at-html-tags -->
 	{@html generatedHtml}
 </div>

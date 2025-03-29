@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { AvailableModes, type TerradrawMode } from '$lib';
 	import { Segment, Tabs } from '@skeletonlabs/skeleton-svelte';
+	import { AvailableModes, type TerradrawMode } from '../lib';
 	import type { PageData } from './$types';
 	import CodeBlock from './CodeBlock.svelte';
 	import DemoController from './DemoController.svelte';

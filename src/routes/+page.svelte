@@ -1,52 +1,50 @@
 <script lang="ts">
-	// import { AvailableModes } from '$lib';
-	// import { Segment, Tabs, TagsInput } from '@skeletonlabs/skeleton-svelte';
-	// import { onMount } from 'svelte';
-	// import type { PageData } from './$types';
+	import { AvailableModes } from '$lib';
+	import { Segment, Tabs, TagsInput } from '@skeletonlabs/skeleton-svelte';
+	import { onMount } from 'svelte';
+	import type { PageData } from './$types';
 	// import CodeBlock from './CodeBlock.svelte';
 
-	// interface Props {
-	// 	data: PageData;
-	// }
+	interface Props {
+		data: PageData;
+	}
 
-	// let { data }: Props = $props();
+	let { data }: Props = $props();
 
-	// let year = new Date().getFullYear();
+	let year = new Date().getFullYear();
 
-	// let importTypeTabs = [
-	// 	{ label: 'NPM', value: 'npm' },
-	// 	{ label: 'CDN', value: 'cdn' }
-	// ];
-	// let importTypeTabSet: string = $state(importTypeTabs[0].value);
+	let importTypeTabs = [
+		{ label: 'NPM', value: 'npm' },
+		{ label: 'CDN', value: 'cdn' }
+	];
+	let importTypeTabSet: string = $state(importTypeTabs[0].value);
 
-	// let availableMode: string[] = AvailableModes as unknown as string[];
-	// let selectedModes: string[] = $state([]);
-	// let isOpen: 'open' | 'close' | undefined = $state();
+	let availableMode: string[] = AvailableModes as unknown as string[];
+	let selectedModes: string[] = $state([]);
+	let isOpen: 'open' | 'close' | undefined = $state();
 
-	// let packageManager = $state('npm');
-	// let controlType: 'default' | 'measure' | undefined = $state();
-	// let openValue = $derived(isOpen === 'open' ? 'true' : 'false');
-	// let demoUrl = $derived(
-	// 	selectedModes.length === 0
-	// 		? ''
-	// 		: `/demo?modes=${(controlType
-	// 				? selectedModes
-	// 				: selectedModes.filter((x) => x !== 'point')
-	// 			).join(',')}&open=${openValue}&measure=${controlType === 'default' ? 'false' : 'true'}`
-	// );
+	let packageManager = $state('npm');
+	let controlType: 'default' | 'measure' | undefined = $state();
+	let openValue = $derived(isOpen === 'open' ? 'true' : 'false');
+	let demoUrl = $derived(
+		selectedModes.length === 0
+			? ''
+			: `/demo?modes=${(controlType
+					? selectedModes
+					: selectedModes.filter((x) => x !== 'point')
+				).join(',')}&open=${openValue}&measure=${controlType === 'default' ? 'false' : 'true'}`
+	);
 
-	// onMount(() => {
-	// 	controlType = 'default';
-	// 	isOpen = 'open';
-	// 	if (selectedModes.length === 0) {
-	// 		selectedModes = ['render', ...availableMode.filter((m) => m !== 'render')];
-	// 	}
-	// });
+	onMount(() => {
+		controlType = 'default';
+		isOpen = 'open';
+		if (selectedModes.length === 0) {
+			selectedModes = ['render', ...availableMode.filter((m) => m !== 'render')];
+		}
+	});
 </script>
 
-test
-
-<!-- <div class="px-4">
+<div class="px-4">
 	<div class="text-center">
 		<h2 class="h1 pt-4 pb-6">Welcome to {data.metadata.title}</h2>
 
@@ -148,19 +146,19 @@ test
 
 					<div class="pt-2">
 						{#if packageManager === 'npm'}
-							<CodeBlock
+							<!-- <CodeBlock
 								lang="console"
 								code={`npm install --save-dev ${data.metadata.packageName}`}
-							/>
+							/> -->
 						{:else if packageManager === 'yarn'}
-							<CodeBlock lang="console" code={`yarn add --dev ${data.metadata.packageName}`} />
+							<!-- <CodeBlock lang="console" code={`yarn add --dev ${data.metadata.packageName}`} /> -->
 						{:else if packageManager === 'pnpm'}
-							<CodeBlock lang="console" code={`pnpm add --save-dev ${data.metadata.packageName}`} />
+							<!-- <CodeBlock lang="console" code={`pnpm add --save-dev ${data.metadata.packageName}`} /> -->
 						{:else if packageManager === 'bun'}
-							<CodeBlock
+							<!-- <CodeBlock
 								lang="console"
 								code={`bun install --save-dev ${data.metadata.packageName}`}
-							/>
+							/> -->
 						{/if}
 					</div>
 
@@ -168,7 +166,7 @@ test
 
 					<p>Copy and paste the below code.</p>
 
-					<CodeBlock
+					<!-- <CodeBlock
 						lang="js"
 						code={data.codes.npm
 							.replace(
@@ -183,12 +181,12 @@ test
 								).join(',')
 							)
 							.replace('{open}', openValue)}
-					/>
+					/> -->
 				</Tabs.Panel>
 				<Tabs.Panel value="cdn">
 					<h3 class="h3 pt-6">Usage</h3>
 
-					<CodeBlock
+					<!-- <CodeBlock
 						lang="html"
 						code={data.codes.cdn
 							.replace(
@@ -203,7 +201,7 @@ test
 								).join(',')
 							)
 							.replace('{open}', openValue)}
-					/>
+					/> -->
 				</Tabs.Panel>
 			{/snippet}
 		</Tabs>
@@ -243,19 +241,19 @@ test
 			</div>
 		</div>
 	</div>
-</div> -->
+</div>
 
-<!-- <footer class="bg-gray-200 p-4">
+<footer class="bg-gray-200 p-4">
 	<p class="text-center w-full">
 		<a class="text-blue-600 visited:text-purple-600" href={data.metadata.contact} target="_blank">
 			©{year}
 			{data.metadata.author}
 		</a>
 	</p>
-</footer> -->
+</footer>
 
 <style lang="postcss">
-	/* .preview-image {
+	.preview-image {
 		max-height: 130px;
 		margin: 0 auto;
 	}
@@ -264,5 +262,5 @@ test
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: 3;
 		overflow: hidden;
-	} */
+	}
 </style>

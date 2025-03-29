@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/state';
 	import {
 		AvailableModes,
 		getDefaultModeOptions,
@@ -11,7 +10,7 @@
 		type TerradrawMode
 	} from '$lib';
 	import { Accordion, Segment, Slider } from '@skeletonlabs/skeleton-svelte';
-	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
+	import MaplibreStyleSwitcherControl, { type StyleDefinition } from '@undp-data/style-switcher';
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
 	import {
 		GeolocateControl,
@@ -23,20 +22,28 @@
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { untrack } from 'svelte';
 	import type { GeoJSONStoreFeatures } from 'terra-draw';
-	import '../../scss/maplibre-gl-terradraw.scss';
-	import CodeBlock from '../CodeBlock.svelte';
-	import type { PageData } from './$types';
+	import '../scss/maplibre-gl-terradraw.scss';
+	import CodeBlock from './CodeBlock.svelte';
 
 	interface Props {
-		data: PageData;
+		styles: StyleDefinition[];
+		geojson: GeoJSONStoreFeatures[];
+		controlType: 'default' | 'measure';
+		modes: TerradrawMode[];
+		isOpen: boolean;
 	}
 
-	let { data }: Props = $props();
+	let {
+		styles,
+		geojson,
+		controlType = 'default',
+		modes = JSON.parse(JSON.stringify(AvailableModes)),
+		isOpen = true
+	}: Props = $props();
 	let mapContainer: HTMLDivElement | undefined = $state();
 	let map: Map | undefined;
 
-	const measure = page.url.searchParams.get('measure') ?? 'false';
-	let isMeasure: boolean = measure === 'true';
+	let isMeasure: boolean = controlType === 'measure';
 
 	let selectedFeature = $state('');
 	let distanceUnit: DistanceUnit = $state('kilometers');
@@ -93,7 +100,7 @@
 
 			map = new Map({
 				container: mapContainer,
-				style: data.styles[0].uri,
+				style: styles[0].uri,
 				center: [18.28, 6.25],
 				zoom: 2.5,
 				maxPitch: 85
@@ -112,21 +119,9 @@
 			map.addControl(new GlobeControl(), 'bottom-right');
 			map.addControl(new ScaleControl(), 'bottom-left');
 
-			const modes = page.url.searchParams.get('modes') || '';
-			let terradrawModes: TerradrawMode[] = [];
-			if (modes.length > 0) {
-				terradrawModes = modes.split(',') as TerradrawMode[];
-			}
-			if (terradrawModes.length === 0) {
-				terradrawModes = ['render', ...AvailableModes.filter((m) => m !== 'render')];
-			}
-
-			const open = page.url.searchParams.get('open') || 'true';
-			const isOpen = open === 'true' ? true : false;
-
 			if (isMeasure) {
 				drawControl = new MaplibreMeasureControl({
-					modes: terradrawModes,
+					modes: modes,
 					open: isOpen,
 					distanceUnit: distanceUnit,
 					distancePrecision: distancePrecision[0],
@@ -136,7 +131,7 @@
 				map.addControl(drawControl, 'top-left');
 			} else {
 				drawControl = new MaplibreTerradrawControl({
-					modes: terradrawModes,
+					modes: modes,
 					open: isOpen,
 					modeOptions: getDefaultModeOptions()
 				});
@@ -158,13 +153,13 @@
 				}
 			});
 
-			const styleSwitcherControl = new MaplibreStyleSwitcherControl(data.styles);
+			const styleSwitcherControl = new MaplibreStyleSwitcherControl(styles);
 			map.addControl(styleSwitcherControl, 'bottom-left');
 
 			map.once('load', () => {
 				styleSwitcherControl.initialise();
-				const initData = data.geojson.filter((f) =>
-					(terradrawModes as string[]).includes(f.properties.mode)
+				const initData = geojson.filter((f) =>
+					(modes as string[]).includes(f.properties.mode as string)
 				) as GeoJSONStoreFeatures[];
 				if (initData.length > 0) {
 					const result = drawInstance?.addFeatures(roundFeatureCoordinates(initData));

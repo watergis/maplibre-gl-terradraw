@@ -79,7 +79,7 @@
 
 <div class="group relative {base} {rounded} {shadow} {classes} {preBase} {prePadding} {preClasses}">
 	<button
-		class="absolute top-2 right-2 bg-white/10 hover:bg-white/20 text-sm text-white px-2 py-1 rounded transition transition-opacity opacity-0 group-hover:opacity-100"
+		class="sticky top-2 right-2 float-right bg-white/10 hover:bg-white/20 text-sm text-white px-2 py-1 rounded transition transition-opacity opacity-0 group-hover:opacity-100"
 		onclick={copyToClipboard}
 	>
 		{copied ? 'Copied' : 'Copy'}

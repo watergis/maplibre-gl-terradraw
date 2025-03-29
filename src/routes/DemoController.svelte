@@ -1,25 +1,71 @@
 <script lang="ts">
-	import { AvailableModes, type TerradrawMode } from '$lib';
-	import { Accordion, Segment, TagsInput } from '@skeletonlabs/skeleton-svelte';
+	import { AvailableModes, type AreaUnit, type DistanceUnit, type TerradrawMode } from '$lib';
+	import { Accordion, Segment, Slider, TagsInput } from '@skeletonlabs/skeleton-svelte';
+	import { untrack } from 'svelte';
+	import CodeBlock from './CodeBlock.svelte';
 
 	interface Props {
 		controlType: 'default' | 'measure';
 		isOpen: 'open' | 'close' | undefined;
 		selectedModes: TerradrawMode[];
+		selectedFeature: string;
+		distanceUnit: DistanceUnit;
+		distancePrecision: number;
+		areaUnit: AreaUnit;
+		areaPrecision: number;
+		computeElevation: 'enabled' | 'disabled';
 		onchange: () => void;
+		onMeasureChange: (
+			type:
+				| 'distanceUnit'
+				| 'distancePrecision'
+				| 'areaUnit'
+				| 'areaPrecision'
+				| 'computeElevation',
+			value: string | number | number[]
+		) => void;
 	}
 
 	let {
 		controlType = $bindable('default'),
 		isOpen = $bindable('open'),
 		selectedModes = $bindable(JSON.parse(JSON.stringify(AvailableModes))),
-		onchange = () => {}
+		selectedFeature = $bindable(''),
+		distanceUnit = $bindable('kilometers'),
+		distancePrecision = $bindable(2),
+		areaUnit = $bindable('metric'),
+		areaPrecision = $bindable(2),
+		computeElevation = $bindable('enabled'),
+		onchange = () => {},
+		onMeasureChange = () => {}
 	}: Props = $props();
 
 	let accordionValue = $state(['control-type']);
+	let measureAccordionValue = $state([
+		'distance-unit',
+		'area-unit',
+		'distance-precision',
+		'area-precision',
+		'compute-elevation'
+	]);
+
+	$effect(() => {
+		if (selectedFeature) {
+			untrack(() => {
+				if (selectedFeature.length > 0) {
+					accordionValue = [
+						...accordionValue.filter((v) => v !== 'selected-feature'),
+						'selected-feature'
+					];
+				} else {
+					accordionValue = accordionValue.filter((v) => v !== 'selected-feature');
+				}
+			});
+		}
+	});
 </script>
 
-<Accordion value={accordionValue} onValueChange={(e) => (accordionValue = e.value)} collapsible>
+<Accordion value={accordionValue} onValueChange={(e) => (accordionValue = e.value)} multiple>
 	<Accordion.Item value="control-type">
 		{#snippet control()}
 			<p class="font-bold uppercase">Control type</p>
@@ -36,6 +82,15 @@
 				onValueChange={(e) => {
 					controlType = e.value as 'default' | 'measure';
 					onchange();
+
+					if (controlType === 'default') {
+						accordionValue = accordionValue.filter((v) => v !== 'measure-option');
+					} else {
+						accordionValue = [
+							...accordionValue.filter((v) => v !== 'measure-option'),
+							'measure-option'
+						];
+					}
 				}}
 			>
 				<Segment.Item value="default">Default Control</Segment.Item>
@@ -43,9 +98,7 @@
 			</Segment>
 		{/snippet}
 	</Accordion.Item>
-</Accordion>
 
-<Accordion value={accordionValue} onValueChange={(e) => (accordionValue = e.value)} collapsible>
 	<Accordion.Item value="mode-selection">
 		{#snippet control()}
 			<p class="font-bold uppercase">Mode selection</p>
@@ -75,9 +128,7 @@
 			{/key}
 		{/snippet}
 	</Accordion.Item>
-</Accordion>
 
-<Accordion value={accordionValue} onValueChange={(e) => (accordionValue = e.value)} collapsible>
 	<Accordion.Item value="open-as-default">
 		{#snippet control()}
 			<p class="font-bold uppercase">Open as default</p>
@@ -100,4 +151,152 @@
 			</Segment>
 		{/snippet}
 	</Accordion.Item>
+
+	{#if selectedFeature.length > 0}
+		<Accordion.Item value="selected-feature">
+			{#snippet control()}
+				<p class="font-bold uppercase">Selected feature</p>
+			{/snippet}
+			{#snippet panel()}
+				<div class="p-2">
+					<p class="text-black">
+						For Polygon, use <b>ctrl+s</b> to resize the feature, and use <b>ctrl+r</b> to rotate the
+						feature.
+					</p>
+				</div>
+				<div class="code-block">
+					<CodeBlock
+						lang="js"
+						code={selectedFeature}
+						base="max-h-64 overflow-y-auto overflow-x-hidden"
+					></CodeBlock>
+				</div>
+			{/snippet}
+		</Accordion.Item>
+	{/if}
+
+	{#if controlType === 'measure'}
+		<Accordion.Item value="measure-option">
+			{#snippet control()}
+				<p class="font-bold uppercase">Measure control options</p>
+			{/snippet}
+			{#snippet panel()}
+				<Accordion
+					value={measureAccordionValue}
+					onValueChange={(e) => (measureAccordionValue = e.value)}
+					multiple
+				>
+					<Accordion.Item value="distance-unit">
+						{#snippet control()}
+							<p class="font-bold uppercase italic">Distance unit</p>
+						{/snippet}
+						{#snippet panel()}
+							<Segment
+								value={distanceUnit}
+								onValueChange={(e) => {
+									distanceUnit = e.value as DistanceUnit;
+									onMeasureChange('distanceUnit', distanceUnit);
+								}}
+							>
+								{#each ['kilometers', 'miles', 'degrees', 'radians'] as unit (unit)}
+									<Segment.Item value={unit}>
+										{#if unit === 'miles'}
+											mi
+										{:else if unit === 'degrees'}
+											°
+										{:else if unit === 'radians'}
+											rad
+										{:else}
+											km
+										{/if}
+									</Segment.Item>
+								{/each}
+							</Segment>
+						{/snippet}
+					</Accordion.Item>
+					<Accordion.Item value="area-unit">
+						{#snippet control()}
+							<p class="font-bold uppercase italic">Area unit</p>
+						{/snippet}
+						{#snippet panel()}
+							<Segment
+								value={areaUnit}
+								onValueChange={(e) => {
+									areaUnit = e.value as AreaUnit;
+									onMeasureChange('areaUnit', areaUnit);
+								}}
+							>
+								{#each ['metric', 'imperial'] as unit (unit)}
+									<Segment.Item value={unit}>
+										{unit}
+									</Segment.Item>
+								{/each}
+							</Segment>
+						{/snippet}
+					</Accordion.Item>
+					<Accordion.Item value="distance-precision">
+						{#snippet control()}
+							<p class="font-bold uppercase italic">Measure precision</p>
+						{/snippet}
+						{#snippet panel()}
+							<div class="py-4">
+								<div class="flex justify-between items-center mb-4">
+									<div class="font-bold">Distance precision (Line)</div>
+									<div class="text-xs">{distancePrecision}</div>
+								</div>
+								<Slider
+									name="range-slider"
+									value={[distancePrecision]}
+									min={0}
+									max={10}
+									step={1}
+									markers={[0, 5, 10]}
+									onValueChange={(e) => {
+										distancePrecision = e.value[0] as number;
+										onMeasureChange('distancePrecision', distancePrecision);
+									}}
+								></Slider>
+								<div class="flex justify-between items-center mt-8 mb-4">
+									<div class="font-bold">Area precision (Polygon)</div>
+									<div class="text-xs">{areaPrecision}</div>
+								</div>
+								<Slider
+									name="range-slider"
+									value={[areaPrecision]}
+									min={0}
+									max={10}
+									step={1}
+									markers={[0, 5, 10]}
+									onValueChange={(e) => {
+										areaPrecision = e.value[0] as number;
+										onMeasureChange('areaPrecision', areaPrecision);
+									}}
+								></Slider>
+							</div>
+						{/snippet}
+					</Accordion.Item>
+					<Accordion.Item value="compute-elevation">
+						{#snippet control()}
+							<p class="font-bold uppercase italic">Compute elevation</p>
+						{/snippet}
+						{#snippet panel()}
+							<Segment
+								value={computeElevation}
+								onValueChange={(e) => {
+									computeElevation = e.value as 'enabled' | 'disabled';
+									onMeasureChange('computeElevation', computeElevation);
+								}}
+							>
+								{#each ['enabled', 'disabled'] as option (option)}
+									<Segment.Item value={option}>
+										{option}
+									</Segment.Item>
+								{/each}
+							</Segment>
+						{/snippet}
+					</Accordion.Item>
+				</Accordion>
+			{/snippet}
+		</Accordion.Item>
+	{/if}
 </Accordion>

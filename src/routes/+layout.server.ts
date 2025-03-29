@@ -56,10 +56,10 @@ export const load: LayoutServerLoad = async ({ fetch }) => {
 		},
 		styles: styles,
 		nav: [
-			{ href: 'https://twitter.com/j_igarashi', icon: 'fa-brands fa-x-twitter fa-lg' },
+			{ href: 'https://twitter.com/j_igarashi', icon: 'twitter' },
 			{
 				href: 'https://github.com/watergis/maplibre-gl-terradraw',
-				icon: 'fa-brands fa-github fa-lg'
+				icon: 'github'
 			}
 		],
 		examples: examples

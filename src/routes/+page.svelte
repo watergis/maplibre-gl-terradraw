@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { AvailableModes, type TerradrawMode } from '$lib';
+	import { AvailableModes, type AreaUnit, type DistanceUnit, type TerradrawMode } from '$lib';
 	import { Segment, Tabs } from '@skeletonlabs/skeleton-svelte';
 	import type { PageData } from './$types';
 	import CodeBlock from './CodeBlock.svelte';
@@ -27,18 +27,49 @@
 	let controlType: 'default' | 'measure' = $state('default');
 	let isOpen: 'open' | 'close' | undefined = $state('open');
 	let selectedModes: TerradrawMode[] = $state(JSON.parse(JSON.stringify(AvailableModes)));
+
+	let selectedFeature: string = $state('');
+	let distanceUnit: DistanceUnit = $state('kilometers');
+	let distancePrecision: number = $state(2);
+	let areaUnit: AreaUnit = $state('metric');
+	let areaPrecision: number = $state(2);
+	let computeElevation: 'enabled' | 'disabled' = $state('enabled');
+
+	const handleMeasureChange = (
+		type: 'distanceUnit' | 'distancePrecision' | 'areaUnit' | 'areaPrecision' | 'computeElevation',
+		value: string | number | number[]
+	) => {
+		if (type === 'distanceUnit') {
+			distanceUnit = value as DistanceUnit;
+		} else if (type === 'distancePrecision') {
+			distancePrecision = value as number;
+		} else if (type === 'areaUnit') {
+			areaUnit = value as AreaUnit;
+		} else if (type === 'areaPrecision') {
+			areaPrecision = value as number;
+		} else if (type === 'computeElevation') {
+			computeElevation = value as 'enabled' | 'disabled';
+		}
+	};
 </script>
 
-<div class="snap-y snap-proximity overflow-y-scroll h-full">
-	<section id="demo" class="demo-container grid grid-cols-[auto_1fr] snap-end">
+<div class="snap-y overflow-y-scroll h-full">
+	<section id="demo" class="demo-container grid grid-cols-[auto_1fr] snap-start">
 		<aside class="sidebar col-span-1 h-screen p-4 w-sm overflow-y-auto hidden md:block">
 			<DemoController
 				bind:controlType
 				bind:isOpen
 				bind:selectedModes
+				bind:selectedFeature
+				bind:distanceUnit
+				bind:distancePrecision
+				bind:areaUnit
+				bind:areaPrecision
+				bind:computeElevation
 				onchange={() => {
 					updateDemo = !updateDemo;
 				}}
+				onMeasureChange={handleMeasureChange}
 			></DemoController>
 
 			<div class="flex justify-center mt-6">
@@ -61,6 +92,12 @@
 					{controlType}
 					isOpen={isOpen === 'open'}
 					geojson={data.geojson}
+					bind:selectedFeature
+					bind:distanceUnit
+					bind:distancePrecision
+					bind:areaUnit
+					bind:areaPrecision
+					bind:computeElevation
 				></DemoMap>
 			{/key}
 
@@ -184,7 +221,7 @@
 		<p class="py-4">
 			See <a
 				href="https://watergis.github.io/maplibre-gl-terradraw"
-				class="text-blue-600 visited:text-purple-600">Plugin API documentation</a
+				class="text-blue-800 visited:text-purple-800">Plugin API documentation</a
 			>
 		</p>
 	</section>
@@ -215,9 +252,9 @@
 		</div>
 	</section>
 
-	<footer class="bg-gray-200 p-4">
+	<footer class="bg-gray-100 p-4">
 		<p class="text-center w-full">
-			<a class="text-blue-600 visited:text-purple-600" href={data.metadata.contact} target="_blank">
+			<a class="text-blue-800 visited:text-purple-800" href={data.metadata.contact} target="_blank">
 				©{year}
 				{data.metadata.author}
 			</a>

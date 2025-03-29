@@ -25,10 +25,8 @@
 
 <iframe class="map-iframe" src={data.url} title={data.title}></iframe>
 
-<div class="contents">
-	<div class="w-full p-4">
-		<CodeBlock lang="html" code={data.html} />
-	</div>
+<div class="p-4">
+	<CodeBlock lang="html" code={data.html} />
 </div>
 
 <footer class="bg-gray-200 p-4">

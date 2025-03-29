@@ -4,8 +4,6 @@
 	import { page } from '$app/state';
 	import type { PageData } from './$types';
 
-	let year = new Date().getFullYear();
-
 	interface Props {
 		data: PageData;
 		children?: import('svelte').Snippet;
@@ -40,33 +38,14 @@
 </svelte:head>
 
 <div class="h-dvh grid grid-rows-[auto_1fr_auto]">
-	<header class="sticky top-0 z-10 bg-gray-200 p-4">
-		<div class="flex items-center">
-			<a href="/"><strong class="text-xl uppercase">{data.metadata.title}</strong></a>
-		</div>
-	</header>
-
-	<main class="overflow-y-auto">
-		{@render children?.()}
-	</main>
-
-	<footer class="bg-gray-200 p-4">
+	<header class="bg-gray-200 p-4">
 		<div class="flex justify-between items-center">
-			<p class="text-left w-full">
-				<a
-					class="text-blue-600 visited:text-purple-600"
-					href={data.metadata.contact}
-					target="_blank"
-				>
-					©{year}
-					{data.metadata.author}
-				</a>
-			</p>
+			<a href="/"><strong class="text-xl text-nowrap uppercase">{data.metadata.title}</strong></a>
 
-			<nav class="flex flex-wrap justify-end gap-2 w-full">
+			<nav class="flex justify-end gap-1">
 				{#each data.nav as link (link.href)}
 					<a
-						class="btn hover:preset-tonal px-2"
+						class="btn hover:preset-tonal px-1"
 						href={link.href}
 						target="_blank"
 						title={link.icon}
@@ -77,5 +56,9 @@
 				{/each}
 			</nav>
 		</div>
-	</footer>
+	</header>
+
+	<main class="w-screen">
+		{@render children?.()}
+	</main>
 </div>

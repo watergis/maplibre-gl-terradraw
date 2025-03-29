@@ -11,6 +11,8 @@
 
 	let { data }: Props = $props();
 
+	let year = new Date().getFullYear();
+
 	let importTypeTabs = [
 		{ label: 'NPM', value: 'npm' },
 		{ label: 'CDN', value: 'cdn' }
@@ -240,6 +242,15 @@
 		</div>
 	</div>
 </div>
+
+<footer class="bg-gray-200 p-4">
+	<p class="text-center w-full">
+		<a class="text-blue-600 visited:text-purple-600" href={data.metadata.contact} target="_blank">
+			©{year}
+			{data.metadata.author}
+		</a>
+	</p>
+</footer>
 
 <style lang="postcss">
 	.preview-image {

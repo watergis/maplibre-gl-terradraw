@@ -8,6 +8,8 @@
 	};
 	const { data }: Props = $props();
 
+	let year = new Date().getFullYear();
+
 	let titleElement: HTMLElement | undefined = $state();
 
 	afterNavigate(() => {
@@ -24,19 +26,22 @@
 <iframe class="map-iframe" src={data.url} title={data.title}></iframe>
 
 <div class="contents">
-	<div class="py-4">
+	<div class="w-full p-4">
 		<CodeBlock lang="html" code={data.html} />
 	</div>
 </div>
 
+<footer class="bg-gray-200 p-4">
+	<p class="text-center w-full">
+		<a class="text-blue-600 visited:text-purple-600" href={data.metadata.contact} target="_blank">
+			©{year}
+			{data.metadata.author}
+		</a>
+	</p>
+</footer>
+
 <style lang="scss">
 	.map-iframe {
-		position: relative;
-		width: 100%;
-		height: 50vh;
-	}
-
-	.contents {
 		position: relative;
 		width: 100%;
 		height: 50vh;

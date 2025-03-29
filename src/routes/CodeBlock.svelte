@@ -44,7 +44,7 @@
 		lang = 'console',
 		theme = 'dark-plus',
 		// Base Style Props
-		base = ' overflow-hidden',
+		base = 'overflow-hidden',
 		rounded = 'rounded-sm',
 		shadow = '',
 		classes = '',
@@ -77,7 +77,9 @@
 		{copied ? 'Copied' : 'Copy'}
 	</button>
 
-	<!-- Output Shiki's Generated HTML -->
-	<!-- eslint-disable svelte/no-at-html-tags -->
-	{@html generatedHtml}
+	<div class="w-full overflow-x-auto">
+		<!-- Output Shiki's Generated HTML -->
+		<!-- eslint-disable svelte/no-at-html-tags -->
+		{@html generatedHtml}
+	</div>
 </div>

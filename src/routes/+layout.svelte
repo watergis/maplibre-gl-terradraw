@@ -38,7 +38,7 @@
 </svelte:head>
 
 <div class="h-dvh grid grid-rows-[auto_1fr_auto]">
-	<header class="bg-gray-200 p-4">
+	<header class="sticky top-0 z-10 bg-gray-200 p-4">
 		<div class="flex justify-between items-center">
 			<a href="/"><strong class="text-xl text-nowrap uppercase">{data.metadata.title}</strong></a>
 
@@ -58,7 +58,7 @@
 		</div>
 	</header>
 
-	<main class="w-screen">
+	<main class="w-screen overflow-y-auto">
 		{@render children?.()}
 	</main>
 </div>

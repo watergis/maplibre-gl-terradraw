@@ -77,9 +77,7 @@
 		{copied ? 'Copied' : 'Copy'}
 	</button>
 
-	<div class="w-full overflow-x-auto">
-		<!-- Output Shiki's Generated HTML -->
-		<!-- eslint-disable svelte/no-at-html-tags -->
-		{@html generatedHtml}
-	</div>
+	<!-- Output Shiki's Generated HTML -->
+	<!-- eslint-disable svelte/no-at-html-tags -->
+	{@html generatedHtml}
 </div>

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { createHighlighterCoreSync } from 'shiki/core';
-	import { createOnigurumaEngine } from 'shiki/engine/oniguruma';
+	import { createHighlighterCoreSync, type HighlighterCore } from 'shiki/core';
+	import { createJavaScriptRegexEngine } from 'shiki/engine/javascript';
 	// Themes
 	// https://shiki.style/themes
 	import themeDarkPlus from 'shiki/themes/dark-plus.mjs';
@@ -10,7 +10,7 @@
 	import css from 'shiki/langs/css.mjs';
 	import html from 'shiki/langs/html.mjs';
 	import js from 'shiki/langs/javascript.mjs';
-	import { untrack } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 
 	interface CodeBlockProps {
 		code?: string;
@@ -56,20 +56,26 @@
 		});
 	};
 
-	$effect(() => {
-		untrack(async () => {
-			const engine = await createOnigurumaEngine(import('shiki/wasm'));
+	let shiki: HighlighterCore | undefined = $state();
 
+	onMount(() => {
+		if (!shiki) {
 			// https://shiki.style/guide/sync-usage
-			const shiki = createHighlighterCoreSync({
-				engine,
+			shiki = createHighlighterCoreSync({
+				engine: createJavaScriptRegexEngine(),
 				// Implement your import theme.
 				themes: [themeDarkPlus],
 				// Implement your imported and supported languages.
 				langs: [console, html, css, js]
 			});
-			generatedHtml = shiki.codeToHtml(code, { lang, theme });
-		});
+		}
+
+		generatedHtml = shiki.codeToHtml(code, { lang, theme });
+	});
+	onDestroy(() => {
+		if (shiki) {
+			shiki.dispose();
+		}
 	});
 </script>
 

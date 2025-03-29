@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { AppBar } from '@skeletonlabs/skeleton-svelte';
 	import '../app.css';
 
 	import { page } from '$app/state';
@@ -38,34 +37,22 @@
 	<meta name="twitter:title" content="Maplibre GL Terra Draw" />
 	<meta name="twitter:image" content={page.data.socialImage} />
 	<meta property="og:url" content={page.url.href} />
-
-	<style>
-		html,
-		body {
-			@apply h-full;
-		}
-	</style>
 </svelte:head>
 
 <div class="h-dvh grid grid-rows-[auto_1fr_auto]">
-	<header class="sticky top-0 z-10">
-		<AppBar>
-			{#snippet lead()}
-				<div class="flex items-center">
-					<a href="/"><strong class="text-xl uppercase">{data.metadata.title}</strong></a>
-				</div>
-			{/snippet}
-		</AppBar>
+	<header class="sticky top-0 z-10 bg-gray-200 p-4">
+		<div class="flex items-center">
+			<a href="/"><strong class="text-xl uppercase">{data.metadata.title}</strong></a>
+		</div>
 	</header>
 
 	<main class="overflow-y-auto">
 		{@render children?.()}
 	</main>
 
-	<footer>
-		<hr />
-		<div class="flex justify-between items-center px-2">
-			<p class="text-left w-full pl-4">
+	<footer class="bg-gray-200 p-4">
+		<div class="flex justify-between items-center">
+			<p class="text-left w-full">
 				<a
 					class="text-blue-600 visited:text-purple-600"
 					href={data.metadata.contact}
@@ -76,7 +63,7 @@
 				</a>
 			</p>
 
-			<nav class="flex flex-wrap justify-end gap-2 w-full pr-2">
+			<nav class="flex flex-wrap justify-end gap-2 w-full">
 				{#each data.nav as link (link.href)}
 					<a
 						class="btn hover:preset-tonal px-2"

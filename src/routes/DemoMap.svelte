@@ -9,7 +9,6 @@
 		type DistanceUnit,
 		type TerradrawMode
 	} from '$lib';
-	import { Accordion, Segment, Slider } from '@skeletonlabs/skeleton-svelte';
 	import MaplibreStyleSwitcherControl, { type StyleDefinition } from '@undp-data/style-switcher';
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
 	import {
@@ -23,7 +22,6 @@
 	import { untrack } from 'svelte';
 	import type { GeoJSONStoreFeatures } from 'terra-draw';
 	import '../scss/maplibre-gl-terradraw.scss';
-	import CodeBlock from './CodeBlock.svelte';
 
 	interface Props {
 		styles: StyleDefinition[];
@@ -31,6 +29,12 @@
 		controlType: 'default' | 'measure';
 		modes: TerradrawMode[];
 		isOpen: boolean;
+		selectedFeature: string;
+		distanceUnit: DistanceUnit;
+		distancePrecision: number;
+		areaUnit: AreaUnit;
+		areaPrecision: number;
+		computeElevation: 'enabled' | 'disabled';
 	}
 
 	let {
@@ -38,61 +42,70 @@
 		geojson,
 		controlType = 'default',
 		modes = JSON.parse(JSON.stringify(AvailableModes)),
-		isOpen = true
+		isOpen = true,
+		selectedFeature = $bindable(''),
+		distanceUnit = $bindable('kilometers'),
+		distancePrecision = $bindable(2),
+		areaUnit = $bindable('metric'),
+		areaPrecision = $bindable(2),
+		computeElevation = $bindable('enabled')
 	}: Props = $props();
 	let mapContainer: HTMLDivElement | undefined = $state();
 	let map: Map | undefined;
 
-	let isMeasure: boolean = controlType === 'measure';
-
-	let selectedFeature = $state('');
-	let distanceUnit: DistanceUnit = $state('kilometers');
-	let distancePrecision: number[] = $state([2]);
-	let areaUnit: AreaUnit = $state('metric');
-	let areaPrecision: number[] = $state([2]);
-	let computeElevation: 'enabled' | 'disabled' = $state('enabled');
+	let isMeasure: boolean = $derived(controlType === 'measure');
 
 	let drawControl: MaplibreTerradrawControl;
 
-	const handleDistanceUnitChanged = () => {
-		if (drawControl) {
-			if (isMeasure) {
-				(drawControl as MaplibreMeasureControl).distanceUnit = distanceUnit;
-			}
+	$effect(() => {
+		if (distanceUnit) {
+			untrack(() => {
+				if (drawControl && isMeasure) {
+					(drawControl as MaplibreMeasureControl).distanceUnit = distanceUnit;
+				}
+			});
 		}
-	};
+	});
 
-	const handleDistancePrecisionChanged = () => {
-		if (drawControl) {
-			if (isMeasure) {
-				(drawControl as MaplibreMeasureControl).distancePrecision = distancePrecision[0];
-			}
+	$effect(() => {
+		if (distancePrecision) {
+			untrack(() => {
+				if (drawControl && isMeasure) {
+					(drawControl as MaplibreMeasureControl).distancePrecision = distancePrecision;
+				}
+			});
 		}
-	};
+	});
 
-	const handleAreaUnitChanged = () => {
-		if (drawControl) {
-			if (isMeasure) {
-				(drawControl as MaplibreMeasureControl).areaUnit = areaUnit;
-			}
+	$effect(() => {
+		if (areaUnit) {
+			untrack(() => {
+				if (drawControl && isMeasure) {
+					(drawControl as MaplibreMeasureControl).areaUnit = areaUnit;
+				}
+			});
 		}
-	};
+	});
 
-	const handleAreaPrecisionChanged = () => {
-		if (drawControl) {
-			if (isMeasure) {
-				(drawControl as MaplibreMeasureControl).areaPrecision = areaPrecision[0];
-			}
+	$effect(() => {
+		if (areaPrecision) {
+			untrack(() => {
+				if (drawControl && isMeasure) {
+					(drawControl as MaplibreMeasureControl).areaPrecision = areaPrecision;
+				}
+			});
 		}
-	};
+	});
 
-	const handleComputeElevationChanged = () => {
-		if (drawControl) {
-			if (isMeasure) {
-				(drawControl as MaplibreMeasureControl).computeElevation = computeElevation === 'enabled';
-			}
+	$effect(() => {
+		if (computeElevation) {
+			untrack(() => {
+				if (drawControl && isMeasure) {
+					(drawControl as MaplibreMeasureControl).computeElevation = computeElevation === 'enabled';
+				}
+			});
 		}
-	};
+	});
 
 	$effect(() =>
 		untrack(() => {
@@ -124,8 +137,8 @@
 					modes: modes,
 					open: isOpen,
 					distanceUnit: distanceUnit,
-					distancePrecision: distancePrecision[0],
-					areaPrecision: areaPrecision[0],
+					distancePrecision: distancePrecision,
+					areaPrecision: areaPrecision,
 					computeElevation: computeElevation === 'enabled'
 				});
 				map.addControl(drawControl, 'top-left');
@@ -179,151 +192,9 @@
 			});
 		})
 	);
-
-	let accodrionValue: string[] = $state(['selected-feature']);
 </script>
 
-<div class="map" bind:this={mapContainer}>
-	{#if isMeasure || selectedFeature.length > 0}
-		<div class="overlay p-2 bg-gray-100 dark:bg-gray-800 text-black dark:text-white">
-			<Accordion
-				value={accodrionValue}
-				onValueChange={(e) => (accodrionValue = e.value)}
-				collapsible
-			>
-				{#if isMeasure}
-					<Accordion.Item value="distance-unit">
-						{#snippet control()}
-							<p>Distance unit</p>
-						{/snippet}
-						{#snippet panel()}
-							<Segment
-								value={distanceUnit}
-								onValueChange={(e) => {
-									distanceUnit = e.value as DistanceUnit;
-									handleDistanceUnitChanged();
-								}}
-							>
-								{#each ['kilometers', 'miles', 'degrees', 'radians'] as unit (unit)}
-									<Segment.Item value={unit}>
-										{#if unit === 'miles'}
-											mi
-										{:else if unit === 'degrees'}
-											°
-										{:else if unit === 'radians'}
-											rad
-										{:else}
-											km
-										{/if}
-									</Segment.Item>
-								{/each}
-							</Segment>
-						{/snippet}
-					</Accordion.Item>
-					<Accordion.Item value="area-unit">
-						{#snippet control()}
-							<p>Area unit</p>
-						{/snippet}
-						{#snippet panel()}
-							<Segment
-								value={areaUnit}
-								onValueChange={(e) => {
-									areaUnit = e.value as AreaUnit;
-									handleAreaUnitChanged();
-								}}
-							>
-								{#each ['metric', 'imperial'] as unit (unit)}
-									<Segment.Item value={unit}>
-										{unit}
-									</Segment.Item>
-								{/each}
-							</Segment>
-						{/snippet}
-					</Accordion.Item>
-					<Accordion.Item value="distance-precision">
-						{#snippet control()}
-							<p>Measure precision</p>
-						{/snippet}
-						{#snippet panel()}
-							<div class="py-4">
-								<div class="flex justify-between items-center mb-4">
-									<div class="font-bold">Distance precision (Line)</div>
-									<div class="text-xs">{distancePrecision}</div>
-								</div>
-								<Slider
-									name="range-slider"
-									value={distancePrecision}
-									min={0}
-									max={10}
-									step={1}
-									markers={[0, 5, 10]}
-									onValueChange={(e) => {
-										distancePrecision = e.value as number[];
-										handleDistancePrecisionChanged();
-									}}
-								></Slider>
-								<div class="flex justify-between items-center mt-8 mb-4">
-									<div class="font-bold">Area precision (Polygon)</div>
-									<div class="text-xs">{areaPrecision}</div>
-								</div>
-								<Slider
-									name="range-slider"
-									value={areaPrecision}
-									min={0}
-									max={10}
-									step={1}
-									markers={[0, 5, 10]}
-									onValueChange={(e) => {
-										areaPrecision = e.value as number[];
-										handleAreaPrecisionChanged();
-									}}
-								></Slider>
-							</div>
-						{/snippet}
-					</Accordion.Item>
-					<Accordion.Item value="compute-elevation">
-						{#snippet control()}
-							<p>Compute elevation</p>
-						{/snippet}
-						{#snippet panel()}
-							<Segment
-								value={computeElevation}
-								onValueChange={(e) => {
-									computeElevation = e.value as 'enabled' | 'disabled';
-									handleComputeElevationChanged();
-								}}
-							>
-								{#each ['enabled', 'disabled'] as option (option)}
-									<Segment.Item value={option}>
-										{option}
-									</Segment.Item>
-								{/each}
-							</Segment>
-						{/snippet}
-					</Accordion.Item>
-				{/if}
-				{#if selectedFeature.length > 0}
-					<Accordion.Item value="selected-feature">
-						{#snippet control()}
-							<p>Selected feature</p>
-						{/snippet}
-						{#snippet panel()}
-							<div class="p-2">
-								<p class="text-black">
-									For Polygon, use <b>ctrl+s</b> to resize the feature, and use <b>ctrl+r</b> to rotate
-									the feature.
-								</p>
-							</div>
-							<div class="code-block">
-								<CodeBlock lang="js" code={selectedFeature}></CodeBlock>
-							</div>
-						{/snippet}
-					</Accordion.Item>
-				{/if}
-			</Accordion>
-		</div>
-	{/if}
-</div>
+<div class="map" bind:this={mapContainer}></div>
 
 <style lang="scss">
 	.map {
@@ -331,23 +202,5 @@
 		width: 100%;
 		height: 100%;
 		background: linear-gradient(to right, #4286f4, #373b44);
-
-		.overlay {
-			position: absolute;
-			top: 5px;
-			right: 5px;
-			z-index: 10;
-			min-width: 300px;
-
-			height: fit-content;
-			width: fit-content;
-
-			.code-block {
-				min-height: 200px;
-				max-height: 300px;
-				width: 100%;
-				overflow-y: auto;
-			}
-		}
 	}
 </style>

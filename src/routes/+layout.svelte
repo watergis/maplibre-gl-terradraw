@@ -1,7 +1,11 @@
 <script lang="ts">
+	import IconGithub from '@lucide/svelte/icons/github';
+	import IconTwitter from '@lucide/svelte/icons/twitter';
+
 	import '../app.css';
 
 	import { page } from '$app/state';
+	import { AppBar } from '@skeletonlabs/skeleton-svelte';
 	import type { PageData } from './$types';
 
 	interface Props {
@@ -30,24 +34,35 @@
 </svelte:head>
 
 <div class="h-dvh grid grid-rows-[auto_1fr_auto]">
-	<header class="sticky top-0 z-10 bg-gray-200 p-4">
-		<div class="flex justify-between items-center">
-			<a href="/"><strong class="text-xl text-nowrap uppercase">{data.metadata.title}</strong></a>
-
-			<nav class="flex justify-end gap-1">
-				{#each data.nav as link (link.href)}
-					<a
-						class="btn hover:preset-tonal px-1"
-						href={link.href}
-						target="_blank"
-						title={link.icon}
-						aria-label={link.icon}
-					>
-						<span><i class={link.icon}></i></span>
-					</a>
-				{/each}
-			</nav>
-		</div>
+	<header class="sticky top-0 z-10 bg-gray-200">
+		<AppBar>
+			{#snippet lead()}
+				<a href="/"><strong class="text-xl text-nowrap uppercase">{data.metadata.title}</strong></a>
+			{/snippet}
+			{#snippet trail()}
+				<nav class="flex justify-end gap-1">
+					{#each data.nav as link (link.href)}
+						<a
+							class="btn hover:preset-tonal px-1"
+							href={link.href}
+							target="_blank"
+							title={link.icon}
+							aria-label={link.icon}
+						>
+							<span>
+								{#if link.icon === 'github'}
+									<IconGithub />
+								{:else if link.icon === 'twitter'}
+									<IconTwitter />
+								{:else}
+									<i class={link.icon}></i>
+								{/if}
+							</span>
+						</a>
+					{/each}
+				</nav>
+			{/snippet}
+		</AppBar>
 	</header>
 
 	<main class="w-screen overflow-y-auto">

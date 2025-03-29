@@ -1,4 +1,4 @@
-import { AvailableModes } from '$lib';
+import { AvailableModes } from '../../src/lib/constants/AvailableModes';
 import { test, expect } from '@playwright/test';
 
 test.describe('landing page test', () => {

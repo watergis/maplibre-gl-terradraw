@@ -1,6 +1,6 @@
 <script lang="ts">
+	import { AvailableModes, type TerradrawMode } from '$lib';
 	import { Accordion, Segment, TagsInput } from '@skeletonlabs/skeleton-svelte';
-	import { AvailableModes, type TerradrawMode } from '../lib';
 
 	interface Props {
 		controlType: 'default' | 'measure';

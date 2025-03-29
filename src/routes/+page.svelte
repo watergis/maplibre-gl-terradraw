@@ -182,11 +182,10 @@
 		<h3 class="h3 pt-6">API Documentation</h3>
 
 		<p class="py-4">
-			The plugin <span class="font-bold">API documentation</span> is available
-			<a
+			See <a
 				href="https://watergis.github.io/maplibre-gl-terradraw"
-				class="text-blue-600 visited:text-purple-600">here</a
-			>.
+				class="text-blue-600 visited:text-purple-600">Plugin API documentation</a
+			>
 		</p>
 	</section>
 	<section id="examples" class="px-4">
@@ -206,7 +205,7 @@
 							<div>
 								<h2 class="h6">{custom.title}</h2>
 							</div>
-							<p class="description opacity-60">
+							<p class="description">
 								{custom.description}
 							</p>
 						</article>

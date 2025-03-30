@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { AvailableModes, type AreaUnit, type DistanceUnit, type TerradrawMode } from '$lib';
+	import IconPlus from '@lucide/svelte/icons/plus';
+	import IconX from '@lucide/svelte/icons/x';
 	import { Accordion, Segment, Slider, TagsInput } from '@skeletonlabs/skeleton-svelte';
 	import { untrack } from 'svelte';
 	import CodeBlock from './CodeBlock.svelte';
@@ -112,20 +114,67 @@
 				remove some drawing modes from your app.
 			</p>
 
-			{#key controlType}
-				<TagsInput
-					name="terradraw-modes"
-					placeholder="{selectedModes.length === 0
-						? 'Select at least a mode. '
-						: ''}Select TerraDraw modes to be added"
-					value={selectedModes}
-					onValueChange={(e) => {
-						selectedModes = e.value as TerradrawMode[];
+			<TagsInput
+				name="terradraw-modes"
+				placeholder="{selectedModes.length === 0
+					? 'Select at least a mode. '
+					: ''}Select TerraDraw modes to be added"
+				value={selectedModes}
+				onValueChange={(e) => {
+					selectedModes = e.value as TerradrawMode[];
+					onchange();
+				}}
+				validate={(details) => AvailableModes.includes(details.inputValue as TerradrawMode)}
+				editable={false}
+			/>
+
+			<nav class="flex flex-row mt-2 gap-2">
+				<button
+					type="button"
+					class="btn preset-filled-primary-500"
+					disabled={selectedModes.length === AvailableModes.length}
+					onclick={() => {
+						selectedModes = [
+							...selectedModes,
+							...AvailableModes.filter((m) => !selectedModes.includes(m))
+						];
 						onchange();
 					}}
-					validate={(details) => AvailableModes.includes(details.inputValue as TerradrawMode)}
-				/>
-			{/key}
+				>
+					<IconPlus />
+					<span>Add all</span>
+				</button>
+				<button
+					type="button"
+					class="btn preset-filled-error-500"
+					disabled={selectedModes.length === 0}
+					onclick={() => {
+						selectedModes = [];
+						onchange();
+					}}
+				>
+					<IconX />
+					<span>Delete all</span>
+				</button>
+			</nav>
+
+			{#if selectedModes.length < AvailableModes.length}
+				{@const selectSize = AvailableModes.filter((m) => !selectedModes.includes(m)).length}
+				<select
+					class="select rounded-container mt-2"
+					size={selectSize === 1 ? selectSize + 1 : selectSize > 5 ? 5 : selectSize}
+					onclick={(e) => {
+						if (!(e.target && 'value' in e.target)) return;
+						const selected = e.target.value as TerradrawMode;
+						selectedModes.push(selected);
+						onchange();
+					}}
+				>
+					{#each AvailableModes.filter((m) => !selectedModes.includes(m)) as mode (mode)}
+						<option value={mode}>{mode}</option>
+					{/each}
+				</select>
+			{/if}
 		{/snippet}
 	</Accordion.Item>
 

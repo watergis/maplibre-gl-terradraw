@@ -1,4 +1,7 @@
 <script module lang="ts">
+	import IconCopy from '@lucide/svelte/icons/copy';
+	import IconCopyCheck from '@lucide/svelte/icons/copy-check';
+
 	import { createHighlighterCoreSync, type HighlighterCore } from 'shiki/core';
 	import { createOnigurumaEngine } from 'shiki/engine/oniguruma';
 	// Themes
@@ -37,7 +40,7 @@
 		lang = 'console',
 		theme = 'dark-plus',
 		// Base Style Props
-		base = 'overflow-hidden',
+		base = 'overflow-y-hidden overflow-x-auto w-full',
 		rounded = 'rounded-sm',
 		shadow = '',
 		classes = '',
@@ -77,14 +80,37 @@
 	});
 </script>
 
-<div class="group relative {base} {rounded} {shadow} {classes} {preBase} {prePadding} {preClasses}">
+<div class="group {base} {rounded} {shadow} {classes} {preBase} {prePadding} {preClasses}">
 	<button
-		class="sticky top-2 right-2 float-right bg-white/10 hover:bg-white/20 text-sm text-white px-2 py-1 rounded transition transition-opacity opacity-0 group-hover:opacity-100"
+		class="copy-button bg-white/10 hover:bg-white/20 text-sm text-white px-2 py-1 rounded"
 		onclick={copyToClipboard}
+		title="Copy to clipboard"
 	>
-		{copied ? 'Copied' : 'Copy'}
+		{#if copied}
+			<IconCopyCheck></IconCopyCheck>
+		{:else}
+			<IconCopy></IconCopy>
+		{/if}
 	</button>
 
 	<!-- eslint-disable svelte/no-at-html-tags -->
 	{@html generatedHtml}
 </div>
+
+<style lang="scss">
+	.group {
+		position: relative;
+
+		:global(.shiki) {
+			width: 100%;
+			overflow-x: auto;
+			overflow-y: auto;
+		}
+
+		.copy-button {
+			position: absolute;
+			top: 0.6em;
+			right: 0.6em;
+		}
+	}
+</style>

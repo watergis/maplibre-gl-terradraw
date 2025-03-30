@@ -82,11 +82,13 @@
 
 <div class="group {base} {rounded} {shadow} {classes} {preBase} {prePadding} {preClasses}">
 	<button
-		class="copy-button bg-white/10 hover:bg-white/20 text-sm text-white px-2 py-1 rounded"
+		class="copy-button hover:bg-white/20 text-sm text-white px-2 py-1 rounded"
+		class:chip={copied}
 		onclick={copyToClipboard}
 		title="Copy to clipboard"
 	>
 		{#if copied}
+			<span>Copied</span>
 			<IconCopyCheck></IconCopyCheck>
 		{:else}
 			<IconCopy></IconCopy>

@@ -165,11 +165,7 @@
 					</p>
 				</div>
 				<div class="code-block">
-					<CodeBlock
-						lang="js"
-						code={selectedFeature}
-						base="max-h-64 overflow-y-auto overflow-x-hidden"
-					></CodeBlock>
+					<CodeBlock lang="js" code={selectedFeature} base="max-h-64 overflow-y-auto "></CodeBlock>
 				</div>
 			{/snippet}
 		</Accordion.Item>

@@ -1,5 +1,11 @@
 <script lang="ts">
-	import { AvailableModes, type AreaUnit, type DistanceUnit, type TerradrawMode } from '$lib';
+	import {
+		AvailableModes,
+		debounce,
+		type AreaUnit,
+		type DistanceUnit,
+		type TerradrawMode
+	} from '$lib';
 	import { Segment, Tabs } from '@skeletonlabs/skeleton-svelte';
 	import type { PageData } from './$types';
 	import CodeBlock from './CodeBlock.svelte';
@@ -35,6 +41,9 @@
 	let areaPrecision: number = $state(2);
 	let computeElevation: 'enabled' | 'disabled' = $state('enabled');
 
+	let searchQuery = $state('');
+	let examples = $state(JSON.parse(JSON.stringify(data.examples)));
+
 	const handleMeasureChange = (
 		type: 'distanceUnit' | 'distancePrecision' | 'areaUnit' | 'areaPrecision' | 'computeElevation',
 		value: string | number | number[]
@@ -51,6 +60,25 @@
 			computeElevation = value as 'enabled' | 'disabled';
 		}
 	};
+
+	const handleSearchExamples = debounce(() => {
+		if (searchQuery.length === 0) {
+			examples = JSON.parse(JSON.stringify(data.examples));
+			return;
+		}
+
+		const filteredExamples = data.examples.filter(
+			(example: { title: string; description: string }) => {
+				const query = searchQuery.toLowerCase();
+				return (
+					example.title.toLowerCase().includes(query) ||
+					example.description.toLowerCase().includes(query)
+				);
+			}
+		);
+
+		examples = filteredExamples;
+	}, 1000);
 </script>
 
 <div class="snap-y overflow-y-scroll h-full">
@@ -215,7 +243,7 @@
 		</div>
 	</section>
 
-	<section id="api-doc" class="px-4">
+	<section id="api-doc" class="px-4 snap-end">
 		<h3 class="h3 pt-6">API Documentation</h3>
 
 		<p class="py-4">
@@ -225,12 +253,20 @@
 			>
 		</p>
 	</section>
-	<section id="examples" class="px-4">
+	<section id="examples" class="px-4 snap-start">
 		<h3 class="h3 pt-6">Examples</h3>
 
 		<div class="py-4">
+			<input
+				class="input mb-4"
+				type="search"
+				placeholder="Search examples..."
+				bind:value={searchQuery}
+				oninput={handleSearchExamples}
+			/>
+
 			<div class="flex flex-wrap gap-4">
-				{#each data.examples as custom (custom.title)}
+				{#each examples as custom (custom.title)}
 					<a
 						class="card preset-filled-surface-100-900 border-[1px] border-surface-200-800 card-hover divide-surface-200-800 block overflow-hidden sm:w-auto md:max-w-48 lg:max-w-64 xl:max-w-80"
 						href={custom.href}

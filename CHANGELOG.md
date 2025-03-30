@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.3.7
+
+### Patch Changes
+
+- 88d254a: chore: upgrade terra-draw to [v.1.4.0](https://github.com/JamesLMilner/terra-draw/blob/main/packages/terra-draw/CHANGELOG.md#140-2025-03-26)
+
 ## 1.3.6
 
 ### Patch Changes

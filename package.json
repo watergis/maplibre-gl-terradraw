@@ -53,7 +53,7 @@
 		"@playwright/test": "^1.51.1",
 		"@skeletonlabs/skeleton": "^3.1.1",
 		"@skeletonlabs/skeleton-svelte": "^1.0.0",
-		"@sveltejs/adapter-auto": "^5.0.0",
+		"@sveltejs/adapter-auto": "^6.0.0",
 		"@sveltejs/kit": "^2.20.2",
 		"@sveltejs/vite-plugin-svelte": "^5.0.3",
 		"@tailwindcss/vite": "^4.0.17",

@@ -5,7 +5,7 @@ import { getPackageInfo } from '../../../helpers';
 export const GET: RequestHandler = async ({ params, fetch, url }) => {
 	const slug = params.slug;
 
-	const filePath = `/assets/examples/${slug}.txt`;
+	const filePath = `/assets/examples/${slug}.htm`;
 
 	const res = await fetch(filePath);
 	if (!res.ok) {

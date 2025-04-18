@@ -52,7 +52,7 @@
 							maxzoom: 18,
 							attribution:
 								'Map tiles by <a target="_top" rel="noopener" href="http://bing.com">Microsoft</a>, under <a target="_top" rel="noopener" href="https://www.microsoft.com/en-us/maps/product">Microsoft Bing Maps Platform APIs Terms Of Use</a>'
-						},
+						}
 					},
 					glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
 					layers: [
@@ -69,7 +69,7 @@
 				},
 				center: [29.915923665876335, -2.00623424231469],
 				zoom: 8,
-				maxPitch: 85,
+				maxPitch: 85
 			});
 
 			const drawControl = new MaplibreTerradrawControl.MaplibreMeasureControl({
@@ -85,13 +85,16 @@
 					minzoom: 5,
 					maxzoom: 15,
 					encoding: 'mapbox'
-				},
+				}
 			});
 			map.addControl(drawControl, 'top-left');
-			map.addControl(new maplibregl.NavigationControl({
-				visualizePitch: true,
-				showCompass: true
-			}), 'bottom-right');
+			map.addControl(
+				new maplibregl.NavigationControl({
+					visualizePitch: true,
+					showCompass: true
+				}),
+				'bottom-right'
+			);
 			map.addControl(new maplibregl.GlobeControl(), 'bottom-right');
 		</script>
 	</body>

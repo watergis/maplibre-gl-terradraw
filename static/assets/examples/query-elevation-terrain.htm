@@ -61,7 +61,7 @@
 							tileSize: 512,
 							minzoom: 5,
 							maxzoom: 15,
-							bounds: [28.86, -2.84, 30.90, -1.05],
+							bounds: [28.86, -2.84, 30.9, -1.05]
 						}
 					},
 					// make sure you enable raster-dem source, otherwise, elevation cannot be queried.
@@ -94,7 +94,7 @@
 				},
 				center: [29.915923665876335, -2.00623424231469],
 				zoom: 8,
-				maxPitch: 85,
+				maxPitch: 85
 			});
 
 			const drawControl = new MaplibreTerradrawControl.MaplibreMeasureControl({
@@ -102,13 +102,16 @@
 				open: true,
 				// enable the flag to compute elevation
 				computeElevation: true,
-				terrainSource: undefined,
+				terrainSource: undefined
 			});
 			map.addControl(drawControl, 'top-left');
-			map.addControl(new maplibregl.NavigationControl({
-				visualizePitch: true,
-				showCompass: true
-			}), 'bottom-right');
+			map.addControl(
+				new maplibregl.NavigationControl({
+					visualizePitch: true,
+					showCompass: true
+				}),
+				'bottom-right'
+			);
 			map.addControl(new maplibregl.GlobeControl(), 'bottom-right');
 			map.addControl(new maplibregl.TerrainControl({ source: 'rwanda-dem' }), 'bottom-right');
 		</script>

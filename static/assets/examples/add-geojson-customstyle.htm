@@ -117,7 +117,7 @@
 							},
 							properties: {
 								// make sure you put terradraw mode for geojson
-								mode: 'polygon',
+								mode: 'polygon'
 							}
 						}
 					];
@@ -125,9 +125,9 @@
 
 					// after adding features, need some time to allow maplibre to load data
 					// inside idle event, export style to console to check.
-					map.once('idle', ()=>{
-						console.log(map.getStyle())
-					})
+					map.once('idle', () => {
+						console.log(map.getStyle());
+					});
 				}
 			});
 		</script>

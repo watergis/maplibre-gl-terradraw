@@ -164,7 +164,13 @@ export class MaplibreTerradrawControl implements IControl {
 			modes: modes
 		});
 
-		this.terradraw.start();
+		if (this.map?.loaded()) {
+			this.terradraw.start();
+		} else {
+			this.map?.once('load', () => {
+				this.terradraw?.start();
+			});
+		}
 
 		this.controlContainer = document.createElement('div');
 		this.controlContainer.classList.add(`maplibregl-ctrl`);

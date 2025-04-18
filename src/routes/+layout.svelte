@@ -1,6 +1,7 @@
 <script lang="ts">
 	import IconGithub from '@lucide/svelte/icons/github';
 	import IconTwitter from '@lucide/svelte/icons/twitter';
+	import LightSwitch from './LightSwitch.svelte';
 
 	import '../app.css';
 
@@ -37,13 +38,16 @@
 	<header class="sticky top-0 z-10 bg-gray-200">
 		<AppBar>
 			{#snippet lead()}
-				<a href="/"><strong class="text-xl text-nowrap uppercase">{data.metadata.title}</strong></a>
+				<a href="/" class="font-bold text-base md:text-xl text-nowrap uppercase">
+					{data.metadata.title}
+				</a>
 			{/snippet}
 			{#snippet trail()}
 				<nav class="flex justify-end gap-1">
+					<LightSwitch />
 					{#each data.nav as link (link.href)}
 						<a
-							class="btn hover:preset-tonal px-1"
+							class="btn hover:preset-tonal px-1 md:px-2"
 							href={link.href}
 							target="_blank"
 							title={link.icon}

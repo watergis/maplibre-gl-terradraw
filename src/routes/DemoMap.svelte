@@ -136,45 +136,46 @@
 			const styleSwitcherControl = new MaplibreStyleSwitcherControl(styles);
 			map.addControl(styleSwitcherControl, 'bottom-left');
 
+			if (modes.length > 0) {
+				if (isMeasure) {
+					drawControl = new MaplibreMeasureControl({
+						modes: modes,
+						open: isOpen,
+						distanceUnit: distanceUnit,
+						distancePrecision: distancePrecision,
+						areaPrecision: areaPrecision,
+						computeElevation: computeElevation === 'enabled'
+					});
+					map.addControl(drawControl, 'top-left');
+				} else {
+					drawControl = new MaplibreTerradrawControl({
+						modes: modes,
+						open: isOpen,
+						modeOptions: getDefaultModeOptions()
+					});
+					map.addControl(drawControl, 'top-left');
+				}
+
+				const drawInstance = drawControl.getTerraDrawInstance();
+				drawInstance?.on('select', (id: string | number) => {
+					const snapshot = drawInstance.getSnapshot();
+					const feature = snapshot?.find((feature) => feature.id === id);
+					selectedFeature = JSON.stringify(feature, null, 4);
+				});
+
+				drawInstance?.on('change', () => {
+					const snapshot = drawInstance.getSnapshot();
+					const selectedFeatures = snapshot.filter((f) => f.properties.selected === true);
+					if (selectedFeatures.length === 0) {
+						selectedFeature = '';
+					}
+				});
+			}
+
 			map.once('load', () => {
 				styleSwitcherControl.initialise();
 				if (modes.length === 0) return;
 				if (!map) return;
-				if (modes.length > 0) {
-					if (isMeasure) {
-						drawControl = new MaplibreMeasureControl({
-							modes: modes,
-							open: isOpen,
-							distanceUnit: distanceUnit,
-							distancePrecision: distancePrecision,
-							areaPrecision: areaPrecision,
-							computeElevation: computeElevation === 'enabled'
-						});
-						map.addControl(drawControl, 'top-left');
-					} else {
-						drawControl = new MaplibreTerradrawControl({
-							modes: modes,
-							open: isOpen,
-							modeOptions: getDefaultModeOptions()
-						});
-						map.addControl(drawControl, 'top-left');
-					}
-
-					const drawInstance = drawControl.getTerraDrawInstance();
-					drawInstance?.on('select', (id: string | number) => {
-						const snapshot = drawInstance.getSnapshot();
-						const feature = snapshot?.find((feature) => feature.id === id);
-						selectedFeature = JSON.stringify(feature, null, 4);
-					});
-
-					drawInstance?.on('change', () => {
-						const snapshot = drawInstance.getSnapshot();
-						const selectedFeatures = snapshot.filter((f) => f.properties.selected === true);
-						if (selectedFeatures.length === 0) {
-							selectedFeature = '';
-						}
-					});
-				}
 
 				const initData = geojson.filter((f) =>
 					(modes as string[]).includes(f.properties.mode as string)

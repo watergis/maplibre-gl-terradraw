@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { afterNavigate } from '$app/navigation';
+	import { ProgressRing } from '@skeletonlabs/skeleton-svelte';
 	import CodeBlock from '../../CodeBlock.svelte';
 	import type { PageData } from './$types';
 
@@ -15,6 +16,12 @@
 	afterNavigate(() => {
 		titleElement?.scrollIntoView();
 	});
+
+	const getHtml = async () => {
+		const response = await fetch(data.url);
+		const text = await response.text();
+		return text;
+	};
 </script>
 
 <h4 class="h3 py-5 px-4" bind:this={titleElement}>{data.title}</h4>
@@ -26,7 +33,16 @@
 <iframe class="map-iframe" src={data.url} title={data.title}></iframe>
 
 <div class="p-4">
-	<CodeBlock lang="html" code={data.html} />
+	{#await getHtml()}
+		<ProgressRing
+			value={null}
+			size="size-14"
+			meterStroke="stroke-tertiary-600-400"
+			trackStroke="stroke-tertiary-50-950"
+		/>
+	{:then html}
+		<CodeBlock lang="html" code={html} />
+	{/await}
 </div>
 
 <footer class="bg-gray-200 p-4">

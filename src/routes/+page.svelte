@@ -249,7 +249,8 @@
 		<p class="py-4">
 			See <a
 				href="https://watergis.github.io/maplibre-gl-terradraw"
-				class="text-blue-800 visited:text-purple-800">Plugin API documentation</a
+				class="text-blue-800 dark:text-surface-50 visited:text-purple-800 dark:visited:text-error-400"
+				>Plugin API documentation</a
 			>
 		</p>
 	</section>
@@ -288,9 +289,13 @@
 		</div>
 	</section>
 
-	<footer class="bg-gray-100 p-4">
+	<footer class="bg-surface-50 dark:bg-surface-900 p-4">
 		<p class="text-center w-full">
-			<a class="text-blue-800 visited:text-purple-800" href={data.metadata.contact} target="_blank">
+			<a
+				class="text-blue-800 dark:text-surface-50 visited:text-purple-800 dark:visited:text-error-400"
+				href={data.metadata.contact}
+				target="_blank"
+			>
 				©{year}
 				{data.metadata.author}
 			</a>

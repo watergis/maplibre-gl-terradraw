@@ -22,7 +22,6 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
 	const description = getDescription(html);
 
 	return {
-		html,
 		title,
 		description,
 		url: filePath,

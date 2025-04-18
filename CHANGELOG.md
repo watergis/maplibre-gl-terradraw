@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.3.9
+
+### Patch Changes
+
+- 9bf9970: fix: make sure starting terradraw when maplibre map is loaded.
+
 ## 1.3.8
 
 ### Patch Changes

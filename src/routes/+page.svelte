@@ -271,7 +271,6 @@
 					<a
 						class="card preset-filled-surface-100-900 border-[1px] border-surface-200-800 card-hover divide-surface-200-800 block overflow-hidden sm:w-auto md:max-w-48 lg:max-w-64 xl:max-w-80"
 						href={custom.href}
-						data-sveltekit-preload-data="off"
 					>
 						<header class="aspect-[21/9] w-full">
 							<img class="preview-image pt-2" src={custom.image} alt={custom.title} />

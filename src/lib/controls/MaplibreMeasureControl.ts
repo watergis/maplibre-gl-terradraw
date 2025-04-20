@@ -98,6 +98,53 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	}
 
 	/**
+	 * Get/Set font glyph for measure control layers
+	 *
+	 * As default, this maesure control uses maplibre's default font glyphs(`Open Sans Regular,Arial Unicode MS Regular`) described at https://maplibre.org/maplibre-style-spec/layers/#text-font
+	 *
+	 * If you are using your own maplibre style or different map privider, you probably need to set the font glyphs to match your maplibre style.
+	 *
+	 * Font glyph availability depends on what types of glyphs are supported by your maplibre style (e.g., Carto, Openmap tiles, Protomap, Maptiler, etc.)
+	 * Please make sure the font glyphs are available in your maplibre style.
+	 *
+	 * Usage:
+	 *
+	 * ```js
+	 * const drawControl = new MaplibreMeasureControl()
+	 * drawControl.fontGlyphs = ['Open Sans Italic']
+	 * map.addControl(drawControl)
+	 * ```
+	 */
+	get fontGlyphs() {
+		const layers = [
+			this.measureOptions.pointLayerLabelSpec,
+			this.measureOptions.lineLayerLabelSpec,
+			this.measureOptions.polygonLayerSpec
+		];
+		const firstLayer = layers[0];
+		return (firstLayer &&
+			firstLayer.layout &&
+			firstLayer.layout['text-font']) as unknown as string[];
+	}
+
+	set fontGlyphs(fontNames: string[]) {
+		const layers = [
+			this.measureOptions.pointLayerLabelSpec,
+			this.measureOptions.lineLayerLabelSpec,
+			this.measureOptions.polygonLayerSpec
+		];
+		for (const layer of layers) {
+			if (layer && layer.layout) {
+				layer.layout['text-font'] = fontNames;
+			}
+			// layer exists in maplibre, update glyphs as well
+			if (this.map && layer && this.map.getLayer(layer.id)) {
+				this.map.setLayoutProperty(layer.id, 'text-font', fontNames);
+			}
+		}
+	}
+
+	/**
 	 * Constructor
 	 * @param options Plugin control options
 	 */

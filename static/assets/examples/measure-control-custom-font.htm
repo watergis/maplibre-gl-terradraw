@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>Using custom font for measure control</title>
+		<meta
+			property="og:description"
+			content="This example shows how you can change font glyphs used in MaplibreMeasureControl other than using maplibre's default font setting."
+		/>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
+		<script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+			}
+			html,
+			body,
+			#map {
+				height: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<script src="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.umd.js"></script>
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.css"
+		/>
+		<div id="map"></div>
+
+		<script>
+			const map = new maplibregl.Map({
+				container: 'map',
+				style: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
+				center: [0, 0],
+				zoom: 1,
+				maxPitch: 85
+			});
+
+			const drawControl = new MaplibreTerradrawControl.MaplibreMeasureControl({
+				modes: ['point', 'linestring', 'polygon', 'delete'],
+				open: true,
+				computeElevation: true
+			});
+			// set your own font glyphs
+			// make sure the font is supported by your map style.
+			// Please also see the documentation of glyphs for maplibre at https://maplibre.org/maplibre-style-spec/glyphs/
+			drawControl.fontGlyphs = ['Open Sans Italic'];
+			map.addControl(drawControl, 'top-left');
+		</script>
+	</body>
+</html>

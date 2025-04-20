@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { MaplibreMeasureControl } from './MaplibreMeasureControl';
 import type { StyleSpecification } from 'maplibre-gl';
 import { TERRADRAW_MEASURE_SOURCE_IDS } from '../helpers/cleanMaplibreStyle';
@@ -221,5 +221,22 @@ describe('cleanStyle method', () => {
 		expect(
 			Object.keys(result.sources).every((source) => TERRADRAW_MEASURE_SOURCE_IDS.includes(source))
 		).toBe(true);
+	});
+});
+
+describe('custom font glyphs', () => {
+	let control: MaplibreMeasureControl;
+
+	beforeEach(() => {
+		control = new MaplibreMeasureControl();
+	});
+
+	it('should return font glyph value user set', () => {
+		control.fontGlyphs = ['Open Sans Italic'];
+		expect(control.fontGlyphs).toEqual(['Open Sans Italic']);
+	});
+
+	it('should return undefined if user do not set font glyphs', () => {
+		expect(control.fontGlyphs).toEqual(undefined);
 	});
 });

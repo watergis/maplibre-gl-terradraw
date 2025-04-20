@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.3.11
+
+### Patch Changes
+
+- 113d122: fix: fixed MeasureControl constructor to copy modeOptions correctly (sstructuredClone seems destroying terradraw's mode instances)
+
 ## 1.3.10
 
 ### Patch Changes

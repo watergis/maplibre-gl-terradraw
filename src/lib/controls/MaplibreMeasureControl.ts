@@ -150,6 +150,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 */
 	constructor(options?: MeasureControlOptions) {
 		let measureOptions: MeasureControlOptions = structuredClone(defaultMeasureControlOptions);
+		measureOptions.modeOptions = defaultMeasureControlOptions.modeOptions;
 		if (options) {
 			measureOptions = Object.assign(measureOptions, options);
 		}

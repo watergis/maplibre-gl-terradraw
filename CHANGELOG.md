@@ -1,5 +1,12 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.3.12
+
+### Patch Changes
+
+- d8b0d64: chore: upgraded terradraw to 1.5.0
+- f9977d9: fix: clean td-point-lower and td-polygon-outline in cleanStyle function
+
 ## 1.3.11
 
 ### Patch Changes

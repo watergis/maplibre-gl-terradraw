@@ -25,6 +25,17 @@ See the [API documentation](https://watergis.github.io/maplibre-gl-terradraw/).
 
 ![dependency-graph.svg](./dependency-graph.svg)
 
+## Use cases
+
+These projects are using `maplibre-gl-terradraw` and can be used as examples:
+
+| Name          | Website                                       | Source code                                      |
+| ------------- | --------------------------------------------- | ------------------------------------------------ |
+| Cartes.app    | [link](https://cartes.app)                    | [link](https://github.com/cartesapp/cartes)      |
+| Open Hinata 3 | [link](https://kenzkenz.xsrv.jp/open-hinata3) | [link](https://github.com/kenzkenz/open-hinata3) |
+
+Please feel free to make a PR to add your project here!
+
 ## Contribution
 
 See [CONTRIBUTING](./CONTRIBUTING.md)

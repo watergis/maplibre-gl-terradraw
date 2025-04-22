@@ -1,7 +1,13 @@
 import { defaultMeasureControlOptions } from '../constants';
 import type { StyleSpecification } from 'maplibre-gl';
 
-export const TERRADRAW_SOURCE_IDS = ['td-point', 'td-linestring', 'td-polygon'];
+export const TERRADRAW_SOURCE_IDS = [
+	'td-point',
+	'td-point-lower',
+	'td-linestring',
+	'td-polygon',
+	'td-polygon-outline'
+];
 export const TERRADRAW_MEASURE_SOURCE_IDS = [
 	...TERRADRAW_SOURCE_IDS,
 	defaultMeasureControlOptions.polygonLayerSpec?.source as string,

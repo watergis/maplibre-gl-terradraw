@@ -149,8 +149,11 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * @param options Plugin control options
 	 */
 	constructor(options?: MeasureControlOptions) {
-		let measureOptions: MeasureControlOptions = structuredClone(defaultMeasureControlOptions);
-		measureOptions.modeOptions = defaultMeasureControlOptions.modeOptions;
+		let measureOptions: MeasureControlOptions = {
+			...JSON.parse(JSON.stringify(defaultMeasureControlOptions)),
+			modeOptions: { ...defaultMeasureControlOptions.modeOptions }
+		};
+
 		if (options) {
 			measureOptions = Object.assign(measureOptions, options);
 		}

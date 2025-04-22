@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.3.13
+
+### Patch Changes
+
+- f855296: fix: fixed bug of using structuredClone in MeasureControl constructor.
+
 ## 1.3.12
 
 ### Patch Changes

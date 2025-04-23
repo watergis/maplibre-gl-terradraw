@@ -1,16 +1,12 @@
 import type { ControlPosition, IControl, Map, StyleSpecification } from 'maplibre-gl';
-import {
-	type GeoJSONStoreFeatures,
-	TerraDraw,
-	TerraDrawExtend,
-	TerraDrawRenderMode
-} from 'terra-draw';
+import { TerraDraw, TerraDrawExtend, TerraDrawRenderMode } from 'terra-draw';
 import { TerraDrawMapLibreGLAdapter } from 'terra-draw-maplibre-gl-adapter';
 import type {
 	TerradrawControlOptions,
 	EventType,
 	TerradrawMode,
-	TerradrawModeClass
+	TerradrawModeClass,
+	EventArgs
 } from '../interfaces';
 import { defaultControlOptions, getDefaultModeOptions } from '../constants';
 import { capitalize, cleanMaplibreStyle, TERRADRAW_SOURCE_IDS } from '../helpers';
@@ -69,7 +65,7 @@ export class MaplibreTerradrawControl implements IControl {
 	protected terradraw?: TerraDraw;
 	protected options: TerradrawControlOptions = defaultControlOptions;
 	protected events: {
-		[key: string]: [(event?: { feature?: GeoJSONStoreFeatures[]; mode?: TerradrawMode }) => void];
+		[key: string]: [(event: EventArgs) => void];
 	} = {};
 
 	protected defaultMode = 'render';
@@ -210,7 +206,7 @@ export class MaplibreTerradrawControl implements IControl {
 	 * @param event event type
 	 * @param callback
 	 */
-	public on(event: EventType, callback: (event?: { feature?: GeoJSONStoreFeatures[] }) => void) {
+	public on(event: EventType, callback: (event: EventArgs) => void) {
 		if (!this.events[event]) {
 			this.events[event] = [callback];
 		} else {
@@ -224,7 +220,7 @@ export class MaplibreTerradrawControl implements IControl {
 	 * @param callback
 	 * @returns
 	 */
-	public off(event: EventType, callback: (event?: { feature?: GeoJSONStoreFeatures[] }) => void) {
+	public off(event: EventType, callback: (event: EventArgs) => void) {
 		if (!this.events[event]) return;
 		const index = this.events[event].findIndex((c) => c === callback);
 		if (index !== -1) {
@@ -258,7 +254,6 @@ export class MaplibreTerradrawControl implements IControl {
 		if (!this.terradraw) return;
 		if (!this.terradraw.enabled) {
 			this.terradraw.start();
-			this.dispatchEvent('mode-changed');
 		}
 	}
 
@@ -364,7 +359,7 @@ export class MaplibreTerradrawControl implements IControl {
 						for (const id of ids) {
 							this.terradraw.deselectFeature(id);
 						}
-						this.dispatchEvent('feature-deleted', { deletedIds: ids as string[] });
+						this.dispatchEvent('feature-deleted', { deletedIds: ids });
 					}
 					this.toggleDeleteSelectionButton();
 					this.toggleButtonsWhenNoFeature();
@@ -386,6 +381,7 @@ export class MaplibreTerradrawControl implements IControl {
 						this.terradraw.setMode(mode);
 						btn.classList.add('active');
 					}
+					this.dispatchEvent('mode-changed');
 					this.toggleDeleteSelectionButton();
 					this.toggleButtonsWhenNoFeature();
 				});

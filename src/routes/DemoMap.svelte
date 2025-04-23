@@ -170,6 +170,20 @@
 						selectedFeature = '';
 					}
 				});
+
+				// event listeners
+				drawControl.on('mode-changed', (event) => {
+					console.log('mode-changed', event);
+				});
+				drawControl.on('feature-deleted', (event) => {
+					console.log('feature-deleted', event);
+				});
+				drawControl.on('collapsed', () => {
+					console.log('collapsed');
+				});
+				drawControl.on('expanded', () => {
+					console.log('expanded');
+				});
 			}
 
 			map.once('load', () => {

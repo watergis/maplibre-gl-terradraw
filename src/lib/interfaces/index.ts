@@ -1,5 +1,6 @@
 export * from './AreaUnit';
 export * from './DistanceUnit';
+export * from './EventArgs';
 export * from './EventTypes';
 export * from './MeasureControlOptions';
 export * from './ModeOptions';

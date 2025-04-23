@@ -36,8 +36,8 @@
 </g>
 <g id="clust6" class="cluster">
 <title>cluster_src/lib/interfaces</title>
-<path fill="#ffffff" stroke="black" stroke-width="2" d="M875.88,-93C875.88,-93 1342,-93 1342,-93 1348,-93 1354,-99 1354,-105 1354,-105 1354,-277 1354,-277 1354,-283 1348,-289 1342,-289 1342,-289 875.88,-289 875.88,-289 869.88,-289 863.88,-283 863.88,-277 863.88,-277 863.88,-105 863.88,-105 863.88,-99 869.88,-93 875.88,-93"/>
-<text text-anchor="middle" x="1108.94" y="-276.45" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="9.00">interfaces</text>
+<path fill="#ffffff" stroke="black" stroke-width="2" d="M875.88,-69C875.88,-69 1342,-69 1342,-69 1348,-69 1354,-75 1354,-81 1354,-81 1354,-283 1354,-283 1354,-289 1348,-295 1342,-295 1342,-295 875.88,-295 875.88,-295 869.88,-295 863.88,-289 863.88,-283 863.88,-283 863.88,-81 863.88,-81 863.88,-75 869.88,-69 875.88,-69"/>
+<text text-anchor="middle" x="1108.94" y="-282.45" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="9.00">interfaces</text>
 </g>
 <!-- src/lib/constants/AvailableModes.ts -->
 <g id="node1" class="node">
@@ -61,46 +61,46 @@
 <g id="node3" class="node">
 <title>src/lib/interfaces/TerradrawControlOptions.ts</title>
 <g id="a_node3"><a xlink:href="src/lib/interfaces/TerradrawControlOptions.ts" xlink:title="TerradrawControlOptions.ts">
-<path fill="#ddfeff" stroke="black" d="M1111.83,-262.88C1111.83,-262.88 995.92,-262.88 995.92,-262.88 992.96,-262.88 990,-259.92 990,-256.96 990,-256.96 990,-251.04 990,-251.04 990,-248.08 992.96,-245.12 995.92,-245.12 995.92,-245.12 1111.83,-245.12 1111.83,-245.12 1114.79,-245.12 1117.75,-248.08 1117.75,-251.04 1117.75,-251.04 1117.75,-256.96 1117.75,-256.96 1117.75,-259.92 1114.79,-262.88 1111.83,-262.88"/>
-<text text-anchor="start" x="998" y="-250.32" font-family="Helvetica,sans-Serif" font-size="9.00">TerradrawControlOptions.ts</text>
+<path fill="#ddfeff" stroke="black" d="M1111.83,-268.88C1111.83,-268.88 995.92,-268.88 995.92,-268.88 992.96,-268.88 990,-265.92 990,-262.96 990,-262.96 990,-257.04 990,-257.04 990,-254.08 992.96,-251.12 995.92,-251.12 995.92,-251.12 1111.83,-251.12 1111.83,-251.12 1114.79,-251.12 1117.75,-254.08 1117.75,-257.04 1117.75,-257.04 1117.75,-262.96 1117.75,-262.96 1117.75,-265.92 1114.79,-268.88 1111.83,-268.88"/>
+<text text-anchor="start" x="998" y="-256.32" font-family="Helvetica,sans-Serif" font-size="9.00">TerradrawControlOptions.ts</text>
 </a>
 </g>
 </g>
 <!-- src/lib/constants/defaultControlOptions.ts&#45;&gt;src/lib/interfaces/TerradrawControlOptions.ts -->
 <g id="edge1" class="edge">
 <title>src/lib/constants/defaultControlOptions.ts&#45;&gt;src/lib/interfaces/TerradrawControlOptions.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M956.35,-429.82C965.91,-427.23 974.99,-422.93 982,-416 995.21,-402.95 983.88,-392.53 990,-375 1003.93,-335.1 1029.01,-292 1042.91,-269.57"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="1044.63,-270.78 1046.04,-264.58 1041.08,-268.55 1044.63,-270.78"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M956.33,-429.79C965.88,-427.21 974.97,-422.91 982,-416 994.93,-403.29 983.83,-393.05 990,-376 1003.84,-337.74 1028.74,-296.73 1042.7,-275.2"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="1044.29,-276.61 1045.82,-270.44 1040.77,-274.3 1044.29,-276.61"/>
 </g>
 <!-- src/lib/interfaces/ModeOptions.ts -->
 <g id="node7" class="node">
 <title>src/lib/interfaces/ModeOptions.ts</title>
 <g id="a_node7"><a xlink:href="src/lib/interfaces/ModeOptions.ts" xlink:title="ModeOptions.ts">
-<path fill="#ddfeff" stroke="black" d="M1209.46,-262.88C1209.46,-262.88 1141.54,-262.88 1141.54,-262.88 1138.58,-262.88 1135.62,-259.92 1135.62,-256.96 1135.62,-256.96 1135.62,-251.04 1135.62,-251.04 1135.62,-248.08 1138.58,-245.12 1141.54,-245.12 1141.54,-245.12 1209.46,-245.12 1209.46,-245.12 1212.42,-245.12 1215.38,-248.08 1215.38,-251.04 1215.38,-251.04 1215.38,-256.96 1215.38,-256.96 1215.38,-259.92 1212.42,-262.88 1209.46,-262.88"/>
-<text text-anchor="start" x="1143.62" y="-250.32" font-family="Helvetica,sans-Serif" font-size="9.00">ModeOptions.ts</text>
+<path fill="#ddfeff" stroke="black" d="M1209.46,-254.88C1209.46,-254.88 1141.54,-254.88 1141.54,-254.88 1138.58,-254.88 1135.62,-251.92 1135.62,-248.96 1135.62,-248.96 1135.62,-243.04 1135.62,-243.04 1135.62,-240.08 1138.58,-237.12 1141.54,-237.12 1141.54,-237.12 1209.46,-237.12 1209.46,-237.12 1212.42,-237.12 1215.38,-240.08 1215.38,-243.04 1215.38,-243.04 1215.38,-248.96 1215.38,-248.96 1215.38,-251.92 1212.42,-254.88 1209.46,-254.88"/>
+<text text-anchor="start" x="1143.62" y="-242.32" font-family="Helvetica,sans-Serif" font-size="9.00">ModeOptions.ts</text>
 </a>
 </g>
 </g>
 <!-- src/lib/interfaces/TerradrawControlOptions.ts&#45;&gt;src/lib/interfaces/ModeOptions.ts -->
-<g id="edge48" class="edge">
+<g id="edge49" class="edge">
 <title>src/lib/interfaces/TerradrawControlOptions.ts&#45;&gt;src/lib/interfaces/ModeOptions.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M1118.19,-254C1121.47,-254 1124.73,-254 1127.94,-254"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="1127.81,-256.1 1133.81,-254 1127.81,-251.9 1127.81,-256.1"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M1118.19,-252.59C1121.47,-252.21 1124.73,-251.82 1127.94,-251.45"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="1128.1,-253.54 1133.82,-250.76 1127.61,-249.37 1128.1,-253.54"/>
 </g>
 <!-- src/lib/interfaces/TerradrawMode.ts -->
 <g id="node29" class="node">
 <title>src/lib/interfaces/TerradrawMode.ts</title>
 <g id="a_node29"><a xlink:href="src/lib/interfaces/TerradrawMode.ts" xlink:title="TerradrawMode.ts">
-<path fill="#ddfeff" stroke="black" d="M1214.33,-232.88C1214.33,-232.88 1136.67,-232.88 1136.67,-232.88 1133.71,-232.88 1130.75,-229.92 1130.75,-226.96 1130.75,-226.96 1130.75,-221.04 1130.75,-221.04 1130.75,-218.08 1133.71,-215.12 1136.67,-215.12 1136.67,-215.12 1214.33,-215.12 1214.33,-215.12 1217.29,-215.12 1220.25,-218.08 1220.25,-221.04 1220.25,-221.04 1220.25,-226.96 1220.25,-226.96 1220.25,-229.92 1217.29,-232.88 1214.33,-232.88"/>
-<text text-anchor="start" x="1138.75" y="-220.32" font-family="Helvetica,sans-Serif" font-size="9.00">TerradrawMode.ts</text>
+<path fill="#ddfeff" stroke="black" d="M1214.33,-224.88C1214.33,-224.88 1136.67,-224.88 1136.67,-224.88 1133.71,-224.88 1130.75,-221.92 1130.75,-218.96 1130.75,-218.96 1130.75,-213.04 1130.75,-213.04 1130.75,-210.08 1133.71,-207.12 1136.67,-207.12 1136.67,-207.12 1214.33,-207.12 1214.33,-207.12 1217.29,-207.12 1220.25,-210.08 1220.25,-213.04 1220.25,-213.04 1220.25,-218.96 1220.25,-218.96 1220.25,-221.92 1217.29,-224.88 1214.33,-224.88"/>
+<text text-anchor="start" x="1138.75" y="-212.32" font-family="Helvetica,sans-Serif" font-size="9.00">TerradrawMode.ts</text>
 </a>
 </g>
 </g>
 <!-- src/lib/interfaces/TerradrawControlOptions.ts&#45;&gt;src/lib/interfaces/TerradrawMode.ts -->
-<g id="edge49" class="edge">
+<g id="edge50" class="edge">
 <title>src/lib/interfaces/TerradrawControlOptions.ts&#45;&gt;src/lib/interfaces/TerradrawMode.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M1092.07,-244.67C1104.11,-241.65 1117.58,-238.27 1130.09,-235.14"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="1130.55,-237.19 1135.86,-233.69 1129.53,-233.11 1130.55,-237.19"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M1078.72,-250.64C1093.62,-244.85 1113.25,-237.34 1130.75,-231 1133.81,-229.89 1136.99,-228.76 1140.18,-227.64"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="1140.74,-229.67 1145.71,-225.71 1139.36,-225.7 1140.74,-229.67"/>
 </g>
 <!-- src/lib/constants/defaultMeasureControlOptions.ts -->
 <g id="node4" class="node">
@@ -115,73 +115,73 @@
 <g id="node5" class="node">
 <title>src/lib/interfaces/MeasureControlOptions.ts</title>
 <g id="a_node5"><a xlink:href="src/lib/interfaces/MeasureControlOptions.ts" xlink:title="MeasureControlOptions.ts">
-<path fill="#ddfeff" stroke="black" d="M1109.21,-204.88C1109.21,-204.88 998.54,-204.88 998.54,-204.88 995.58,-204.88 992.62,-201.92 992.62,-198.96 992.62,-198.96 992.62,-193.04 992.62,-193.04 992.62,-190.08 995.58,-187.12 998.54,-187.12 998.54,-187.12 1109.21,-187.12 1109.21,-187.12 1112.17,-187.12 1115.12,-190.08 1115.12,-193.04 1115.12,-193.04 1115.12,-198.96 1115.12,-198.96 1115.12,-201.92 1112.17,-204.88 1109.21,-204.88"/>
-<text text-anchor="start" x="1000.62" y="-192.32" font-family="Helvetica,sans-Serif" font-size="9.00">MeasureControlOptions.ts</text>
+<path fill="#ddfeff" stroke="black" d="M1109.21,-180.88C1109.21,-180.88 998.54,-180.88 998.54,-180.88 995.58,-180.88 992.62,-177.92 992.62,-174.96 992.62,-174.96 992.62,-169.04 992.62,-169.04 992.62,-166.08 995.58,-163.12 998.54,-163.12 998.54,-163.12 1109.21,-163.12 1109.21,-163.12 1112.17,-163.12 1115.12,-166.08 1115.12,-169.04 1115.12,-169.04 1115.12,-174.96 1115.12,-174.96 1115.12,-177.92 1112.17,-180.88 1109.21,-180.88"/>
+<text text-anchor="start" x="1000.62" y="-168.32" font-family="Helvetica,sans-Serif" font-size="9.00">MeasureControlOptions.ts</text>
 </a>
 </g>
 </g>
 <!-- src/lib/constants/defaultMeasureControlOptions.ts&#45;&gt;src/lib/interfaces/MeasureControlOptions.ts -->
 <g id="edge2" class="edge">
 <title>src/lib/constants/defaultMeasureControlOptions.ts&#45;&gt;src/lib/interfaces/MeasureControlOptions.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M909.4,-391.83C926.99,-374.28 964.38,-333.94 982,-292 991.23,-270.04 977.34,-259.18 990,-239 998.2,-225.93 1011.98,-215.84 1024.56,-208.73"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="1025.36,-210.69 1029.66,-206 1023.38,-206.99 1025.36,-210.69"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M910.57,-391.8C929,-375.21 966.27,-338.26 982,-298 991,-274.97 973.99,-205.85 990,-187 990.35,-186.58 990.72,-186.18 991.09,-185.78"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="992.09,-187.69 995.25,-182.17 989.34,-184.52 992.09,-187.69"/>
 </g>
 <!-- src/lib/interfaces/MeasureControlOptions.ts&#45;&gt;src/lib/interfaces/ModeOptions.ts -->
-<g id="edge44" class="edge">
+<g id="edge45" class="edge">
 <title>src/lib/interfaces/MeasureControlOptions.ts&#45;&gt;src/lib/interfaces/ModeOptions.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M1076.23,-205.36C1088.73,-211.2 1104.59,-219.26 1117.75,-228 1124.05,-232.19 1124.17,-235.26 1130.75,-239 1132.52,-240 1134.36,-240.95 1136.25,-241.86"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="1135.09,-243.64 1141.42,-244.11 1136.77,-239.79 1135.09,-243.64"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M1110.23,-181.36C1112.94,-182.97 1115.47,-184.84 1117.75,-187 1132.55,-201.03 1116.64,-216.27 1130.75,-231 1131.15,-231.41 1131.55,-231.81 1131.97,-232.21"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="1130.68,-233.86 1136.74,-235.78 1133.2,-230.5 1130.68,-233.86"/>
 </g>
 <!-- src/lib/interfaces/AreaUnit.ts -->
 <g id="node15" class="node">
 <title>src/lib/interfaces/AreaUnit.ts</title>
 <g id="a_node15"><a xlink:href="src/lib/interfaces/AreaUnit.ts" xlink:title="AreaUnit.ts">
-<path fill="#ddfeff" stroke="black" d="M1200.08,-118.88C1200.08,-118.88 1150.92,-118.88 1150.92,-118.88 1147.96,-118.88 1145,-115.92 1145,-112.96 1145,-112.96 1145,-107.04 1145,-107.04 1145,-104.08 1147.96,-101.12 1150.92,-101.12 1150.92,-101.12 1200.08,-101.12 1200.08,-101.12 1203.04,-101.12 1206,-104.08 1206,-107.04 1206,-107.04 1206,-112.96 1206,-112.96 1206,-115.92 1203.04,-118.88 1200.08,-118.88"/>
-<text text-anchor="start" x="1153" y="-106.33" font-family="Helvetica,sans-Serif" font-size="9.00">AreaUnit.ts</text>
+<path fill="#ddfeff" stroke="black" d="M1200.08,-94.88C1200.08,-94.88 1150.92,-94.88 1150.92,-94.88 1147.96,-94.88 1145,-91.92 1145,-88.96 1145,-88.96 1145,-83.04 1145,-83.04 1145,-80.08 1147.96,-77.12 1150.92,-77.12 1150.92,-77.12 1200.08,-77.12 1200.08,-77.12 1203.04,-77.12 1206,-80.08 1206,-83.04 1206,-83.04 1206,-88.96 1206,-88.96 1206,-91.92 1203.04,-94.88 1200.08,-94.88"/>
+<text text-anchor="start" x="1153" y="-82.33" font-family="Helvetica,sans-Serif" font-size="9.00">AreaUnit.ts</text>
 </a>
 </g>
 </g>
 <!-- src/lib/interfaces/MeasureControlOptions.ts&#45;&gt;src/lib/interfaces/AreaUnit.ts -->
-<g id="edge42" class="edge">
+<g id="edge43" class="edge">
 <title>src/lib/interfaces/MeasureControlOptions.ts&#45;&gt;src/lib/interfaces/AreaUnit.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M1067.68,-186.8C1088.9,-171.54 1131.47,-140.94 1155.97,-123.32"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="1156.92,-125.23 1160.56,-120.02 1154.46,-121.82 1156.92,-125.23"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M1068.99,-162.63C1081.83,-154.04 1101.22,-140.9 1117.75,-129 1131.12,-119.37 1145.96,-108.11 1157.1,-99.53"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="1158.22,-101.32 1161.69,-95.99 1155.66,-97.99 1158.22,-101.32"/>
 </g>
 <!-- src/lib/interfaces/DistanceUnit.ts -->
 <g id="node23" class="node">
 <title>src/lib/interfaces/DistanceUnit.ts</title>
 <g id="a_node23"><a xlink:href="src/lib/interfaces/DistanceUnit.ts" xlink:title="DistanceUnit.ts">
-<path fill="#ddfeff" stroke="black" d="M1208.33,-202.88C1208.33,-202.88 1142.67,-202.88 1142.67,-202.88 1139.71,-202.88 1136.75,-199.92 1136.75,-196.96 1136.75,-196.96 1136.75,-191.04 1136.75,-191.04 1136.75,-188.08 1139.71,-185.12 1142.67,-185.12 1142.67,-185.12 1208.33,-185.12 1208.33,-185.12 1211.29,-185.12 1214.25,-188.08 1214.25,-191.04 1214.25,-191.04 1214.25,-196.96 1214.25,-196.96 1214.25,-199.92 1211.29,-202.88 1208.33,-202.88"/>
-<text text-anchor="start" x="1144.75" y="-190.32" font-family="Helvetica,sans-Serif" font-size="9.00">DistanceUnit.ts</text>
+<path fill="#ddfeff" stroke="black" d="M1208.33,-180.88C1208.33,-180.88 1142.67,-180.88 1142.67,-180.88 1139.71,-180.88 1136.75,-177.92 1136.75,-174.96 1136.75,-174.96 1136.75,-169.04 1136.75,-169.04 1136.75,-166.08 1139.71,-163.12 1142.67,-163.12 1142.67,-163.12 1208.33,-163.12 1208.33,-163.12 1211.29,-163.12 1214.25,-166.08 1214.25,-169.04 1214.25,-169.04 1214.25,-174.96 1214.25,-174.96 1214.25,-177.92 1211.29,-180.88 1208.33,-180.88"/>
+<text text-anchor="start" x="1144.75" y="-168.32" font-family="Helvetica,sans-Serif" font-size="9.00">DistanceUnit.ts</text>
 </a>
 </g>
 </g>
 <!-- src/lib/interfaces/MeasureControlOptions.ts&#45;&gt;src/lib/interfaces/DistanceUnit.ts -->
-<g id="edge43" class="edge">
+<g id="edge44" class="edge">
 <title>src/lib/interfaces/MeasureControlOptions.ts&#45;&gt;src/lib/interfaces/DistanceUnit.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M1115.39,-194.99C1119.99,-194.91 1124.59,-194.83 1129.07,-194.76"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="1129.01,-196.86 1134.98,-194.66 1128.94,-192.66 1129.01,-196.86"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M1115.39,-172C1119.99,-172 1124.59,-172 1129.07,-172"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="1128.98,-174.1 1134.98,-172 1128.98,-169.9 1128.98,-174.1"/>
 </g>
 <!-- src/lib/interfaces/MeasureControlOptions.ts&#45;&gt;src/lib/interfaces/TerradrawMode.ts -->
-<g id="edge45" class="edge">
+<g id="edge46" class="edge">
 <title>src/lib/interfaces/MeasureControlOptions.ts&#45;&gt;src/lib/interfaces/TerradrawMode.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M1094.71,-205.32C1105.3,-207.8 1116.84,-210.5 1127.77,-213.06"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="1127.05,-215.05 1133.37,-214.37 1128,-210.96 1127.05,-215.05"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M1099.92,-181.36C1105.98,-183.02 1112.06,-184.9 1117.75,-187 1129.67,-191.4 1142.32,-197.68 1152.64,-203.28"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="1151.46,-205.03 1157.73,-206.1 1153.5,-201.36 1151.46,-205.03"/>
 </g>
 <!-- src/lib/interfaces/TerrainSource.ts -->
-<g id="node30" class="node">
+<g id="node31" class="node">
 <title>src/lib/interfaces/TerrainSource.ts</title>
-<g id="a_node30"><a xlink:href="src/lib/interfaces/TerrainSource.ts" xlink:title="TerrainSource.ts">
-<path fill="#ddfeff" stroke="black" d="M1210.96,-172.88C1210.96,-172.88 1140.04,-172.88 1140.04,-172.88 1137.08,-172.88 1134.12,-169.92 1134.12,-166.96 1134.12,-166.96 1134.12,-161.04 1134.12,-161.04 1134.12,-158.08 1137.08,-155.12 1140.04,-155.12 1140.04,-155.12 1210.96,-155.12 1210.96,-155.12 1213.92,-155.12 1216.88,-158.08 1216.88,-161.04 1216.88,-161.04 1216.88,-166.96 1216.88,-166.96 1216.88,-169.92 1213.92,-172.88 1210.96,-172.88"/>
-<text text-anchor="start" x="1142.12" y="-160.32" font-family="Helvetica,sans-Serif" font-size="9.00">TerrainSource.ts</text>
+<g id="a_node31"><a xlink:href="src/lib/interfaces/TerrainSource.ts" xlink:title="TerrainSource.ts">
+<path fill="#ddfeff" stroke="black" d="M1210.96,-147.88C1210.96,-147.88 1140.04,-147.88 1140.04,-147.88 1137.08,-147.88 1134.12,-144.92 1134.12,-141.96 1134.12,-141.96 1134.12,-136.04 1134.12,-136.04 1134.12,-133.08 1137.08,-130.12 1140.04,-130.12 1140.04,-130.12 1210.96,-130.12 1210.96,-130.12 1213.92,-130.12 1216.88,-133.08 1216.88,-136.04 1216.88,-136.04 1216.88,-141.96 1216.88,-141.96 1216.88,-144.92 1213.92,-147.88 1210.96,-147.88"/>
+<text text-anchor="start" x="1142.12" y="-135.32" font-family="Helvetica,sans-Serif" font-size="9.00">TerrainSource.ts</text>
 </a>
 </g>
 </g>
 <!-- src/lib/interfaces/MeasureControlOptions.ts&#45;&gt;src/lib/interfaces/TerrainSource.ts -->
-<g id="edge46" class="edge">
+<g id="edge47" class="edge">
 <title>src/lib/interfaces/MeasureControlOptions.ts&#45;&gt;src/lib/interfaces/TerrainSource.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M1089.8,-186.66C1103.19,-183.08 1118.6,-178.95 1132.58,-175.21"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="1133.03,-177.27 1138.28,-173.69 1131.94,-173.21 1133.03,-177.27"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M1088.83,-162.63C1102.84,-158.77 1119.2,-154.26 1133.84,-150.22"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="1134.18,-152.3 1139.41,-148.68 1133.07,-148.25 1134.18,-152.3"/>
 </g>
 <!-- src/lib/constants/getDefaultModeOptions.ts -->
 <g id="node6" class="node">
@@ -195,23 +195,23 @@
 <!-- src/lib/constants/getDefaultModeOptions.ts&#45;&gt;src/lib/interfaces/ModeOptions.ts -->
 <g id="edge3" class="edge">
 <title>src/lib/constants/getDefaultModeOptions.ts&#45;&gt;src/lib/interfaces/ModeOptions.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M959.94,-483.07C967.5,-481.19 975.03,-478.87 982,-476 1049.62,-448.15 1071.07,-439.3 1117.75,-383 1146.62,-348.18 1163.39,-296.37 1170.48,-270.28"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="1172.5,-270.85 1171.99,-264.51 1168.44,-269.79 1172.5,-270.85"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M959.92,-483.04C967.49,-481.16 975.02,-478.85 982,-476 1049.46,-448.42 1071.77,-440.55 1117.75,-384 1148.24,-346.5 1164.43,-290.36 1170.97,-262.67"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="1173.02,-263.13 1172.3,-256.82 1168.92,-262.21 1173.02,-263.13"/>
 </g>
 <!-- src/lib/interfaces/TerradrawModeClass.ts -->
-<g id="node31" class="node">
+<g id="node32" class="node">
 <title>src/lib/interfaces/TerradrawModeClass.ts</title>
-<g id="a_node31"><a xlink:href="src/lib/interfaces/TerradrawModeClass.ts" xlink:title="TerradrawModeClass.ts">
-<path fill="#ddfeff" stroke="black" d="M1340.08,-206.88C1340.08,-206.88 1239.17,-206.88 1239.17,-206.88 1236.21,-206.88 1233.25,-203.92 1233.25,-200.96 1233.25,-200.96 1233.25,-195.04 1233.25,-195.04 1233.25,-192.08 1236.21,-189.12 1239.17,-189.12 1239.17,-189.12 1340.08,-189.12 1340.08,-189.12 1343.04,-189.12 1346,-192.08 1346,-195.04 1346,-195.04 1346,-200.96 1346,-200.96 1346,-203.92 1343.04,-206.88 1340.08,-206.88"/>
-<text text-anchor="start" x="1241.25" y="-194.32" font-family="Helvetica,sans-Serif" font-size="9.00">TerradrawModeClass.ts</text>
+<g id="a_node32"><a xlink:href="src/lib/interfaces/TerradrawModeClass.ts" xlink:title="TerradrawModeClass.ts">
+<path fill="#ddfeff" stroke="black" d="M1340.08,-181.88C1340.08,-181.88 1239.17,-181.88 1239.17,-181.88 1236.21,-181.88 1233.25,-178.92 1233.25,-175.96 1233.25,-175.96 1233.25,-170.04 1233.25,-170.04 1233.25,-167.08 1236.21,-164.12 1239.17,-164.12 1239.17,-164.12 1340.08,-164.12 1340.08,-164.12 1343.04,-164.12 1346,-167.08 1346,-170.04 1346,-170.04 1346,-175.96 1346,-175.96 1346,-178.92 1343.04,-181.88 1340.08,-181.88"/>
+<text text-anchor="start" x="1241.25" y="-169.32" font-family="Helvetica,sans-Serif" font-size="9.00">TerradrawModeClass.ts</text>
 </a>
 </g>
 </g>
 <!-- src/lib/interfaces/ModeOptions.ts&#45;&gt;src/lib/interfaces/TerradrawModeClass.ts -->
-<g id="edge47" class="edge">
+<g id="edge48" class="edge">
 <title>src/lib/interfaces/ModeOptions.ts&#45;&gt;src/lib/interfaces/TerradrawModeClass.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M1206.48,-244.66C1211.16,-242.93 1215.88,-241.03 1220.25,-239 1237.29,-231.08 1255.49,-220.02 1268.83,-211.39"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="1269.82,-213.25 1273.69,-208.2 1267.52,-209.74 1269.82,-213.25"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M1208.19,-236.72C1212.35,-235.05 1216.48,-233.14 1220.25,-231 1241.33,-219.02 1262.07,-200.15 1275.08,-187.21"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="1276.37,-188.88 1279.1,-183.14 1273.39,-185.93 1276.37,-188.88"/>
 </g>
 <!-- src/lib/constants/index.ts -->
 <g id="node8" class="node">
@@ -280,16 +280,16 @@
 <g id="node11" class="node">
 <title>src/lib/interfaces/index.ts</title>
 <g id="a_node11"><a xlink:href="src/lib/interfaces/index.ts" xlink:title="index.ts">
-<path fill="#ddfeff" stroke="black" d="M919.96,-163.88C919.96,-163.88 877.79,-163.88 877.79,-163.88 874.83,-163.88 871.88,-160.92 871.88,-157.96 871.88,-157.96 871.88,-152.04 871.88,-152.04 871.88,-149.08 874.83,-146.12 877.79,-146.12 877.79,-146.12 919.96,-146.12 919.96,-146.12 922.92,-146.12 925.88,-149.08 925.88,-152.04 925.88,-152.04 925.88,-157.96 925.88,-157.96 925.88,-160.92 922.92,-163.88 919.96,-163.88"/>
-<text text-anchor="start" x="883.12" y="-151.32" font-family="Helvetica,sans-Serif" font-size="9.00">index.ts</text>
+<path fill="#ddfeff" stroke="black" d="M919.96,-153.88C919.96,-153.88 877.79,-153.88 877.79,-153.88 874.83,-153.88 871.88,-150.92 871.88,-147.96 871.88,-147.96 871.88,-142.04 871.88,-142.04 871.88,-139.08 874.83,-136.12 877.79,-136.12 877.79,-136.12 919.96,-136.12 919.96,-136.12 922.92,-136.12 925.88,-139.08 925.88,-142.04 925.88,-142.04 925.88,-147.96 925.88,-147.96 925.88,-150.92 922.92,-153.88 919.96,-153.88"/>
+<text text-anchor="start" x="883.12" y="-141.32" font-family="Helvetica,sans-Serif" font-size="9.00">index.ts</text>
 </a>
 </g>
 </g>
 <!-- src/lib/controls/MaplibreMeasureControl.ts&#45;&gt;src/lib/interfaces/index.ts -->
 <g id="edge10" class="edge">
 <title>src/lib/controls/MaplibreMeasureControl.ts&#45;&gt;src/lib/interfaces/index.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M276.31,-281.33C280.31,-282.44 284.24,-283.66 288,-285 364.11,-312.15 370.76,-349.78 449.25,-369 469.03,-373.84 798.97,-380.53 815.75,-369 883.08,-322.72 895.24,-213.03 897.41,-171.4"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="899.5,-171.62 897.66,-165.54 895.31,-171.44 899.5,-171.62"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M276.31,-281.33C280.31,-282.44 284.24,-283.66 288,-285 364.11,-312.15 370.76,-349.78 449.25,-369 469.03,-373.84 799.06,-380.66 815.75,-369 885.93,-319.98 896.32,-204.11 897.72,-161.28"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="899.81,-161.51 897.86,-155.46 895.62,-161.41 899.81,-161.51"/>
 </g>
 <!-- src/lib/controls/MaplibreTerradrawControl.ts -->
 <g id="node12" class="node">
@@ -325,16 +325,16 @@
 <g id="node16" class="node">
 <title>src/lib/helpers/convertAreaUnit.ts</title>
 <g id="a_node16"><a xlink:href="src/lib/helpers/convertAreaUnit.ts" xlink:title="convertAreaUnit.ts">
-<path fill="#ddfeff" stroke="black" d="M789.46,-183.88C789.46,-183.88 710.29,-183.88 710.29,-183.88 707.33,-183.88 704.38,-180.92 704.38,-177.96 704.38,-177.96 704.38,-172.04 704.38,-172.04 704.38,-169.08 707.33,-166.12 710.29,-166.12 710.29,-166.12 789.46,-166.12 789.46,-166.12 792.42,-166.12 795.38,-169.08 795.38,-172.04 795.38,-172.04 795.38,-177.96 795.38,-177.96 795.38,-180.92 792.42,-183.88 789.46,-183.88"/>
-<text text-anchor="start" x="712.38" y="-171.32" font-family="Helvetica,sans-Serif" font-size="9.00">convertAreaUnit.ts</text>
+<path fill="#ddfeff" stroke="black" d="M789.46,-175.88C789.46,-175.88 710.29,-175.88 710.29,-175.88 707.33,-175.88 704.38,-172.92 704.38,-169.96 704.38,-169.96 704.38,-164.04 704.38,-164.04 704.38,-161.08 707.33,-158.12 710.29,-158.12 710.29,-158.12 789.46,-158.12 789.46,-158.12 792.42,-158.12 795.38,-161.08 795.38,-164.04 795.38,-164.04 795.38,-169.96 795.38,-169.96 795.38,-172.92 792.42,-175.88 789.46,-175.88"/>
+<text text-anchor="start" x="712.38" y="-163.32" font-family="Helvetica,sans-Serif" font-size="9.00">convertAreaUnit.ts</text>
 </a>
 </g>
 </g>
 <!-- src/lib/helpers/index.ts&#45;&gt;src/lib/helpers/convertAreaUnit.ts -->
 <g id="edge29" class="edge">
 <title>src/lib/helpers/index.ts&#45;&gt;src/lib/helpers/convertAreaUnit.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M488.3,-218.02C493.38,-204.7 504.95,-180.18 524.25,-170 553.18,-154.74 640.58,-161.62 697.45,-168.18"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="702.99,-170.94 697.27,-168.16 703.48,-166.77 702.99,-170.94"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M487.96,-217.87C492.69,-203.76 503.96,-177.11 524.25,-166 552.93,-150.3 640.41,-155.59 697.36,-161.12"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="702.94,-163.78 697.18,-161.1 703.36,-159.6 702.94,-163.78"/>
 </g>
 <!-- src/lib/helpers/calcDistance.ts -->
 <g id="node17" class="node">
@@ -355,31 +355,31 @@
 <g id="node18" class="node">
 <title>src/lib/helpers/convertMetricDistance.ts</title>
 <g id="a_node18"><a xlink:href="src/lib/helpers/convertMetricDistance.ts" xlink:title="convertMetricDistance.ts">
-<path fill="#ddfeff" stroke="black" d="M801.83,-224.88C801.83,-224.88 697.92,-224.88 697.92,-224.88 694.96,-224.88 692,-221.92 692,-218.96 692,-218.96 692,-213.04 692,-213.04 692,-210.08 694.96,-207.12 697.92,-207.12 697.92,-207.12 801.83,-207.12 801.83,-207.12 804.79,-207.12 807.75,-210.08 807.75,-213.04 807.75,-213.04 807.75,-218.96 807.75,-218.96 807.75,-221.92 804.79,-224.88 801.83,-224.88"/>
-<text text-anchor="start" x="700" y="-212.32" font-family="Helvetica,sans-Serif" font-size="9.00">convertMetricDistance.ts</text>
+<path fill="#ddfeff" stroke="black" d="M801.83,-223.88C801.83,-223.88 697.92,-223.88 697.92,-223.88 694.96,-223.88 692,-220.92 692,-217.96 692,-217.96 692,-212.04 692,-212.04 692,-209.08 694.96,-206.12 697.92,-206.12 697.92,-206.12 801.83,-206.12 801.83,-206.12 804.79,-206.12 807.75,-209.08 807.75,-212.04 807.75,-212.04 807.75,-217.96 807.75,-217.96 807.75,-220.92 804.79,-223.88 801.83,-223.88"/>
+<text text-anchor="start" x="700" y="-211.32" font-family="Helvetica,sans-Serif" font-size="9.00">convertMetricDistance.ts</text>
 </a>
 </g>
 </g>
 <!-- src/lib/helpers/index.ts&#45;&gt;src/lib/helpers/convertMetricDistance.ts -->
 <g id="edge30" class="edge">
 <title>src/lib/helpers/index.ts&#45;&gt;src/lib/helpers/convertMetricDistance.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M490.08,-217.65C496.31,-206.75 508.26,-189.3 524.25,-182 555.53,-167.72 645.91,-172.63 679,-182 685.53,-183.85 686.01,-186.81 692,-190 701.09,-194.85 711.27,-199.68 720.47,-203.84"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="725.2,-208.25 720.57,-203.89 726.91,-204.41 725.2,-208.25"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M490.08,-217.65C496.31,-206.75 508.26,-189.3 524.25,-182 586.81,-153.43 611.89,-166.95 679,-182 696.44,-185.91 714.65,-194.69 728.1,-202.2"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="732.39,-207.09 728.23,-202.28 734.48,-203.45 732.39,-207.09"/>
 </g>
 <!-- src/lib/helpers/getDistanceUnitName.ts -->
 <g id="node19" class="node">
 <title>src/lib/helpers/getDistanceUnitName.ts</title>
 <g id="a_node19"><a xlink:href="src/lib/helpers/getDistanceUnitName.ts" xlink:title="getDistanceUnitName.ts">
-<path fill="#ddfeff" stroke="black" d="M801.46,-284.88C801.46,-284.88 698.29,-284.88 698.29,-284.88 695.33,-284.88 692.38,-281.92 692.38,-278.96 692.38,-278.96 692.38,-273.04 692.38,-273.04 692.38,-270.08 695.33,-267.12 698.29,-267.12 698.29,-267.12 801.46,-267.12 801.46,-267.12 804.42,-267.12 807.38,-270.08 807.38,-273.04 807.38,-273.04 807.38,-278.96 807.38,-278.96 807.38,-281.92 804.42,-284.88 801.46,-284.88"/>
-<text text-anchor="start" x="700.38" y="-272.32" font-family="Helvetica,sans-Serif" font-size="9.00">getDistanceUnitName.ts</text>
+<path fill="#ddfeff" stroke="black" d="M801.46,-287.88C801.46,-287.88 698.29,-287.88 698.29,-287.88 695.33,-287.88 692.38,-284.92 692.38,-281.96 692.38,-281.96 692.38,-276.04 692.38,-276.04 692.38,-273.08 695.33,-270.12 698.29,-270.12 698.29,-270.12 801.46,-270.12 801.46,-270.12 804.42,-270.12 807.38,-273.08 807.38,-276.04 807.38,-276.04 807.38,-281.96 807.38,-281.96 807.38,-284.92 804.42,-287.88 801.46,-287.88"/>
+<text text-anchor="start" x="700.38" y="-275.32" font-family="Helvetica,sans-Serif" font-size="9.00">getDistanceUnitName.ts</text>
 </a>
 </g>
 </g>
 <!-- src/lib/helpers/index.ts&#45;&gt;src/lib/helpers/getDistanceUnitName.ts -->
 <g id="edge32" class="edge">
 <title>src/lib/helpers/index.ts&#45;&gt;src/lib/helpers/getDistanceUnitName.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M490.11,-236.3C496.35,-247.16 508.33,-264.56 524.25,-272 551.74,-284.85 628.79,-283.56 685.01,-280.57"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="691.22,-282.33 685.11,-280.56 690.98,-278.13 691.22,-282.33"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M490.12,-236.27C496.39,-247.08 508.38,-264.45 524.25,-272 551.66,-285.04 628.73,-284.81 684.97,-282.63"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="691.15,-284.48 685.07,-282.63 690.98,-280.28 691.15,-284.48"/>
 </g>
 <!-- src/lib/helpers/capitalize.ts -->
 <g id="node20" class="node">
@@ -472,67 +472,82 @@
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="534.15,-324.59 529.84,-319.92 536.13,-320.88 534.15,-324.59"/>
 </g>
 <!-- src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/TerradrawControlOptions.ts -->
-<g id="edge56" class="edge">
+<g id="edge58" class="edge">
 <title>src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/TerradrawControlOptions.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M907.56,-164.25C921.98,-181.03 954.84,-216.54 990,-236 994.3,-238.38 998.95,-240.47 1003.7,-242.3"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="1008.57,-246.28 1003.63,-242.28 1009.99,-242.33 1008.57,-246.28"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M905.88,-154.31C918.84,-173.64 951.4,-218.31 990,-242 993.75,-244.3 997.8,-246.32 1001.98,-248.08"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="1006.93,-252.25 1002.09,-248.13 1008.45,-248.33 1006.93,-252.25"/>
 </g>
 <!-- src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/MeasureControlOptions.ts -->
-<g id="edge54" class="edge">
+<g id="edge56" class="edge">
 <title>src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/MeasureControlOptions.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M926.18,-162.05C949.57,-168.32 984.18,-177.59 1011.31,-184.86"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="1016.53,-188.43 1011.28,-184.85 1017.62,-184.38 1016.53,-188.43"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M926.18,-149.64C944.61,-152.89 970,-157.37 993.21,-161.47"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="998.66,-164.57 993.12,-161.45 999.39,-160.43 998.66,-164.57"/>
 </g>
 <!-- src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/ModeOptions.ts -->
-<g id="edge55" class="edge">
+<g id="edge57" class="edge">
 <title>src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/ModeOptions.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M908.35,-163.91C923.26,-178.97 955.85,-209.14 990,-223 1043.02,-244.52 1061.57,-228.11 1117.75,-239 1123.5,-240.12 1129.53,-241.49 1135.43,-242.94"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="1140.77,-246.47 1135.48,-242.95 1141.81,-242.4 1140.77,-246.47"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M906.58,-154.15C920.1,-171.8 952.54,-210.25 990,-227 1013.91,-237.69 1081.91,-242.46 1128.33,-244.53"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="1134.21,-246.88 1128.31,-244.53 1134.39,-242.68 1134.21,-246.88"/>
 </g>
 <!-- src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/AreaUnit.ts -->
-<g id="edge51" class="edge">
+<g id="edge52" class="edge">
 <title>src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/AreaUnit.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M913.13,-145.67C930.04,-134.4 960.62,-116.06 990,-109 1040.14,-96.94 1100.17,-100.45 1137.84,-104.71"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="1143.36,-107.48 1137.65,-104.68 1143.85,-103.3 1143.36,-107.48"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M910.27,-135.64C926.12,-122.06 957.87,-97.5 990,-88 1039.6,-73.34 1100.02,-76.38 1137.89,-80.62"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="1143.45,-83.39 1137.73,-80.6 1143.94,-79.22 1143.45,-83.39"/>
 </g>
 <!-- src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/DistanceUnit.ts -->
-<g id="edge52" class="edge">
+<g id="edge53" class="edge">
 <title>src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/DistanceUnit.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M926,-157.76C975.54,-163.07 1081.44,-174.69 1117.75,-181 1121.64,-181.68 1125.67,-182.45 1129.7,-183.27"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="1135.04,-186.55 1129.61,-183.25 1135.91,-182.44 1135.04,-186.55"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M926.22,-144.73C967.36,-144.7 1049.27,-146.18 1117.75,-157 1124.03,-157.99 1130.63,-159.39 1137.01,-160.94"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="1142.33,-164.46 1137.03,-160.95 1143.36,-160.39 1142.33,-164.46"/>
+</g>
+<!-- src/lib/interfaces/EventArgs.ts -->
+<g id="node28" class="node">
+<title>src/lib/interfaces/EventArgs.ts</title>
+<g id="a_node28"><a xlink:href="src/lib/interfaces/EventArgs.ts" xlink:title="EventArgs.ts">
+<path fill="#ddfeff" stroke="black" d="M1081.46,-210.88C1081.46,-210.88 1026.29,-210.88 1026.29,-210.88 1023.33,-210.88 1020.38,-207.92 1020.38,-204.96 1020.38,-204.96 1020.38,-199.04 1020.38,-199.04 1020.38,-196.08 1023.33,-193.12 1026.29,-193.12 1026.29,-193.12 1081.46,-193.12 1081.46,-193.12 1084.42,-193.12 1087.38,-196.08 1087.38,-199.04 1087.38,-199.04 1087.38,-204.96 1087.38,-204.96 1087.38,-207.92 1084.42,-210.88 1081.46,-210.88"/>
+<text text-anchor="start" x="1028.38" y="-198.32" font-family="Helvetica,sans-Serif" font-size="9.00">EventArgs.ts</text>
+</a>
+</g>
+</g>
+<!-- src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/EventArgs.ts -->
+<g id="edge54" class="edge">
+<title>src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/EventArgs.ts</title>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M917.05,-154.28C934.87,-163.6 963.75,-177.86 990,-187 997.3,-189.54 1005.23,-191.8 1012.91,-193.75"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="1018.41,-197.25 1013.08,-193.79 1019.41,-193.17 1018.41,-197.25"/>
+</g>
+<!-- src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/TerradrawMode.ts -->
+<g id="edge59" class="edge">
+<title>src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/TerradrawMode.ts</title>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M907.37,-154.12C921.5,-170.5 953.9,-204.35 990,-217 1033.11,-232.11 1085.45,-230.07 1123.36,-225.3"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="1129.55,-226.6 1123.32,-225.31 1129,-222.44 1129.55,-226.6"/>
 </g>
 <!-- src/lib/interfaces/EventTypes.ts -->
-<g id="node28" class="node">
+<g id="node30" class="node">
 <title>src/lib/interfaces/EventTypes.ts</title>
-<g id="a_node28"><a xlink:href="src/lib/interfaces/EventTypes.ts" xlink:title="EventTypes.ts">
-<path fill="#ddfeff" stroke="black" d="M1084.46,-132.88C1084.46,-132.88 1023.29,-132.88 1023.29,-132.88 1020.33,-132.88 1017.38,-129.92 1017.38,-126.96 1017.38,-126.96 1017.38,-121.04 1017.38,-121.04 1017.38,-118.08 1020.33,-115.12 1023.29,-115.12 1023.29,-115.12 1084.46,-115.12 1084.46,-115.12 1087.42,-115.12 1090.38,-118.08 1090.38,-121.04 1090.38,-121.04 1090.38,-126.96 1090.38,-126.96 1090.38,-129.92 1087.42,-132.88 1084.46,-132.88"/>
-<text text-anchor="start" x="1025.38" y="-120.33" font-family="Helvetica,sans-Serif" font-size="9.00">EventTypes.ts</text>
+<g id="a_node30"><a xlink:href="src/lib/interfaces/EventTypes.ts" xlink:title="EventTypes.ts">
+<path fill="#ddfeff" stroke="black" d="M1084.46,-122.88C1084.46,-122.88 1023.29,-122.88 1023.29,-122.88 1020.33,-122.88 1017.38,-119.92 1017.38,-116.96 1017.38,-116.96 1017.38,-111.04 1017.38,-111.04 1017.38,-108.08 1020.33,-105.12 1023.29,-105.12 1023.29,-105.12 1084.46,-105.12 1084.46,-105.12 1087.42,-105.12 1090.38,-108.08 1090.38,-111.04 1090.38,-111.04 1090.38,-116.96 1090.38,-116.96 1090.38,-119.92 1087.42,-122.88 1084.46,-122.88"/>
+<text text-anchor="start" x="1025.38" y="-110.33" font-family="Helvetica,sans-Serif" font-size="9.00">EventTypes.ts</text>
 </a>
 </g>
 </g>
 <!-- src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/EventTypes.ts -->
-<g id="edge53" class="edge">
+<g id="edge55" class="edge">
 <title>src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/EventTypes.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M926.18,-149.67C949.25,-144.99 983.24,-138.11 1010.21,-132.64"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="1016.34,-133.54 1010.04,-132.68 1015.51,-129.43 1016.34,-133.54"/>
-</g>
-<!-- src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/TerradrawMode.ts -->
-<g id="edge57" class="edge">
-<title>src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/TerradrawMode.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M910.65,-164.18C926.71,-177.25 958.45,-200.79 990,-211 1033.57,-225.11 1085.86,-227.53 1123.63,-226.91"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="1129.55,-228.88 1123.51,-226.91 1129.46,-224.68 1129.55,-228.88"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M926.18,-139.67C949.25,-134.99 983.24,-128.11 1010.21,-122.64"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="1016.34,-123.54 1010.04,-122.68 1015.51,-119.43 1016.34,-123.54"/>
 </g>
 <!-- src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/TerrainSource.ts -->
-<g id="edge59" class="edge">
+<g id="edge61" class="edge">
 <title>src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/TerrainSource.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M926.21,-155.86C972.39,-157.38 1068.61,-160.53 1126.77,-162.44"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="1132.6,-164.73 1126.67,-162.43 1132.74,-160.53 1132.6,-164.73"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M926.21,-144.42C972.39,-143.42 1068.61,-141.31 1126.77,-140.04"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="1132.71,-142.01 1126.67,-140.05 1132.62,-137.81 1132.71,-142.01"/>
 </g>
 <!-- src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/TerradrawModeClass.ts -->
-<g id="edge58" class="edge">
+<g id="edge60" class="edge">
 <title>src/lib/interfaces/index.ts&#45;&gt;src/lib/interfaces/TerradrawModeClass.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M926,-152.35C992.34,-145.97 1165.83,-131.51 1220.25,-149 1241.66,-155.88 1262.06,-172.21 1274.91,-184.14"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="1277.76,-189.77 1274.87,-184.1 1280.66,-186.73 1277.76,-189.77"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M913.13,-135.67C930.04,-124.4 960.62,-106.06 990,-99 1045.2,-85.73 1061.38,-92.22 1117.75,-99 1129.39,-100.4 1209.6,-119.11 1220.25,-124 1239.99,-133.07 1259.88,-148.14 1273.07,-159.18"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="1276.18,-164.58 1272.97,-159.09 1278.9,-161.39 1276.18,-164.58"/>
 </g>
 <!-- src/lib/controls/MaplibreTerradrawControl.ts&#45;&gt;src/lib/constants/index.ts -->
 <g id="edge12" class="edge">
@@ -549,8 +564,8 @@
 <!-- src/lib/controls/MaplibreTerradrawControl.ts&#45;&gt;src/lib/interfaces/index.ts -->
 <g id="edge14" class="edge">
 <title>src/lib/controls/MaplibreTerradrawControl.ts&#45;&gt;src/lib/interfaces/index.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M433.48,-256.7C436.34,-254.83 438.96,-252.62 441.25,-250 455.23,-234.01 433.92,-73.7 449.25,-59 463.95,-44.91 797.26,-50.48 815.75,-59 851.86,-75.63 878,-116.83 890.19,-139.48"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="888.19,-140.17 892.82,-144.52 891.91,-138.23 888.19,-140.17"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M433.48,-256.7C436.34,-254.83 438.96,-252.62 441.25,-250 455.23,-234.01 433.92,-73.7 449.25,-59 463.95,-44.91 797.03,-50.99 815.75,-59 849.32,-73.36 875.7,-108.93 888.81,-129.54"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="886.85,-130.37 891.79,-134.38 890.43,-128.17 886.85,-130.37"/>
 </g>
 <!-- src/lib/controls/index.ts -->
 <g id="node13" class="node">
@@ -576,44 +591,44 @@
 <!-- src/lib/helpers/calcArea.ts&#45;&gt;src/lib/interfaces/AreaUnit.ts -->
 <g id="edge17" class="edge">
 <title>src/lib/helpers/calcArea.ts&#45;&gt;src/lib/interfaces/AreaUnit.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M632.26,-107.87C697.11,-105.47 856.46,-99.9 990,-98 1046.77,-97.19 1061.28,-92.09 1117.75,-98 1124.22,-98.68 1131.04,-99.78 1137.63,-101.04"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="1136.86,-103.03 1143.16,-102.17 1137.7,-98.91 1136.86,-103.03"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M632.21,-105.41C696.95,-97.75 856.1,-80.04 990,-74 1046.72,-71.44 1061.28,-68.09 1117.75,-74 1124.22,-74.68 1131.04,-75.78 1137.63,-77.04"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="1136.86,-79.03 1143.16,-78.17 1137.7,-74.91 1136.86,-79.03"/>
 </g>
 <!-- src/lib/helpers/calcArea.ts&#45;&gt;src/lib/helpers/convertAreaUnit.ts -->
 <g id="edge18" class="edge">
 <title>src/lib/helpers/calcArea.ts&#45;&gt;src/lib/helpers/convertAreaUnit.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M632.54,-111.81C647.02,-113.93 664.39,-117.61 679,-124 699.2,-132.83 719.21,-148.31 732.61,-159.9"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="731.19,-161.45 737.07,-163.87 733.98,-158.31 731.19,-161.45"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M632.33,-112.31C646.76,-114.55 664.15,-118.19 679,-124 697.19,-131.11 715.93,-142.94 729.43,-152.39"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="728.16,-154.07 734.26,-155.86 730.61,-150.66 728.16,-154.07"/>
 </g>
 <!-- src/lib/helpers/convertAreaUnit.ts&#45;&gt;src/lib/interfaces/index.ts -->
 <g id="edge23" class="edge">
 <title>src/lib/helpers/convertAreaUnit.ts&#45;&gt;src/lib/interfaces/index.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M795.78,-168.89C817.89,-165.88 844.09,-162.32 864.41,-159.55"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="864.45,-161.67 870.11,-158.78 863.88,-157.51 864.45,-161.67"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M795.78,-160.28C817.89,-156.97 844.09,-153.05 864.41,-150.01"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="864.49,-152.12 870.11,-149.15 863.87,-147.97 864.49,-152.12"/>
 </g>
 <!-- src/lib/helpers/calcDistance.ts&#45;&gt;src/lib/interfaces/index.ts -->
 <g id="edge19" class="edge">
 <title>src/lib/helpers/calcDistance.ts&#45;&gt;src/lib/interfaces/index.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M640.65,-227.65C654.3,-225.97 668.81,-221.68 679,-212 696.27,-195.59 673.4,-174.89 692,-160 705.06,-149.54 809.1,-151.71 864.08,-153.62"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="863.92,-155.72 869.99,-153.84 864.07,-151.52 863.92,-155.72"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M640.82,-227.82C654.48,-226.16 668.97,-221.84 679,-212 698.48,-192.89 671.06,-169.49 692,-152 704.85,-141.27 808.99,-142.49 864.04,-143.92"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="863.9,-146.02 869.95,-144.08 864.01,-141.82 863.9,-146.02"/>
 </g>
 <!-- src/lib/helpers/calcDistance.ts&#45;&gt;src/lib/helpers/convertMetricDistance.ts -->
 <g id="edge20" class="edge">
 <title>src/lib/helpers/calcDistance.ts&#45;&gt;src/lib/helpers/convertMetricDistance.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M640.67,-224.14C653.56,-223.17 668.37,-222.06 682.8,-220.97"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="682.88,-223.07 688.7,-220.53 682.56,-218.88 682.88,-223.07"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M640.67,-223.88C653.56,-222.82 668.37,-221.61 682.8,-220.42"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="682.9,-222.52 688.71,-219.94 682.55,-218.33 682.9,-222.52"/>
 </g>
 <!-- src/lib/helpers/calcDistance.ts&#45;&gt;src/lib/helpers/getDistanceUnitName.ts -->
 <g id="edge21" class="edge">
 <title>src/lib/helpers/calcDistance.ts&#45;&gt;src/lib/helpers/getDistanceUnitName.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M640.81,-232.5C653.17,-234.8 666.83,-237.92 679,-242 694.89,-247.33 711.81,-255.49 725.02,-262.48"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="723.79,-264.2 730.06,-265.21 725.78,-260.51 723.79,-264.2"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M640.51,-232.18C652.98,-234.48 666.77,-237.67 679,-242 695.72,-247.92 713.35,-257.29 726.73,-265.12"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="725.64,-266.91 731.86,-268.19 727.79,-263.31 725.64,-266.91"/>
 </g>
 <!-- src/lib/helpers/getDistanceUnitName.ts&#45;&gt;src/lib/interfaces/DistanceUnit.ts -->
 <g id="edge24" class="edge">
 <title>src/lib/helpers/getDistanceUnitName.ts&#45;&gt;src/lib/interfaces/DistanceUnit.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M807.55,-276.74C907.56,-277.8 1106,-278.66 1117.75,-269 1138.82,-251.67 1112.62,-229.39 1130.75,-209 1131.13,-208.57 1131.52,-208.16 1131.93,-207.75"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="1133.17,-209.45 1136.58,-204.08 1130.57,-206.15 1133.17,-209.45"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M807.58,-280.26C907.64,-282.22 1106.16,-284.84 1117.75,-275 1143.21,-253.39 1112.46,-228.94 1130.75,-201 1134.87,-194.71 1140.88,-189.46 1147.13,-185.24"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="1148.12,-187.1 1152.11,-182.15 1145.9,-183.53 1148.12,-187.1"/>
 </g>
 <!-- src/lib/helpers/cleanMaplibreStyle.ts&#45;&gt;src/lib/constants/index.ts -->
 <g id="edge22" class="edge">
@@ -624,14 +639,14 @@
 <!-- src/lib/helpers/queryElevationByPoint.ts&#45;&gt;src/lib/interfaces/index.ts -->
 <g id="edge36" class="edge">
 <title>src/lib/helpers/queryElevationByPoint.ts&#45;&gt;src/lib/interfaces/index.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M660.99,-141.33C703.84,-143.14 763.43,-145.86 815.75,-149 831.67,-149.95 849.31,-151.22 864.15,-152.34"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="863.98,-154.43 870.12,-152.79 864.29,-150.24 863.98,-154.43"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M660.98,-138.93C703.82,-139.03 763.41,-139.48 815.75,-141 831.67,-141.46 849.31,-142.28 864.15,-143.06"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="864.01,-145.15 870.11,-143.38 864.23,-140.96 864.01,-145.15"/>
 </g>
 <!-- src/lib/helpers/queryElevationFromRasterDEM.ts&#45;&gt;src/lib/interfaces/index.ts -->
 <g id="edge37" class="edge">
 <title>src/lib/helpers/queryElevationFromRasterDEM.ts&#45;&gt;src/lib/interfaces/index.ts</title>
-<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M653.28,-88.37C661.88,-90.13 670.72,-92.04 679,-94 745.22,-109.7 821.59,-131.95 864.35,-144.78"/>
-<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="863.63,-146.76 869.98,-146.47 864.84,-142.73 863.63,-146.76"/>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M651.57,-88.35C660.7,-90.17 670.15,-92.1 679,-94 744.99,-108.16 821.74,-126.47 864.58,-136.86"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="863.87,-138.85 870.19,-138.22 864.86,-134.77 863.87,-138.85"/>
 </g>
 <!-- src/lib/index.ts -->
 <g id="node27" class="node">
@@ -657,8 +672,8 @@
 <!-- src/lib/index.ts&#45;&gt;src/lib/interfaces/index.ts -->
 <g id="edge41" class="edge">
 <title>src/lib/index.ts&#45;&gt;src/lib/interfaces/index.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M54.33,-232.68C65.3,-191.14 115.94,-25 223.5,-25 223.5,-25 223.5,-25 602.62,-25 697.95,-25 732.65,-2.31 815.75,-49 853.06,-69.96 879.14,-115.49 890.87,-139.48"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="891.6,-145.91 890.93,-139.59 895.4,-144.11 891.6,-145.91"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M54.33,-232.68C65.3,-191.14 115.94,-25 223.5,-25 223.5,-25 223.5,-25 602.62,-25 697.95,-25 731.54,-4.34 815.75,-49 850.69,-67.53 877.16,-107.6 889.75,-129.66"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="890.89,-136.03 889.81,-129.76 894.56,-133.99 890.89,-136.03"/>
 </g>
 <!-- src/lib/index.ts&#45;&gt;src/lib/controls/index.ts -->
 <g id="edge39" class="edge">
@@ -666,11 +681,17 @@
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M78.49,-248.23C81.34,-248.9 84.27,-249.59 87.18,-250.28"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="92.47,-253.68 87.11,-250.26 93.43,-249.59 92.47,-253.68"/>
 </g>
+<!-- src/lib/interfaces/EventArgs.ts&#45;&gt;src/lib/interfaces/TerradrawMode.ts -->
+<g id="edge42" class="edge">
+<title>src/lib/interfaces/EventArgs.ts&#45;&gt;src/lib/interfaces/TerradrawMode.ts</title>
+<path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M1087.56,-205.83C1098.56,-207.11 1111.11,-208.58 1123.19,-210"/>
+<polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="1122.93,-212.08 1129.13,-210.69 1123.42,-207.91 1122.93,-212.08"/>
+</g>
 <!-- src/lib/interfaces/TerradrawMode.ts&#45;&gt;src/lib/constants/AvailableModes.ts -->
-<g id="edge50" class="edge">
+<g id="edge51" class="edge">
 <title>src/lib/interfaces/TerradrawMode.ts&#45;&gt;src/lib/constants/AvailableModes.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M1137.99,-233.36C1135.35,-234.95 1132.88,-236.82 1130.75,-239 1117.39,-252.67 1128.5,-264.19 1117.75,-280 1076.57,-340.54 1025.61,-320.03 990,-384 976.49,-408.28 1001.13,-425.85 982,-446 974.44,-453.96 964.17,-458.53 953.44,-461.01"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="953.3,-458.9 947.77,-462.03 954.05,-463.03 953.3,-458.9"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M1137.81,-225.19C1135.2,-226.82 1132.8,-228.74 1130.75,-231 1113.88,-249.61 1131.34,-264.88 1117.75,-286 1078.88,-346.4 1025.75,-322.7 990,-385 976.39,-408.72 1000.84,-426.19 982,-446 974.43,-453.96 964.16,-458.52 953.43,-461"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="953.29,-458.89 947.76,-462.02 954.04,-463.02 953.29,-458.89"/>
 </g>
 </g>
 </svg>

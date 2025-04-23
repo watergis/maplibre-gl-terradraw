@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.3.14
+
+### Patch Changes
+
+- c8c1f03: fix: fixed bug of mode-changed event is not dispatched when mode is changed.
+
 ## 1.3.13
 
 ### Patch Changes

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { replaceState } from '$app/navigation';
+	import { page } from '$app/state';
 	import {
 		AvailableModes,
 		debounce,
@@ -30,16 +32,30 @@
 
 	let updateDemo = $state(false);
 
-	let controlType: 'default' | 'measure' = $state('default');
-	let isOpen: 'open' | 'close' | undefined = $state('open');
-	let selectedModes: TerradrawMode[] = $state(JSON.parse(JSON.stringify(AvailableModes)));
+	const defaultControlType =
+		(page.url.searchParams.get('controlType') as 'default' | 'measure') ?? 'default';
+	const defaultIsOpen = (page.url.searchParams.get('isOpen') as 'open' | 'close') ?? 'open';
+	const defaultModes =
+		((page.url.searchParams.get('modes') as string)?.split(',') as TerradrawMode[]) ??
+		JSON.parse(JSON.stringify(AvailableModes));
+	const defaultDistanceUnit =
+		(page.url.searchParams.get('distanceUnit') as DistanceUnit) ?? 'kilometers';
+	const defaultDistancePrecision = parseInt(page.url.searchParams.get('distancePrecision') ?? '2');
+	const defaultAreaUnit = (page.url.searchParams.get('areaUnit') as AreaUnit) ?? 'metric';
+	const defaultAreaPrecision = parseInt(page.url.searchParams.get('areaPrecision') ?? '2');
+	const defaultComputeElevation =
+		(page.url.searchParams.get('computeElevation') as 'enabled' | 'disabled') ?? 'enabled';
+
+	let controlType: 'default' | 'measure' = $state(defaultControlType);
+	let isOpen: 'open' | 'close' | undefined = $state(defaultIsOpen);
+	let selectedModes: TerradrawMode[] = $state(defaultModes);
 
 	let selectedFeature: string = $state('');
-	let distanceUnit: DistanceUnit = $state('kilometers');
-	let distancePrecision: number = $state(2);
-	let areaUnit: AreaUnit = $state('metric');
-	let areaPrecision: number = $state(2);
-	let computeElevation: 'enabled' | 'disabled' = $state('enabled');
+	let distanceUnit: DistanceUnit = $state(defaultDistanceUnit);
+	let distancePrecision: number = $state(defaultDistancePrecision);
+	let areaUnit: AreaUnit = $state(defaultAreaUnit);
+	let areaPrecision: number = $state(defaultAreaPrecision);
+	let computeElevation: 'enabled' | 'disabled' = $state(defaultComputeElevation);
 
 	let searchQuery = $state('');
 	let examples = $state(JSON.parse(JSON.stringify(data.examples)));
@@ -59,6 +75,7 @@
 		} else if (type === 'computeElevation') {
 			computeElevation = value as 'enabled' | 'disabled';
 		}
+		updatePageUrl();
 	};
 
 	const handleSearchExamples = debounce(() => {
@@ -79,6 +96,32 @@
 
 		examples = filteredExamples;
 	}, 1000);
+
+	const updatePageUrl = () => {
+		const pageUrl = new URL(page.url.href);
+		pageUrl.searchParams.set('controlType', controlType);
+		pageUrl.searchParams.set('isOpen', isOpen ?? 'open');
+		pageUrl.searchParams.set('modes', selectedModes.join(','));
+		if (controlType == 'measure') {
+			pageUrl.searchParams.set('distanceUnit', distanceUnit);
+			pageUrl.searchParams.set('distancePrecision', distancePrecision.toString());
+			pageUrl.searchParams.set('areaUnit', areaUnit);
+			pageUrl.searchParams.set('areaPrecision', areaPrecision.toString());
+			pageUrl.searchParams.set('computeElevation', computeElevation);
+		} else {
+			pageUrl.searchParams.delete('distanceUnit');
+			pageUrl.searchParams.delete('distancePrecision');
+			pageUrl.searchParams.delete('areaUnit');
+			pageUrl.searchParams.delete('areaPrecision');
+			pageUrl.searchParams.delete('computeElevation');
+		}
+		replaceState(pageUrl, '');
+	};
+
+	const handleDemoConfigChanged = () => {
+		updateDemo = !updateDemo;
+		updatePageUrl();
+	};
 </script>
 
 <div class="snap-y overflow-y-scroll h-full">
@@ -94,9 +137,7 @@
 				bind:areaUnit
 				bind:areaPrecision
 				bind:computeElevation
-				onchange={() => {
-					updateDemo = !updateDemo;
-				}}
+				onchange={handleDemoConfigChanged}
 				onMeasureChange={handleMeasureChange}
 			></DemoController>
 

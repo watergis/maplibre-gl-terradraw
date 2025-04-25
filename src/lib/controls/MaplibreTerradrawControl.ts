@@ -310,6 +310,7 @@ export class MaplibreTerradrawControl implements IControl {
 		const btn = document.createElement('button');
 		btn.type = 'button';
 		this.modeButtons[mode] = btn;
+		btn.setAttribute('data-testid', `${mode}`);
 
 		if (mode === 'render') {
 			btn.classList.add(`maplibregl-terradraw-${mode}-button`);

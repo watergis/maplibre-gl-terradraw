@@ -12,7 +12,6 @@ test.describe('demo page test', () => {
 	test('demo page has expected to have map class', async ({ page }) => {
 		await page.goto('/');
 		const mapContainer = page.locator('.map');
-		await expect(mapContainer).toBeTruthy();
 		await expect(mapContainer).toHaveCount(2);
 	});
 
@@ -27,10 +26,12 @@ test.describe('demo page test', () => {
 				className = '.maplibregl-terradraw-delete-selection-button';
 			} else if (mode === 'delete') {
 				className = '.maplibregl-terradraw-delete-button';
+			} else if (mode === 'download') {
+				className = '.maplibregl-terradraw-download-button';
 			}
 
-			const modeButoton = page.locator(className);
-			await expect(modeButoton).toBeTruthy();
+			const modeButton = page.locator(className);
+			await expect(modeButton).toHaveCount(1);
 		}
 	});
 });

@@ -29,10 +29,11 @@ See the [API documentation](https://watergis.github.io/maplibre-gl-terradraw/).
 
 These projects are using `maplibre-gl-terradraw` and can be used as examples:
 
-| Name          | Website                                       | Source code                                      |
-| ------------- | --------------------------------------------- | ------------------------------------------------ |
-| Cartes.app    | [link](https://cartes.app)                    | [link](https://github.com/cartesapp/cartes)      |
-| Open Hinata 3 | [link](https://kenzkenz.xsrv.jp/open-hinata3) | [link](https://github.com/kenzkenz/open-hinata3) |
+| Name          | Website                                                                | Source code                                        |
+| ------------- | ---------------------------------------------------------------------- | -------------------------------------------------- |
+| Cartes.app    | [cartes.app](https://cartes.app)                                       | [GitHub](https://github.com/cartesapp/cartes)      |
+| Open Hinata 3 | [kenzkenz.xsrv.jp/open-hinata3](https://kenzkenz.xsrv.jp/open-hinata3) | [GitHub](https://github.com/kenzkenz/open-hinata3) |
+| UNDP GeoHub   | [geohub.data.undp.org](https://geohub.data.undp.org/)                  | [GitHub](https://github.com/UNDP-Data/geohub)      |
 
 Please feel free to make a PR to add your project here!
 

@@ -67,6 +67,7 @@
 		"@undp-data/style-switcher": "^2.0.12",
 		"@vitest/coverage-v8": "^3.1.2",
 		"@watergis/terrain-rgb": "^2.1.1",
+		"axe-playwright": "^2.1.0",
 		"dependency-cruiser": "^16.10.1",
 		"eslint": "^9.25.1",
 		"eslint-config-prettier": "^10.1.2",

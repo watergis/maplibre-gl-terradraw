@@ -33,7 +33,8 @@
 
 			const draw = new MaplibreTerradrawControl.MaplibreTerradrawControl({
 				modes: [{modes}],
-				open: {open}
+				open: {open},
+				{measure_options}
 			});
 			map.addControl(draw, 'top-left');
 		</script>

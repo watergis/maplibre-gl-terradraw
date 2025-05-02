@@ -143,6 +143,7 @@
 						open: isOpen,
 						distanceUnit: distanceUnit,
 						distancePrecision: distancePrecision,
+						areaUnit: areaUnit,
 						areaPrecision: areaPrecision,
 						computeElevation: computeElevation === 'enabled'
 					});

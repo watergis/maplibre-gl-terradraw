@@ -26,12 +26,10 @@
 		{ label: 'NPM', value: 'npm' },
 		{ label: 'CDN', value: 'cdn' }
 	];
-	let importTypeTabSet: string = $state(importTypeTabs[0].value);
-
-	let packageManager = $state('npm');
 
 	let updateDemo = $state(false);
 
+	const defaultExampleType = page.url.searchParams.get('exampleType') ?? importTypeTabs[0].value;
 	const defaultControlType =
 		(page.url.searchParams.get('controlType') as 'default' | 'measure') ?? 'default';
 	const defaultIsOpen = (page.url.searchParams.get('isOpen') as 'open' | 'close') ?? 'open';
@@ -45,7 +43,9 @@
 	const defaultAreaPrecision = parseInt(page.url.searchParams.get('areaPrecision') ?? '2');
 	const defaultComputeElevation =
 		(page.url.searchParams.get('computeElevation') as 'enabled' | 'disabled') ?? 'enabled';
+	const defaultPackageManager = page.url.searchParams.get('packageManager') ?? 'npm';
 
+	let importTypeTabSet: string = $state(defaultExampleType);
 	let controlType: 'default' | 'measure' = $state(defaultControlType);
 	let isOpen: 'open' | 'close' | undefined = $state(defaultIsOpen);
 	let selectedModes: TerradrawMode[] = $state(defaultModes);
@@ -56,6 +56,7 @@
 	let areaUnit: AreaUnit = $state(defaultAreaUnit);
 	let areaPrecision: number = $state(defaultAreaPrecision);
 	let computeElevation: 'enabled' | 'disabled' = $state(defaultComputeElevation);
+	let packageManager = $state(defaultPackageManager);
 
 	let searchQuery = $state('');
 	let examples = $state(JSON.parse(JSON.stringify(data.examples)));
@@ -100,6 +101,7 @@
 
 	const updatePageUrl = () => {
 		const pageUrl = new URL(page.url.href);
+		pageUrl.searchParams.set('exampleType', importTypeTabSet);
 		pageUrl.searchParams.set('controlType', controlType);
 		pageUrl.searchParams.set('isOpen', isOpen ?? 'open');
 		pageUrl.searchParams.set('modes', selectedModes.join(','));
@@ -116,6 +118,7 @@
 			pageUrl.searchParams.delete('areaPrecision');
 			pageUrl.searchParams.delete('computeElevation');
 		}
+		pageUrl.searchParams.set('packageManager', packageManager);
 		replaceState(pageUrl, '');
 	};
 
@@ -210,7 +213,13 @@
 		</div>
 
 		<div class="space-y-2">
-			<Tabs value={importTypeTabSet} onValueChange={(e) => (importTypeTabSet = e.value)}>
+			<Tabs
+				value={importTypeTabSet}
+				onValueChange={(e) => {
+					importTypeTabSet = e.value;
+					updatePageUrl();
+				}}
+			>
 				{#snippet list()}
 					{#each importTypeTabs as tab (tab.value)}
 						<Tabs.Control value={tab.value}>{tab.label}</Tabs.Control>
@@ -224,7 +233,10 @@
 						<Segment
 							name="package-manager"
 							value={packageManager}
-							onValueChange={(e) => (packageManager = e.value as string)}
+							onValueChange={(e) => {
+								packageManager = e.value as string;
+								updatePageUrl();
+							}}
 						>
 							<Segment.Item value="npm">npm</Segment.Item>
 							<Segment.Item value="yarn">yarn</Segment.Item>

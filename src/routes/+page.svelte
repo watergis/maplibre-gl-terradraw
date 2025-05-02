@@ -75,6 +75,7 @@
 		} else if (type === 'computeElevation') {
 			computeElevation = value as 'enabled' | 'disabled';
 		}
+		updateDemo = !updateDemo;
 		updatePageUrl();
 	};
 
@@ -121,6 +122,16 @@
 	const handleDemoConfigChanged = () => {
 		updateDemo = !updateDemo;
 		updatePageUrl();
+	};
+
+	const getMeasureOptions = () => {
+		const options = [];
+		options.push(`distanceUnit: '${distanceUnit}'`);
+		options.push(`distancePrecision: ${distancePrecision}`);
+		options.push(`areaUnit: '${areaUnit}'`);
+		options.push(`areaPrecision: ${areaPrecision}`);
+		options.push(`computeElevation: ${computeElevation === 'enabled' ? 'true' : 'false'}`);
+		return options.join(`, `);
 	};
 </script>
 
@@ -257,7 +268,11 @@
 											: 'MaplibreMeasureControl'
 									)
 									.replace('{modes}', selectedModes.map((m) => `'${m}'`).join(','))
-									.replace('{open}', isOpen === 'open' ? 'true' : 'false')}
+									.replace('{open}', isOpen === 'open' ? 'true' : 'false')
+									.replace(
+										'{measure_options}',
+										controlType === 'default' ? '' : getMeasureOptions()
+									)}
 							/>
 						{/key}
 					</Tabs.Panel>
@@ -275,7 +290,11 @@
 											: 'MaplibreMeasureControl('
 									)
 									.replace('{modes}', selectedModes.map((m) => `'${m}'`).join(','))
-									.replace('{open}', isOpen === 'open' ? 'true' : 'false')}
+									.replace('{open}', isOpen === 'open' ? 'true' : 'false')
+									.replace(
+										'{measure_options}',
+										controlType === 'default' ? '' : getMeasureOptions()
+									)}
 							/>
 						{/key}
 					</Tabs.Panel>

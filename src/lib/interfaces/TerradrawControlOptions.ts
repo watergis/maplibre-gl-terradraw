@@ -32,4 +32,10 @@ export interface TerradrawControlOptions {
 	 * https://github.com/JamesLMilner/terra-draw/blob/806e319d5680a3f69edeff7dd629da3f1b4ff9bf/src/adapters/common/base.adapter.ts#L28-L48
 	 */
 	adapterOptions?: BaseAdapterConfig;
+
+	/**
+	 * CSS class prefix for the control.
+	 * Default is empty string. It will add this prefix to the class names defined in maplibre-gl-terradraw.css.
+	 */
+	cssPrefix?: string;
 }

@@ -36,6 +36,12 @@ export interface MeasureControlOptions {
 	adapterOptions?: TerraDrawExtend.BaseAdapterConfig;
 
 	/**
+	 * CSS class prefix for the control.
+	 * Default is 'measure-'. It will add this prefix to the class names defined in maplibre-gl-terradraw.css.
+	 */
+	cssPrefix?: string;
+
+	/**
 	 * Maplibre symbol layer specification (on points) for point layer
 	 */
 	pointLayerLabelSpec?: SymbolLayerSpecification;

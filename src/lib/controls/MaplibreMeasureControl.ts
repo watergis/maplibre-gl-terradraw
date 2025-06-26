@@ -160,7 +160,8 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		super({
 			modes: measureOptions.modes,
 			open: measureOptions.open,
-			modeOptions: measureOptions.modeOptions
+			modeOptions: measureOptions.modeOptions,
+			cssPrefix: measureOptions.cssPrefix
 		});
 		this.measureOptions = measureOptions;
 	}

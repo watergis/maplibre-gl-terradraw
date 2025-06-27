@@ -375,5 +375,6 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 	distanceUnit: 'kilometers',
 	distancePrecision: 2,
 	areaUnit: 'metric',
-	areaPrecision: 2
+	areaPrecision: 2,
+	cssPrefix: 'measure-'
 };

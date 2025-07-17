@@ -55,7 +55,7 @@
 		"@skeletonlabs/skeleton-svelte": "^1.2.3",
 		"@sveltejs/adapter-auto": "^6.0.1",
 		"@sveltejs/kit": "^2.21.5",
-		"@sveltejs/vite-plugin-svelte": "^5.1.0",
+		"@sveltejs/vite-plugin-svelte": "^6.0.0",
 		"@tailwindcss/vite": "^4.1.10",
 		"@testing-library/jest-dom": "^6.6.3",
 		"@turf/area": "^7.2.0",

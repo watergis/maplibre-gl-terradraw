@@ -1,5 +1,28 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.5.0
+
+### Minor Changes
+
+- c5da394: feat: added freehand-linestring mode by upgrading terra-draw to 1.11.0.
+
+  Introduced cache functionality to avoid fetching elevation by the same coordinates repeatedly. The below is an example how to use cache for elevation. If it is not specified, default setting is used for caching.
+
+  ```ts
+  const draw = new MaplibreMeasureControl({
+  	elevationCacheConfig: {
+  		enabled: true, // enable cache
+  		maxSize: 1000, // max cache size
+  		ttl: 60 * 60 * 1000, // 1 hour
+  		precision: 9 // 9 is default precision of terra-draw adapter setting
+  	}
+  });
+  ```
+
+### Patch Changes
+
+- fe2f02d: chore: update dependencies such as vite (6 to 7), etc
+
 ## 1.4.0
 
 ### Minor Changes

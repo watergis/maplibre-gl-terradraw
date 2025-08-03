@@ -5,6 +5,7 @@ import type { DistanceUnit } from './DistanceUnit';
 import type { AreaUnit } from './AreaUnit';
 import type { TerradrawMode } from './TerradrawMode';
 import type { TerrainSource } from './TerrainSource';
+import type { ElevationCacheConfig } from './ElevationCacheConfig';
 
 /**
  * MeasureControl Plugin control constructor options
@@ -111,4 +112,14 @@ export interface MeasureControlOptions {
 	 * As default, terrarium source from AWS is set.
 	 */
 	terrainSource?: TerrainSource;
+
+	/**
+	 * Elevation cache configuration.
+	 * If undefined is set to this option, the plugin uses default cache configuration.
+	 * Default is enabled with maxSize 1000, ttl 1 hour, and precision 9.
+	 * If you want to disable elevation cache, set `enabled` to false.
+	 *
+	 * Note: If you disable elevation cache, the plugin will query elevation from DEM tiles every time when you measure linestring even if the same coordinates appear repeatedly. This may make the response slow.
+	 */
+	elevationCacheConfig?: ElevationCacheConfig;
 }

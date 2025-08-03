@@ -1,6 +1,7 @@
 import {
 	TerraDrawAngledRectangleMode,
 	TerraDrawCircleMode,
+	TerraDrawFreehandLineStringMode,
 	TerraDrawFreehandMode,
 	TerraDrawLineStringMode,
 	TerraDrawPointMode,
@@ -104,6 +105,16 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 				closingPointOutlineWidth: 1
 			}
 		}),
+		'freehand-linestring': new TerraDrawFreehandLineStringMode({
+			styles: {
+				lineStringColor: '#666666',
+				lineStringWidth: 2,
+				closingPointColor: '#FFFFFF',
+				closingPointWidth: 3,
+				closingPointOutlineColor: '#666666',
+				closingPointOutlineWidth: 1
+			}
+		}),
 		sensor: new TerraDrawSensorMode({
 			styles: {
 				fillColor: '#EDEFF0',
@@ -158,6 +169,18 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 				freehand: {
 					feature: {
 						draggable: true,
+						coordinates: {
+							midpoints: true,
+							draggable: true,
+							deletable: true
+						}
+					}
+				},
+				'freehand-linestring': {
+					feature: {
+						draggable: true,
+						rotateable: true,
+						scaleable: true,
 						coordinates: {
 							midpoints: true,
 							draggable: true,
@@ -375,5 +398,11 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 	distanceUnit: 'kilometers',
 	distancePrecision: 2,
 	areaUnit: 'metric',
-	areaPrecision: 2
+	areaPrecision: 2,
+	elevationCacheConfig: {
+		enabled: true,
+		maxSize: 1000,
+		ttl: 60 * 60 * 1000, // 1 hour
+		precision: 9 // 9 is default precision of terra-draw adapter setting
+	}
 };

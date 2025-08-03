@@ -398,5 +398,11 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 	distanceUnit: 'kilometers',
 	distancePrecision: 2,
 	areaUnit: 'metric',
-	areaPrecision: 2
+	areaPrecision: 2,
+	elevationCacheConfig: {
+		enabled: true,
+		maxSize: 1000,
+		ttl: 60 * 60 * 1000, // 1 hour
+		precision: 9 // 9 is default precision of terra-draw adapter setting
+	}
 };

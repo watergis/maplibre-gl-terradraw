@@ -16,6 +16,7 @@ import {
 	calcDistance,
 	cleanMaplibreStyle,
 	debounce,
+	MemoryCache,
 	queryElevationByPoint,
 	queryElevationFromRasterDEM,
 	TERRADRAW_SOURCE_IDS
@@ -26,6 +27,7 @@ import {
  */
 export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	private measureOptions: MeasureControlOptions;
+	private elevationCache: MemoryCache<number> | undefined;
 
 	/**
 	 * The unit of distance can be degrees, radians, miles, or kilometers (default 'kilometers')
@@ -163,6 +165,15 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			modeOptions: measureOptions.modeOptions
 		});
 		this.measureOptions = measureOptions;
+		if (
+			this.measureOptions.elevationCacheConfig &&
+			this.measureOptions.elevationCacheConfig?.enabled
+		) {
+			this.elevationCache = new MemoryCache<number>(
+				this.measureOptions.elevationCacheConfig.maxSize,
+				this.measureOptions.elevationCacheConfig.ttl
+			);
+		}
 	}
 
 	/**
@@ -655,7 +666,9 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					if (points && points.length > 0) {
 						const updatedFeatures = await queryElevationFromRasterDEM(
 							points as GeoJSONStoreFeatures[],
-							this.measureOptions.terrainSource
+							this.measureOptions.terrainSource,
+							this.measureOptions.elevationCacheConfig,
+							this.elevationCache
 						);
 
 						this.replaceGeoJSONSource(
@@ -690,7 +703,9 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					if (points && points.length > 0) {
 						const updatedFeatures = await queryElevationFromRasterDEM(
 							points as GeoJSONStoreFeatures[],
-							this.measureOptions.terrainSource
+							this.measureOptions.terrainSource,
+							this.measureOptions.elevationCacheConfig,
+							this.elevationCache
 						);
 						this.replaceGeoJSONSource(
 							updatedFeatures,

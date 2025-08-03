@@ -12,12 +12,5 @@ export default defineConfig({
 			allow: ['./dist']
 		},
 		host: true
-	},
-	css: {
-		preprocessorOptions: {
-			scss: {
-				api: 'modern-compiler'
-			}
-		}
 	}
 });

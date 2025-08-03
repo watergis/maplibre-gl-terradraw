@@ -215,14 +215,14 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				const id: string = feature.id as string;
 				const geometryType = feature.geometry.type;
 				const mode = feature.properties.mode as TerradrawMode;
-				if (mode === 'linestring' && geometryType === 'LineString') {
+				if (['linestring', 'freehand-linestring'].includes(mode) && geometryType === 'LineString') {
 					this.measureLine(id);
 					this.computeElevationByLineFeatureID(id);
 				} else if (mode === 'point' && geometryType === 'Point') {
 					this.measurePoint(id);
 					this.computeElevationByPointFeatureID(id);
 				} else if (
-					!['point', 'linestring', 'select', 'render'].includes(mode) &&
+					!['point', 'linestring', 'freehand-linestring', 'select', 'render'].includes(mode) &&
 					geometryType === 'Polygon'
 				) {
 					this.measurePolygon(id);
@@ -270,7 +270,9 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	private registerMesureControl() {
 		if (!this.map) return;
 
-		const lineModes = this.options.modes?.filter((m) => ['linestring'].includes(m));
+		const lineModes = this.options.modes?.filter((m) =>
+			['linestring', 'freehand-linestring'].includes(m)
+		);
 		const pointMode = this.options.modes?.find((m) => m === 'point');
 
 		if (pointMode) {
@@ -385,7 +387,10 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			if (!drawInstance) return;
 			const snapshot = drawInstance.getSnapshot();
 			const lineFeatures = snapshot.filter(
-				(f) => f.properties.mode === 'linestring' && f.geometry.type === 'LineString'
+				(f) =>
+					f.properties.mode &&
+					['linestring', 'freehand-linestring'].includes(f.properties.mode as string) &&
+					f.geometry.type === 'LineString'
 			);
 			if (lineFeatures.length > 0) {
 				for (const f of lineFeatures) {
@@ -446,12 +451,12 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			if (feature) {
 				const geometryType = feature.geometry.type;
 				const mode = feature.properties.mode as TerradrawMode;
-				if (mode === 'linestring' && geometryType === 'LineString') {
+				if (['linestring', 'freehand-linestring'].includes(mode) && geometryType === 'LineString') {
 					this.measureLine(id);
 				} else if (mode === 'point' && geometryType === 'Point') {
 					this.measurePoint(id);
 				} else if (
-					!['point', 'linestring', 'select', 'render'].includes(mode) &&
+					!['point', 'linestring', 'freehand-linestring', 'select', 'render'].includes(mode) &&
 					geometryType === 'Polygon'
 				) {
 					this.measurePolygon(id);

@@ -15,6 +15,7 @@ export const defaultControlOptions: TerradrawControlOptions = {
 		'sector',
 		'circle',
 		'freehand',
+		'freehand-linestring',
 		'select',
 		'delete-selection',
 		'delete',

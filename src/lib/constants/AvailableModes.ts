@@ -16,6 +16,7 @@ export const AvailableModes = [
 	'rectangle',
 	'circle',
 	'freehand',
+	'freehand-linestring',
 	'angled-rectangle',
 	'sensor',
 	'sector',

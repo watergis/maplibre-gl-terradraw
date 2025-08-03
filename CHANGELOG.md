@@ -119,7 +119,6 @@
 ### Patch Changes
 
 - a567539: chore: upgraded terradraw to v1.2.0, and did the following changes:
-
   - feat: enable editable for default mode option of point, linestring and polygon. Now, point, linestring and polygon mode can be edited directly without using select mode, and node can be deleted by right click.
   - refactor: use TerraDrawExtend.FeatureID instead of string | number
 
@@ -129,7 +128,6 @@
 
 - 1d14866: chore: updated devDependencies.
 - e514d7f: refactor: moved following util functions from MeasureControl to helpers to reduce code size of the control.
-
   - queryTerrainElevation
   - getDistanceUnitName
   - calcArea
@@ -352,7 +350,6 @@
 ### Patch Changes
 
 - cb56751: chore: updated dependencies in package.json as follows:
-
   - support `maplibre-gl` to v5 as `peerDependencies`
   - delete turfjs from `peerDependencies` since they are bundled in the package.
   - add `terradraw` marked as optional in `peerDependencies` meta because TerraDraw is included in the plugin package. Terradraw is only required when users want to do their own customization.
@@ -448,7 +445,6 @@
   Due to adding new plugin control, `default` export was removed.
 
   New usage of `MaplibreTerradrawControl` will be like below.
-
   - NPM
 
   ```diff

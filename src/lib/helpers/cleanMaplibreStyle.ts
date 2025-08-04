@@ -49,7 +49,7 @@ export const cleanMaplibreStyle = (
 			});
 		} else if (options.excludeTerraDrawLayers === true) {
 			cloned.layers = cloned.layers.filter((l) => {
-				return 'source' in l && !sourceIds.includes(l.source);
+				return ('source' in l && !sourceIds.includes(l.source)) || l.type === 'background';
 			});
 			Object.keys(cloned.sources).forEach((key) => {
 				if (sourceIds.includes(key)) {

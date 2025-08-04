@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.5.1
+
+### Patch Changes
+
+- a2832a1: fix: keep background layer after calling cleanStyle with excludeTerraDrawLayers option. Previously background layer is deleted mistakenly
+
 ## 1.5.0
 
 ### Minor Changes

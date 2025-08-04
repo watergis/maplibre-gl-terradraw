@@ -37,6 +37,15 @@ These projects are using `maplibre-gl-terradraw` and can be used as examples:
 
 Please feel free to make a PR to add your project here!
 
+## Dependencies
+
+This plugin depends the following libraries:
+
+- [Terra Draw](https://github.com/JamesLMilner/terra-draw): core library for drawing features
+- [maplibre-gl-js](https://github.com/maplibre/maplibre-gl-js): map library for the plugin
+- [Turf](https://github.com/Turfjs/turf): It is used for measuring functionalities (area, distance, centroid).
+- [Google fonts](https://fonts.google.com/icons): using some icons for the plugin buttons
+
 ## Contribution
 
 See [CONTRIBUTING](./CONTRIBUTING.md)

@@ -197,6 +197,12 @@ describe('cleanMaplibreStyle - default control', () => {
 		expect(result).toEqual(maplibreStyle);
 	});
 
+	it('should include background layer when excludeTerraDrawLayers is true', () => {
+		const result = cleanMaplibreStyle(maplibreStyle, { excludeTerraDrawLayers: true });
+		const backgroundLayer = result.layers.filter((layer) => layer.id === 'background');
+		expect(backgroundLayer.length).toBe(1);
+	});
+
 	it('should exclude TerraDraw layers when excludeTerraDrawLayers is true', () => {
 		const result = cleanMaplibreStyle(maplibreStyle, { excludeTerraDrawLayers: true });
 		expect(
@@ -226,6 +232,12 @@ describe('cleanMaplibreStyle - measure control', () => {
 	it('should return the original style when no options are set', () => {
 		const result = cleanMaplibreStyle(maplibreStyle);
 		expect(result).toEqual(maplibreStyle);
+	});
+
+	it('should include background layer when excludeTerraDrawLayers is true', () => {
+		const result = cleanMaplibreStyle(maplibreStyle, { excludeTerraDrawLayers: true });
+		const backgroundLayer = result.layers.filter((layer) => layer.id === 'background');
+		expect(backgroundLayer.length).toBe(1);
 	});
 
 	it('should exclude TerraDraw layers when excludeTerraDrawLayers is true', () => {

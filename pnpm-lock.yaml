@@ -129,11 +129,11 @@ importers:
         specifier: ^4.1.11
         version: 4.1.11
       terra-draw:
-        specifier: ^1.11.0
-        version: 1.11.0
+        specifier: ^1.12.0
+        version: 1.12.0
       terra-draw-maplibre-gl-adapter:
-        specifier: ^1.1.1
-        version: 1.1.1(maplibre-gl@5.6.1)(terra-draw@1.11.0)
+        specifier: ^1.1.2
+        version: 1.1.2(maplibre-gl@5.6.1)(terra-draw@1.12.0)
       typedoc:
         specifier: ^0.28.9
         version: 0.28.9(typescript@5.9.2)
@@ -3115,14 +3115,14 @@ packages:
     resolution: {integrity: sha512-wK0Ri4fOGjv/XPy8SBHZChl8CM7uMc5VML7SqiQ0zG7+J5Vr+RMQDoHa2CNT6KHUnTGIXH34UDMkPzAUyapBZg==}
     engines: {node: '>=8'}
 
-  terra-draw-maplibre-gl-adapter@1.1.1:
-    resolution: {integrity: sha512-PkrhUO2sVuc8dviOzzfKyEAuToEKcy1UWOQ/EtdNXx+dPAw8WuCXOhXJpf+M1yi02z+v6mRMq/7h8sRs2fBeng==}
+  terra-draw-maplibre-gl-adapter@1.1.2:
+    resolution: {integrity: sha512-Oke9zH3mpMrIcqyX+eL6H1QgyV+lLnrA9arVaQ2V/lqm2SC/arGOQKSeWZTsP9eME8qjCFPkGIITE3GDO2RwRQ==}
     peerDependencies:
       maplibre-gl: '>=4'
       terra-draw: ^1.0.0
 
-  terra-draw@1.11.0:
-    resolution: {integrity: sha512-e1A64BnuexKdGo/Q3MF3SYyhbOo4I3modq28cjZJOuGe2T2NXvNOC0rwFLR12iAlH4g4GTpPfvvldi3c4hqWPA==}
+  terra-draw@1.12.0:
+    resolution: {integrity: sha512-/QzX1+3W6GVMJ2yvMa7JjVfzshfZQ0sQijQjJWxh6rjhA2gGDOeBNc63fiY2GabJfyRfjGUWzjFe60lQl12qpg==}
 
   test-exclude@7.0.1:
     resolution: {integrity: sha512-pFYqmTw68LXVjeWJMST4+borgQP2AyMNbg1BpZh9LbyhUeNkeaPF9gzfPGUAnSMV3qPYdWUwDIjjCLiSDOl7vg==}
@@ -6597,12 +6597,12 @@ snapshots:
 
   term-size@2.2.1: {}
 
-  terra-draw-maplibre-gl-adapter@1.1.1(maplibre-gl@5.6.1)(terra-draw@1.11.0):
+  terra-draw-maplibre-gl-adapter@1.1.2(maplibre-gl@5.6.1)(terra-draw@1.12.0):
     dependencies:
       maplibre-gl: 5.6.1
-      terra-draw: 1.11.0
+      terra-draw: 1.12.0
 
-  terra-draw@1.11.0: {}
+  terra-draw@1.12.0: {}
 
   test-exclude@7.0.1:
     dependencies:

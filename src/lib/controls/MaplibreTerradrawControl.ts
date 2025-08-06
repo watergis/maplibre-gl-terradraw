@@ -19,6 +19,7 @@ export class MaplibreTerradrawControl implements IControl {
 	protected map?: Map;
 	protected modeButtons: { [key: string]: HTMLButtonElement } = {};
 	protected _isExpanded = false;
+	protected _cssPrefix = '';
 
 	/**
 	 * get the state of whether the control is expanded or collapsed
@@ -28,13 +29,23 @@ export class MaplibreTerradrawControl implements IControl {
 	}
 
 	/**
+	 * CSS prefix for the control buttons.
+	 * Default is empty string
+	 */
+	protected get cssPrefix(): string {
+		return this._cssPrefix;
+	}
+
+	/**
 	 * set the state of the control either expanded or collapsed.
 	 * terradraw mode will be reset if the state is changed.
 	 * either `expanded` or `collapsed` event is dispatched when changed
 	 */
 	public set isExpanded(value: boolean) {
 		this._isExpanded = value;
-		const controls = document.getElementsByClassName('maplibregl-terradraw-add-control');
+		const controls = document.getElementsByClassName(
+			`maplibregl-terradraw-${this.cssPrefix}add-control`
+		);
 		for (let i = 0; i < controls.length; i++) {
 			const item = controls.item(i);
 			if (!item) continue;
@@ -44,7 +55,9 @@ export class MaplibreTerradrawControl implements IControl {
 				item.classList.add('hidden');
 			}
 		}
-		const addButton = document.getElementsByClassName('maplibregl-terradraw-render-button');
+		const addButton = document.getElementsByClassName(
+			`maplibregl-terradraw-${this.cssPrefix}render-button`
+		);
 		if (addButton && addButton.length > 0) {
 			if (this.isExpanded) {
 				addButton.item(0)?.classList.add('enabled');
@@ -79,6 +92,13 @@ export class MaplibreTerradrawControl implements IControl {
 
 		if (options) {
 			this.options = Object.assign(this.options, options);
+		}
+		const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
+		if (!this.options.adapterOptions) {
+			this.options.adapterOptions = {};
+		}
+		if (!this.options.adapterOptions?.prefixId) {
+			this.options.adapterOptions.prefixId = prefixId;
 		}
 	}
 
@@ -293,7 +313,9 @@ export class MaplibreTerradrawControl implements IControl {
 		if (!this.terradraw.enabled) {
 			this.terradraw.start();
 		}
-		const controls = document.getElementsByClassName('maplibregl-terradraw-add-control');
+		const controls = document.getElementsByClassName(
+			`maplibregl-terradraw-${this.cssPrefix}add-control`
+		);
 		for (let i = 0; i < controls.length; i++) {
 			const item = controls.item(i);
 			if (!item) continue;
@@ -312,7 +334,7 @@ export class MaplibreTerradrawControl implements IControl {
 		this.modeButtons[mode] = btn;
 
 		if (mode === 'render') {
-			btn.classList.add(`maplibregl-terradraw-${mode}-button`);
+			btn.classList.add(`maplibregl-terradraw-${this.cssPrefix}${mode}-button`);
 
 			if (this.isExpanded) {
 				btn.classList.add('enabled');
@@ -321,7 +343,7 @@ export class MaplibreTerradrawControl implements IControl {
 			btn.title = capitalize('expand or collapse drawing tool');
 			btn.addEventListener('click', this.toggleEditor.bind(this));
 		} else {
-			btn.classList.add('maplibregl-terradraw-add-control');
+			btn.classList.add(`maplibregl-terradraw-${this.cssPrefix}add-control`);
 
 			if (!this.isExpanded) {
 				btn.classList.add('hidden');
@@ -329,7 +351,7 @@ export class MaplibreTerradrawControl implements IControl {
 			btn.title = capitalize(mode.replace(/-/g, ' '));
 
 			if (mode === 'delete') {
-				btn.classList.add(`maplibregl-terradraw-${mode}-button`);
+				btn.classList.add(`maplibregl-terradraw-${this.cssPrefix}${mode}-button`);
 
 				btn.addEventListener('click', () => {
 					if (!this.terradraw) return;
@@ -342,7 +364,7 @@ export class MaplibreTerradrawControl implements IControl {
 					this.dispatchEvent('feature-deleted');
 				});
 			} else if (mode === 'delete-selection') {
-				btn.classList.add(`maplibregl-terradraw-${mode}-button`);
+				btn.classList.add(`maplibregl-terradraw-${this.cssPrefix}${mode}-button`);
 				btn.classList.add(`hidden-delete-selection`);
 				btn.addEventListener('click', () => {
 					if (!this.terradraw) return;
@@ -365,10 +387,10 @@ export class MaplibreTerradrawControl implements IControl {
 					this.toggleButtonsWhenNoFeature();
 				});
 			} else if (mode === 'download') {
-				btn.classList.add(`maplibregl-terradraw-${mode}-button`);
+				btn.classList.add(`maplibregl-terradraw-${this.cssPrefix}${mode}-button`);
 				btn.addEventListener('click', this.handleDownload.bind(this));
 			} else {
-				btn.classList.add(`maplibregl-terradraw-add-${mode}-button`);
+				btn.classList.add(`maplibregl-terradraw-${this.cssPrefix}add-${mode}-button`);
 
 				btn.addEventListener('click', () => {
 					if (!this.terradraw) return;
@@ -429,7 +451,12 @@ export class MaplibreTerradrawControl implements IControl {
 		style: StyleSpecification,
 		options?: { excludeTerraDrawLayers?: boolean; onlyTerraDrawLayers?: boolean }
 	) {
-		return cleanMaplibreStyle(style, options, TERRADRAW_SOURCE_IDS);
+		return cleanMaplibreStyle(
+			style,
+			options,
+			TERRADRAW_SOURCE_IDS,
+			this.options.adapterOptions?.prefixId
+		);
 	}
 
 	/**
@@ -456,9 +483,9 @@ export class MaplibreTerradrawControl implements IControl {
 		const isActive = fc && fc.features.length > 0 ? true : false;
 
 		const targets = [
-			`maplibregl-terradraw-add-select-button`,
-			`maplibregl-terradraw-download-button`,
-			`maplibregl-terradraw-delete-button`
+			`maplibregl-terradraw-${this.cssPrefix}add-select-button`,
+			`maplibregl-terradraw-${this.cssPrefix}download-button`,
+			`maplibregl-terradraw-${this.cssPrefix}delete-button`
 		];
 		for (const className of targets) {
 			const btns = this.controlContainer.getElementsByClassName(className);
@@ -479,7 +506,9 @@ export class MaplibreTerradrawControl implements IControl {
 		const fc = this.getFeatures(false);
 		const hasFeatures = fc && fc.features.length > 0;
 		const isActive = hasFeatures && enabled && mode === 'select';
-		const btns = document.getElementsByClassName(`maplibregl-terradraw-delete-selection-button`);
+		const btns = document.getElementsByClassName(
+			`maplibregl-terradraw-${this.cssPrefix}delete-selection-button`
+		);
 		for (let i = 0; i < btns.length; i++) {
 			const btn = btns.item(i);
 			if (!btn) continue;
@@ -491,7 +520,9 @@ export class MaplibreTerradrawControl implements IControl {
 		}
 
 		if (!hasFeatures) {
-			const btns = document.getElementsByClassName(`maplibregl-terradraw-add-select-button`);
+			const btns = document.getElementsByClassName(
+				`maplibregl-terradraw-${this.cssPrefix}add-select-button`
+			);
 			for (let i = 0; i < btns.length; i++) {
 				const btn = btns.item(i);
 				if (!btn) continue;

@@ -9,7 +9,8 @@ export const exampleIds = [
 	'custom-icon',
 	'query-elevation-terrain',
 	'query-elevation-terrainrgb',
-	'change-style'
+	'change-style',
+	'use-both-control'
 ];
 
 export const getTitle = (body: string) => {

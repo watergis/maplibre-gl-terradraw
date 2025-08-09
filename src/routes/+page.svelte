@@ -11,7 +11,6 @@
 	import { Segment, Tabs } from '@skeletonlabs/skeleton-svelte';
 	import type { PageData } from './$types';
 	import CodeBlock from './CodeBlock.svelte';
-	import DemoController from './DemoController.svelte';
 	import DemoMap from './DemoMap.svelte';
 
 	interface Props {
@@ -139,60 +138,25 @@
 </script>
 
 <div class="snap-y overflow-y-scroll h-full">
-	<section id="demo" class="demo-container grid grid-cols-[auto_1fr] snap-start">
-		<aside class="sidebar col-span-1 h-screen p-4 w-sm overflow-y-auto hidden md:block">
-			<DemoController
-				bind:controlType
-				bind:isOpen
-				bind:selectedModes
-				bind:selectedFeature
-				bind:distanceUnit
-				bind:distancePrecision
-				bind:areaUnit
-				bind:areaPrecision
-				bind:computeElevation
-				onchange={handleDemoConfigChanged}
-				onMeasureChange={handleMeasureChange}
-			></DemoController>
-
-			<div class="flex justify-center mt-6">
-				<button
-					class="btn btn-lg preset-filled capitalize"
-					onclick={() => {
-						document.getElementById('getting-started')?.scrollIntoView({ behavior: 'smooth' });
-					}}
-				>
-					Getting started
-				</button>
-			</div>
-		</aside>
-
-		<main class="map col-span-2 md:col-span-1">
-			{#key updateDemo}
-				<DemoMap
-					styles={data.styles}
-					modes={selectedModes}
-					{controlType}
-					isOpen={isOpen === 'open'}
-					geojson={data.geojson}
-					bind:selectedFeature
-					bind:distanceUnit
-					bind:distancePrecision
-					bind:areaUnit
-					bind:areaPrecision
-					bind:computeElevation
-				></DemoMap>
-			{/key}
-
-			<button
-				class="md:hidden absolute bottom-4 left-1/2 -translate-x-1/2 z-10 btn btn-base preset-filled"
-				onclick={() => {
-					document.getElementById('getting-started')?.scrollIntoView({ behavior: 'smooth' });
-				}}
-			>
-				Getting started
-			</button>
-		</main>
+	<section id="demo" class="demo-container h-full">
+		<DemoMap
+			styles={data.styles}
+			bind:selectedModes
+			bind:controlType
+			bind:isOpen
+			geojson={data.geojson}
+			bind:selectedFeature
+			bind:distanceUnit
+			bind:distancePrecision
+			bind:areaUnit
+			bind:areaPrecision
+			bind:computeElevation
+			onchange={handleDemoConfigChanged}
+			onMeasureChange={handleMeasureChange}
+			onClickGetStarted={() => {
+				document.getElementById('getting-started')?.scrollIntoView({ behavior: 'smooth' });
+			}}
+		></DemoMap>
 	</section>
 
 	<section id="getting-started" class="px-4 snap-start">
@@ -376,19 +340,6 @@
 </div>
 
 <style lang="postcss">
-	.demo-container {
-		position: relative;
-		width: 100%;
-		height: 100%;
-
-		.sidebar {
-			height: 100%;
-		}
-		.map {
-			height: 100%;
-		}
-	}
-
 	.preview-image {
 		max-height: 130px;
 		margin: 0 auto;

@@ -308,7 +308,7 @@ export class MaplibreTerradrawControl implements IControl {
 	/**
 	 * Reset active mode to back to render mode
 	 */
-	protected resetActiveMode() {
+	public resetActiveMode() {
 		if (!this.terradraw) return;
 		if (!this.terradraw.enabled) {
 			this.terradraw.start();

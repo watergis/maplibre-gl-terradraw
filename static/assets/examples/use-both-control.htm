@@ -53,6 +53,19 @@
 				computeElevation: true
 			});
 			map.addControl(measureControl, 'top-right');
+
+			// there will be drawing event conflict between two Terra Draw controls.
+			// so we need to reset the active mode of one control when the other control's mode is changed.
+			drawControl.on('mode-changed', (e) => {
+				if (e.mode !== 'render') {
+					measureControl.resetActiveMode();
+				}
+			});
+			measureControl.on('mode-changed', (e) => {
+				if (e.mode !== 'render') {
+					drawControl.resetActiveMode();
+				}
+			});
 		</script>
 	</body>
 </html>

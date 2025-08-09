@@ -2,11 +2,11 @@ import { defaultMeasureControlOptions } from '../constants';
 import type { StyleSpecification } from 'maplibre-gl';
 
 export const TERRADRAW_SOURCE_IDS = [
-	'td-point',
-	'td-point-lower',
-	'td-linestring',
-	'td-polygon',
-	'td-polygon-outline'
+	'{prefix}-point',
+	'{prefix}-point-lower',
+	'{prefix}-linestring',
+	'{prefix}-polygon',
+	'{prefix}-polygon-outline'
 ];
 export const TERRADRAW_MEASURE_SOURCE_IDS = [
 	...TERRADRAW_SOURCE_IDS,
@@ -29,13 +29,17 @@ export const TERRADRAW_MEASURE_SOURCE_IDS = [
  * @param options.excludeTerraDrawLayers return maplibre style without terradraw layers and sources
  * @param options.onlyTerraDrawLayers return maplibre style with only terradraw layers and sources
  * @param sourceIds terradraw related source IDs (internally used). Use TERRADRAW_SOURCE_IDS or TERRADRAW_MEASURE_SOURCE_IDS
+ * @param prefixId prefix to use for source IDs, default is 'td'. {prefix} will be replaced with this prefixId
  * @returns maplibre style spec
  */
 export const cleanMaplibreStyle = (
 	style: StyleSpecification,
 	options?: { excludeTerraDrawLayers?: boolean; onlyTerraDrawLayers?: boolean },
-	sourceIds = TERRADRAW_SOURCE_IDS
+	sourceIds = TERRADRAW_SOURCE_IDS,
+	prefixId = 'td'
 ) => {
+	sourceIds = sourceIds.map((id) => id.replace('{prefix}', prefixId));
+
 	const cloned: StyleSpecification = JSON.parse(JSON.stringify(style));
 	if (options) {
 		if (options.onlyTerraDrawLayers === true) {

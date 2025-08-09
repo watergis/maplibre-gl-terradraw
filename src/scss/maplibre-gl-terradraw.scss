@@ -1,3 +1,4 @@
+.maplibregl-terradraw-measure-render-button,
 .maplibregl-terradraw-render-button {
 	background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%235f6368%22%3E%3Cpath%20d%3D%22M200-200h57l391-391-57-57-391%20391v57Zm-80%2080v-170l528-527q12-11%2026.5-17t30.5-6q16%200%2031%206t26%2018l55%2056q12%2011%2017.5%2026t5.5%2030q0%2016-5.5%2030.5T817-647L290-120H120Zm640-584-56-56%2056%2056Zm-141%2085-28-29%2057%2057-29-28Z%22%2F%3E%3C%2Fsvg%3E');
 	background-position: center;
@@ -10,6 +11,7 @@
 	}
 }
 
+.maplibregl-terradraw-measure-add-point-button,
 .maplibregl-terradraw-add-point-button {
 	background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%200%2024%2024%22%20width%3D%2224px%22%20fill%3D%22%235f6368%22%3E%3Cpath%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%3Cpath%20d%3D%22M12%202C6.47%202%202%206.47%202%2012s4.47%2010%2010%2010%2010-4.47%2010-10S17.53%202%2012%202z%22%2F%3E%3C%2Fsvg%3E');
 	background-position: center;
@@ -17,6 +19,7 @@
 	background-size: 50%;
 }
 
+.maplibregl-terradraw-measure-add-linestring-button,
 .maplibregl-terradraw-add-linestring-button {
 	background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%235f6368%22%3E%3Cpath%20d%3D%22M600-80v-100L320-320H120v-240h172l108-124v-196h240v240H468L360-516v126l240%20120v-50h240v240H600ZM480-720h80v-80h-80v80ZM200-400h80v-80h-80v80Zm480%20240h80v-80h-80v80ZM520-760ZM240-440Zm480%20240Z%22%2F%3E%3C%2Fsvg%3E');
 	background-position: center;
@@ -24,6 +27,7 @@
 	background-size: 80%;
 }
 
+.maplibregl-terradraw-measure-add-polygon-button,
 .maplibregl-terradraw-add-polygon-button {
 	background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%235f6368%22%3E%3Cpath%20d%3D%22M480-200%20200-480l280-280%20280%20280-280%20280Zm0-114%20166-166-166-166-166%20166%20166%20166Zm0-166Z%22%2F%3E%3C%2Fsvg%3E');
 	background-position: center;
@@ -31,6 +35,7 @@
 	background-size: 100%;
 }
 
+.maplibregl-terradraw-measure-add-rectangle-button,
 .maplibregl-terradraw-add-rectangle-button {
 	background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%235f6368%22%3E%3Cpath%20d%3D%22M80-160v-640h800v640H80Zm80-80h640v-480H160v480Zm0%200v-480%20480Z%22%2F%3E%3C%2Fsvg%3E');
 	background-position: center;
@@ -38,6 +43,7 @@
 	background-size: 80%;
 }
 
+.maplibregl-terradraw-measure-add-angled-rectangle-button,
 .maplibregl-terradraw-add-angled-rectangle-button {
 	background: url('data:image/svg+xml,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%20standalone%3D%22no%22%3F%3E%3Csvg%20%20%20height%3D%2224px%22%20%20%20viewBox%3D%220%20-960%20960%20960%22%20%20%20width%3D%2224px%22%20%20%20fill%3D%22%235f6368%22%20%20%20version%3D%221.1%22%20%20%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20%20%20xmlns%3Asvg%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20%20%20%20%20d%3D%22m%2037.539365%2C-480.93078%20347.571515%2C-449.23871%20550.8024%2C442.94063%20-347.57147%2C449.238706%20z%20m%2098.526685%2C-11.86077%20440.64196%2C354.3525%20260.67863%2C-336.92904%20-440.64196%2C-354.3525%20z%20m%200%2C0%20260.67863%2C-336.92904%20z%22%20%20%20%20%20id%3D%22path9%22%20%20%20%20%20style%3D%22stroke-width%3A0.885424%22%20%2F%3E%3C%2Fsvg%3E');
 	background-position: center;
@@ -45,6 +51,7 @@
 	background-size: 80%;
 }
 
+.maplibregl-terradraw-measure-add-circle-button,
 .maplibregl-terradraw-add-circle-button {
 	background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%235f6368%22%3E%3Cpath%20d%3D%22M480-80q-83%200-156-31.5T197-197q-54-54-85.5-127T80-480q0-83%2031.5-156T197-763q54-54%20127-85.5T480-880q83%200%20156%2031.5T763-763q54%2054%2085.5%20127T880-480q0%2083-31.5%20156T763-197q-54%2054-127%2085.5T480-80Zm0-80q134%200%20227-93t93-227q0-134-93-227t-227-93q-134%200-227%2093t-93%20227q0%20134%2093%20227t227%2093Zm0-320Z%22%2F%3E%3C%2Fsvg%3E');
 	background-position: center;
@@ -52,6 +59,7 @@
 	background-size: 80%;
 }
 
+.maplibregl-terradraw-measure-add-freehand-button,
 .maplibregl-terradraw-add-freehand-button {
 	background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%235f6368%22%3E%3Cpath%20d%3D%22m499-287%20335-335-52-52-335%20335%2052%2052Zm-261%2087q-100-5-149-42T40-349q0-65%2053.5-105.5T242-503q39-3%2058.5-12.5T320-542q0-26-29.5-39T193-600l7-80q103%208%20151.5%2041.5T400-542q0%2053-38.5%2083T248-423q-64%205-96%2023.5T120-349q0%2035%2028%2050.5t94%2018.5l-4%2080Zm280%207L353-358l382-382q20-20%2047.5-20t47.5%2020l70%2070q20%2020%2020%2047.5T900-575L518-193Zm-159%2033q-17%204-30-9t-9-30l33-159%20165%20165-159%2033Z%22%2F%3E%3C%2Fsvg%3E');
 	background-position: center;
@@ -59,6 +67,7 @@
 	background-size: 80%;
 }
 
+.maplibregl-terradraw-measure-add-freehand-linestring-button,
 .maplibregl-terradraw-add-freehand-linestring-button {
 	background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%235f6368%22%3E%3Cpath%20d%3D%22M554-120q-54%200-91-37t-37-89q0-76%2061.5-137.5T641-460q-3-36-18-54.5T582-533q-30%200-65%2025t-83%2082q-78%2093-114.5%20121T241-277q-51%200-86-38t-35-92q0-54%2023.5-110.5T223-653q19-26%2028-44t9-29q0-7-2.5-10.5T250-740q-10%200-25%2012.5T190-689l-70-71q32-39%2065-59.5t65-20.5q46%200%2078%2032t32%2080q0%2029-15%2064t-50%2084q-38%2054-56.5%2095T220-413q0%2017%205.5%2026.5T241-377q10%200%2017.5-5.5T286-409q13-14%2031-34.5t44-50.5q63-75%20114-107t107-32q67%200%20110%2045t49%20123h99v100h-99q-8%20112-58.5%20178.5T554-120Zm2-100q32%200%2054-36.5T640-358q-46%2011-80%2043.5T526-250q0%2014%208%2022t22%208Z%22%2F%3E%3C%2Fsvg%3E');
 	background-position: center;
@@ -66,6 +75,7 @@
 	background-size: 80%;
 }
 
+.maplibregl-terradraw-measure-add-select-button,
 .maplibregl-terradraw-add-select-button {
 	background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%235f6368%22%3E%3Cpath%20d%3D%22m320-410%2079-110h170L320-716v306ZM551-80%20406-392%20240-160v-720l560%20440H516l144%20309-109%2051ZM399-520Z%22%2F%3E%3C%2Fsvg%3E');
 	background-position: center;
@@ -77,6 +87,7 @@
 	}
 }
 
+.maplibregl-terradraw-measure-add-sensor-button,
 .maplibregl-terradraw-add-sensor-button {
 	background: url('data:image/svg+xml,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%20standalone%3D%22no%22%3F%3E%3Csvg%20%20%20height%3D%2224px%22%20%20%20viewBox%3D%220%20-960%20960%20960%22%20%20%20width%3D%2224px%22%20%20%20fill%3D%22%235f6368%22%20%20%20version%3D%221.1%22%20%20%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20%20%20xmlns%3Asvg%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20%20%20%20%20d%3D%22m%20175.44945%2C-140.58995%20q%20-51.7845%2C-40.91901%20-59.52204%2C-106.93515%20-7.73754%2C-66.01614%2033.18147%2C-117.80063%2040.91901%2C-51.7845%20106.93515%2C-59.52205%2066.01614%2C-7.73754%20117.80064%2C33.18147%2051.7845%2C40.91902%2059.52204%2C106.93516%207.73754%2C66.01613%20-33.18147%2C117.80063%20-40.91902%2C51.7845%20-106.93515%2C59.52204%20-66.01614%2C7.737553%20-117.80064%2C-33.18147%20z%20m%2049.5988%2C-62.76909%20q%2025.89225%2C20.45951%2058.90032%2C16.59074%2033.00807%2C-3.86877%2053.46758%2C-29.76102%2020.45951%2C-25.89225%2016.59073%2C-58.90032%20-3.86877%2C-33.00807%20-29.76102%2C-53.46758%20-25.89225%2C-20.4595%20-58.90031%2C-16.59073%20-33.00807%2C3.86877%20-53.46758%2C29.76102%20-20.45951%2C25.89225%20-16.59074%2C58.90032%203.86878%2C33.00807%2029.76102%2C53.46757%20z%20m%20-22.97789%2C-548.35391%20-12.19302%2C-79.73287%20q%20112.53252%2C-11.76569%20224.3855%2C19.2651%20111.85299%2C31.03079%20207.57585%2C106.66897%2095.72286%2C75.63817%20151.77719%2C177.28419%2056.05433%2C101.64601%2070.62921%2C213.84928%20l%20-80.39138%2C6.57463%20q%20-14.16857%2C-96.58805%20-61.69898%2C-183.21432%20-47.53041%2C-86.62626%20-129.91484%2C-151.72469%20-82.38443%2C-65.09843%20-177.6537%2C-91.30945%20-95.26926%2C-26.21102%20-192.51583%2C-17.66084%20z%20m%20362.29181%2C460.88355%20q%20-9.39434%2C-55.85469%20-38.43379%2C-106.20308%20-29.03946%2C-50.34839%20-77.68551%2C-88.78746%20-48.64604%2C-38.43907%20-103.95255%2C-54.73908%20-55.3065%2C-16.30001%20-112.60432%2C-13.14405%20l%20-12.19303%2C-79.73287%20q%2073.36839%2C-5.75148%20145.25862%2C15.3683%2071.89023%2C21.11978%20133.09009%2C69.47861%2061.19986%2C48.35884%2097.97862%2C113.10699%2036.77876%2C64.74815%2048.14864%2C137.45802%20z%20m%20-289.71511%2C24.70127%20z%22%20%20%20%20%20id%3D%22path185%22%20%2F%3E%3C%2Fsvg%3E');
 	background-position: center;
@@ -84,6 +95,7 @@
 	background-size: 80%;
 }
 
+.maplibregl-terradraw-measure-add-sector-button,
 .maplibregl-terradraw-add-sector-button {
 	background: url('data:image/svg+xml,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%20standalone%3D%22no%22%3F%3E%3Csvg%20%20%20height%3D%2224px%22%20%20%20viewBox%3D%220%20-960%20960%20960%22%20%20%20width%3D%2224px%22%20%20%20fill%3D%22%235f6368%22%20%20%20version%3D%221.1%22%20%20%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20%20%20xmlns%3Asvg%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20%20%20%20%20d%3D%22M720-160q0-116-44-218T556-556q-76-76-178-120t-218-44v-80q132%200%20248.5%2050.5T612-612q87%2087%20137.5%20203.5T800-160h-80Z%22%20%20%20%20%20id%3D%22path2%22%20%2F%3E%3Cpath%20%20%20%20%20id%3D%22rect266%22%20%20%20%20%20style%3D%22stroke-width%3A39.5568%22%20%20%20%20%20d%3D%22m%20160.37637%2C-731.67749%20h%2081.35594%20v%20564.89777%20h%20-81.35594%20z%22%20%2F%3E%3Cpath%20%20%20%20%20id%3D%22rect320%22%20%20%20%20%20style%3D%22stroke-width%3A40.058%22%20%20%20%20%20d%3D%22m%20160.45728%2C-237.66447%20h%20571.14288%20v%2077.28813%20H%20160.45728%20Z%22%20%2F%3E%3C%2Fsvg%3E');
 	background-position: center;
@@ -91,6 +103,7 @@
 	background-size: 100%;
 }
 
+.maplibregl-terradraw-measure-add-control,
 .maplibregl-terradraw-add-control {
 	display: block;
 
@@ -103,6 +116,7 @@
 	}
 }
 
+.maplibregl-terradraw-measure-delete-button,
 .maplibregl-terradraw-delete-button {
 	background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%235f6368%22%3E%3Cpath%20d%3D%22M280-120q-33%200-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0%2033-23.5%2056.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160%200h80v-360h-80v360ZM280-720v520-520Z%22%2F%3E%3C%2Fsvg%3E');
 	background-position: center;
@@ -114,6 +128,7 @@
 	}
 }
 
+.maplibregl-terradraw-measure-delete-selection-button,
 .maplibregl-terradraw-delete-selection-button {
 	background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%235f6368%22%3E%3Cpath%20d%3D%22m500-120-56-56%20142-142-142-142%2056-56%20142%20142%20142-142%2056%2056-142%20142%20142%20142-56%2056-142-142-142%20142Zm-220%200v-80h80v80h-80Zm-80-640h-80q0-33%2023.5-56.5T200-840v80Zm80%200v-80h80v80h-80Zm160%200v-80h80v80h-80Zm160%200v-80h80v80h-80Zm160%200v-80q33%200%2056.5%2023.5T840-760h-80ZM200-200v80q-33%200-56.5-23.5T120-200h80Zm-80-80v-80h80v80h-80Zm0-160v-80h80v80h-80Zm0-160v-80h80v80h-80Zm640%200v-80h80v80h-80Z%22%2F%3E%3C%2Fsvg%3E');
 	background-position: center;
@@ -126,6 +141,7 @@
 	}
 }
 
+.maplibregl-terradraw-measure-download-button,
 .maplibregl-terradraw-download-button {
 	background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%235f6368%22%3E%3Cpath%20d%3D%22M480-320%20280-520l56-58%20104%20104v-326h80v326l104-104%2056%2058-200%20200ZM240-160q-33%200-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0%2033-23.5%2056.5T720-160H240Z%22%2F%3E%3C%2Fsvg%3E');
 	background-position: center;

@@ -148,36 +148,36 @@ const maplibreStyle: StyleSpecification = {
 			}
 		},
 		{
-			id: 'td-linestring',
+			id: 'td-measure-linestring',
 			type: 'line',
-			source: 'td-linestring',
+			source: 'td-measure-linestring',
 			paint: {
 				'line-width': ['get', 'lineStringWidth'],
 				'line-color': ['get', 'lineStringColor']
 			}
 		},
 		{
-			id: 'td-polygon',
+			id: 'td-measure-polygon',
 			type: 'fill',
-			source: 'td-polygon',
+			source: 'td-measure-polygon',
 			paint: {
 				'fill-color': ['get', 'polygonFillColor'],
 				'fill-opacity': ['get', 'polygonFillOpacity']
 			}
 		},
 		{
-			id: 'td-polygon-outline',
+			id: 'td-measure-polygon-outline',
 			type: 'line',
-			source: 'td-polygon',
+			source: 'td-measure-polygon',
 			paint: {
 				'line-width': ['get', 'polygonOutlineWidth'],
 				'line-color': ['get', 'polygonOutlineColor']
 			}
 		},
 		{
-			id: 'td-point',
+			id: 'td-measure-point',
 			type: 'circle',
-			source: 'td-point',
+			source: 'td-measure-point',
 			paint: {
 				'circle-stroke-color': ['get', 'pointOutlineColor'],
 				'circle-stroke-width': ['get', 'pointOutlineWidth'],
@@ -189,6 +189,8 @@ const maplibreStyle: StyleSpecification = {
 };
 
 describe('cleanStyle method', () => {
+	const sourceIds = TERRADRAW_MEASURE_SOURCE_IDS.map((id) => id.replace('{prefix}', 'td-measure'));
+
 	it('should return the original style when no options are set', () => {
 		const control = new MaplibreMeasureControl();
 		const result = control.cleanStyle(maplibreStyle);
@@ -199,14 +201,9 @@ describe('cleanStyle method', () => {
 		const control = new MaplibreMeasureControl();
 		const result = control.cleanStyle(maplibreStyle, { excludeTerraDrawLayers: true });
 		expect(
-			result.layers.some(
-				(layer) =>
-					'source' in layer && TERRADRAW_MEASURE_SOURCE_IDS.includes(layer.source as string)
-			)
+			result.layers.some((layer) => 'source' in layer && sourceIds.includes(layer.source as string))
 		).toBe(false);
-		expect(
-			Object.keys(result.sources).some((source) => TERRADRAW_MEASURE_SOURCE_IDS.includes(source))
-		).toBe(false);
+		expect(Object.keys(result.sources).some((source) => sourceIds.includes(source))).toBe(false);
 	});
 
 	it('should include only TerraDraw layers when onlyTerraDrawLayers is true', () => {
@@ -214,13 +211,10 @@ describe('cleanStyle method', () => {
 		const result = control.cleanStyle(maplibreStyle, { onlyTerraDrawLayers: true });
 		expect(
 			result.layers.every(
-				(layer) =>
-					'source' in layer && TERRADRAW_MEASURE_SOURCE_IDS.includes(layer.source as string)
+				(layer) => 'source' in layer && sourceIds.includes(layer.source as string)
 			)
 		).toBe(true);
-		expect(
-			Object.keys(result.sources).every((source) => TERRADRAW_MEASURE_SOURCE_IDS.includes(source))
-		).toBe(true);
+		expect(Object.keys(result.sources).every((source) => sourceIds.includes(source))).toBe(true);
 	});
 });
 

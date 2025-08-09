@@ -145,14 +145,20 @@
 						distancePrecision: distancePrecision,
 						areaUnit: areaUnit,
 						areaPrecision: areaPrecision,
-						computeElevation: computeElevation === 'enabled'
+						computeElevation: computeElevation === 'enabled',
+						adapterOptions: {
+							prefixId: 'td-measure'
+						}
 					});
 					map.addControl(drawControl, 'top-left');
 				} else {
 					drawControl = new MaplibreTerradrawControl({
 						modes: modes,
 						open: isOpen,
-						modeOptions: getDefaultModeOptions()
+						modeOptions: getDefaultModeOptions(),
+						adapterOptions: {
+							prefixId: 'td-default'
+						}
 					});
 					map.addControl(drawControl, 'top-left');
 				}
@@ -210,6 +216,11 @@
 							(drawControl as MaplibreMeasureControl).recalc();
 						});
 					}
+				}
+			});
+			map.on('styledata', () => {
+				if (map) {
+					console.log(map.getStyle());
 				}
 			});
 		})

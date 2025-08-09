@@ -251,9 +251,9 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 		})
 	},
 	pointLayerLabelSpec: {
-		id: 'terradraw-measure-point-label',
+		id: '{prefix}-point-label',
 		type: 'symbol',
-		source: 'terradraw-measure-point-source',
+		source: '{prefix}-point-source',
 		filter: ['all', ['==', '$type', 'Point'], ['==', 'mode', 'point']],
 		layout: {
 			'text-field': [
@@ -291,9 +291,9 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 		}
 	},
 	lineLayerLabelSpec: {
-		id: 'terradraw-measure-line-label',
+		id: '{prefix}-line-label',
 		type: 'symbol',
-		source: 'terradraw-measure-line-source',
+		source: '{prefix}-line-source',
 		filter: ['==', '$type', 'Point'],
 		layout: {
 			'text-field': [
@@ -343,9 +343,9 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 		}
 	},
 	lineLayerNodeSpec: {
-		id: 'terradraw-measure-line-node',
+		id: '{prefix}-line-node',
 		type: 'circle',
-		source: 'terradraw-measure-line-source',
+		source: '{prefix}-line-source',
 		filter: ['==', '$type', 'Point'],
 		layout: {},
 		paint: {
@@ -356,9 +356,9 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 		}
 	},
 	polygonLayerSpec: {
-		id: 'terradraw-measure-polygon-label',
+		id: '{prefix}-polygon-label',
 		type: 'symbol',
-		source: 'terradraw-measure-polygon-source',
+		source: '{prefix}-polygon-source',
 		filter: ['==', '$type', 'Point'],
 		layout: {
 			'text-field': ['concat', ['to-string', ['get', 'area']], ' ', ['get', 'unit']],
@@ -405,5 +405,8 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 		maxSize: 1000,
 		ttl: 60 * 60 * 1000, // 1 hour
 		precision: 9 // 9 is default precision of terra-draw adapter setting
+	},
+	adapterOptions: {
+		prefixId: 'td-measure'
 	}
 };

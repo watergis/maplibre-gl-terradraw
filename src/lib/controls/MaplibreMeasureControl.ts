@@ -159,11 +159,40 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		if (options) {
 			measureOptions = Object.assign(measureOptions, options);
 		}
+
+		// replace {prefix} with prefixId for sources and layers
+		const prefixId = measureOptions.adapterOptions?.prefixId ?? 'td-measure';
+		if (measureOptions.adapterOptions && !measureOptions.adapterOptions?.prefixId) {
+			measureOptions.adapterOptions.prefixId = prefixId;
+		}
+
+		(measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).id =
+			measureOptions.pointLayerLabelSpec?.id.replace('{prefix}', prefixId) as string;
+		(measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).source =
+			measureOptions.pointLayerLabelSpec?.source.replace('{prefix}', prefixId) as string;
+
+		(measureOptions.lineLayerNodeSpec as CircleLayerSpecification).id =
+			measureOptions.lineLayerNodeSpec?.id.replace('{prefix}', prefixId) as string;
+		(measureOptions.lineLayerNodeSpec as CircleLayerSpecification).source =
+			measureOptions.lineLayerNodeSpec?.source.replace('{prefix}', prefixId) as string;
+
+		(measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).id =
+			measureOptions.lineLayerLabelSpec?.id.replace('{prefix}', prefixId) as string;
+		(measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source =
+			measureOptions.lineLayerLabelSpec?.source.replace('{prefix}', prefixId) as string;
+
+		(measureOptions.polygonLayerSpec as SymbolLayerSpecification).id =
+			measureOptions.polygonLayerSpec?.id.replace('{prefix}', prefixId) as string;
+		(measureOptions.polygonLayerSpec as SymbolLayerSpecification).source =
+			measureOptions.polygonLayerSpec?.source.replace('{prefix}', prefixId) as string;
+
 		super({
 			modes: measureOptions.modes,
 			open: measureOptions.open,
-			modeOptions: measureOptions.modeOptions
+			modeOptions: measureOptions.modeOptions,
+			adapterOptions: measureOptions.adapterOptions
 		});
+		this._cssPrefix = 'measure-';
 		this.measureOptions = measureOptions;
 		if (
 			this.measureOptions.elevationCacheConfig &&
@@ -272,7 +301,12 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		const pointSource = this.measureOptions.pointLayerLabelSpec?.source;
 		if (pointSource) sourceIds.push(pointSource);
 
-		return cleanMaplibreStyle(style, options, sourceIds);
+		return cleanMaplibreStyle(
+			style,
+			options,
+			sourceIds,
+			this.measureOptions.adapterOptions?.prefixId
+		);
 	}
 
 	/**

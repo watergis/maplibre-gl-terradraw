@@ -189,6 +189,8 @@ const maplibreStyle: StyleSpecification = {
 };
 
 describe('cleanStyle method', () => {
+	const sourceIds = TERRADRAW_SOURCE_IDS.map((id) => id.replace('{prefix}', 'td'));
+
 	it('should return the original style when no options are set', () => {
 		const control = new MaplibreTerradrawControl();
 		const result = control.cleanStyle(maplibreStyle);
@@ -199,13 +201,9 @@ describe('cleanStyle method', () => {
 		const control = new MaplibreTerradrawControl();
 		const result = control.cleanStyle(maplibreStyle, { excludeTerraDrawLayers: true });
 		expect(
-			result.layers.some(
-				(layer) => 'source' in layer && TERRADRAW_SOURCE_IDS.includes(layer.source as string)
-			)
+			result.layers.some((layer) => 'source' in layer && sourceIds.includes(layer.source as string))
 		).toBe(false);
-		expect(
-			Object.keys(result.sources).some((source) => TERRADRAW_SOURCE_IDS.includes(source))
-		).toBe(false);
+		expect(Object.keys(result.sources).some((source) => sourceIds.includes(source))).toBe(false);
 	});
 
 	it('should include only TerraDraw layers when onlyTerraDrawLayers is true', () => {
@@ -213,11 +211,9 @@ describe('cleanStyle method', () => {
 		const result = control.cleanStyle(maplibreStyle, { onlyTerraDrawLayers: true });
 		expect(
 			result.layers.every(
-				(layer) => 'source' in layer && TERRADRAW_SOURCE_IDS.includes(layer.source as string)
+				(layer) => 'source' in layer && sourceIds.includes(layer.source as string)
 			)
 		).toBe(true);
-		expect(
-			Object.keys(result.sources).every((source) => TERRADRAW_SOURCE_IDS.includes(source))
-		).toBe(true);
+		expect(Object.keys(result.sources).every((source) => sourceIds.includes(source))).toBe(true);
 	});
 });

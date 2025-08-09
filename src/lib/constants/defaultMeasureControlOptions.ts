@@ -28,6 +28,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 		'sector',
 		'circle',
 		'freehand',
+		'freehand-linestring',
 		'select',
 		'delete-selection',
 		'delete',

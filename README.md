@@ -45,6 +45,7 @@ This plugin depends the following libraries:
 - [maplibre-gl-js](https://github.com/maplibre/maplibre-gl-js): map library for the plugin
 - [Turf](https://github.com/Turfjs/turf): It is used for measuring functionalities (area, distance, centroid).
 - [Google fonts](https://fonts.google.com/icons): using some icons for the plugin buttons
+- [font-gis](https://viglino.github.io/font-gis): using some geometry and measure SVGs for the plugin buttons
 
 ## Contribution
 

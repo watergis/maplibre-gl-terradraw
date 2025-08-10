@@ -11,8 +11,7 @@
 	import { Segment, Tabs } from '@skeletonlabs/skeleton-svelte';
 	import type { PageData } from './$types';
 	import CodeBlock from './CodeBlock.svelte';
-	import DemoController from './DemoController.svelte';
-	import DemoMap from './DemoMap.svelte';
+	import DemoMap, { type DemoOptions } from './DemoMap.svelte';
 
 	interface Props {
 		data: PageData;
@@ -29,56 +28,28 @@
 
 	let updateDemo = $state(false);
 
+	let demoOptions: DemoOptions = $state({
+		controlType: (page.url.searchParams.get('controlType') as 'default' | 'measure') ?? 'default',
+		isOpen: (page.url.searchParams.get('isOpen') as 'open' | 'close') ?? 'open',
+		modes:
+			((page.url.searchParams.get('modes') as string)?.split(',') as TerradrawMode[]) ??
+			JSON.parse(JSON.stringify(AvailableModes)),
+		distanceUnit: (page.url.searchParams.get('distanceUnit') as DistanceUnit) ?? 'kilometers',
+		distancePrecision: parseInt(page.url.searchParams.get('distancePrecision') ?? '2'),
+		areaUnit: (page.url.searchParams.get('areaUnit') as AreaUnit) ?? 'metric',
+		areaPrecision: parseInt(page.url.searchParams.get('areaPrecision') ?? '2'),
+		computeElevation:
+			(page.url.searchParams.get('computeElevation') as 'enabled' | 'disabled') ?? 'enabled'
+	});
+
 	const defaultExampleType = page.url.searchParams.get('exampleType') ?? importTypeTabs[0].value;
-	const defaultControlType =
-		(page.url.searchParams.get('controlType') as 'default' | 'measure') ?? 'default';
-	const defaultIsOpen = (page.url.searchParams.get('isOpen') as 'open' | 'close') ?? 'open';
-	const defaultModes =
-		((page.url.searchParams.get('modes') as string)?.split(',') as TerradrawMode[]) ??
-		JSON.parse(JSON.stringify(AvailableModes));
-	const defaultDistanceUnit =
-		(page.url.searchParams.get('distanceUnit') as DistanceUnit) ?? 'kilometers';
-	const defaultDistancePrecision = parseInt(page.url.searchParams.get('distancePrecision') ?? '2');
-	const defaultAreaUnit = (page.url.searchParams.get('areaUnit') as AreaUnit) ?? 'metric';
-	const defaultAreaPrecision = parseInt(page.url.searchParams.get('areaPrecision') ?? '2');
-	const defaultComputeElevation =
-		(page.url.searchParams.get('computeElevation') as 'enabled' | 'disabled') ?? 'enabled';
 	const defaultPackageManager = page.url.searchParams.get('packageManager') ?? 'npm';
 
 	let importTypeTabSet: string = $state(defaultExampleType);
-	let controlType: 'default' | 'measure' = $state(defaultControlType);
-	let isOpen: 'open' | 'close' | undefined = $state(defaultIsOpen);
-	let selectedModes: TerradrawMode[] = $state(defaultModes);
-
-	let selectedFeature: string = $state('');
-	let distanceUnit: DistanceUnit = $state(defaultDistanceUnit);
-	let distancePrecision: number = $state(defaultDistancePrecision);
-	let areaUnit: AreaUnit = $state(defaultAreaUnit);
-	let areaPrecision: number = $state(defaultAreaPrecision);
-	let computeElevation: 'enabled' | 'disabled' = $state(defaultComputeElevation);
 	let packageManager = $state(defaultPackageManager);
 
 	let searchQuery = $state('');
 	let examples = $state(JSON.parse(JSON.stringify(data.examples)));
-
-	const handleMeasureChange = (
-		type: 'distanceUnit' | 'distancePrecision' | 'areaUnit' | 'areaPrecision' | 'computeElevation',
-		value: string | number | number[]
-	) => {
-		if (type === 'distanceUnit') {
-			distanceUnit = value as DistanceUnit;
-		} else if (type === 'distancePrecision') {
-			distancePrecision = value as number;
-		} else if (type === 'areaUnit') {
-			areaUnit = value as AreaUnit;
-		} else if (type === 'areaPrecision') {
-			areaPrecision = value as number;
-		} else if (type === 'computeElevation') {
-			computeElevation = value as 'enabled' | 'disabled';
-		}
-		updateDemo = !updateDemo;
-		updatePageUrl();
-	};
 
 	const handleSearchExamples = debounce(() => {
 		if (searchQuery.length === 0) {
@@ -102,15 +73,15 @@
 	const updatePageUrl = () => {
 		const pageUrl = new URL(page.url.href);
 		pageUrl.searchParams.set('exampleType', importTypeTabSet);
-		pageUrl.searchParams.set('controlType', controlType);
-		pageUrl.searchParams.set('isOpen', isOpen ?? 'open');
-		pageUrl.searchParams.set('modes', selectedModes.join(','));
-		if (controlType == 'measure') {
-			pageUrl.searchParams.set('distanceUnit', distanceUnit);
-			pageUrl.searchParams.set('distancePrecision', distancePrecision.toString());
-			pageUrl.searchParams.set('areaUnit', areaUnit);
-			pageUrl.searchParams.set('areaPrecision', areaPrecision.toString());
-			pageUrl.searchParams.set('computeElevation', computeElevation);
+		pageUrl.searchParams.set('controlType', demoOptions.controlType);
+		pageUrl.searchParams.set('isOpen', demoOptions.isOpen ?? 'open');
+		pageUrl.searchParams.set('modes', demoOptions.modes.join(','));
+		if (demoOptions.controlType == 'measure') {
+			pageUrl.searchParams.set('distanceUnit', demoOptions.distanceUnit);
+			pageUrl.searchParams.set('distancePrecision', demoOptions.distancePrecision.toString());
+			pageUrl.searchParams.set('areaUnit', demoOptions.areaUnit);
+			pageUrl.searchParams.set('areaPrecision', demoOptions.areaPrecision.toString());
+			pageUrl.searchParams.set('computeElevation', demoOptions.computeElevation);
 		} else {
 			pageUrl.searchParams.delete('distanceUnit');
 			pageUrl.searchParams.delete('distancePrecision');
@@ -122,77 +93,34 @@
 		replaceState(pageUrl, '');
 	};
 
-	const handleDemoConfigChanged = () => {
-		updateDemo = !updateDemo;
-		updatePageUrl();
-	};
-
 	const getMeasureOptions = () => {
 		const options = [];
-		options.push(`distanceUnit: '${distanceUnit}'`);
-		options.push(`distancePrecision: ${distancePrecision}`);
-		options.push(`areaUnit: '${areaUnit}'`);
-		options.push(`areaPrecision: ${areaPrecision}`);
-		options.push(`computeElevation: ${computeElevation === 'enabled' ? 'true' : 'false'}`);
+		options.push(`distanceUnit: '${demoOptions.distanceUnit}'`);
+		options.push(`distancePrecision: ${demoOptions.distancePrecision}`);
+		options.push(`areaUnit: '${demoOptions.areaUnit}'`);
+		options.push(`areaPrecision: ${demoOptions.areaPrecision}`);
+		options.push(
+			`computeElevation: ${demoOptions.computeElevation === 'enabled' ? 'true' : 'false'}`
+		);
 		return options.join(`, `);
 	};
 </script>
 
 <div class="snap-y overflow-y-scroll h-full">
-	<section id="demo" class="demo-container grid grid-cols-[auto_1fr] snap-start">
-		<aside class="sidebar col-span-1 h-screen p-4 w-sm overflow-y-auto hidden md:block">
-			<DemoController
-				bind:controlType
-				bind:isOpen
-				bind:selectedModes
-				bind:selectedFeature
-				bind:distanceUnit
-				bind:distancePrecision
-				bind:areaUnit
-				bind:areaPrecision
-				bind:computeElevation
-				onchange={handleDemoConfigChanged}
-				onMeasureChange={handleMeasureChange}
-			></DemoController>
-
-			<div class="flex justify-center mt-6">
-				<button
-					class="btn btn-lg preset-filled capitalize"
-					onclick={() => {
-						document.getElementById('getting-started')?.scrollIntoView({ behavior: 'smooth' });
-					}}
-				>
-					Getting started
-				</button>
-			</div>
-		</aside>
-
-		<main class="map col-span-2 md:col-span-1">
-			{#key updateDemo}
-				<DemoMap
-					styles={data.styles}
-					modes={selectedModes}
-					{controlType}
-					isOpen={isOpen === 'open'}
-					geojson={data.geojson}
-					bind:selectedFeature
-					bind:distanceUnit
-					bind:distancePrecision
-					bind:areaUnit
-					bind:areaPrecision
-					bind:computeElevation
-				></DemoMap>
-			{/key}
-
-			<button
-				class="md:hidden absolute bottom-4 left-1/2 -translate-x-1/2 z-10 btn btn-base preset-filled"
-				onclick={() => {
-					document.getElementById('getting-started')?.scrollIntoView({ behavior: 'smooth' });
-				}}
-			>
-				Getting started
-			</button>
-		</main>
+	<section id="demo" class="demo-container h-full">
+		<DemoMap
+			styles={data.styles}
+			geojson={data.geojson}
+			options={demoOptions}
+			onchange={(value: DemoOptions) => {
+				demoOptions = value;
+				updateDemo = !updateDemo;
+				updatePageUrl();
+			}}
+			onclick={() => {
+				document.getElementById('getting-started')?.scrollIntoView({ behavior: 'smooth' });
+			}}
+		></DemoMap>
 	</section>
 
 	<section id="getting-started" class="px-4 snap-start">
@@ -275,15 +203,15 @@
 								code={data.codes.npm
 									.replace(
 										/MaplibreTerradrawControl/g,
-										controlType === 'default'
+										demoOptions.controlType === 'default'
 											? 'MaplibreTerradrawControl'
 											: 'MaplibreMeasureControl'
 									)
-									.replace('{modes}', selectedModes.map((m) => `'${m}'`).join(','))
-									.replace('{open}', isOpen === 'open' ? 'true' : 'false')
+									.replace('{modes}', demoOptions.modes.map((m) => `'${m}'`).join(','))
+									.replace('{open}', demoOptions.isOpen === 'open' ? 'true' : 'false')
 									.replace(
 										'{measure_options}',
-										controlType === 'default' ? '' : getMeasureOptions()
+										demoOptions.controlType === 'default' ? '' : getMeasureOptions()
 									)}
 							/>
 						{/key}
@@ -297,15 +225,15 @@
 								code={data.codes.cdn
 									.replace(
 										/MaplibreTerradrawControl\(/g,
-										controlType === 'default'
+										demoOptions.controlType === 'default'
 											? 'MaplibreTerradrawControl('
 											: 'MaplibreMeasureControl('
 									)
-									.replace('{modes}', selectedModes.map((m) => `'${m}'`).join(','))
-									.replace('{open}', isOpen === 'open' ? 'true' : 'false')
+									.replace('{modes}', demoOptions.modes.map((m) => `'${m}'`).join(','))
+									.replace('{open}', demoOptions.isOpen === 'open' ? 'true' : 'false')
 									.replace(
 										'{measure_options}',
-										controlType === 'default' ? '' : getMeasureOptions()
+										demoOptions.controlType === 'default' ? '' : getMeasureOptions()
 									)}
 							/>
 						{/key}
@@ -376,19 +304,6 @@
 </div>
 
 <style lang="postcss">
-	.demo-container {
-		position: relative;
-		width: 100%;
-		height: 100%;
-
-		.sidebar {
-			height: 100%;
-		}
-		.map {
-			height: 100%;
-		}
-	}
-
 	.preview-image {
 		max-height: 130px;
 		margin: 0 auto;

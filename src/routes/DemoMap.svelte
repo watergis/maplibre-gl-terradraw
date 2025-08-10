@@ -1,3 +1,16 @@
+<script module lang="ts">
+	export interface DemoOptions {
+		controlType: 'default' | 'measure';
+		isOpen: 'open' | 'close' | undefined;
+		modes: TerradrawMode[];
+		distanceUnit: DistanceUnit;
+		distancePrecision: number;
+		areaUnit: AreaUnit;
+		areaPrecision: number;
+		computeElevation: 'enabled' | 'disabled';
+	}
+</script>
+
 <script lang="ts">
 	import {
 		AvailableModes,
@@ -30,51 +43,35 @@
 	interface Props {
 		styles: StyleDefinition[];
 		geojson: GeoJSONStoreFeatures[];
-		controlType: 'default' | 'measure';
-		isOpen: 'open' | 'close' | undefined;
-		selectedModes: TerradrawMode[];
-		selectedFeature: string;
-		distanceUnit: DistanceUnit;
-		distancePrecision: number;
-		areaUnit: AreaUnit;
-		areaPrecision: number;
-		computeElevation: 'enabled' | 'disabled';
-		onchange: () => void;
-		onMeasureChange: (
-			type:
-				| 'distanceUnit'
-				| 'distancePrecision'
-				| 'areaUnit'
-				| 'areaPrecision'
-				| 'computeElevation',
-			value: string | number | number[]
-		) => void;
-		onClickGetStarted?: () => void;
+		options: DemoOptions;
+		onchange: (options: DemoOptions) => void;
+		onclick?: () => void;
 	}
 
 	let {
 		styles,
 		geojson,
-		controlType = $bindable('default'),
-		isOpen = $bindable('open'),
-		selectedModes = $bindable(JSON.parse(JSON.stringify(AvailableModes))),
-		selectedFeature = $bindable(''),
-		distanceUnit = $bindable('kilometers'),
-		distancePrecision = $bindable(2),
-		areaUnit = $bindable('metric'),
-		areaPrecision = $bindable(2),
-		computeElevation = $bindable('enabled'),
+		options = $bindable({
+			controlType: 'default',
+			isOpen: 'open',
+			modes: JSON.parse(JSON.stringify(AvailableModes)),
+			distanceUnit: 'kilometers',
+			distancePrecision: 2,
+			areaUnit: 'metric',
+			areaPrecision: 2,
+			computeElevation: 'enabled'
+		}),
 		onchange = () => {},
-		onMeasureChange = () => {},
-		onClickGetStarted = () => {}
+		onclick = () => {}
 	}: Props = $props();
 
 	let mapContainer: HTMLDivElement | undefined = $state();
 	let map: Map | undefined;
 
-	let isMeasure: boolean = $derived(controlType === 'measure');
+	let isMeasure: boolean = $derived(options.controlType === 'measure');
 
 	let drawControl: MaplibreTerradrawControl | undefined = $state();
+	let selectedFeature: string = $state('');
 
 	let accordionValue = $state(['control-type']);
 	let measureAccordionValue = $state([
@@ -113,17 +110,17 @@
 
 		deleteControl();
 
-		if (selectedModes.length === 0) return;
+		if (options.modes.length === 0) return;
 
 		if (isMeasure) {
 			drawControl = new MaplibreMeasureControl({
-				modes: selectedModes,
-				open: isOpen === 'open',
-				distanceUnit: distanceUnit,
-				distancePrecision: distancePrecision,
-				areaUnit: areaUnit,
-				areaPrecision: areaPrecision,
-				computeElevation: computeElevation === 'enabled',
+				modes: options.modes,
+				open: options.isOpen === 'open',
+				distanceUnit: options.distanceUnit,
+				distancePrecision: options.distancePrecision,
+				areaUnit: options.areaUnit,
+				areaPrecision: options.areaPrecision,
+				computeElevation: options.computeElevation === 'enabled',
 				adapterOptions: {
 					prefixId: 'td-measure'
 				}
@@ -131,8 +128,8 @@
 			map.addControl(drawControl, 'top-left');
 		} else {
 			drawControl = new MaplibreTerradrawControl({
-				modes: selectedModes,
-				open: isOpen === 'open',
+				modes: options.modes,
+				open: options.isOpen === 'open',
 				modeOptions: getDefaultModeOptions(),
 				adapterOptions: {
 					prefixId: 'td-default'
@@ -174,12 +171,12 @@
 	};
 
 	const initialize_data = () => {
-		if (selectedModes.length === 0) return;
+		if (options.modes.length === 0) return;
 		if (!map) return;
 		if (!drawControl) return;
 
 		const initData = geojson.filter((f) =>
-			(selectedModes as string[]).includes(f.properties.mode as string)
+			(options.modes as string[]).includes(f.properties.mode as string)
 		) as GeoJSONStoreFeatures[];
 		if (initData.length > 0) {
 			const drawInstance = drawControl.getTerraDrawInstance();
@@ -255,13 +252,13 @@
 
 					<Segment
 						name="control-type"
-						value={controlType}
+						value={options.controlType}
 						onValueChange={(e) => {
-							controlType = e.value as 'default' | 'measure';
+							options.controlType = e.value as 'default' | 'measure';
 							addControl();
-							onchange();
+							onchange(options);
 
-							if (controlType === 'default') {
+							if (options.controlType === 'default') {
 								accordionValue = accordionValue.filter((v) => v !== 'measure-option');
 							} else {
 								accordionValue = [
@@ -292,14 +289,14 @@
 
 					<TagsInput
 						name="terradraw-modes"
-						placeholder="{selectedModes.length === 0
+						placeholder="{options.modes.length === 0
 							? 'Select at least a mode. '
 							: ''}Select TerraDraw modes to be added"
-						value={selectedModes}
+						value={options.modes}
 						onValueChange={(e) => {
-							selectedModes = e.value as TerradrawMode[];
+							options.modes = e.value as TerradrawMode[];
 							addControl();
-							onchange();
+							onchange(options);
 						}}
 						validate={(details) => AvailableModes.includes(details.inputValue as TerradrawMode)}
 						editable={false}
@@ -309,14 +306,14 @@
 						<button
 							type="button"
 							class="btn preset-filled-primary-500"
-							disabled={selectedModes.length === AvailableModes.length}
+							disabled={options.modes.length === AvailableModes.length}
 							onclick={() => {
-								selectedModes = [
-									...selectedModes,
-									...AvailableModes.filter((m) => !selectedModes.includes(m))
+								options.modes = [
+									...options.modes,
+									...AvailableModes.filter((m) => !options.modes.includes(m))
 								];
 								addControl();
-								onchange();
+								onchange(options);
 							}}
 						>
 							<IconPlus />
@@ -325,11 +322,11 @@
 						<button
 							type="button"
 							class="btn preset-filled-error-500"
-							disabled={selectedModes.length === 0}
+							disabled={options.modes.length === 0}
 							onclick={() => {
-								selectedModes = [];
+								options.modes = [];
 								addControl();
-								onchange();
+								onchange(options);
 							}}
 						>
 							<IconX />
@@ -337,20 +334,20 @@
 						</button>
 					</nav>
 
-					{#if selectedModes.length < AvailableModes.length}
-						{@const selectSize = AvailableModes.filter((m) => !selectedModes.includes(m)).length}
+					{#if options.modes.length < AvailableModes.length}
+						{@const selectSize = AvailableModes.filter((m) => !options.modes.includes(m)).length}
 						<select
 							class="select rounded-container mt-2"
 							size={selectSize === 1 ? selectSize + 1 : selectSize > 5 ? 5 : selectSize}
 							onclick={(e) => {
 								if (!(e.target && 'value' in e.target)) return;
 								const selected = e.target.value as TerradrawMode;
-								selectedModes.push(selected);
+								options.modes.push(selected);
 								addControl();
-								onchange();
+								onchange(options);
 							}}
 						>
-							{#each AvailableModes.filter((m) => !selectedModes.includes(m)) as mode (mode)}
+							{#each AvailableModes.filter((m) => !options.modes.includes(m)) as mode (mode)}
 								<option value={mode}>{mode}</option>
 							{/each}
 						</select>
@@ -369,11 +366,11 @@
 					</p>
 					<Segment
 						name="is-open"
-						value={isOpen}
+						value={options.isOpen}
 						onValueChange={(e) => {
-							isOpen = e.value as 'open' | 'close';
+							options.isOpen = e.value as 'open' | 'close';
 							addControl();
-							onchange();
+							onchange(options);
 						}}
 					>
 						<Segment.Item value="open">Open as default</Segment.Item>
@@ -402,7 +399,7 @@
 				</Accordion.Item>
 			{/if}
 
-			{#if controlType === 'measure'}
+			{#if options.controlType === 'measure'}
 				<Accordion.Item value="measure-option">
 					{#snippet control()}
 						<p class="font-bold uppercase">Measure control options</p>
@@ -419,13 +416,13 @@
 								{/snippet}
 								{#snippet panel()}
 									<Segment
-										value={distanceUnit}
+										value={options.distanceUnit}
 										onValueChange={(e) => {
-											distanceUnit = e.value as DistanceUnit;
+											options.distanceUnit = e.value as DistanceUnit;
 											if (drawControl && isMeasure) {
-												(drawControl as MaplibreMeasureControl).distanceUnit = distanceUnit;
+												(drawControl as MaplibreMeasureControl).distanceUnit = options.distanceUnit;
 											}
-											onMeasureChange('distanceUnit', distanceUnit);
+											onchange(options);
 										}}
 									>
 										{#each ['kilometers', 'miles', 'degrees', 'radians'] as unit (unit)}
@@ -450,13 +447,13 @@
 								{/snippet}
 								{#snippet panel()}
 									<Segment
-										value={areaUnit}
+										value={options.areaUnit}
 										onValueChange={(e) => {
-											areaUnit = e.value as AreaUnit;
+											options.areaUnit = e.value as AreaUnit;
 											if (drawControl && isMeasure) {
-												(drawControl as MaplibreMeasureControl).areaUnit = areaUnit;
+												(drawControl as MaplibreMeasureControl).areaUnit = options.areaUnit;
 											}
-											onMeasureChange('areaUnit', areaUnit);
+											onchange(options);
 										}}
 									>
 										{#each ['metric', 'imperial'] as unit (unit)}
@@ -475,41 +472,42 @@
 									<div class="py-4">
 										<div class="flex justify-between items-center mb-4">
 											<div class="font-bold">Distance precision (Line)</div>
-											<div class="text-xs">{distancePrecision}</div>
+											<div class="text-xs">{options.distancePrecision}</div>
 										</div>
 										<Slider
 											name="range-slider"
-											value={[distancePrecision]}
+											value={[options.distancePrecision]}
 											min={0}
 											max={10}
 											step={1}
 											markers={[0, 5, 10]}
 											onValueChange={(e) => {
-												distancePrecision = e.value[0] as number;
+												options.distancePrecision = e.value[0] as number;
 												if (drawControl && isMeasure) {
 													(drawControl as MaplibreMeasureControl).distancePrecision =
-														distancePrecision;
+														options.distancePrecision;
 												}
-												onMeasureChange('distancePrecision', distancePrecision);
+												onchange(options);
 											}}
 										></Slider>
 										<div class="flex justify-between items-center mt-8 mb-4">
 											<div class="font-bold">Area precision (Polygon)</div>
-											<div class="text-xs">{areaPrecision}</div>
+											<div class="text-xs">{options.areaPrecision}</div>
 										</div>
 										<Slider
 											name="range-slider"
-											value={[areaPrecision]}
+											value={[options.areaPrecision]}
 											min={0}
 											max={10}
 											step={1}
 											markers={[0, 5, 10]}
 											onValueChange={(e) => {
-												areaPrecision = e.value[0] as number;
+												options.areaPrecision = e.value[0] as number;
 												if (drawControl && isMeasure) {
-													(drawControl as MaplibreMeasureControl).areaPrecision = areaPrecision;
+													(drawControl as MaplibreMeasureControl).areaPrecision =
+														options.areaPrecision;
 												}
-												onMeasureChange('areaPrecision', areaPrecision);
+												onchange(options);
 											}}
 										></Slider>
 									</div>
@@ -521,14 +519,14 @@
 								{/snippet}
 								{#snippet panel()}
 									<Segment
-										value={computeElevation}
+										value={options.computeElevation}
 										onValueChange={(e) => {
-											computeElevation = e.value as 'enabled' | 'disabled';
+											options.computeElevation = e.value as 'enabled' | 'disabled';
 											if (drawControl && isMeasure) {
 												(drawControl as MaplibreMeasureControl).computeElevation =
-													computeElevation === 'enabled';
+													options.computeElevation === 'enabled';
 											}
-											onMeasureChange('computeElevation', computeElevation);
+											onchange(options);
 										}}
 									>
 										{#each ['enabled', 'disabled'] as option (option)}
@@ -546,9 +544,7 @@
 		</Accordion>
 
 		<div class="flex justify-center mt-6">
-			<button class="btn btn-lg preset-filled capitalize" onclick={onClickGetStarted}>
-				Getting started
-			</button>
+			<button class="btn btn-lg preset-filled capitalize" {onclick}> Getting started </button>
 		</div>
 	</aside>
 	<main class="map col-span-2 md:col-span-1">
@@ -556,7 +552,7 @@
 
 		<button
 			class="md:hidden absolute bottom-4 left-1/2 -translate-x-1/2 z-10 btn btn-base preset-filled"
-			onclick={onClickGetStarted}
+			{onclick}
 		>
 			Getting started
 		</button>

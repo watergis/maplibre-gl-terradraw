@@ -29,7 +29,8 @@
 	let updateDemo = $state(false);
 
 	let demoOptions: DemoOptions = $state({
-		controlType: (page.url.searchParams.get('controlType') as 'default' | 'measure') ?? 'default',
+		controlType:
+			(page.url.searchParams.get('controlType') as 'default' | 'measure' | 'valhalla') ?? 'default',
 		isOpen: (page.url.searchParams.get('isOpen') as 'open' | 'close') ?? 'open',
 		modes:
 			((page.url.searchParams.get('modes') as string)?.split(',') as TerradrawMode[]) ??
@@ -111,7 +112,7 @@
 		<DemoMap
 			styles={data.styles}
 			geojson={data.geojson}
-			options={demoOptions}
+			bind:options={demoOptions}
 			onchange={(value: DemoOptions) => {
 				demoOptions = value;
 				updateDemo = !updateDemo;
@@ -205,7 +206,9 @@
 										/MaplibreTerradrawControl/g,
 										demoOptions.controlType === 'default'
 											? 'MaplibreTerradrawControl'
-											: 'MaplibreMeasureControl'
+											: demoOptions.controlType === 'measure'
+												? 'MaplibreMeasureControl'
+												: 'MaplibreValhallaControl'
 									)
 									.replace('{modes}', demoOptions.modes.map((m) => `'${m}'`).join(','))
 									.replace('{open}', demoOptions.isOpen === 'open' ? 'true' : 'false')
@@ -227,7 +230,9 @@
 										/MaplibreTerradrawControl\(/g,
 										demoOptions.controlType === 'default'
 											? 'MaplibreTerradrawControl('
-											: 'MaplibreMeasureControl('
+											: demoOptions.controlType === 'measure'
+												? 'MaplibreMeasureControl('
+												: 'MaplibreValhallaControl('
 									)
 									.replace('{modes}', demoOptions.modes.map((m) => `'${m}'`).join(','))
 									.replace('{open}', demoOptions.isOpen === 'open' ? 'true' : 'false')

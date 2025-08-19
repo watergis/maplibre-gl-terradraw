@@ -9,3 +9,4 @@ export * from './TerrainSource';
 export * from './TerradrawControlOptions';
 export * from './TerradrawMode';
 export * from './TerradrawModeClass';
+export * from './ValhallaControlOptions';

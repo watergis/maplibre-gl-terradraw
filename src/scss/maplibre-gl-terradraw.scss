@@ -22,6 +22,18 @@
 	}
 }
 
+.maplibregl-terradraw-valhalla-render-button {
+	background: url('./icons/render_valhalla_on.svg');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 100%;
+
+	&.enabled {
+		background: url('./icons/render_valhalla_off.svg');
+		background-size: 100%;
+	}
+}
+
 .maplibregl-terradraw-measure-add-point-button,
 .maplibregl-terradraw-add-point-button {
 	background: url('./icons/point.svg');
@@ -33,6 +45,13 @@
 .maplibregl-terradraw-measure-add-linestring-button,
 .maplibregl-terradraw-add-linestring-button {
 	background: url('./icons/linestring.svg');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 80%;
+}
+
+.maplibregl-terradraw-valhalla-add-linestring-button {
+	background: url('./icons/valhalla_route.svg');
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: 80%;
@@ -86,6 +105,7 @@
 	background-size: 80%;
 }
 
+.maplibregl-terradraw-valhalla-add-select-button,
 .maplibregl-terradraw-measure-add-select-button,
 .maplibregl-terradraw-add-select-button {
 	background: url('./icons/select.svg');
@@ -114,6 +134,7 @@
 	background-size: 100%;
 }
 
+.maplibregl-terradraw-valhalla-add-control,
 .maplibregl-terradraw-measure-add-control,
 .maplibregl-terradraw-add-control {
 	display: block;
@@ -127,6 +148,7 @@
 	}
 }
 
+.maplibregl-terradraw-valhalla-delete-button,
 .maplibregl-terradraw-measure-delete-button,
 .maplibregl-terradraw-delete-button {
 	background: url('./icons/delete.svg');
@@ -139,6 +161,7 @@
 	}
 }
 
+.maplibregl-terradraw-valhalla-delete-selection-button,
 .maplibregl-terradraw-measure-delete-selection-button,
 .maplibregl-terradraw-delete-selection-button {
 	background: url('./icons/delete_selection.svg');
@@ -153,6 +176,7 @@
 	}
 }
 
+.maplibregl-terradraw-valhalla-download-button,
 .maplibregl-terradraw-measure-download-button,
 .maplibregl-terradraw-download-button {
 	background: url('./icons/download.svg');

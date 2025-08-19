@@ -1,6 +1,6 @@
 <script module lang="ts">
 	export interface DemoOptions {
-		controlType: 'default' | 'measure';
+		controlType: 'default' | 'measure' | 'valhalla';
 		isOpen: 'open' | 'close' | undefined;
 		modes: TerradrawMode[];
 		distanceUnit: DistanceUnit;
@@ -14,13 +14,16 @@
 <script lang="ts">
 	import {
 		AvailableModes,
+		AvailableValhallaModes,
 		getDefaultModeOptions,
 		MaplibreMeasureControl,
 		MaplibreTerradrawControl,
+		MaplibreValhallaControl,
 		roundFeatureCoordinates,
 		type AreaUnit,
 		type DistanceUnit,
-		type TerradrawMode
+		type TerradrawMode,
+		type TerradrawValhallaMode
 	} from '$lib';
 	import IconPlus from '@lucide/svelte/icons/plus';
 	import IconX from '@lucide/svelte/icons/x';
@@ -68,8 +71,6 @@
 	let mapContainer: HTMLDivElement | undefined = $state();
 	let map: Map | undefined;
 
-	let isMeasure: boolean = $derived(options.controlType === 'measure');
-
 	let drawControl: MaplibreTerradrawControl | undefined = $state();
 	let selectedFeature: string = $state('');
 
@@ -112,7 +113,7 @@
 
 		if (options.modes.length === 0) return;
 
-		if (isMeasure) {
+		if (options.controlType === 'measure') {
 			drawControl = new MaplibreMeasureControl({
 				modes: options.modes,
 				open: options.isOpen === 'open',
@@ -123,6 +124,19 @@
 				computeElevation: options.computeElevation === 'enabled',
 				adapterOptions: {
 					prefixId: 'td-measure'
+				}
+			});
+			map.addControl(drawControl, 'top-left');
+		} else if (options.controlType === 'valhalla') {
+			const modes = options.modes.filter((mode) =>
+				AvailableValhallaModes.includes(mode as TerradrawValhallaMode)
+			) as TerradrawValhallaMode[];
+			options.modes = modes;
+			drawControl = new MaplibreValhallaControl({
+				modes: modes,
+				open: options.isOpen === 'open',
+				adapterOptions: {
+					prefixId: 'td-valhalla'
 				}
 			});
 			map.addControl(drawControl, 'top-left');
@@ -191,7 +205,7 @@
 				}
 			}
 
-			if (isMeasure) {
+			if (options.controlType === 'measure') {
 				map?.once('idle', () => {
 					(drawControl as MaplibreMeasureControl).recalc();
 				});
@@ -253,6 +267,7 @@
 					<Segment
 						name="control-type"
 						value={options.controlType}
+						orientation="vertical"
 						onValueChange={(e) => {
 							options.controlType = e.value as 'default' | 'measure';
 							addControl();
@@ -260,16 +275,23 @@
 
 							if (options.controlType === 'default') {
 								accordionValue = accordionValue.filter((v) => v !== 'measure-option');
-							} else {
+							}
+							if (options.controlType === 'measure') {
 								accordionValue = [
 									...accordionValue.filter((v) => v !== 'measure-option'),
 									'measure-option'
+								];
+							} else {
+								accordionValue = [
+									...accordionValue.filter((v) => v !== 'valhalla-option'),
+									'valhalla-option'
 								];
 							}
 						}}
 					>
 						<Segment.Item value="default">Default Control</Segment.Item>
 						<Segment.Item value="measure">Measure Control</Segment.Item>
+						<Segment.Item value="valhalla">Valhalla Control</Segment.Item>
 					</Segment>
 				{/snippet}
 			</Accordion.Item>
@@ -419,7 +441,7 @@
 										value={options.distanceUnit}
 										onValueChange={(e) => {
 											options.distanceUnit = e.value as DistanceUnit;
-											if (drawControl && isMeasure) {
+											if (drawControl && options.controlType === 'measure') {
 												(drawControl as MaplibreMeasureControl).distanceUnit = options.distanceUnit;
 											}
 											onchange(options);
@@ -450,7 +472,7 @@
 										value={options.areaUnit}
 										onValueChange={(e) => {
 											options.areaUnit = e.value as AreaUnit;
-											if (drawControl && isMeasure) {
+											if (drawControl && options.controlType === 'measure') {
 												(drawControl as MaplibreMeasureControl).areaUnit = options.areaUnit;
 											}
 											onchange(options);
@@ -483,7 +505,7 @@
 											markers={[0, 5, 10]}
 											onValueChange={(e) => {
 												options.distancePrecision = e.value[0] as number;
-												if (drawControl && isMeasure) {
+												if (drawControl && options.controlType === 'measure') {
 													(drawControl as MaplibreMeasureControl).distancePrecision =
 														options.distancePrecision;
 												}
@@ -503,7 +525,7 @@
 											markers={[0, 5, 10]}
 											onValueChange={(e) => {
 												options.areaPrecision = e.value[0] as number;
-												if (drawControl && isMeasure) {
+												if (drawControl && options.controlType === 'measure') {
 													(drawControl as MaplibreMeasureControl).areaPrecision =
 														options.areaPrecision;
 												}
@@ -522,7 +544,7 @@
 										value={options.computeElevation}
 										onValueChange={(e) => {
 											options.computeElevation = e.value as 'enabled' | 'disabled';
-											if (drawControl && isMeasure) {
+											if (drawControl && options.controlType === 'measure') {
 												(drawControl as MaplibreMeasureControl).computeElevation =
 													options.computeElevation === 'enabled';
 											}

@@ -25,3 +25,12 @@ export const AvailableModes = [
 	'delete',
 	'download'
 ] as const;
+
+export const AvailableValhallaModes = [
+	'render',
+	'linestring',
+	'select',
+	'delete-selection',
+	'delete',
+	'download'
+] as const;

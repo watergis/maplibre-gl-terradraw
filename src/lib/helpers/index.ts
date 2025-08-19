@@ -10,4 +10,4 @@ export * from './memoryCache';
 export * from './queryElevationByPoint';
 export * from './queryElevationFromRasterDEM';
 export * from './roundFeatureCoordinates';
-export * from './valhallaRouting2';
+export * from './valhallaRouting';

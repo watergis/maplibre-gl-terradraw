@@ -3,8 +3,7 @@ import { defaultValhallaControlOptions } from '../constants';
 import type { ValhallaControlOptions, ValhallaOptions } from '../interfaces';
 import { LngLat, type Map } from 'maplibre-gl';
 import type { GeoJSONStoreGeometries, TerraDrawExtend } from 'terra-draw';
-import { debounce } from '$lib/helpers/debounce';
-import { ValhallaRouting } from '$lib/helpers/ValhallaRouting';
+import { debounce, ValhallaRouting } from '../helpers';
 
 /**
  * Maplibre GL Terra Draw Measure Control

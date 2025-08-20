@@ -131,7 +131,7 @@
 			const modes = options.modes.filter((mode) =>
 				AvailableValhallaModes.includes(mode as TerradrawValhallaMode)
 			) as TerradrawValhallaMode[];
-			options.modes = modes;
+			options.modes = modes as unknown as TerradrawMode[];
 			drawControl = new MaplibreValhallaControl({
 				modes: modes,
 				open: options.isOpen === 'open',
@@ -309,7 +309,9 @@
 				{/snippet}
 				{#snippet panel()}
 					{@const availableModes =
-						options.controlType === 'valhalla' ? AvailableValhallaModes : AvailableModes}
+						options.controlType === 'valhalla'
+							? (AvailableValhallaModes as unknown as TerradrawMode[])
+							: AvailableModes}
 					<p class="pb-4">
 						Your chosen options are automatically applied at the demo and the below usage code.
 					</p>
@@ -329,10 +331,7 @@
 							addControl();
 							onchange(options);
 						}}
-						validate={(details) =>
-							(availableModes as unknown as TerradrawMode[]).includes(
-								details.inputValue as TerradrawMode
-							)}
+						validate={(details) => availableModes.includes(details.inputValue as TerradrawMode)}
 						editable={false}
 					/>
 

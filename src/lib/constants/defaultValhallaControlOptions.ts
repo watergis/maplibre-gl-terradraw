@@ -1,11 +1,11 @@
-import { TerraDrawLineStringMode, TerraDrawSelectMode } from 'terra-draw';
+import { TerraDrawLineStringMode, TerraDrawRenderMode, TerraDrawSelectMode } from 'terra-draw';
 import type { ValhallaControlOptions } from '../interfaces/ValhallaControlOptions';
 
 /**
  * Default ValhallaControl options
  */
 export const defaultValhallaControlOptions: ValhallaControlOptions = {
-	modes: ['render', 'linestring', 'select', 'delete-selection', 'delete', 'download'],
+	modes: ['render', 'linestring', 'select', 'delete-selection', 'delete', 'settings', 'download'],
 	open: false,
 	// see styling parameters of Terra Draw at https://github.com/JamesLMilner/terra-draw/blob/main/guides/5.STYLING.md
 	modeOptions: {
@@ -35,6 +35,10 @@ export const defaultValhallaControlOptions: ValhallaControlOptions = {
 					}
 				}
 			}
+		}),
+		settings: new TerraDrawRenderMode({
+			modeName: 'settings',
+			styles: {}
 		})
 	},
 	valhallaOptions: {

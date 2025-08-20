@@ -1,6 +1,11 @@
 import { MaplibreTerradrawControl } from './MaplibreTerradrawControl';
 import { defaultValhallaControlOptions } from '../constants';
-import type { ValhallaControlOptions, ValhallaOptions } from '../interfaces';
+import type {
+	TerradrawMode,
+	TerradrawValhallaMode,
+	ValhallaControlOptions,
+	ValhallaOptions
+} from '../interfaces';
 import { LngLat, type Map } from 'maplibre-gl';
 import type { GeoJSONStoreGeometries, TerraDrawExtend } from 'terra-draw';
 import { debounce } from '../helpers/debounce';
@@ -92,7 +97,7 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 		_options.adapterOptions.prefixId = _options.adapterOptions?.prefixId ?? 'td-valhalla';
 
 		super({
-			modes: _options.modes,
+			modes: _options.modes as unknown as TerradrawMode[],
 			open: _options.open,
 			modeOptions: _options.modeOptions,
 			adapterOptions: _options.adapterOptions
@@ -131,6 +136,23 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 	public activate() {
 		super.activate();
 		this.registerValhallaControl();
+	}
+
+	/**
+	 * Add Terra Draw drawing mode button
+	 * @param mode Terra Draw mode name
+	 */
+	protected addTerradrawButton(mode: TerradrawMode) {
+		const btn = document.createElement('button');
+		btn.type = 'button';
+		this.modeButtons[mode] = btn;
+
+		if ((mode as TerradrawValhallaMode) === 'settings') {
+			btn.classList.add(`maplibregl-terradraw-${this.cssPrefix}${mode}-button`);
+			btn.addEventListener('click', this.handleSettings.bind(this));
+		} else {
+			super.addTerradrawButton(mode);
+		}
 	}
 
 	/**
@@ -216,4 +238,9 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 		this.terradraw?.removeFeatures([id]);
 		this.terradraw?.addFeatures([feature]);
 	};
+
+	private handleSettings() {
+		// TODO: implement settings dialog
+		console.warn('Settings dialog is not implemented yet.');
+	}
 }

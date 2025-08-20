@@ -274,7 +274,7 @@
 					<Segment
 						name="control-type"
 						value={options.controlType}
-						orientation="vertical"
+						orientation="horizontal"
 						onValueChange={(e) => {
 							options.controlType = e.value as 'default' | 'measure';
 							addControl();
@@ -296,9 +296,9 @@
 							}
 						}}
 					>
-						<Segment.Item value="default">Default Control</Segment.Item>
-						<Segment.Item value="measure">Measure Control</Segment.Item>
-						<Segment.Item value="valhalla">Valhalla Control</Segment.Item>
+						<Segment.Item value="default">Default</Segment.Item>
+						<Segment.Item value="measure">Measure</Segment.Item>
+						<Segment.Item value="valhalla">Valhalla</Segment.Item>
 					</Segment>
 				{/snippet}
 			</Accordion.Item>
@@ -308,6 +308,8 @@
 					<p class="font-bold uppercase">Mode selection</p>
 				{/snippet}
 				{#snippet panel()}
+					{@const availableModes =
+						options.controlType === 'valhalla' ? AvailableValhallaModes : AvailableModes}
 					<p class="pb-4">
 						Your chosen options are automatically applied at the demo and the below usage code.
 					</p>
@@ -327,7 +329,10 @@
 							addControl();
 							onchange(options);
 						}}
-						validate={(details) => AvailableModes.includes(details.inputValue as TerradrawMode)}
+						validate={(details) =>
+							(availableModes as unknown as TerradrawMode[]).includes(
+								details.inputValue as TerradrawMode
+							)}
 						editable={false}
 					/>
 
@@ -335,11 +340,11 @@
 						<button
 							type="button"
 							class="btn preset-filled-primary-500"
-							disabled={options.modes.length === AvailableModes.length}
+							disabled={options.modes.length === availableModes.length}
 							onclick={() => {
 								options.modes = [
 									...options.modes,
-									...AvailableModes.filter((m) => !options.modes.includes(m))
+									...availableModes.filter((m) => !options.modes.includes(m))
 								];
 								addControl();
 								onchange(options);
@@ -363,8 +368,8 @@
 						</button>
 					</nav>
 
-					{#if options.modes.length < AvailableModes.length}
-						{@const selectSize = AvailableModes.filter((m) => !options.modes.includes(m)).length}
+					{#if options.modes.length < availableModes.length}
+						{@const selectSize = availableModes.filter((m) => !options.modes.includes(m)).length}
 						<select
 							class="select rounded-container mt-2"
 							size={selectSize === 1 ? selectSize + 1 : selectSize > 5 ? 5 : selectSize}
@@ -376,7 +381,7 @@
 								onchange(options);
 							}}
 						>
-							{#each AvailableModes.filter((m) => !options.modes.includes(m)) as mode (mode)}
+							{#each availableModes.filter((m) => !options.modes.includes(m)) as mode (mode)}
 								<option value={mode}>{mode}</option>
 							{/each}
 						</select>

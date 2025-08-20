@@ -1,7 +1,7 @@
 import type { ModeOptions } from './ModeOptions';
 import type { TerraDrawExtend } from 'terra-draw';
 import type { TerradrawValhallaMode } from './TerradrawMode';
-import type { distanceUnitType, meansOfTransportType } from '$lib/helpers';
+import type { distanceUnitType, meansOfTransportType } from '../helpers';
 /**
  * ValhallaControl Plugin control constructor options
  */

@@ -60,6 +60,8 @@ export interface ValhallaError {
 
 export type meansOfTransportType = 'pedestrian' | 'bicycle' | 'auto';
 
+export type distanceUnitType = 'kilometers' | 'miles';
+
 export class ValhallaRouting {
 	private tripData: LngLat[] = [];
 
@@ -87,7 +89,11 @@ export class ValhallaRouting {
 		this.tripSummary = undefined;
 	}
 
-	public async calcRoute(tripData: LngLat[], meansOfTransport: meansOfTransportType) {
+	public async calcRoute(
+		tripData: LngLat[],
+		meansOfTransport: meansOfTransportType,
+		distanceUnit: distanceUnitType
+	) {
 		this.tripData = tripData;
 		if (!this.tripData || (this.tripData && this.tripData.length < 2)) {
 			this.tripSummary = undefined;
@@ -101,7 +107,7 @@ export class ValhallaRouting {
 			}),
 			costing: meansOfTransport,
 			costing_options: { auto: { country_crossing_penalty: 2000.0 } },
-			units: 'kilometers',
+			units: distanceUnit,
 			id: 'my_work_route'
 		};
 		const apiUrl = `${baseAPI}?json=${JSON.stringify(params)}`;
@@ -131,7 +137,8 @@ export class ValhallaRouting {
 			sumTime += Number((leg.summary.time / 60).toFixed());
 		});
 		const feature = this.geoLineString(combinedShape, {
-			length: sumLength,
+			distance: sumLength,
+			distance_unit: distanceUnit === 'kilometers' ? 'km' : 'mi',
 			time: sumTime
 		});
 
@@ -139,7 +146,7 @@ export class ValhallaRouting {
 		return { feature, pointFeatures };
 	}
 
-	geoLineString(
+	private geoLineString(
 		coordinates: number[][] = [],
 		props: { [key: string]: string | number } = {}
 	): GeoJSONFeature {
@@ -155,7 +162,7 @@ export class ValhallaRouting {
 		};
 	}
 
-	geoPoint(coordinates: number[][] = []): GeoJSONFeature {
+	private geoPoint(coordinates: number[][] = []): GeoJSONFeature {
 		return {
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore

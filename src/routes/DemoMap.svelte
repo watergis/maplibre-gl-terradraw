@@ -137,6 +137,13 @@
 				open: options.isOpen === 'open',
 				adapterOptions: {
 					prefixId: 'td-valhalla'
+				},
+				valhallaOptions: {
+					url: 'https://valhalla.water-gis.com',
+					routingOptions: {
+						meansOfTransport: 'pedestrian',
+						distanceUnit: 'kilometers'
+					}
 				}
 			});
 			map.addControl(drawControl, 'top-left');

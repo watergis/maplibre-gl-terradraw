@@ -38,7 +38,11 @@ export const defaultValhallaControlOptions: ValhallaControlOptions = {
 		})
 	},
 	valhallaOptions: {
-		url: 'https://valhalla.water-gis.com'
+		url: '',
+		routingOptions: {
+			meansOfTransport: 'auto',
+			distanceUnit: 'kilometers'
+		}
 	},
 	adapterOptions: {
 		prefixId: 'td-valhalla'

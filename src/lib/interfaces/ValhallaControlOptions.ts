@@ -1,6 +1,7 @@
 import type { ModeOptions } from './ModeOptions';
 import type { TerraDrawExtend } from 'terra-draw';
 import type { TerradrawValhallaMode } from './TerradrawMode';
+import type { distanceUnitType, meansOfTransportType } from '$lib/helpers';
 /**
  * ValhallaControl Plugin control constructor options
  */
@@ -24,6 +25,9 @@ export interface ValhallaControlOptions {
 	 */
 	modeOptions?: ModeOptions;
 
+	/**
+	 * Valhalla options for the control.
+	 */
 	valhallaOptions?: ValhallaOptions;
 
 	/**
@@ -34,5 +38,29 @@ export interface ValhallaControlOptions {
 }
 
 export interface ValhallaOptions {
+	/**
+	 * URL of Valhalla API.
+	 * Default is empty string, which means you need to set the URL before using the control.
+	 * If you want to use the demo Valhalla API, set the URL to 'https://valhalla.water-gis.com'.
+	 * However, this demo api is only available for Rwanda, Uganda and Kenya.
+	 *
+	 * If the URL is not set, the control constructor will throw an error.
+	 *
+	 * Please read more about how to set up your own Valhalla API at https://valhalla.github.io/valhalla/
+	 */
 	url?: string;
+
+	routingOptions?: {
+		/**
+		 * Means of transport for Valhalla routing API.
+		 * 'auto', 'bicycle', 'pedestrian' models are available in the plugin.
+		 * https://valhalla.github.io/valhalla/api/turn-by-turn/api-reference/#costing-models
+		 */
+		meansOfTransport?: meansOfTransportType;
+		/**
+		 * Dustance unit for Valhalla routing API.
+		 * https://valhalla.github.io/valhalla/api/turn-by-turn/api-reference/#directions-options
+		 */
+		distanceUnit?: distanceUnitType;
+	};
 }

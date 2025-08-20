@@ -214,7 +214,11 @@
 									.replace('{open}', demoOptions.isOpen === 'open' ? 'true' : 'false')
 									.replace(
 										'{measure_options}',
-										demoOptions.controlType === 'default' ? '' : getMeasureOptions()
+										demoOptions.controlType === 'default'
+											? ''
+											: demoOptions.controlType === 'valhalla'
+												? ''
+												: getMeasureOptions()
 									)}
 							/>
 						{/key}
@@ -238,7 +242,11 @@
 									.replace('{open}', demoOptions.isOpen === 'open' ? 'true' : 'false')
 									.replace(
 										'{measure_options}',
-										demoOptions.controlType === 'default' ? '' : getMeasureOptions()
+										demoOptions.controlType === 'default'
+											? ''
+											: demoOptions.controlType === 'valhalla'
+												? ''
+												: getMeasureOptions()
 									)}
 							/>
 						{/key}

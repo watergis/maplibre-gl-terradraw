@@ -8,15 +8,15 @@ import type {
 } from '../interfaces';
 import { LngLat, type Map } from 'maplibre-gl';
 import type { GeoJSONStoreGeometries, TerraDrawExtend } from 'terra-draw';
-import { debounce } from '../helpers/debounce';
 import {
+	debounce,
+	ModalDialog,
 	distanceUnitOptions,
 	meansOfTransportOptions,
 	ValhallaRouting,
 	type distanceUnitType,
 	type meansOfTransportType
-} from '../helpers/valhallaRouting';
-import { ModalDialog } from '$lib/helpers';
+} from '../helpers';
 
 /**
  * Maplibre GL Terra Draw Measure Control

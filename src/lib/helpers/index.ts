@@ -7,6 +7,7 @@ export * from './cleanMaplibreStyle';
 export * from './debounce';
 export * from './getDistanceUnitName';
 export * from './memoryCache';
+export * from './modalDialog';
 export * from './queryElevationByPoint';
 export * from './queryElevationFromRasterDEM';
 export * from './roundFeatureCoordinates';

@@ -16,12 +16,14 @@ import {
 	type distanceUnitType,
 	type meansOfTransportType
 } from '../helpers/valhallaRouting';
+import { ModalDialog } from '$lib/helpers';
 
 /**
  * Maplibre GL Terra Draw Measure Control
  */
 export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 	private valhallaOptions: ValhallaOptions;
+	private _modalDialog: ModalDialog | undefined;
 
 	/**
 	 * Get the URL of Valhalla API
@@ -79,13 +81,16 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 	}
 
 	/**
-	 * Get the dialog element for settings
+	 * Get the dialog instance for settings
 	 */
-	get settingDialog() {
-		const dialog = document.getElementsByClassName(
-			`maplibregl-terradraw-${this.cssPrefix}settings-dialog`
-		);
-		return dialog.length > 0 ? (dialog[0] as HTMLDialogElement) : null;
+	get settingDialog(): ModalDialog {
+		return this._modalDialog as ModalDialog;
+	}
+	/**
+	 * Set the dialog instance for settings
+	 */
+	set settingDialog(value: ModalDialog) {
+		this._modalDialog = value;
 	}
 
 	/**
@@ -151,135 +156,60 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 		this.registerValhallaControl();
 	}
 
+	/**
+	 * Create the settings dialog for Valhalla control
+	 */
 	private createSettingsDialog() {
-		const dialog = document.createElement('dialog');
-		dialog.classList.add(`maplibregl-terradraw-${this.cssPrefix}settings-dialog`);
+		this.settingDialog = new ModalDialog(
+			`maplibregl-terradraw-${this.cssPrefix}settings-dialog`,
+			'Settings'
+		);
+		this.settingDialog.create(
+			this.map?.getContainer().parentElement as HTMLElement,
+			(content: HTMLDivElement) => {
+				// Means of Transport section
+				const transportSection = document.createElement('div');
+				transportSection.classList.add('setting-section');
 
-		const header = document.createElement('div');
-		header.classList.add('dialog-header');
+				const transportLabel = document.createElement('label');
+				transportLabel.textContent = 'Means of Transport';
+				transportLabel.classList.add('setting-label');
+				transportSection.appendChild(transportLabel);
 
-		const title = document.createElement('h3');
-		title.textContent = 'Settings';
-		title.classList.add('dialog-title');
-		header.appendChild(title);
+				transportSection.appendChild(
+					this.settingDialog.createSegmentButtons(
+						meansOfTransportOptions as unknown as { value: string; label: string }[],
+						this.routingMeansOfTransport,
+						(value: string) => {
+							this.routingMeansOfTransport = value as meansOfTransportType;
+						}
+					)
+				);
+				content.appendChild(transportSection);
 
-		const btnClose = document.createElement('button');
-		btnClose.type = 'button';
-		btnClose.classList.add('close-button');
-		btnClose.innerHTML = '×'; // X文字
-		btnClose.setAttribute('aria-label', 'Close dialog');
-		btnClose.addEventListener('click', () => {
-			this.settingDialog?.close();
-		});
-		header.appendChild(btnClose);
+				// Distance Unit section
+				const unitSection = document.createElement('div');
+				unitSection.classList.add('setting-section');
 
-		dialog.appendChild(header);
+				const unitLabel = document.createElement('label');
+				unitLabel.textContent = 'Distance Unit';
+				unitLabel.classList.add('setting-label');
+				unitSection.appendChild(unitLabel);
 
-		const content = document.createElement('div');
-		content.classList.add(`content`);
+				unitSection.appendChild(
+					this.settingDialog.createSegmentButtons(
+						distanceUnitOptions as unknown as { value: string; label: string }[],
+						this.routingDistanceUnit,
+						(value: string) => {
+							this.routingDistanceUnit = value as distanceUnitType;
+						}
+					)
+				);
+				content.appendChild(unitSection);
 
-		// Means of Transport section
-		const transportSection = document.createElement('div');
-		transportSection.classList.add('setting-section');
-
-		const transportLabel = document.createElement('label');
-		transportLabel.textContent = 'Means of Transport';
-		transportLabel.classList.add('setting-label');
-		transportSection.appendChild(transportLabel);
-
-		const transportButtons = document.createElement('div');
-		transportButtons.classList.add('segment-buttons');
-
-		meansOfTransportOptions.forEach((option) => {
-			const button = document.createElement('button');
-			button.type = 'button';
-			button.classList.add('segment-button');
-			button.value = option.value;
-			button.textContent = option.label;
-
-			if (option.value === this.routingMeansOfTransport) {
-				button.classList.add('active');
+				return content;
 			}
-
-			button.addEventListener('click', () => {
-				transportButtons
-					.querySelectorAll('.segment-button')
-					.forEach((btn) => btn.classList.remove('active'));
-				button.classList.add('active');
-				this.routingMeansOfTransport = button.value as meansOfTransportType;
-			});
-
-			transportButtons.appendChild(button);
-		});
-
-		transportSection.appendChild(transportButtons);
-		content.appendChild(transportSection);
-
-		// Distance Unit section
-		const unitSection = document.createElement('div');
-		unitSection.classList.add('setting-section');
-
-		const unitLabel = document.createElement('label');
-		unitLabel.textContent = 'Distance Unit';
-		unitLabel.classList.add('setting-label');
-		unitSection.appendChild(unitLabel);
-
-		const unitButtons = document.createElement('div');
-		unitButtons.classList.add('segment-buttons');
-
-		distanceUnitOptions.forEach((option) => {
-			const button = document.createElement('button');
-			button.type = 'button';
-			button.classList.add('segment-button');
-			button.value = option.value;
-			button.textContent = option.label;
-
-			if (option.value === this.routingDistanceUnit) {
-				button.classList.add('active');
-			}
-
-			button.addEventListener('click', () => {
-				unitButtons
-					.querySelectorAll('.segment-button')
-					.forEach((btn) => btn.classList.remove('active'));
-				button.classList.add('active');
-				this.routingDistanceUnit = button.value as distanceUnitType;
-			});
-
-			unitButtons.appendChild(button);
-		});
-
-		unitSection.appendChild(unitButtons);
-
-		content.appendChild(unitSection);
-
-		dialog.appendChild(content);
-
-		// const btnClose = document.createElement('button');
-		// btnClose.type = 'button';
-		// btnClose.classList.add(`close-button`);
-		// btnClose.innerHTML = 'Close';
-		// btnClose.addEventListener('click', () => {
-		// 	this.settingDialog?.close();
-		// });
-		// dialog.appendChild(btnClose);
-
-		dialog.addEventListener('click', (event) => {
-			const target = event.target as Element | null;
-			if (!target) return;
-			const rect = target.getBoundingClientRect();
-
-			if (
-				rect.left > event.clientX ||
-				rect.right < event.clientX ||
-				rect.top > event.clientY ||
-				rect.bottom < event.clientY
-			) {
-				dialog.close();
-			}
-		});
-
-		this.map?.getContainer().parentElement?.appendChild(dialog);
+		);
 	}
 
 	/**
@@ -293,10 +223,17 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 
 		if ((mode as TerradrawValhallaMode) === 'settings') {
 			btn.classList.add(`maplibregl-terradraw-${this.cssPrefix}${mode}-button`);
-			btn.addEventListener('click', this.handleSettings.bind(this));
+			btn.addEventListener('click', this.handleSettingDialog.bind(this));
 		} else {
 			super.addTerradrawButton(mode);
 		}
+	}
+
+	/**
+	 * Handle the click event of the settings button
+	 */
+	private handleSettingDialog() {
+		this.settingDialog?.open();
 	}
 
 	/**
@@ -383,8 +320,4 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 		this.terradraw?.removeFeatures([id]);
 		this.terradraw?.addFeatures([feature]);
 	};
-
-	private handleSettings() {
-		this.settingDialog?.showModal();
-	}
 }

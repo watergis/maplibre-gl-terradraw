@@ -58,9 +58,20 @@ export interface ValhallaError {
 	status_code: number;
 }
 
-export type meansOfTransportType = 'pedestrian' | 'bicycle' | 'auto';
+export const meansOfTransportOptions = [
+	{ value: 'pedestrian', label: 'Pedestrian' },
+	{ value: 'bicycle', label: 'Bicycle' },
+	{ value: 'auto', label: 'Auto' }
+] as const;
 
-export type distanceUnitType = 'kilometers' | 'miles';
+export type meansOfTransportType = (typeof meansOfTransportOptions)[number]['value'];
+
+export const distanceUnitOptions = [
+	{ value: 'kilometers', label: 'km' },
+	{ value: 'miles', label: 'mile' }
+] as const;
+
+export type distanceUnitType = (typeof distanceUnitOptions)[number]['value'];
 
 export class ValhallaRouting {
 	private tripData: LngLat[] = [];

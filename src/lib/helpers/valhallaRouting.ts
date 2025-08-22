@@ -1,5 +1,8 @@
 import { GeoJSONFeature, LngLat } from 'maplibre-gl';
 
+/**
+ * ValhallaTripSummary interface for the summary of the trip.
+ */
 export interface ValhallaTripSummary {
 	has_time_restrictions: boolean;
 	min_lat: number;
@@ -11,6 +14,9 @@ export interface ValhallaTripSummary {
 	cost: number;
 }
 
+/**
+ * ValhallaRoutingLocation interface for the locations in the trip.
+ */
 export interface ValhallaRoutingLocation {
 	type: string;
 	lat: number;
@@ -19,6 +25,9 @@ export interface ValhallaRoutingLocation {
 	original_index: number;
 }
 
+/**
+ * ValhallaRoutingLeg interface for the legs of the trip.
+ */
 export interface ValhallaRoutingLeg {
 	maneuvers: {
 		type: number;
@@ -38,6 +47,9 @@ export interface ValhallaRoutingLeg {
 	shape: string;
 }
 
+/**
+ * ValhallaTripResult interface for the response from Valhalla routing API.
+ */
 export interface ValhallaTripResult {
 	trip: {
 		locations: ValhallaRoutingLocation[];
@@ -51,6 +63,9 @@ export interface ValhallaTripResult {
 	id: string;
 }
 
+/**
+ * ValhallaError interface for error response from Valhalla API.
+ */
 export interface ValhallaError {
 	error: string;
 	error_code: number;
@@ -58,31 +73,61 @@ export interface ValhallaError {
 	status_code: number;
 }
 
-export const meansOfTransportOptions = [
+/**
+ * Options of means of transport for Valhalla routing API.
+ */
+export const routingMeansOfTransportOptions = [
 	{ value: 'pedestrian', label: 'Pedestrian' },
 	{ value: 'bicycle', label: 'Bicycle' },
-	{ value: 'auto', label: 'Auto' }
+	{ value: 'auto', label: 'Car' }
 ] as const;
 
-export type meansOfTransportType = (typeof meansOfTransportOptions)[number]['value'];
+/**
+ * routingMeansOfTransportType is the type for means of transport in Valhalla routing API.
+ */
+export type routingMeansOfTransportType = (typeof routingMeansOfTransportOptions)[number]['value'];
 
-export const distanceUnitOptions = [
+/**
+ * Options of distance unit for Valhalla routing API.
+ */
+export const routingDistanceUnitOptions = [
 	{ value: 'kilometers', label: 'km' },
 	{ value: 'miles', label: 'mile' }
 ] as const;
 
-export type distanceUnitType = (typeof distanceUnitOptions)[number]['value'];
+/**
+ * routingDistanceUnitType is the type for distance unit in Valhalla routing API.
+ */
+export type routingDistanceUnitType = (typeof routingDistanceUnitOptions)[number]['value'];
 
+/**
+ * Valhalla routing API class
+ */
 export class ValhallaRouting {
 	private tripData: LngLat[] = [];
 
+	/**
+	 * get the raw trip data from the valhalla routing API.
+	 * @returns tripData
+	 */
 	public getTripData(): LngLat[] {
 		return this.tripData;
 	}
 
+	/**
+	 * Valhalla API URL
+	 */
 	private url: string;
 
+	/**
+	 * Trip summary from routing API.
+	 */
 	private tripSummary: ValhallaTripSummary | undefined;
+
+	/**
+	 * Get the trip summary from the routing API.
+	 * @returns tripSummary
+	 */
 	public getTripSummary(): ValhallaTripSummary | undefined {
 		return this.tripSummary;
 	}
@@ -95,15 +140,26 @@ export class ValhallaRouting {
 		this.url = url;
 	}
 
+	/**
+	 * Clear the trip data and summary.
+	 */
 	public clearFeatures() {
 		this.tripData = [];
 		this.tripSummary = undefined;
 	}
 
+	/**
+	 * Calculate the route using Valhalla routing API.
+	 * @param tripData array of LngLat coordinates for the trip
+	 * @param meansOfTransport means of transport for Valhalla routing API.
+	 * @param distanceUnit distance unit for Valhalla routing API.
+	 * @returns returns a feature with LineString geometry and point features for the trip data
+	 * @throws Error if the trip data is invalid or if the Valhalla API returns
+	 */
 	public async calcRoute(
 		tripData: LngLat[],
-		meansOfTransport: meansOfTransportType,
-		distanceUnit: distanceUnitType
+		meansOfTransport: routingMeansOfTransportType,
+		distanceUnit: routingDistanceUnitType
 	) {
 		this.tripData = tripData;
 		if (!this.tripData || (this.tripData && this.tripData.length < 2)) {
@@ -141,22 +197,53 @@ export class ValhallaRouting {
 		const combinedShape: number[][] = [];
 		let sumLength = 0;
 		let sumTime = 0;
-		json.trip.legs.forEach((leg) => {
+		const combinedManeuvers: ValhallaRoutingLeg['maneuvers'] = [];
+
+		const pointFeatures = this.geoPoint(this.tripData.map((pt) => [pt.lng, pt.lat]));
+
+		json.trip.legs.forEach((leg, index) => {
 			const shape = this.decodeShape(leg.shape);
 			combinedShape.push(...shape);
 			sumLength += Number(leg.summary.length.toFixed(2));
 			sumTime += Number((leg.summary.time / 60).toFixed());
-		});
-		const feature = this.geoLineString(combinedShape, {
-			distance: sumLength,
-			distance_unit: distanceUnit === 'kilometers' ? 'km' : 'mi',
-			time: sumTime
+			combinedManeuvers.push(...leg.maneuvers);
+
+			const pointFeature = pointFeatures.features[index + 1];
+			pointFeature.properties = {
+				...pointFeature.properties,
+				distance: sumLength,
+				distance_unit: distanceUnit === 'kilometers' ? 'km' : 'mi',
+				time: sumTime,
+				maneuvers: leg.maneuvers
+			};
 		});
 
-		const pointFeatures = this.geoPoint(this.tripData.map((pt) => [pt.lng, pt.lat]));
+		const transportLabel = routingMeansOfTransportOptions.find(
+			(opt) => opt.value === meansOfTransport
+		)?.label as string;
+
+		const feature = this.geoLineString(combinedShape, {
+			meansOfTransport: transportLabel,
+			distance: sumLength,
+			distance_unit: distanceUnit === 'kilometers' ? 'km' : 'mi',
+			time: sumTime,
+			maneuvers: combinedManeuvers as unknown as string
+		});
+
+		const firstFeature = pointFeatures.features[0];
+		firstFeature.properties = {
+			...firstFeature.properties,
+			meansOfTransport: transportLabel
+		};
 		return { feature, pointFeatures };
 	}
 
+	/**
+	 * create a GeoJSON Feature with LineString geometry.
+	 * @param coordinates array of coordinates
+	 * @param props properties to set for the feature
+	 * @returns GeoJSON Feature with LineString geometry
+	 */
 	private geoLineString(
 		coordinates: number[][] = [],
 		props: { [key: string]: string | number } = {}
@@ -173,21 +260,28 @@ export class ValhallaRouting {
 		};
 	}
 
-	private geoPoint(coordinates: number[][] = []): GeoJSONFeature {
+	/**
+	 * Create a GeoJSON FeatureCollection with Point features.
+	 * @param coordinates array of coordinates
+	 * @returns GeoJSON FeatureCollection
+	 */
+	private geoPoint(coordinates: number[][] = []) {
 		return {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
 			type: 'FeatureCollection',
 			features: coordinates.map((c, i) => {
 				let text = (i + 1).toString();
 				if (i === 0) {
-					text = 'From';
+					text = 'Start';
 				} else if (i === coordinates.length - 1) {
-					text = 'To';
+					text = 'Goal';
+				} else {
+					text = `No.${text}`;
 				}
 				return {
 					type: 'Feature',
+					id: `node-${i}`,
 					properties: {
+						sequence: i,
 						text
 					},
 					geometry: {
@@ -195,10 +289,16 @@ export class ValhallaRouting {
 						coordinates: c
 					}
 				};
-			})
+			}) as unknown as GeoJSONFeature[]
 		};
 	}
 
+	/**
+	 * decode a shape string from Valhalla routing API to convert it to an array of coordinates.
+	 * @param value encoded shape object from Valhalla routing API
+	 * @param precision coordinate precision, default is 6
+	 * @returns the list of coordinates as [lng, lat] pairs
+	 */
 	private decodeShape(value: string, precision = 6) {
 		let index = 0,
 			lat = 0,

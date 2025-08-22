@@ -1,7 +1,8 @@
 import type { ModeOptions } from './ModeOptions';
 import type { TerraDrawExtend } from 'terra-draw';
 import type { TerradrawValhallaMode } from './TerradrawMode';
-import type { distanceUnitType, meansOfTransportType } from '../helpers';
+import type { routingDistanceUnitType, routingMeansOfTransportType } from '../helpers';
+import type { CircleLayerSpecification, SymbolLayerSpecification } from 'maplibre-gl';
 /**
  * ValhallaControl Plugin control constructor options
  */
@@ -35,6 +36,16 @@ export interface ValhallaControlOptions {
 	 * https://github.com/JamesLMilner/terra-draw/blob/806e319d5680a3f69edeff7dd629da3f1b4ff9bf/src/adapters/common/base.adapter.ts#L28-L48
 	 */
 	adapterOptions?: TerraDrawExtend.BaseAdapterConfig & { prefixId?: string };
+
+	/**
+	 * Maplibre symbol layer specification (on line nodes) for line distance layer
+	 */
+	lineLayerNodeLabelSpec?: SymbolLayerSpecification;
+
+	/**
+	 * Maplibre circle layer specification for visualizing node style of line distance layer
+	 */
+	lineLayerNodeSpec?: CircleLayerSpecification;
 }
 
 export interface ValhallaOptions {
@@ -56,11 +67,11 @@ export interface ValhallaOptions {
 		 * 'auto', 'bicycle', 'pedestrian' models are available in the plugin.
 		 * https://valhalla.github.io/valhalla/api/turn-by-turn/api-reference/#costing-models
 		 */
-		meansOfTransport?: meansOfTransportType;
+		meansOfTransport?: routingMeansOfTransportType;
 		/**
 		 * Dustance unit for Valhalla routing API.
 		 * https://valhalla.github.io/valhalla/api/turn-by-turn/api-reference/#directions-options
 		 */
-		distanceUnit?: distanceUnitType;
+		distanceUnit?: routingDistanceUnitType;
 	};
 }

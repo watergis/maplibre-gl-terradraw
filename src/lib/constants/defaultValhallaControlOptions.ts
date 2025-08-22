@@ -50,5 +50,82 @@ export const defaultValhallaControlOptions: ValhallaControlOptions = {
 	},
 	adapterOptions: {
 		prefixId: 'td-valhalla'
+	},
+	lineLayerNodeLabelSpec: {
+		id: '{prefix}-line-node-label',
+		type: 'symbol',
+		source: '{prefix}-line-source',
+		filter: ['==', '$type', 'Point'],
+		layout: {
+			'text-field': [
+				'case',
+				['all', ['has', 'distance'], ['has', 'distance_unit'], ['has', 'time']],
+				[
+					'concat',
+					['to-string', ['get', 'text']],
+					'\n',
+					['to-string', ['/', ['round', ['*', ['get', 'distance'], 10]], 10]],
+					['to-string', ['get', 'distance_unit']],
+					'\n',
+					['to-string', ['get', 'time']],
+					'min'
+				],
+				['all', ['has', 'meansOfTransport']],
+				[
+					'concat',
+					['to-string', ['get', 'text']],
+					'\n(',
+					['to-string', ['get', 'meansOfTransport']],
+					')'
+				],
+				['concat', ['to-string', ['get', 'text']]]
+			],
+			'symbol-placement': 'point',
+			'text-size': [
+				'interpolate',
+				['linear'],
+				['zoom'],
+				5,
+				10,
+				10,
+				12.0,
+				13,
+				14.0,
+				14,
+				16.0,
+				18,
+				18.0
+			],
+			'text-overlap': 'always',
+			'text-variable-anchor': ['left', 'right', 'top', 'bottom'],
+			'text-radial-offset': 0.5,
+			'text-justify': 'left',
+			'text-letter-spacing': 0.05
+		},
+		paint: {
+			'text-halo-color': '#F7F7F7',
+			'text-halo-width': 2,
+			'text-color': '#232E3D'
+		}
+	},
+	lineLayerNodeSpec: {
+		id: '{prefix}-line-node',
+		type: 'circle',
+		source: '{prefix}-line-source',
+		filter: ['==', '$type', 'Point'],
+		layout: {},
+		paint: {
+			'circle-radius': 3,
+			'circle-color': [
+				'case',
+				['==', ['get', 'text'], 'Start'],
+				'#0000FF',
+				['==', ['get', 'text'], 'Goal'],
+				'#FFFF00',
+				'#FFFFFF'
+			],
+			'circle-stroke-color': '#000000',
+			'circle-stroke-width': 1
+		}
 	}
 };

@@ -1,4 +1,11 @@
-import type { ControlPosition, IControl, Map, StyleSpecification } from 'maplibre-gl';
+import type {
+	ControlPosition,
+	GeoJSONSource,
+	GeoJSONSourceSpecification,
+	IControl,
+	Map,
+	StyleSpecification
+} from 'maplibre-gl';
 import { TerraDraw, TerraDrawExtend, TerraDrawRenderMode } from 'terra-draw';
 import { TerraDrawMapLibreGLAdapter } from 'terra-draw-maplibre-gl-adapter';
 import type {
@@ -527,6 +534,48 @@ export class MaplibreTerradrawControl implements IControl {
 				const btn = btns.item(i);
 				if (!btn) continue;
 				btn.classList.remove('active');
+			}
+		}
+	}
+
+	/**
+	 * Clear GeoJSON feature related to extended control such as measure and valhalla by TerraDraw feature ID
+	 * @param sourceIds the array of source ID to delete
+	 * @param ids the array of feature ID. Optional, if undefined, delete all labels for source
+	 * @returns void
+	 */
+	protected clearExtendedFeatures(
+		sourceIds: string[],
+		ids: TerraDrawExtend.FeatureId[] | undefined = undefined
+	) {
+		if (!this.map) return;
+		for (const sourceId of sourceIds) {
+			const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
+				sourceId
+			] as GeoJSONSourceSpecification;
+			if (geojsonSource) {
+				// delete old nodes
+				if (
+					typeof geojsonSource.data !== 'string' &&
+					geojsonSource.data.type === 'FeatureCollection'
+				) {
+					// if ids is undefined, delete all labels for the source
+					if (ids === undefined) {
+						geojsonSource.data.features = [];
+					} else {
+						// Delete label features if originalId does not exist anymore.
+						geojsonSource.data.features = geojsonSource.data.features.filter((f) => {
+							if (f.properties?.originalId) {
+								return !ids.includes(f.properties.originalId);
+							} else {
+								return !ids.includes(f.id as string);
+							}
+						});
+					}
+
+					// update GeoJSON source with new data
+					(this.map.getSource(sourceId) as GeoJSONSource)?.setData(geojsonSource.data);
+				}
 			}
 		}
 	}

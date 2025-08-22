@@ -37,6 +37,13 @@ export class ModalDialog {
 		parentElement: HTMLElement,
 		addConttent: (contentElement: HTMLDivElement) => HTMLDivElement
 	) {
+		const existingDialog = document.getElementsByClassName(this.className);
+		if (existingDialog.length > 0) {
+			Array.from(existingDialog).forEach((dialog) => {
+				dialog.remove();
+			});
+		}
+
 		this.dialog = document.createElement('dialog');
 		this.dialog.classList.add(this.className);
 

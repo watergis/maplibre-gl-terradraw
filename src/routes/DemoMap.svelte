@@ -8,6 +8,7 @@
 		areaUnit: AreaUnit;
 		areaPrecision: number;
 		computeElevation: 'enabled' | 'disabled';
+		valhallaOptions: ValhallaOptions;
 	}
 </script>
 
@@ -20,10 +21,15 @@
 		MaplibreTerradrawControl,
 		MaplibreValhallaControl,
 		roundFeatureCoordinates,
+		routingDistanceUnitOptions,
+		routingMeansOfTransportOptions,
 		type AreaUnit,
 		type DistanceUnit,
+		type routingDistanceUnitType,
+		type routingMeansOfTransportType,
 		type TerradrawMode,
-		type TerradrawValhallaMode
+		type TerradrawValhallaMode,
+		type ValhallaOptions
 	} from '$lib';
 	import IconPlus from '@lucide/svelte/icons/plus';
 	import IconX from '@lucide/svelte/icons/x';
@@ -62,7 +68,14 @@
 			distancePrecision: 2,
 			areaUnit: 'metric',
 			areaPrecision: 2,
-			computeElevation: 'enabled'
+			computeElevation: 'enabled',
+			valhallaOptions: {
+				url: '',
+				routingOptions: {
+					meansOfTransport: 'pedestrian',
+					distanceUnit: 'kilometers'
+				}
+			}
 		}),
 		onchange = () => {},
 		onclick = () => {}
@@ -81,6 +94,12 @@
 		'distance-precision',
 		'area-precision',
 		'compute-elevation'
+	]);
+
+	let valhallaAccordionValue = $state([
+		'valhalla-url',
+		'routing-means-of-transport',
+		'routing-distance-unit'
 	]);
 
 	$effect(() => {
@@ -138,13 +157,7 @@
 				adapterOptions: {
 					prefixId: 'td-valhalla'
 				},
-				valhallaOptions: {
-					url: 'https://valhalla.water-gis.com',
-					routingOptions: {
-						meansOfTransport: 'pedestrian',
-						distanceUnit: 'kilometers'
-					}
-				}
+				valhallaOptions: options.valhallaOptions
 			});
 			map.addControl(drawControl, 'top-left');
 		} else {
@@ -267,8 +280,8 @@
 				{/snippet}
 				{#snippet panel()}
 					<p class="pb-4">
-						Default control is MaplibreTerradrawControl. If you want to use measure control, enable
-						to choose MaplibreMeasureControl.
+						Default control is MaplibreTerradrawControl. If you want to use more advanced control,
+						enable to choose MaplibreMeasureControl or MaplibreValhallaControl.
 					</p>
 
 					<Segment
@@ -565,6 +578,105 @@
 										{#each ['enabled', 'disabled'] as option (option)}
 											<Segment.Item value={option}>
 												{option}
+											</Segment.Item>
+										{/each}
+									</Segment>
+								{/snippet}
+							</Accordion.Item>
+						</Accordion>
+					{/snippet}
+				</Accordion.Item>
+			{/if}
+
+			{#if options.controlType === 'valhalla'}
+				<Accordion.Item value="valhalla-option">
+					{#snippet control()}
+						<p class="font-bold uppercase">Valhalla control options</p>
+					{/snippet}
+					{#snippet panel()}
+						<Accordion
+							value={valhallaAccordionValue}
+							onValueChange={(e) => (valhallaAccordionValue = e.value)}
+							multiple
+						>
+							<Accordion.Item value="valhalla-url">
+								{#snippet control()}
+									<p class="font-bold uppercase italic">Valhalla API URL</p>
+								{/snippet}
+								{#snippet panel()}
+									<input
+										type="text"
+										class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+										value={options.valhallaOptions.url}
+										onchange={(e) => {
+											if (e.target) {
+												options.valhallaOptions.url = (e.target as HTMLInputElement).value;
+												onchange(options);
+											}
+										}}
+									/>
+									<p class="pb-4">
+										Note. the example api URL of Valhalla control only supports the country of
+										Kenya, Uganda and Rwanda in this demo. You need to deploy your own Valhalla API
+										server for your application.
+									</p>
+								{/snippet}
+							</Accordion.Item>
+
+							<Accordion.Item value="routing-means-of-transport">
+								{#snippet control()}
+									<p class="font-bold uppercase italic">Means of transport for routing</p>
+								{/snippet}
+								{#snippet panel()}
+									<Segment
+										value={options.valhallaOptions.routingOptions?.meansOfTransport}
+										onValueChange={(e) => {
+											if (!options.valhallaOptions.routingOptions) {
+												options.valhallaOptions.routingOptions = {};
+											} else {
+												options.valhallaOptions.routingOptions.meansOfTransport =
+													e.value as routingMeansOfTransportType;
+											}
+											if (drawControl && options.controlType === 'valhalla') {
+												(drawControl as MaplibreValhallaControl).routingMeansOfTransport =
+													options.valhallaOptions.routingOptions.meansOfTransport ?? 'pedestrian';
+											}
+											onchange(options);
+										}}
+									>
+										{#each routingMeansOfTransportOptions as item (item.value)}
+											<Segment.Item value={item.value}>
+												{item.label}
+											</Segment.Item>
+										{/each}
+									</Segment>
+								{/snippet}
+							</Accordion.Item>
+
+							<Accordion.Item value="routing-distance-unit">
+								{#snippet control()}
+									<p class="font-bold uppercase italic">Distance unit for routing</p>
+								{/snippet}
+								{#snippet panel()}
+									<Segment
+										value={options.valhallaOptions.routingOptions?.distanceUnit}
+										onValueChange={(e) => {
+											if (!options.valhallaOptions.routingOptions) {
+												options.valhallaOptions.routingOptions = {};
+											} else {
+												options.valhallaOptions.routingOptions.distanceUnit =
+													e.value as routingDistanceUnitType;
+											}
+											if (drawControl && options.controlType === 'valhalla') {
+												(drawControl as MaplibreValhallaControl).routingDistanceUnit =
+													options.valhallaOptions.routingOptions.distanceUnit ?? 'kilometers';
+											}
+											onchange(options);
+										}}
+									>
+										{#each routingDistanceUnitOptions as item (item.value)}
+											<Segment.Item value={item.value}>
+												{item.label}
 											</Segment.Item>
 										{/each}
 									</Segment>

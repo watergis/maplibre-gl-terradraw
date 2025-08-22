@@ -6,7 +6,8 @@
 		debounce,
 		type AreaUnit,
 		type DistanceUnit,
-		type TerradrawMode
+		type TerradrawMode,
+		type ValhallaOptions
 	} from '$lib';
 	import { Segment, Tabs } from '@skeletonlabs/skeleton-svelte';
 	import type { PageData } from './$types';
@@ -40,7 +41,16 @@
 		areaUnit: (page.url.searchParams.get('areaUnit') as AreaUnit) ?? 'metric',
 		areaPrecision: parseInt(page.url.searchParams.get('areaPrecision') ?? '2'),
 		computeElevation:
-			(page.url.searchParams.get('computeElevation') as 'enabled' | 'disabled') ?? 'enabled'
+			(page.url.searchParams.get('computeElevation') as 'enabled' | 'disabled') ?? 'enabled',
+		valhallaOptions: (page.url.searchParams.get('valhallaOptions')
+			? JSON.parse(decodeURIComponent(page.url.searchParams.get('valhallaOptions') ?? '{}'))
+			: {
+					url: 'https://valhalla.water-gis.com',
+					routingOptions: {
+						meansOfTransport: 'pedestrian',
+						distanceUnit: 'kilometers'
+					}
+				}) as ValhallaOptions
 	});
 
 	const defaultExampleType = page.url.searchParams.get('exampleType') ?? importTypeTabs[0].value;
@@ -90,6 +100,14 @@
 			pageUrl.searchParams.delete('areaPrecision');
 			pageUrl.searchParams.delete('computeElevation');
 		}
+		if (demoOptions.controlType == 'valhalla') {
+			pageUrl.searchParams.set(
+				'valhallaOptions',
+				encodeURIComponent(JSON.stringify(demoOptions.valhallaOptions))
+			);
+		} else {
+			pageUrl.searchParams.delete('valhallaOptions');
+		}
 		pageUrl.searchParams.set('packageManager', packageManager);
 		replaceState(pageUrl, '');
 	};
@@ -104,6 +122,10 @@
 			`computeElevation: ${demoOptions.computeElevation === 'enabled' ? 'true' : 'false'}`
 		);
 		return options.join(`, `);
+	};
+
+	const getValhallaOptions = () => {
+		return `valhallaOptions: ${JSON.stringify(demoOptions.valhallaOptions)}`;
 	};
 </script>
 
@@ -213,11 +235,11 @@
 									.replace('{modes}', demoOptions.modes.map((m) => `'${m}'`).join(','))
 									.replace('{open}', demoOptions.isOpen === 'open' ? 'true' : 'false')
 									.replace(
-										'{measure_options}',
+										'{control_options}',
 										demoOptions.controlType === 'default'
 											? ''
 											: demoOptions.controlType === 'valhalla'
-												? ''
+												? getValhallaOptions()
 												: getMeasureOptions()
 									)}
 							/>
@@ -241,11 +263,11 @@
 									.replace('{modes}', demoOptions.modes.map((m) => `'${m}'`).join(','))
 									.replace('{open}', demoOptions.isOpen === 'open' ? 'true' : 'false')
 									.replace(
-										'{measure_options}',
+										'{control_options}',
 										demoOptions.controlType === 'default'
 											? ''
 											: demoOptions.controlType === 'valhalla'
-												? ''
+												? getValhallaOptions()
 												: getMeasureOptions()
 									)}
 							/>

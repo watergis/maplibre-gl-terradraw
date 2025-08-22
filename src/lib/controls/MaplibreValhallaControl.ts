@@ -68,6 +68,7 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 			this.valhallaOptions.routingOptions = {};
 		}
 		this.valhallaOptions.routingOptions.meansOfTransport = value;
+		this.createSettingsDialog();
 	}
 
 	/**
@@ -89,6 +90,7 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 			this.valhallaOptions.routingOptions = {};
 		}
 		this.valhallaOptions.routingOptions.distanceUnit = value;
+		this.createSettingsDialog();
 	}
 
 	/**
@@ -271,7 +273,11 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 						routingMeansOfTransportOptions as unknown as { value: string; label: string }[],
 						this.routingMeansOfTransport,
 						(value: string) => {
-							this.routingMeansOfTransport = value as routingMeansOfTransportType;
+							if (!this.valhallaOptions.routingOptions) {
+								this.valhallaOptions.routingOptions = {};
+							}
+							this.valhallaOptions.routingOptions.meansOfTransport =
+								value as routingMeansOfTransportType;
 						}
 					)
 				);
@@ -291,7 +297,10 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 						routingDistanceUnitOptions as unknown as { value: string; label: string }[],
 						this.routingDistanceUnit,
 						(value: string) => {
-							this.routingDistanceUnit = value as routingDistanceUnitType;
+							if (!this.valhallaOptions.routingOptions) {
+								this.valhallaOptions.routingOptions = {};
+							}
+							this.valhallaOptions.routingOptions.distanceUnit = value as routingDistanceUnitType;
 						}
 					)
 				);

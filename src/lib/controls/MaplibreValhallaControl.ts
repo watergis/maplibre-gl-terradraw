@@ -373,7 +373,9 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 			) {
 				this.map.addLayer(this.controlOptions.lineLayerNodeLabelSpec as SymbolLayerSpecification);
 			}
+		}
 
+		if (lineModes && lineModes.length > 0) {
 			const drawInstance = this.getTerraDrawInstance();
 			if (drawInstance) {
 				// subscribe change event of TerraDraw to calc distance

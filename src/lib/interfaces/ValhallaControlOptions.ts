@@ -1,8 +1,19 @@
 import type { ModeOptions } from './ModeOptions';
 import type { TerraDrawExtend } from 'terra-draw';
 import type { TerradrawValhallaMode } from './TerradrawMode';
-import type { routingDistanceUnitType, routingMeansOfTransportType } from '../helpers';
-import type { CircleLayerSpecification, SymbolLayerSpecification } from 'maplibre-gl';
+import type {
+	Contour,
+	ContourType,
+	isochroneMeansOfTransportType,
+	routingDistanceUnitType,
+	routingMeansOfTransportType
+} from '../helpers';
+import type {
+	CircleLayerSpecification,
+	FillLayerSpecification,
+	LineLayerSpecification,
+	SymbolLayerSpecification
+} from 'maplibre-gl';
 /**
  * ValhallaControl Plugin control constructor options
  */
@@ -46,6 +57,21 @@ export interface ValhallaControlOptions {
 	 * Maplibre circle layer specification for visualizing node style of line distance layer
 	 */
 	lineLayerNodeSpec?: CircleLayerSpecification;
+
+	/**
+	 * Maplibre fill layer specification for isochrone polygon layer
+	 */
+	isochronePolygonLayerSpec?: FillLayerSpecification;
+
+	/**
+	 * Maplibre line layer specification for isochrone line layer
+	 */
+	isochroneLineLayerSpec?: LineLayerSpecification;
+
+	/**
+	 * Maplibre symbol layer specification for isochrone label layer
+	 */
+	isochroneLabelLayerSpec?: SymbolLayerSpecification;
 }
 
 export interface ValhallaOptions {
@@ -73,5 +99,24 @@ export interface ValhallaOptions {
 		 * https://valhalla.github.io/valhalla/api/turn-by-turn/api-reference/#directions-options
 		 */
 		distanceUnit?: routingDistanceUnitType;
+	};
+
+	isochroneOptions?: {
+		/**
+		 * The type of contour to compute isochrone either 'time' or 'distance'
+		 */
+		contourType?: ContourType;
+		/**
+		 * Means of transport for Valhalla isochrone API.
+		 * 'auto', 'bicycle', 'pedestrian' models are available in the plugin.
+		 * https://valhalla.github.io/valhalla/api/isochrone/api-reference/#costing-parameters
+		 */
+		meansOfTransport?: isochroneMeansOfTransportType;
+
+		/**
+		 * List of contours for isochrone API.
+		 * Each contour has time, distance and color properties.
+		 */
+		contours?: Contour[];
 	};
 }

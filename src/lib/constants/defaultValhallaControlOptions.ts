@@ -1,14 +1,37 @@
-import { TerraDrawLineStringMode, TerraDrawRenderMode, TerraDrawSelectMode } from 'terra-draw';
+import {
+	TerraDrawLineStringMode,
+	TerraDrawPointMode,
+	TerraDrawRenderMode,
+	TerraDrawSelectMode
+} from 'terra-draw';
 import type { ValhallaControlOptions } from '../interfaces/ValhallaControlOptions';
 
 /**
  * Default ValhallaControl options
  */
 export const defaultValhallaControlOptions: ValhallaControlOptions = {
-	modes: ['render', 'linestring', 'select', 'delete-selection', 'delete', 'settings', 'download'],
+	modes: [
+		'render',
+		'linestring',
+		'point',
+		'select',
+		'delete-selection',
+		'delete',
+		'settings',
+		'download'
+	],
 	open: false,
 	// see styling parameters of Terra Draw at https://github.com/JamesLMilner/terra-draw/blob/main/guides/5.STYLING.md
 	modeOptions: {
+		point: new TerraDrawPointMode({
+			editable: false,
+			styles: {
+				pointColor: '#FFFFFF',
+				pointWidth: 5,
+				pointOutlineColor: '#666666',
+				pointOutlineWidth: 1
+			}
+		}),
 		linestring: new TerraDrawLineStringMode({
 			editable: false,
 			styles: {
@@ -22,6 +45,11 @@ export const defaultValhallaControlOptions: ValhallaControlOptions = {
 		}),
 		select: new TerraDrawSelectMode({
 			flags: {
+				point: {
+					feature: {
+						draggable: false
+					}
+				},
 				linestring: {
 					feature: {
 						draggable: false,
@@ -46,6 +74,32 @@ export const defaultValhallaControlOptions: ValhallaControlOptions = {
 		routingOptions: {
 			meansOfTransport: 'auto',
 			distanceUnit: 'kilometers'
+		},
+		isochroneOptions: {
+			contourType: 'time',
+			meansOfTransport: 'auto',
+			contours: [
+				{
+					time: 3,
+					distance: 1,
+					color: 'ff0000'
+				},
+				{
+					time: 5,
+					distance: 2,
+					color: 'ffff00'
+				},
+				{
+					time: 10,
+					distance: 3,
+					color: '0000ff'
+				},
+				{
+					time: 15,
+					distance: 4,
+					color: 'ff00ff'
+				}
+			]
 		}
 	},
 	adapterOptions: {
@@ -126,6 +180,59 @@ export const defaultValhallaControlOptions: ValhallaControlOptions = {
 			],
 			'circle-stroke-color': '#000000',
 			'circle-stroke-width': 1
+		}
+	},
+	isochronePolygonLayerSpec: {
+		id: '{prefix}-isochrone-polygon',
+		type: 'fill',
+		source: '{prefix}-isochrone-source',
+		layout: {},
+		paint: {
+			'fill-color': ['get', 'fillColor'],
+			'fill-opacity': ['get', 'fillOpacity']
+		}
+	},
+	isochroneLineLayerSpec: {
+		id: '{prefix}-isochrone-line',
+		type: 'line',
+		source: '{prefix}-isochrone-source',
+		layout: {
+			'line-join': 'round',
+			'line-cap': 'round'
+		},
+		paint: {
+			'line-color': ['get', 'fillColor'],
+			'line-width': 3
+		}
+	},
+	isochroneLabelLayerSpec: {
+		id: '{prefix}-isochrone-label',
+		type: 'symbol',
+		source: '{prefix}-isochrone-source',
+		layout: {
+			'symbol-placement': 'line',
+			'text-pitch-alignment': 'viewport',
+			'text-field': [
+				'concat',
+				['get', 'contour'],
+				' ',
+				[
+					'case',
+					['==', ['get', 'metric'], 'time'],
+					'min',
+					['==', ['get', 'metric'], 'distance'],
+					'km',
+					''
+				]
+			],
+			'text-size': 12,
+			'symbol-spacing': 100,
+			'text-max-angle': 45
+		},
+		paint: {
+			'text-color': 'rgb(0, 0, 0)',
+			'text-halo-width': 1,
+			'text-halo-color': 'rgb(255, 255, 255)'
 		}
 	}
 };

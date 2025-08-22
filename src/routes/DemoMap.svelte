@@ -74,6 +74,32 @@
 				routingOptions: {
 					meansOfTransport: 'pedestrian',
 					distanceUnit: 'kilometers'
+				},
+				isochroneOptions: {
+					contourType: 'time',
+					meansOfTransport: 'auto',
+					contours: [
+						{
+							time: 3,
+							distance: 1,
+							color: 'ff0000'
+						},
+						{
+							time: 5,
+							distance: 2,
+							color: 'ffff00'
+						},
+						{
+							time: 10,
+							distance: 3,
+							color: '0000ff'
+						},
+						{
+							time: 15,
+							distance: 4,
+							color: 'ff00ff'
+						}
+					]
 				}
 			}
 		}),

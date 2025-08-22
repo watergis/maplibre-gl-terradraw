@@ -11,4 +11,5 @@ export * from './modalDialog';
 export * from './queryElevationByPoint';
 export * from './queryElevationFromRasterDEM';
 export * from './roundFeatureCoordinates';
+export * from './valhallaIsochrone';
 export * from './valhallaRouting';

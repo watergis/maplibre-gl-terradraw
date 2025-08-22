@@ -29,6 +29,7 @@ export const AvailableModes = [
 export const AvailableValhallaModes = [
 	'render',
 	'linestring',
+	'point',
 	'select',
 	'delete-selection',
 	'delete',

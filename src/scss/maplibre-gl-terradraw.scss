@@ -42,6 +42,13 @@
 	background-size: 150%;
 }
 
+.maplibregl-terradraw-valhalla-add-point-button {
+	background: url('./icons/valhalla_isochrone.svg');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 80%;
+}
+
 .maplibregl-terradraw-measure-add-linestring-button,
 .maplibregl-terradraw-add-linestring-button {
 	background: url('./icons/linestring.svg');

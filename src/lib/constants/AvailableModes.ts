@@ -33,6 +33,6 @@ export const AvailableValhallaModes = [
 	'select',
 	'delete-selection',
 	'delete',
-	'settings',
-	'download'
+	'download',
+	'settings'
 ] as const;

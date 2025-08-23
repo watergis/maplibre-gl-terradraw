@@ -4,7 +4,6 @@ import type { TerradrawValhallaMode } from './TerradrawMode';
 import type {
 	Contour,
 	ContourType,
-	isochroneMeansOfTransportType,
 	routingDistanceUnitType,
 	routingMeansOfTransportType
 } from '../helpers';
@@ -111,7 +110,7 @@ export interface ValhallaOptions {
 		 * 'auto', 'bicycle', 'pedestrian' models are available in the plugin.
 		 * https://valhalla.github.io/valhalla/api/isochrone/api-reference/#costing-parameters
 		 */
-		meansOfTransport?: isochroneMeansOfTransportType;
+		meansOfTransport?: routingMeansOfTransportType;
 
 		/**
 		 * List of contours for isochrone API.

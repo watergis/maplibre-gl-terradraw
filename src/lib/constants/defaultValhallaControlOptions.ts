@@ -17,8 +17,8 @@ export const defaultValhallaControlOptions: ValhallaControlOptions = {
 		'select',
 		'delete-selection',
 		'delete',
-		'settings',
-		'download'
+		'download',
+		'settings'
 	],
 	open: false,
 	// see styling parameters of Terra Draw at https://github.com/JamesLMilner/terra-draw/blob/main/guides/5.STYLING.md

@@ -1,6 +1,12 @@
 import type { GeoJSONStoreFeatures } from 'terra-draw';
+import type { routingMeansOfTransportType } from './valhallaRouting';
 
-export type ContourType = 'time' | 'distance';
+export const contourTypeOptions = [
+	{ value: 'time', label: 'Time' },
+	{ value: 'distance', label: 'Distance' }
+] as const;
+
+export type ContourType = (typeof contourTypeOptions)[number]['value'];
 
 export interface Contour {
 	time?: number;
@@ -9,20 +15,8 @@ export interface Contour {
 }
 
 /**
- * Options of means of transport for Valhalla isochrone API.
+ * Valhalla Isochrone engine class
  */
-export const isochroneMeansOfTransportOptions = [
-	{ value: 'pedestrian', label: 'Pedestrian' },
-	{ value: 'bicycle', label: 'Bicycle' },
-	{ value: 'auto', label: 'Car' }
-] as const;
-
-/**
- * isochroneMeansOfTransportType is the type for means of transport in Valhalla isochrone API.
- */
-export type isochroneMeansOfTransportType =
-	(typeof isochroneMeansOfTransportOptions)[number]['value'];
-
 export class ValhallaIsochrone {
 	private url: string;
 
@@ -34,11 +28,20 @@ export class ValhallaIsochrone {
 		this.url = url;
 	}
 
+	/**
+	 * Calculate isochrone by given parameters from Valhalla API
+	 * @param lon Longitude
+	 * @param lat Latitude
+	 * @param contourType the type of contour either time or distance
+	 * @param meansOfTransport costing model either auto, bicycle or pedestrian
+	 * @param contours Optional. the list of contour. If skipped, default value is used.
+	 * @returns GeoJSON Feature Collection object
+	 */
 	public async calcIsochrone(
 		lon: number,
 		lat: number,
 		contourType: ContourType,
-		meansOfTransport: isochroneMeansOfTransportType,
+		meansOfTransport: routingMeansOfTransportType,
 		contours: Contour[]
 	) {
 		const contourList: Contour[] = JSON.parse(JSON.stringify(contours));

@@ -129,7 +129,8 @@
 		'routing-means-of-transport',
 		'routing-distance-unit',
 		'isochrone-means-of-transport',
-		'isochrone-contour-type'
+		'isochrone-contour-type',
+		'isochrone-contours'
 	]);
 
 	let valhallaGroup: 'routing' | 'isochrone' = $state('routing');
@@ -795,6 +796,19 @@
 												{@const contours = options.valhallaOptions.isochroneOptions
 													?.contours as Contour[]}
 
+												<button
+													type="button"
+													class="btn preset-filled"
+													hidden={contours.length > 3}
+													onclick={() => {
+														const lastContour = contours[contours.length - 1];
+														contours.push(JSON.parse(JSON.stringify(lastContour)));
+													}}
+												>
+													<IconPlus size={18} />
+													<span>Add contour</span>
+												</button>
+
 												<div class="table-wrap">
 													<table class="table table-fixed w-full max-w-md">
 														<colgroup>
@@ -818,27 +832,39 @@
 																		><input
 																			type="color"
 																			bind:value={row.color}
-																			class="w-10 h-6"
+																			class="cursor-pointer w-10 h-6"
 																		/></td
 																	>
 																	<td
 																		><input
 																			type="number"
 																			bind:value={row.time}
-																			class="w-10 text-xs px-1"
+																			class="cursor-pointer w-10 text-xs px-1"
 																		/></td
 																	>
 																	<td
 																		><input
 																			type="number"
 																			bind:value={row.distance}
-																			class="w-10 text-xs px-1"
+																			class="cursor-pointer w-10 text-xs px-1"
 																		/></td
 																	>
 																	<td class="text-right">
-																		<button class="btn btn-sm preset-filled rounded-full w-8 h-8">
-																			<IconX />
-																		</button>
+																		{#if index > 0}
+																			<button
+																				class="btn btn-sm preset-filled rounded-full w-8 h-8"
+																				onclick={() => {
+																					if (options.valhallaOptions.isochroneOptions?.contours) {
+																						options.valhallaOptions.isochroneOptions.contours.splice(
+																							index,
+																							1
+																						);
+																					}
+																				}}
+																			>
+																				<IconX />
+																			</button>
+																		{/if}
 																	</td>
 																</tr>
 															{/each}

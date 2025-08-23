@@ -224,6 +224,10 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 		};
 		if (options) {
 			_options = Object.assign(_options, options);
+			_options.valhallaOptions = Object.assign(
+				JSON.parse(JSON.stringify(defaultValhallaControlOptions.valhallaOptions)),
+				_options.valhallaOptions as ValhallaOptions
+			);
 		}
 
 		// replace {prefix} with prefixId for sources and layers

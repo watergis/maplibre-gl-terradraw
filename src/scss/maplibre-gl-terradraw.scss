@@ -22,6 +22,18 @@
 	}
 }
 
+.maplibregl-terradraw-valhalla-render-button {
+	background: url('./icons/render_valhalla_on.svg');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 100%;
+
+	&.enabled {
+		background: url('./icons/render_valhalla_off.svg');
+		background-size: 100%;
+	}
+}
+
 .maplibregl-terradraw-measure-add-point-button,
 .maplibregl-terradraw-add-point-button {
 	background: url('./icons/point.svg');
@@ -30,9 +42,23 @@
 	background-size: 150%;
 }
 
+.maplibregl-terradraw-valhalla-add-point-button {
+	background: url('./icons/valhalla_isochrone.svg');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 80%;
+}
+
 .maplibregl-terradraw-measure-add-linestring-button,
 .maplibregl-terradraw-add-linestring-button {
 	background: url('./icons/linestring.svg');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 80%;
+}
+
+.maplibregl-terradraw-valhalla-add-linestring-button {
+	background: url('./icons/valhalla_route.svg');
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: 80%;
@@ -86,6 +112,7 @@
 	background-size: 80%;
 }
 
+.maplibregl-terradraw-valhalla-add-select-button,
 .maplibregl-terradraw-measure-add-select-button,
 .maplibregl-terradraw-add-select-button {
 	background: url('./icons/select.svg');
@@ -114,6 +141,7 @@
 	background-size: 100%;
 }
 
+.maplibregl-terradraw-valhalla-add-control,
 .maplibregl-terradraw-measure-add-control,
 .maplibregl-terradraw-add-control {
 	display: block;
@@ -127,6 +155,7 @@
 	}
 }
 
+.maplibregl-terradraw-valhalla-delete-button,
 .maplibregl-terradraw-measure-delete-button,
 .maplibregl-terradraw-delete-button {
 	background: url('./icons/delete.svg');
@@ -139,6 +168,7 @@
 	}
 }
 
+.maplibregl-terradraw-valhalla-delete-selection-button,
 .maplibregl-terradraw-measure-delete-selection-button,
 .maplibregl-terradraw-delete-selection-button {
 	background: url('./icons/delete_selection.svg');
@@ -153,6 +183,7 @@
 	}
 }
 
+.maplibregl-terradraw-valhalla-download-button,
 .maplibregl-terradraw-measure-download-button,
 .maplibregl-terradraw-download-button {
 	background: url('./icons/download.svg');
@@ -162,5 +193,243 @@
 
 	&:disabled {
 		background-color: rgb(235, 235, 228);
+	}
+}
+
+.maplibregl-terradraw-valhalla-settings-button {
+	background: url('./icons/settings.svg');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 80%;
+}
+
+.maplibregl-terradraw-valhalla-settings-dialog {
+	width: fit-content;
+	padding: 0;
+	text-align: center;
+	border: none;
+	border-radius: 0.5rem;
+	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	margin: 0;
+
+	&::backdrop {
+		backdrop-filter: blur(3px);
+	}
+
+	&[open],
+	&::backdrop {
+		animation: fadeIn 0.3s;
+	}
+
+	@keyframes fadeIn {
+		0% {
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+
+	.dialog-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 1rem 1.5rem;
+		background-color: #222;
+		color: white;
+		border-top-left-radius: 0.5rem;
+		border-top-right-radius: 0.5rem;
+
+		.dialog-title {
+			margin: 0;
+			font-size: 1.1rem;
+			font-weight: 600;
+		}
+
+		.close-button {
+			background: none;
+			border: none;
+			outline: none;
+			box-shadow: none;
+			font-size: 1.2rem;
+			font-weight: bold;
+			cursor: pointer;
+			width: 2rem;
+			height: 2rem;
+			border-radius: 50%;
+			line-height: 1;
+			transition: background-color 0.2s ease;
+
+			&:hover {
+				background-color: rgba(255, 255, 255, 0.1);
+			}
+		}
+	}
+
+	.content {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+		padding: 1.5rem;
+	}
+
+	.tab-container {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	.tab-buttons {
+		display: flex;
+		border-bottom: 1px solid #ddd;
+	}
+
+	.tab-button {
+		flex: 1;
+		padding: 0.75rem 1rem;
+		border: none;
+		background-color: transparent;
+		color: #666;
+		font-size: 0.9rem;
+		font-weight: 500;
+		cursor: pointer;
+		border-bottom: 2px solid transparent;
+		transition: all 0.2s ease;
+
+		&.active {
+			color: #222;
+			border-bottom-color: #222;
+		}
+
+		&:hover {
+			background-color: #f5f5f5;
+		}
+	}
+
+	.tab-content {
+		display: none;
+
+		&.active {
+			display: block;
+		}
+	}
+
+	.setting-section {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.setting-label {
+		font-size: 1rem;
+		font-weight: 500;
+		text-align: left;
+		margin-top: 0.5em;
+		margin-bottom: 0.25em;
+	}
+
+	.segment-buttons {
+		display: flex;
+		border: 1px solid #ddd;
+		border-radius: 0.4rem;
+		overflow: hidden;
+		padding: 0.5rem;
+
+		.segment-button {
+			flex: 1;
+			padding: 0.25rem 1rem;
+			border: none;
+			border-radius: 0.4rem;
+			background-color: transparent;
+			color: #666;
+			font-size: 0.8rem;
+			font-weight: 500;
+			cursor: pointer;
+			transition: all 0.2s ease;
+
+			&.active {
+				background-color: #222;
+				color: white;
+			}
+		}
+	}
+
+	.contours-table {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.contours-table-element {
+		width: 100%;
+		border-collapse: collapse;
+		border: 1px solid #ddd;
+		border-radius: 0.25rem;
+		overflow: hidden;
+
+		th,
+		td {
+			padding: 0.5rem;
+			text-align: center;
+			border-bottom: 1px solid #eee;
+		}
+
+		th {
+			// background-color: #f8f9fa;
+			font-weight: 600;
+			font-size: 0.85rem;
+		}
+
+		.color-picker {
+			width: 40px;
+			height: 30px;
+			border: none;
+			border-radius: 0.25rem;
+			cursor: pointer;
+		}
+
+		.number-input {
+			width: 80px;
+			padding: 0.25rem;
+			border: 1px solid #ddd;
+			border-radius: 0.25rem;
+			text-align: center;
+		}
+
+		.delete-button {
+			background-color: #c3c3c3;
+			border: none;
+			outline: none;
+			box-shadow: none;
+			font-size: 1.2rem;
+			font-weight: bold;
+			cursor: pointer;
+			width: 2rem;
+			height: 2rem;
+			border-radius: 50%;
+			line-height: 1;
+			transition: background-color 0.2s ease;
+
+			&:hover {
+				background-color: rgba(0, 0, 0, 0.3);
+			}
+		}
+	}
+	.add-row-button {
+		align-self: flex-start;
+		padding: 0.5rem 1rem;
+		background-color: #c3c3c3;
+		border-radius: 0.25rem;
+		cursor: pointer;
+		font-size: 0.85rem;
+
+		&:hover {
+			background-color: rgba(0, 0, 0, 0.3);
+		}
 	}
 }

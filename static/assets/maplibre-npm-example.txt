@@ -15,6 +15,6 @@ const map = new Map({
 const draw = new MaplibreTerradrawControl({
     modes: [{modes}],
     open: {open},
-	{measure_options}
+	{control_options}
 });
 map.addControl(draw, 'top-left');

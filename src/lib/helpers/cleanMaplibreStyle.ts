@@ -1,4 +1,4 @@
-import { defaultMeasureControlOptions } from '../constants';
+import { defaultMeasureControlOptions, defaultValhallaControlOptions } from '../constants';
 import type { StyleSpecification } from 'maplibre-gl';
 
 export const TERRADRAW_SOURCE_IDS = [
@@ -13,6 +13,14 @@ export const TERRADRAW_MEASURE_SOURCE_IDS = [
 	defaultMeasureControlOptions.polygonLayerSpec?.source as string,
 	defaultMeasureControlOptions.lineLayerLabelSpec?.source as string,
 	defaultMeasureControlOptions.pointLayerLabelSpec?.source as string
+];
+export const TERRADRAW_VALHALLA_SOURCE_IDS = [
+	...TERRADRAW_SOURCE_IDS,
+	defaultValhallaControlOptions.routingLineLayerNodeLabelSpec?.source as string,
+	defaultValhallaControlOptions.routingLineLayerNodeSpec?.source as string,
+	defaultValhallaControlOptions.isochronePolygonLayerSpec?.source as string,
+	defaultValhallaControlOptions.isochroneLineLayerSpec?.source as string,
+	defaultValhallaControlOptions.isochroneLabelLayerSpec?.source as string
 ];
 
 /**

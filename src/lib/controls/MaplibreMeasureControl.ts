@@ -171,10 +171,10 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		(measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).source =
 			measureOptions.pointLayerLabelSpec?.source.replace('{prefix}', prefixId) as string;
 
-		(measureOptions.lineLayerNodeSpec as CircleLayerSpecification).id =
-			measureOptions.lineLayerNodeSpec?.id.replace('{prefix}', prefixId) as string;
-		(measureOptions.lineLayerNodeSpec as CircleLayerSpecification).source =
-			measureOptions.lineLayerNodeSpec?.source.replace('{prefix}', prefixId) as string;
+		(measureOptions.routingLineLayerNodeSpec as CircleLayerSpecification).id =
+			measureOptions.routingLineLayerNodeSpec?.id.replace('{prefix}', prefixId) as string;
+		(measureOptions.routingLineLayerNodeSpec as CircleLayerSpecification).source =
+			measureOptions.routingLineLayerNodeSpec?.source.replace('{prefix}', prefixId) as string;
 
 		(measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).id =
 			measureOptions.lineLayerLabelSpec?.id.replace('{prefix}', prefixId) as string;
@@ -362,9 +362,11 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 
 			// add GeoJSON layer for distance label node appearance
 			if (
-				!this.map.getLayer((this.measureOptions.lineLayerNodeSpec as CircleLayerSpecification).id)
+				!this.map.getLayer(
+					(this.measureOptions.routingLineLayerNodeSpec as CircleLayerSpecification).id
+				)
 			) {
-				this.map.addLayer(this.measureOptions.lineLayerNodeSpec as CircleLayerSpecification);
+				this.map.addLayer(this.measureOptions.routingLineLayerNodeSpec as CircleLayerSpecification);
 			}
 
 			// add GeoJSON layer for distance label appearance
@@ -476,13 +478,13 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		const sources = [
 			this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification,
 			this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification,
-			this.measureOptions.lineLayerNodeSpec as CircleLayerSpecification,
+			this.measureOptions.routingLineLayerNodeSpec as CircleLayerSpecification,
 			this.measureOptions.polygonLayerSpec as SymbolLayerSpecification
 		];
 		const sourceIds = sources.map((src) => src.source);
 
 		if (type === 'delete') {
-			this.clearMeasureFeatures(sourceIds, ids);
+			this.clearExtendedFeatures(sourceIds, ids);
 			return;
 		}
 
@@ -508,7 +510,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				}
 			} else {
 				// if editing ID does not exist, delete all related features from measure layers
-				this.clearMeasureFeatures(sourceIds, [id]);
+				this.clearExtendedFeatures(sourceIds, [id]);
 			}
 		}
 	}
@@ -531,8 +533,14 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		) {
 			this.map.removeLayer((this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).id);
 		}
-		if (this.map.getLayer((this.measureOptions.lineLayerNodeSpec as CircleLayerSpecification).id)) {
-			this.map.removeLayer((this.measureOptions.lineLayerNodeSpec as CircleLayerSpecification).id);
+		if (
+			this.map.getLayer(
+				(this.measureOptions.routingLineLayerNodeSpec as CircleLayerSpecification).id
+			)
+		) {
+			this.map.removeLayer(
+				(this.measureOptions.routingLineLayerNodeSpec as CircleLayerSpecification).id
+			);
 		}
 		if (this.map.getLayer((this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).id)) {
 			this.map.removeLayer((this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).id);
@@ -561,48 +569,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			this.map.removeSource(
 				(this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).source
 			);
-		}
-	}
-
-	/**
-	 * Clear GeoJSON feature related to measure control by TerraDraw feature ID
-	 * @param sourceIds the array of source ID to delete
-	 * @param ids the array of feature ID. Optional, if undefined, delete all labels for source
-	 * @returns void
-	 */
-	private clearMeasureFeatures(
-		sourceIds: string[],
-		ids: TerraDrawExtend.FeatureId[] | undefined = undefined
-	) {
-		if (!this.map) return;
-		for (const sourceId of sourceIds) {
-			const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
-				sourceId
-			] as GeoJSONSourceSpecification;
-			if (geojsonSource) {
-				// delete old nodes
-				if (
-					typeof geojsonSource.data !== 'string' &&
-					geojsonSource.data.type === 'FeatureCollection'
-				) {
-					// if ids is undefined, delete all labels for the source
-					if (ids === undefined) {
-						geojsonSource.data.features = [];
-					} else {
-						// Delete label features if originalId does not exist anymore.
-						geojsonSource.data.features = geojsonSource.data.features.filter((f) => {
-							if (f.properties?.originalId) {
-								return !ids.includes(f.properties.originalId);
-							} else {
-								return !ids.includes(f.id as string);
-							}
-						});
-					}
-
-					// update GeoJSON source with new data
-					(this.map.getSource(sourceId) as GeoJSONSource)?.setData(geojsonSource.data);
-				}
-			}
 		}
 	}
 
@@ -810,10 +776,12 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					);
 				}
 				if (
-					this.map.getLayer((this.measureOptions.lineLayerNodeSpec as CircleLayerSpecification).id)
+					this.map.getLayer(
+						(this.measureOptions.routingLineLayerNodeSpec as CircleLayerSpecification).id
+					)
 				) {
 					this.map.moveLayer(
-						(this.measureOptions.lineLayerNodeSpec as CircleLayerSpecification).id
+						(this.measureOptions.routingLineLayerNodeSpec as CircleLayerSpecification).id
 					);
 				}
 
@@ -934,7 +902,9 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				}
 
 				this.map.moveLayer((this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).id);
-				this.map.moveLayer((this.measureOptions.lineLayerNodeSpec as CircleLayerSpecification).id);
+				this.map.moveLayer(
+					(this.measureOptions.routingLineLayerNodeSpec as CircleLayerSpecification).id
+				);
 
 				if (
 					this.map.getLayer(
@@ -1009,7 +979,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 						(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).id
 					);
 					this.map.moveLayer(
-						(this.measureOptions.lineLayerNodeSpec as CircleLayerSpecification).id
+						(this.measureOptions.routingLineLayerNodeSpec as CircleLayerSpecification).id
 					);
 				}
 
@@ -1035,16 +1005,16 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			const sources = [
 				this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification,
 				this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification,
-				this.measureOptions.lineLayerNodeSpec as CircleLayerSpecification,
+				this.measureOptions.routingLineLayerNodeSpec as CircleLayerSpecification,
 				this.measureOptions.polygonLayerSpec as SymbolLayerSpecification
 			];
 			const sourceIds = sources.map((src) => src.source);
 			if (deletedIds && deletedIds.length > 0) {
 				// delete only features by IDs
-				this.clearMeasureFeatures(sourceIds, deletedIds);
+				this.clearExtendedFeatures(sourceIds, deletedIds);
 			} else {
 				// delete all features
-				this.clearMeasureFeatures(sourceIds, undefined);
+				this.clearExtendedFeatures(sourceIds, undefined);
 			}
 		}
 	}

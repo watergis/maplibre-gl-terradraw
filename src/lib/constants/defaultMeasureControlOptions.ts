@@ -342,7 +342,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 			'text-color': '#232E3D'
 		}
 	},
-	lineLayerNodeSpec: {
+	routingLineLayerNodeSpec: {
 		id: '{prefix}-line-node',
 		type: 'circle',
 		source: '{prefix}-line-source',

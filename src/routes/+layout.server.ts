@@ -23,11 +23,6 @@ export const load: LayoutServerLoad = async ({ fetch }) => {
 
 	const styles = [
 		{
-			title: 'Maplibre',
-			uri: 'https://demotiles.maplibre.org/style.json',
-			image: '/assets/style-switcher/maplibre.webp'
-		},
-		{
 			title: 'Voyager',
 			uri: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
 			image: '/assets/style-switcher/voyager.webp'
@@ -41,6 +36,11 @@ export const load: LayoutServerLoad = async ({ fetch }) => {
 			title: 'Dark',
 			uri: 'https://tiles.basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
 			image: '/assets/style-switcher/dark.webp'
+		},
+		{
+			title: 'Maplibre',
+			uri: 'https://demotiles.maplibre.org/style.json',
+			image: '/assets/style-switcher/maplibre.webp'
 		}
 	];
 

@@ -1,6 +1,6 @@
 <script module lang="ts">
 	export interface DemoOptions {
-		controlType: 'default' | 'measure';
+		controlType: 'default' | 'measure' | 'valhalla';
 		isOpen: 'open' | 'close' | undefined;
 		modes: TerradrawMode[];
 		distanceUnit: DistanceUnit;
@@ -8,23 +8,34 @@
 		areaUnit: AreaUnit;
 		areaPrecision: number;
 		computeElevation: 'enabled' | 'disabled';
+		valhallaOptions: ValhallaOptions;
 	}
 </script>
 
 <script lang="ts">
 	import {
 		AvailableModes,
+		AvailableValhallaModes,
+		costingModelOptions,
 		getDefaultModeOptions,
 		MaplibreMeasureControl,
 		MaplibreTerradrawControl,
+		MaplibreValhallaControl,
 		roundFeatureCoordinates,
+		routingDistanceUnitOptions,
 		type AreaUnit,
+		type Contour,
+		type ContourType,
+		type costingModelType,
 		type DistanceUnit,
-		type TerradrawMode
+		type routingDistanceUnitType,
+		type TerradrawMode,
+		type TerradrawValhallaMode,
+		type ValhallaOptions
 	} from '$lib';
 	import IconPlus from '@lucide/svelte/icons/plus';
 	import IconX from '@lucide/svelte/icons/x';
-	import { Accordion, Segment, Slider, TagsInput } from '@skeletonlabs/skeleton-svelte';
+	import { Accordion, Segment, Slider, Tabs, TagsInput } from '@skeletonlabs/skeleton-svelte';
 	import MaplibreStyleSwitcherControl, { type StyleDefinition } from '@undp-data/style-switcher';
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
 	import {
@@ -59,7 +70,40 @@
 			distancePrecision: 2,
 			areaUnit: 'metric',
 			areaPrecision: 2,
-			computeElevation: 'enabled'
+			computeElevation: 'enabled',
+			valhallaOptions: {
+				url: '',
+				routingOptions: {
+					costingModel: 'pedestrian',
+					distanceUnit: 'kilometers'
+				},
+				isochroneOptions: {
+					contourType: 'time',
+					costingModel: 'auto',
+					contours: [
+						{
+							time: 3,
+							distance: 1,
+							color: '#ff0000'
+						},
+						{
+							time: 5,
+							distance: 2,
+							color: '#ffff00'
+						},
+						{
+							time: 10,
+							distance: 3,
+							color: '#0000ff'
+						},
+						{
+							time: 15,
+							distance: 4,
+							color: '#ff00ff'
+						}
+					]
+				}
+			}
 		}),
 		onchange = () => {},
 		onclick = () => {}
@@ -67,8 +111,6 @@
 
 	let mapContainer: HTMLDivElement | undefined = $state();
 	let map: Map | undefined;
-
-	let isMeasure: boolean = $derived(options.controlType === 'measure');
 
 	let drawControl: MaplibreTerradrawControl | undefined = $state();
 	let selectedFeature: string = $state('');
@@ -81,6 +123,17 @@
 		'area-precision',
 		'compute-elevation'
 	]);
+
+	let valhallaAccordionValue = $state([
+		'valhalla-url',
+		'routing-means-of-transport',
+		'routing-distance-unit',
+		'isochrone-means-of-transport',
+		'isochrone-contour-type',
+		'isochrone-contours'
+	]);
+
+	let valhallaGroup: 'routing' | 'isochrone' = $state('routing');
 
 	$effect(() => {
 		if (selectedFeature) {
@@ -112,7 +165,7 @@
 
 		if (options.modes.length === 0) return;
 
-		if (isMeasure) {
+		if (options.controlType === 'measure') {
 			drawControl = new MaplibreMeasureControl({
 				modes: options.modes,
 				open: options.isOpen === 'open',
@@ -124,6 +177,20 @@
 				adapterOptions: {
 					prefixId: 'td-measure'
 				}
+			});
+			map.addControl(drawControl, 'top-left');
+		} else if (options.controlType === 'valhalla') {
+			const modes = options.modes.filter((mode) =>
+				AvailableValhallaModes.includes(mode as TerradrawValhallaMode)
+			) as TerradrawValhallaMode[];
+			options.modes = modes as unknown as TerradrawMode[];
+			drawControl = new MaplibreValhallaControl({
+				modes: modes,
+				open: options.isOpen === 'open',
+				adapterOptions: {
+					prefixId: 'td-valhalla'
+				},
+				valhallaOptions: options.valhallaOptions
 			});
 			map.addControl(drawControl, 'top-left');
 		} else {
@@ -151,6 +218,10 @@
 			if (selectedFeatures.length === 0) {
 				selectedFeature = '';
 			}
+		});
+		drawControl.on('setting-changed', () => {
+			console.log('setting-changed');
+			onchange(options);
 		});
 
 		// event listeners
@@ -191,7 +262,7 @@
 				}
 			}
 
-			if (isMeasure) {
+			if (options.controlType === 'measure') {
 				map?.once('idle', () => {
 					(drawControl as MaplibreMeasureControl).recalc();
 				});
@@ -246,13 +317,14 @@
 				{/snippet}
 				{#snippet panel()}
 					<p class="pb-4">
-						Default control is MaplibreTerradrawControl. If you want to use measure control, enable
-						to choose MaplibreMeasureControl.
+						Default control is MaplibreTerradrawControl. If you want to use more advanced control,
+						enable to choose MaplibreMeasureControl or MaplibreValhallaControl.
 					</p>
 
 					<Segment
 						name="control-type"
 						value={options.controlType}
+						orientation="horizontal"
 						onValueChange={(e) => {
 							options.controlType = e.value as 'default' | 'measure';
 							addControl();
@@ -260,16 +332,23 @@
 
 							if (options.controlType === 'default') {
 								accordionValue = accordionValue.filter((v) => v !== 'measure-option');
-							} else {
+							}
+							if (options.controlType === 'measure') {
 								accordionValue = [
 									...accordionValue.filter((v) => v !== 'measure-option'),
 									'measure-option'
 								];
+							} else {
+								accordionValue = [
+									...accordionValue.filter((v) => v !== 'valhalla-option'),
+									'valhalla-option'
+								];
 							}
 						}}
 					>
-						<Segment.Item value="default">Default Control</Segment.Item>
-						<Segment.Item value="measure">Measure Control</Segment.Item>
+						<Segment.Item value="default">Default</Segment.Item>
+						<Segment.Item value="measure">Measure</Segment.Item>
+						<Segment.Item value="valhalla">Valhalla</Segment.Item>
 					</Segment>
 				{/snippet}
 			</Accordion.Item>
@@ -279,6 +358,10 @@
 					<p class="font-bold uppercase">Mode selection</p>
 				{/snippet}
 				{#snippet panel()}
+					{@const availableModes =
+						options.controlType === 'valhalla'
+							? (AvailableValhallaModes as unknown as TerradrawMode[])
+							: AvailableModes}
 					<p class="pb-4">
 						Your chosen options are automatically applied at the demo and the below usage code.
 					</p>
@@ -298,7 +381,7 @@
 							addControl();
 							onchange(options);
 						}}
-						validate={(details) => AvailableModes.includes(details.inputValue as TerradrawMode)}
+						validate={(details) => availableModes.includes(details.inputValue as TerradrawMode)}
 						editable={false}
 					/>
 
@@ -306,11 +389,11 @@
 						<button
 							type="button"
 							class="btn preset-filled-primary-500"
-							disabled={options.modes.length === AvailableModes.length}
+							disabled={options.modes.length === availableModes.length}
 							onclick={() => {
 								options.modes = [
 									...options.modes,
-									...AvailableModes.filter((m) => !options.modes.includes(m))
+									...availableModes.filter((m) => !options.modes.includes(m))
 								];
 								addControl();
 								onchange(options);
@@ -334,8 +417,8 @@
 						</button>
 					</nav>
 
-					{#if options.modes.length < AvailableModes.length}
-						{@const selectSize = AvailableModes.filter((m) => !options.modes.includes(m)).length}
+					{#if options.modes.length < availableModes.length}
+						{@const selectSize = availableModes.filter((m) => !options.modes.includes(m)).length}
 						<select
 							class="select rounded-container mt-2"
 							size={selectSize === 1 ? selectSize + 1 : selectSize > 5 ? 5 : selectSize}
@@ -347,7 +430,7 @@
 								onchange(options);
 							}}
 						>
-							{#each AvailableModes.filter((m) => !options.modes.includes(m)) as mode (mode)}
+							{#each availableModes.filter((m) => !options.modes.includes(m)) as mode (mode)}
 								<option value={mode}>{mode}</option>
 							{/each}
 						</select>
@@ -419,7 +502,7 @@
 										value={options.distanceUnit}
 										onValueChange={(e) => {
 											options.distanceUnit = e.value as DistanceUnit;
-											if (drawControl && isMeasure) {
+											if (drawControl && options.controlType === 'measure') {
 												(drawControl as MaplibreMeasureControl).distanceUnit = options.distanceUnit;
 											}
 											onchange(options);
@@ -450,7 +533,7 @@
 										value={options.areaUnit}
 										onValueChange={(e) => {
 											options.areaUnit = e.value as AreaUnit;
-											if (drawControl && isMeasure) {
+											if (drawControl && options.controlType === 'measure') {
 												(drawControl as MaplibreMeasureControl).areaUnit = options.areaUnit;
 											}
 											onchange(options);
@@ -483,7 +566,7 @@
 											markers={[0, 5, 10]}
 											onValueChange={(e) => {
 												options.distancePrecision = e.value[0] as number;
-												if (drawControl && isMeasure) {
+												if (drawControl && options.controlType === 'measure') {
 													(drawControl as MaplibreMeasureControl).distancePrecision =
 														options.distancePrecision;
 												}
@@ -503,7 +586,7 @@
 											markers={[0, 5, 10]}
 											onValueChange={(e) => {
 												options.areaPrecision = e.value[0] as number;
-												if (drawControl && isMeasure) {
+												if (drawControl && options.controlType === 'measure') {
 													(drawControl as MaplibreMeasureControl).areaPrecision =
 														options.areaPrecision;
 												}
@@ -522,7 +605,7 @@
 										value={options.computeElevation}
 										onValueChange={(e) => {
 											options.computeElevation = e.value as 'enabled' | 'disabled';
-											if (drawControl && isMeasure) {
+											if (drawControl && options.controlType === 'measure') {
 												(drawControl as MaplibreMeasureControl).computeElevation =
 													options.computeElevation === 'enabled';
 											}
@@ -537,6 +620,262 @@
 									</Segment>
 								{/snippet}
 							</Accordion.Item>
+						</Accordion>
+					{/snippet}
+				</Accordion.Item>
+			{/if}
+
+			{#if options.controlType === 'valhalla'}
+				<Accordion.Item value="valhalla-option">
+					{#snippet control()}
+						<p class="font-bold uppercase">Valhalla control options</p>
+					{/snippet}
+					{#snippet panel()}
+						<Accordion
+							value={valhallaAccordionValue}
+							onValueChange={(e) => (valhallaAccordionValue = e.value)}
+							multiple
+						>
+							<Accordion.Item value="valhalla-url">
+								{#snippet control()}
+									<p class="font-bold uppercase italic">Valhalla API URL</p>
+								{/snippet}
+								{#snippet panel()}
+									<input
+										type="text"
+										class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+										value={options.valhallaOptions.url}
+										onchange={(e) => {
+											if (e.target) {
+												options.valhallaOptions.url = (e.target as HTMLInputElement).value;
+												onchange(options);
+											}
+										}}
+									/>
+									<p class="pb-4">
+										Note. the example api URL of Valhalla control only supports the country of
+										Kenya, Uganda and Rwanda in this demo. You need to deploy your own Valhalla API
+										server for your application.
+									</p>
+								{/snippet}
+							</Accordion.Item>
+
+							<Tabs
+								value={valhallaGroup}
+								onValueChange={(e) => (valhallaGroup = e.value as 'routing' | 'isochrone')}
+								fluid
+							>
+								{#snippet list()}
+									<Tabs.Control value="routing">Routing</Tabs.Control>
+									<Tabs.Control value="isochrone">Isochrone</Tabs.Control>
+								{/snippet}
+								{#snippet content()}
+									<Tabs.Panel value="routing">
+										<Accordion.Item value="routing-means-of-transport">
+											{#snippet control()}
+												<p class="font-bold uppercase italic">Means of transport</p>
+											{/snippet}
+											{#snippet panel()}
+												<Segment
+													value={options.valhallaOptions.routingOptions?.costingModel}
+													onValueChange={(e) => {
+														if (!options.valhallaOptions.routingOptions) {
+															options.valhallaOptions.routingOptions = {};
+														} else {
+															options.valhallaOptions.routingOptions.costingModel =
+																e.value as costingModelType;
+														}
+														if (drawControl && options.controlType === 'valhalla') {
+															(drawControl as MaplibreValhallaControl).routingCostingModel =
+																options.valhallaOptions.routingOptions.costingModel ?? 'pedestrian';
+														}
+														onchange(options);
+													}}
+												>
+													{#each costingModelOptions as item (item.value)}
+														<Segment.Item value={item.value}>
+															{item.label}
+														</Segment.Item>
+													{/each}
+												</Segment>
+											{/snippet}
+										</Accordion.Item>
+
+										<Accordion.Item value="routing-distance-unit">
+											{#snippet control()}
+												<p class="font-bold uppercase italic">Distance unit</p>
+											{/snippet}
+											{#snippet panel()}
+												<Segment
+													value={options.valhallaOptions.routingOptions?.distanceUnit}
+													onValueChange={(e) => {
+														if (!options.valhallaOptions.routingOptions) {
+															options.valhallaOptions.routingOptions = {};
+														} else {
+															options.valhallaOptions.routingOptions.distanceUnit =
+																e.value as routingDistanceUnitType;
+														}
+														if (drawControl && options.controlType === 'valhalla') {
+															(drawControl as MaplibreValhallaControl).routingDistanceUnit =
+																options.valhallaOptions.routingOptions.distanceUnit ?? 'kilometers';
+														}
+														onchange(options);
+													}}
+												>
+													{#each routingDistanceUnitOptions as item (item.value)}
+														<Segment.Item value={item.value}>
+															{item.label}
+														</Segment.Item>
+													{/each}
+												</Segment>
+											{/snippet}
+										</Accordion.Item>
+									</Tabs.Panel>
+									<Tabs.Panel value="isochrone">
+										<Accordion.Item value="isochrone-contour-type">
+											{#snippet control()}
+												<p class="font-bold uppercase italic">Type of contour</p>
+											{/snippet}
+											{#snippet panel()}
+												<Segment
+													value={options.valhallaOptions.isochroneOptions?.contourType}
+													onValueChange={(e) => {
+														if (!options.valhallaOptions.isochroneOptions) {
+															options.valhallaOptions.isochroneOptions = {};
+														} else {
+															options.valhallaOptions.isochroneOptions.contourType =
+																e.value as ContourType;
+														}
+														if (drawControl && options.controlType === 'valhalla') {
+															(drawControl as MaplibreValhallaControl).isochroneContourType =
+																options.valhallaOptions.isochroneOptions.contourType ?? 'time';
+														}
+														onchange(options);
+													}}
+												>
+													<Segment.Item value="time">Time</Segment.Item>
+													<Segment.Item value="distance">Distance</Segment.Item>
+												</Segment>
+											{/snippet}
+										</Accordion.Item>
+										<Accordion.Item value="isochrone-means-of-transport">
+											{#snippet control()}
+												<p class="font-bold uppercase italic">Means of transport</p>
+											{/snippet}
+											{#snippet panel()}
+												<Segment
+													value={options.valhallaOptions.isochroneOptions?.costingModel}
+													onValueChange={(e) => {
+														if (!options.valhallaOptions.isochroneOptions) {
+															options.valhallaOptions.isochroneOptions = {};
+														} else {
+															options.valhallaOptions.isochroneOptions.costingModel =
+																e.value as costingModelType;
+														}
+														if (drawControl && options.controlType === 'valhalla') {
+															(drawControl as MaplibreValhallaControl).isochroneCostingModel =
+																options.valhallaOptions.isochroneOptions.costingModel ??
+																'pedestrian';
+														}
+														onchange(options);
+													}}
+												>
+													{#each costingModelOptions as item (item.value)}
+														<Segment.Item value={item.value}>
+															{item.label}
+														</Segment.Item>
+													{/each}
+												</Segment>
+											{/snippet}
+										</Accordion.Item>
+										<Accordion.Item value="isochrone-contours">
+											{#snippet control()}
+												<p class="font-bold uppercase italic">Contours</p>
+											{/snippet}
+											{#snippet panel()}
+												{@const contours = options.valhallaOptions.isochroneOptions
+													?.contours as Contour[]}
+
+												<button
+													type="button"
+													class="btn preset-filled"
+													hidden={contours.length > 3}
+													onclick={() => {
+														const lastContour = contours[contours.length - 1];
+														contours.push(JSON.parse(JSON.stringify(lastContour)));
+													}}
+												>
+													<IconPlus size={18} />
+													<span>Add contour</span>
+												</button>
+
+												<div class="table-wrap">
+													<table class="table table-fixed w-full max-w-md">
+														<colgroup>
+															<col class="w-20" />
+															<col class="w-20" />
+															<col class="w-20" />
+															<col />
+														</colgroup>
+														<thead>
+															<tr>
+																<th class="text-xs">Color</th>
+																<th class="text-xs">Time (min)</th>
+																<th class="text-xs">Distance (km)</th>
+																<th>&nbsp;</th>
+															</tr>
+														</thead>
+														<tbody>
+															{#each contours as row, index (index)}
+																<tr>
+																	<td
+																		><input
+																			type="color"
+																			bind:value={row.color}
+																			class="cursor-pointer w-10 h-6"
+																		/></td
+																	>
+																	<td
+																		><input
+																			type="number"
+																			bind:value={row.time}
+																			class="cursor-pointer w-10 text-xs px-1"
+																		/></td
+																	>
+																	<td
+																		><input
+																			type="number"
+																			bind:value={row.distance}
+																			class="cursor-pointer w-10 text-xs px-1"
+																		/></td
+																	>
+																	<td class="text-right">
+																		{#if index > 0}
+																			<button
+																				class="btn btn-sm preset-filled rounded-full w-8 h-8"
+																				onclick={() => {
+																					if (options.valhallaOptions.isochroneOptions?.contours) {
+																						options.valhallaOptions.isochroneOptions.contours.splice(
+																							index,
+																							1
+																						);
+																					}
+																				}}
+																			>
+																				<IconX />
+																			</button>
+																		{/if}
+																	</td>
+																</tr>
+															{/each}
+														</tbody>
+													</table>
+												</div>
+											{/snippet}
+										</Accordion.Item>
+									</Tabs.Panel>
+								{/snippet}
+							</Tabs>
 						</Accordion>
 					{/snippet}
 				</Accordion.Item>

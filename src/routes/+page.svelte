@@ -6,7 +6,8 @@
 		debounce,
 		type AreaUnit,
 		type DistanceUnit,
-		type TerradrawMode
+		type TerradrawMode,
+		type ValhallaOptions
 	} from '$lib';
 	import { Segment, Tabs } from '@skeletonlabs/skeleton-svelte';
 	import type { PageData } from './$types';
@@ -29,7 +30,8 @@
 	let updateDemo = $state(false);
 
 	let demoOptions: DemoOptions = $state({
-		controlType: (page.url.searchParams.get('controlType') as 'default' | 'measure') ?? 'default',
+		controlType:
+			(page.url.searchParams.get('controlType') as 'default' | 'measure' | 'valhalla') ?? 'default',
 		isOpen: (page.url.searchParams.get('isOpen') as 'open' | 'close') ?? 'open',
 		modes:
 			((page.url.searchParams.get('modes') as string)?.split(',') as TerradrawMode[]) ??
@@ -39,7 +41,42 @@
 		areaUnit: (page.url.searchParams.get('areaUnit') as AreaUnit) ?? 'metric',
 		areaPrecision: parseInt(page.url.searchParams.get('areaPrecision') ?? '2'),
 		computeElevation:
-			(page.url.searchParams.get('computeElevation') as 'enabled' | 'disabled') ?? 'enabled'
+			(page.url.searchParams.get('computeElevation') as 'enabled' | 'disabled') ?? 'enabled',
+		valhallaOptions: (page.url.searchParams.get('valhallaOptions')
+			? JSON.parse(decodeURIComponent(page.url.searchParams.get('valhallaOptions') ?? '{}'))
+			: {
+					url: 'https://valhalla.water-gis.com',
+					routingOptions: {
+						costingModel: 'pedestrian',
+						distanceUnit: 'kilometers'
+					},
+					isochroneOptions: {
+						contourType: 'time',
+						costingModel: 'auto',
+						contours: [
+							{
+								time: 3,
+								distance: 1,
+								color: '#ff0000'
+							},
+							{
+								time: 5,
+								distance: 2,
+								color: '#ffff00'
+							},
+							{
+								time: 10,
+								distance: 3,
+								color: '#0000ff'
+							},
+							{
+								time: 15,
+								distance: 4,
+								color: '#ff00ff'
+							}
+						]
+					}
+				}) as ValhallaOptions
 	});
 
 	const defaultExampleType = page.url.searchParams.get('exampleType') ?? importTypeTabs[0].value;
@@ -89,6 +126,14 @@
 			pageUrl.searchParams.delete('areaPrecision');
 			pageUrl.searchParams.delete('computeElevation');
 		}
+		if (demoOptions.controlType == 'valhalla') {
+			pageUrl.searchParams.set(
+				'valhallaOptions',
+				encodeURIComponent(JSON.stringify(demoOptions.valhallaOptions))
+			);
+		} else {
+			pageUrl.searchParams.delete('valhallaOptions');
+		}
 		pageUrl.searchParams.set('packageManager', packageManager);
 		replaceState(pageUrl, '');
 	};
@@ -104,6 +149,10 @@
 		);
 		return options.join(`, `);
 	};
+
+	const getValhallaOptions = () => {
+		return `valhallaOptions: ${JSON.stringify(demoOptions.valhallaOptions)}`;
+	};
 </script>
 
 <div class="snap-y overflow-y-scroll h-full">
@@ -111,7 +160,7 @@
 		<DemoMap
 			styles={data.styles}
 			geojson={data.geojson}
-			options={demoOptions}
+			bind:options={demoOptions}
 			onchange={(value: DemoOptions) => {
 				demoOptions = value;
 				updateDemo = !updateDemo;
@@ -205,13 +254,19 @@
 										/MaplibreTerradrawControl/g,
 										demoOptions.controlType === 'default'
 											? 'MaplibreTerradrawControl'
-											: 'MaplibreMeasureControl'
+											: demoOptions.controlType === 'measure'
+												? 'MaplibreMeasureControl'
+												: 'MaplibreValhallaControl'
 									)
 									.replace('{modes}', demoOptions.modes.map((m) => `'${m}'`).join(','))
 									.replace('{open}', demoOptions.isOpen === 'open' ? 'true' : 'false')
 									.replace(
-										'{measure_options}',
-										demoOptions.controlType === 'default' ? '' : getMeasureOptions()
+										'{control_options}',
+										demoOptions.controlType === 'default'
+											? ''
+											: demoOptions.controlType === 'valhalla'
+												? getValhallaOptions()
+												: getMeasureOptions()
 									)}
 							/>
 						{/key}
@@ -227,13 +282,19 @@
 										/MaplibreTerradrawControl\(/g,
 										demoOptions.controlType === 'default'
 											? 'MaplibreTerradrawControl('
-											: 'MaplibreMeasureControl('
+											: demoOptions.controlType === 'measure'
+												? 'MaplibreMeasureControl('
+												: 'MaplibreValhallaControl('
 									)
 									.replace('{modes}', demoOptions.modes.map((m) => `'${m}'`).join(','))
 									.replace('{open}', demoOptions.isOpen === 'open' ? 'true' : 'false')
 									.replace(
-										'{measure_options}',
-										demoOptions.controlType === 'default' ? '' : getMeasureOptions()
+										'{control_options}',
+										demoOptions.controlType === 'default'
+											? ''
+											: demoOptions.controlType === 'valhalla'
+												? getValhallaOptions()
+												: getMeasureOptions()
 									)}
 							/>
 						{/key}

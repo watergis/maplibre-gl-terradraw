@@ -622,14 +622,14 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 		const colorCell = document.createElement('td');
 		const colorInput = document.createElement('input');
 		colorInput.type = 'color';
-		colorInput.value = `#${contour.color}`;
+		colorInput.value = contour.color;
 		colorInput.classList.add('color-picker');
 		colorInput.addEventListener('change', (e) => {
 			e.stopPropagation();
 			if (!this.valhallaOptions.isochroneOptions?.contours) return;
 			this.valhallaOptions.isochroneOptions.contours[index].color = (
 				e.target as HTMLInputElement
-			).value.replace('#', '');
+			).value;
 			this.dispatchEvent('setting-changed');
 		});
 		colorCell.appendChild(colorInput);

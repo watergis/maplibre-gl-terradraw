@@ -57,7 +57,10 @@ export class ValhallaIsochrone {
 		const jsonOption = {
 			locations: [{ lat, lon }],
 			costing: costingModel,
-			contours: contourList,
+			contours: contourList.map((c) => {
+				c.color = c.color.replace('#', '');
+				return c;
+			}),
 			polygons: true
 		};
 		const url = `${this.url}/isochrone?json=${JSON.stringify(jsonOption)}`;

@@ -24,6 +24,7 @@
 		roundFeatureCoordinates,
 		routingDistanceUnitOptions,
 		type AreaUnit,
+		type Contour,
 		type ContourType,
 		type costingModelType,
 		type DistanceUnit,
@@ -83,22 +84,22 @@
 						{
 							time: 3,
 							distance: 1,
-							color: 'ff0000'
+							color: '#ff0000'
 						},
 						{
 							time: 5,
 							distance: 2,
-							color: 'ffff00'
+							color: '#ffff00'
 						},
 						{
 							time: 10,
 							distance: 3,
-							color: '0000ff'
+							color: '#0000ff'
 						},
 						{
 							time: 15,
 							distance: 4,
-							color: 'ff00ff'
+							color: '#ff00ff'
 						}
 					]
 				}
@@ -661,6 +662,7 @@
 							<Tabs
 								value={valhallaGroup}
 								onValueChange={(e) => (valhallaGroup = e.value as 'routing' | 'isochrone')}
+								fluid
 							>
 								{#snippet list()}
 									<Tabs.Control value="routing">Routing</Tabs.Control>
@@ -783,6 +785,66 @@
 														</Segment.Item>
 													{/each}
 												</Segment>
+											{/snippet}
+										</Accordion.Item>
+										<Accordion.Item value="isochrone-contours">
+											{#snippet control()}
+												<p class="font-bold uppercase italic">Contours</p>
+											{/snippet}
+											{#snippet panel()}
+												{@const contours = options.valhallaOptions.isochroneOptions
+													?.contours as Contour[]}
+
+												<div class="table-wrap">
+													<table class="table table-fixed w-full max-w-md">
+														<colgroup>
+															<col class="w-20" />
+															<col class="w-20" />
+															<col class="w-20" />
+															<col />
+														</colgroup>
+														<thead>
+															<tr>
+																<th class="text-xs">Color</th>
+																<th class="text-xs">Time (min)</th>
+																<th class="text-xs">Distance (km)</th>
+																<th>&nbsp;</th>
+															</tr>
+														</thead>
+														<tbody>
+															{#each contours as row, index (index)}
+																<tr>
+																	<td
+																		><input
+																			type="color"
+																			bind:value={row.color}
+																			class="w-10 h-6"
+																		/></td
+																	>
+																	<td
+																		><input
+																			type="number"
+																			bind:value={row.time}
+																			class="w-10 text-xs px-1"
+																		/></td
+																	>
+																	<td
+																		><input
+																			type="number"
+																			bind:value={row.distance}
+																			class="w-10 text-xs px-1"
+																		/></td
+																	>
+																	<td class="text-right">
+																		<button class="btn btn-sm preset-filled rounded-full w-8 h-8">
+																			<IconX />
+																		</button>
+																	</td>
+																</tr>
+															{/each}
+														</tbody>
+													</table>
+												</div>
 											{/snippet}
 										</Accordion.Item>
 									</Tabs.Panel>

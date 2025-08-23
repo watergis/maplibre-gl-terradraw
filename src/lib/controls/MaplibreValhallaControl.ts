@@ -180,7 +180,7 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 	 * ```
 	 */
 	get fontGlyphs() {
-		const layers = [this.controlOptions.lineLayerNodeLabelSpec];
+		const layers = [this.controlOptions.routingLineLayerNodeLabelSpec];
 		const firstLayer = layers[0];
 		return (firstLayer &&
 			firstLayer.layout &&
@@ -188,7 +188,7 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 	}
 
 	set fontGlyphs(fontNames: string[]) {
-		const layers = [this.controlOptions.lineLayerNodeLabelSpec];
+		const layers = [this.controlOptions.routingLineLayerNodeLabelSpec];
 		for (const layer of layers) {
 			if (layer && layer.layout) {
 				layer.layout['text-font'] = fontNames;
@@ -234,15 +234,15 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 
 		const prefixId = _options.adapterOptions?.prefixId ?? 'td-valhalla';
 
-		(_options.lineLayerNodeLabelSpec as SymbolLayerSpecification).id =
-			_options.lineLayerNodeLabelSpec?.id.replace('{prefix}', prefixId) as string;
-		(_options.lineLayerNodeLabelSpec as SymbolLayerSpecification).source =
-			_options.lineLayerNodeLabelSpec?.source.replace('{prefix}', prefixId) as string;
+		(_options.routingLineLayerNodeLabelSpec as SymbolLayerSpecification).id =
+			_options.routingLineLayerNodeLabelSpec?.id.replace('{prefix}', prefixId) as string;
+		(_options.routingLineLayerNodeLabelSpec as SymbolLayerSpecification).source =
+			_options.routingLineLayerNodeLabelSpec?.source.replace('{prefix}', prefixId) as string;
 
-		(_options.lineLayerNodeSpec as CircleLayerSpecification).id =
-			_options.lineLayerNodeSpec?.id.replace('{prefix}', prefixId) as string;
-		(_options.lineLayerNodeSpec as CircleLayerSpecification).source =
-			_options.lineLayerNodeSpec?.source.replace('{prefix}', prefixId) as string;
+		(_options.routingLineLayerNodeSpec as CircleLayerSpecification).id =
+			_options.routingLineLayerNodeSpec?.id.replace('{prefix}', prefixId) as string;
+		(_options.routingLineLayerNodeSpec as CircleLayerSpecification).source =
+			_options.routingLineLayerNodeSpec?.source.replace('{prefix}', prefixId) as string;
 
 		(_options.isochronePolygonLayerSpec as FillLayerSpecification).id =
 			_options.isochronePolygonLayerSpec?.id.replace('{prefix}', prefixId) as string;
@@ -325,8 +325,11 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 	) {
 		const sourceIds = TERRADRAW_SOURCE_IDS;
 
-		const pointSource = this.controlOptions.lineLayerNodeSpec?.source;
+		const pointSource = this.controlOptions.routingLineLayerNodeSpec?.source;
 		if (pointSource) sourceIds.push(pointSource);
+
+		const polygonSource = this.controlOptions.isochronePolygonLayerSpec?.source;
+		if (polygonSource) sourceIds.push(polygonSource);
 
 		return cleanMaplibreStyle(style, options, sourceIds, this.options.adapterOptions?.prefixId);
 	}
@@ -757,11 +760,11 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 			// add GeoJSON source for line node
 			if (
 				!this.map.getSource(
-					(this.controlOptions.lineLayerNodeSpec as CircleLayerSpecification).source
+					(this.controlOptions.routingLineLayerNodeSpec as CircleLayerSpecification).source
 				)
 			) {
 				this.map.addSource(
-					(this.controlOptions.lineLayerNodeSpec as CircleLayerSpecification).source,
+					(this.controlOptions.routingLineLayerNodeSpec as CircleLayerSpecification).source,
 					{
 						type: 'geojson',
 						data: { type: 'FeatureCollection', features: [] }
@@ -771,16 +774,20 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 
 			// add GeoJSON layer for distance label node appearance
 			if (
-				!this.map.getLayer((this.controlOptions.lineLayerNodeSpec as CircleLayerSpecification).id)
+				!this.map.getLayer(
+					(this.controlOptions.routingLineLayerNodeSpec as CircleLayerSpecification).id
+				)
 			) {
-				this.map.addLayer(this.controlOptions.lineLayerNodeSpec as CircleLayerSpecification);
+				this.map.addLayer(this.controlOptions.routingLineLayerNodeSpec as CircleLayerSpecification);
 			}
 			if (
 				!this.map.getLayer(
-					(this.controlOptions.lineLayerNodeLabelSpec as SymbolLayerSpecification).id
+					(this.controlOptions.routingLineLayerNodeLabelSpec as SymbolLayerSpecification).id
 				)
 			) {
-				this.map.addLayer(this.controlOptions.lineLayerNodeLabelSpec as SymbolLayerSpecification);
+				this.map.addLayer(
+					this.controlOptions.routingLineLayerNodeLabelSpec as SymbolLayerSpecification
+				);
 			}
 		}
 
@@ -847,21 +854,31 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 		this.off('feature-deleted', this.onFeatureDeleted.bind(this));
 		if (!this.map) return;
 
-		if (this.map.getLayer((this.controlOptions.lineLayerNodeSpec as CircleLayerSpecification).id)) {
-			this.map.removeLayer((this.controlOptions.lineLayerNodeSpec as CircleLayerSpecification).id);
-		}
 		if (
-			this.map.getLayer((this.controlOptions.lineLayerNodeLabelSpec as SymbolLayerSpecification).id)
+			this.map.getLayer(
+				(this.controlOptions.routingLineLayerNodeSpec as CircleLayerSpecification).id
+			)
 		) {
 			this.map.removeLayer(
-				(this.controlOptions.lineLayerNodeLabelSpec as SymbolLayerSpecification).id
+				(this.controlOptions.routingLineLayerNodeSpec as CircleLayerSpecification).id
 			);
 		}
 		if (
-			this.map.getSource((this.controlOptions.lineLayerNodeSpec as CircleLayerSpecification).source)
+			this.map.getLayer(
+				(this.controlOptions.routingLineLayerNodeLabelSpec as SymbolLayerSpecification).id
+			)
+		) {
+			this.map.removeLayer(
+				(this.controlOptions.routingLineLayerNodeLabelSpec as SymbolLayerSpecification).id
+			);
+		}
+		if (
+			this.map.getSource(
+				(this.controlOptions.routingLineLayerNodeSpec as CircleLayerSpecification).source
+			)
 		) {
 			this.map.removeSource(
-				(this.controlOptions.lineLayerNodeSpec as CircleLayerSpecification).source
+				(this.controlOptions.routingLineLayerNodeSpec as CircleLayerSpecification).source
 			);
 		}
 
@@ -1033,7 +1050,7 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 		}) as unknown as GeoJSONStoreFeatures[];
 
 		const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
-			(this.controlOptions.lineLayerNodeSpec as CircleLayerSpecification).source
+			(this.controlOptions.routingLineLayerNodeSpec as CircleLayerSpecification).source
 		] as GeoJSONSourceSpecification;
 		if (geojsonSource) {
 			if (
@@ -1053,12 +1070,14 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 
 			(
 				this.map.getSource(
-					(this.controlOptions.lineLayerNodeSpec as CircleLayerSpecification).source
+					(this.controlOptions.routingLineLayerNodeSpec as CircleLayerSpecification).source
 				) as GeoJSONSource
 			)?.setData(geojsonSource.data);
-			this.map.moveLayer((this.controlOptions.lineLayerNodeSpec as CircleLayerSpecification).id);
 			this.map.moveLayer(
-				(this.controlOptions.lineLayerNodeLabelSpec as SymbolLayerSpecification).id
+				(this.controlOptions.routingLineLayerNodeSpec as CircleLayerSpecification).id
+			);
+			this.map.moveLayer(
+				(this.controlOptions.routingLineLayerNodeLabelSpec as SymbolLayerSpecification).id
 			);
 		}
 	};
@@ -1076,7 +1095,7 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 			}
 
 			const sources = [
-				this.controlOptions.lineLayerNodeSpec as CircleLayerSpecification,
+				this.controlOptions.routingLineLayerNodeSpec as CircleLayerSpecification,
 				this.controlOptions.isochronePolygonLayerSpec as FillLayerSpecification
 			];
 			const sourceIds = sources.map((src) => src.source);

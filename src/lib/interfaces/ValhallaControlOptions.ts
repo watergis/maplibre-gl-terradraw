@@ -45,12 +45,12 @@ export interface ValhallaControlOptions {
 	/**
 	 * Maplibre symbol layer specification (on line nodes) for line distance layer
 	 */
-	lineLayerNodeLabelSpec?: SymbolLayerSpecification;
+	routingLineLayerNodeLabelSpec?: SymbolLayerSpecification;
 
 	/**
 	 * Maplibre circle layer specification for visualizing node style of line distance layer
 	 */
-	lineLayerNodeSpec?: CircleLayerSpecification;
+	routingLineLayerNodeSpec?: CircleLayerSpecification;
 
 	/**
 	 * Maplibre fill layer specification for isochrone polygon layer

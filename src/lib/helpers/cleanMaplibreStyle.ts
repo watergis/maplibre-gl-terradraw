@@ -16,8 +16,11 @@ export const TERRADRAW_MEASURE_SOURCE_IDS = [
 ];
 export const TERRADRAW_VALHALLA_SOURCE_IDS = [
 	...TERRADRAW_SOURCE_IDS,
-	defaultValhallaControlOptions.lineLayerNodeLabelSpec?.source as string,
-	defaultValhallaControlOptions.lineLayerNodeSpec?.source as string
+	defaultValhallaControlOptions.routingLineLayerNodeLabelSpec?.source as string,
+	defaultValhallaControlOptions.routingLineLayerNodeSpec?.source as string,
+	defaultValhallaControlOptions.isochronePolygonLayerSpec?.source as string,
+	defaultValhallaControlOptions.isochroneLineLayerSpec?.source as string,
+	defaultValhallaControlOptions.isochroneLabelLayerSpec?.source as string
 ];
 
 /**

@@ -105,10 +105,10 @@ export const defaultValhallaControlOptions: ValhallaControlOptions = {
 	adapterOptions: {
 		prefixId: 'td-valhalla'
 	},
-	lineLayerNodeLabelSpec: {
-		id: '{prefix}-line-node-label',
+	routingLineLayerNodeLabelSpec: {
+		id: '{prefix}-routing-node-label',
 		type: 'symbol',
-		source: '{prefix}-line-source',
+		source: '{prefix}-routing-source',
 		filter: ['==', '$type', 'Point'],
 		layout: {
 			'text-field': [
@@ -162,10 +162,10 @@ export const defaultValhallaControlOptions: ValhallaControlOptions = {
 			'text-color': '#232E3D'
 		}
 	},
-	lineLayerNodeSpec: {
-		id: '{prefix}-line-node',
+	routingLineLayerNodeSpec: {
+		id: '{prefix}-routing-node',
 		type: 'circle',
-		source: '{prefix}-line-source',
+		source: '{prefix}-routing-source',
 		filter: ['==', '$type', 'Point'],
 		layout: {},
 		paint: {

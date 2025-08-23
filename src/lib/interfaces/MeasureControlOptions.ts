@@ -49,7 +49,7 @@ export interface MeasureControlOptions {
 	/**
 	 * Maplibre circle layer specification for visualizing node style of line distance layer
 	 */
-	lineLayerNodeSpec?: CircleLayerSpecification;
+	routingLineLayerNodeSpec?: CircleLayerSpecification;
 
 	/**
 	 * Maplibre symbol layer specification (centroid) for polygon area layer

@@ -47,12 +47,12 @@
 			: {
 					url: 'https://valhalla.water-gis.com',
 					routingOptions: {
-						meansOfTransport: 'pedestrian',
+						costingModel: 'pedestrian',
 						distanceUnit: 'kilometers'
 					},
 					isochroneOptions: {
 						contourType: 'time',
-						meansOfTransport: 'auto',
+						costingModel: 'auto',
 						contours: [
 							{
 								time: 3,

@@ -1,5 +1,5 @@
 import type { GeoJSONStoreFeatures } from 'terra-draw';
-import type { routingMeansOfTransportType } from './valhallaRouting';
+import type { costingModelType } from './valhallaRouting';
 
 export const contourTypeOptions = [
 	{ value: 'time', label: 'Time' },
@@ -33,7 +33,7 @@ export class ValhallaIsochrone {
 	 * @param lon Longitude
 	 * @param lat Latitude
 	 * @param contourType the type of contour either time or distance
-	 * @param meansOfTransport costing model either auto, bicycle or pedestrian
+	 * @param costingModel costing model either auto, bicycle or pedestrian
 	 * @param contours Optional. the list of contour. If skipped, default value is used.
 	 * @returns GeoJSON Feature Collection object
 	 */
@@ -41,7 +41,7 @@ export class ValhallaIsochrone {
 		lon: number,
 		lat: number,
 		contourType: ContourType,
-		meansOfTransport: routingMeansOfTransportType,
+		costingModel: costingModelType,
 		contours: Contour[]
 	) {
 		const contourList: Contour[] = JSON.parse(JSON.stringify(contours));
@@ -56,7 +56,7 @@ export class ValhallaIsochrone {
 		// http://localhost:8002/isochrone?json={%22locations%22:[{%22lat%22:-1.946357,%22lon%22:30.059753}],%22costing%22:%22pedestrian%22,%22contours%22:[{%22time%22:15,%22color%22:%22ff0000%22},{%22time%22:30,%22color%22:%22ffff00%22},{%22time%22:60,%22color%22:%220000ff%22}]}
 		const jsonOption = {
 			locations: [{ lat, lon }],
-			costing: meansOfTransport,
+			costing: costingModel,
 			contours: contourList,
 			polygons: true
 		};

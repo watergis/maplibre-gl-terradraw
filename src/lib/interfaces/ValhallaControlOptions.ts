@@ -1,12 +1,7 @@
 import type { ModeOptions } from './ModeOptions';
 import type { TerraDrawExtend } from 'terra-draw';
 import type { TerradrawValhallaMode } from './TerradrawMode';
-import type {
-	Contour,
-	ContourType,
-	routingDistanceUnitType,
-	routingMeansOfTransportType
-} from '../helpers';
+import type { Contour, ContourType, routingDistanceUnitType, costingModelType } from '../helpers';
 import type {
 	CircleLayerSpecification,
 	FillLayerSpecification,
@@ -92,7 +87,7 @@ export interface ValhallaOptions {
 		 * 'auto', 'bicycle', 'pedestrian' models are available in the plugin.
 		 * https://valhalla.github.io/valhalla/api/turn-by-turn/api-reference/#costing-models
 		 */
-		meansOfTransport?: routingMeansOfTransportType;
+		costingModel?: costingModelType;
 		/**
 		 * Dustance unit for Valhalla routing API.
 		 * https://valhalla.github.io/valhalla/api/turn-by-turn/api-reference/#directions-options
@@ -110,7 +105,7 @@ export interface ValhallaOptions {
 		 * 'auto', 'bicycle', 'pedestrian' models are available in the plugin.
 		 * https://valhalla.github.io/valhalla/api/isochrone/api-reference/#costing-parameters
 		 */
-		meansOfTransport?: routingMeansOfTransportType;
+		costingModel?: costingModelType;
 
 		/**
 		 * List of contours for isochrone API.

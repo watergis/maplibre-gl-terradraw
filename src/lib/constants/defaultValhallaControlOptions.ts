@@ -72,12 +72,12 @@ export const defaultValhallaControlOptions: ValhallaControlOptions = {
 	valhallaOptions: {
 		url: '',
 		routingOptions: {
-			meansOfTransport: 'auto',
+			costingModel: 'auto',
 			distanceUnit: 'kilometers'
 		},
 		isochroneOptions: {
 			contourType: 'time',
-			meansOfTransport: 'auto',
+			costingModel: 'auto',
 			contours: [
 				{
 					time: 3,
@@ -124,12 +124,12 @@ export const defaultValhallaControlOptions: ValhallaControlOptions = {
 					['to-string', ['get', 'time']],
 					'min'
 				],
-				['all', ['has', 'meansOfTransport']],
+				['all', ['has', 'costingModel']],
 				[
 					'concat',
 					['to-string', ['get', 'text']],
 					'\n(',
-					['to-string', ['get', 'meansOfTransport']],
+					['to-string', ['get', 'costingModel']],
 					')'
 				],
 				['concat', ['to-string', ['get', 'text']]]

@@ -16,17 +16,17 @@
 	import {
 		AvailableModes,
 		AvailableValhallaModes,
+		costingModelOptions,
 		getDefaultModeOptions,
 		MaplibreMeasureControl,
 		MaplibreTerradrawControl,
 		MaplibreValhallaControl,
 		roundFeatureCoordinates,
 		routingDistanceUnitOptions,
-		routingMeansOfTransportOptions,
 		type AreaUnit,
+		type costingModelType,
 		type DistanceUnit,
 		type routingDistanceUnitType,
-		type routingMeansOfTransportType,
 		type TerradrawMode,
 		type TerradrawValhallaMode,
 		type ValhallaOptions
@@ -72,12 +72,12 @@
 			valhallaOptions: {
 				url: '',
 				routingOptions: {
-					meansOfTransport: 'pedestrian',
+					costingModel: 'pedestrian',
 					distanceUnit: 'kilometers'
 				},
 				isochroneOptions: {
 					contourType: 'time',
-					meansOfTransport: 'auto',
+					costingModel: 'auto',
 					contours: [
 						{
 							time: 3,
@@ -655,22 +655,22 @@
 								{/snippet}
 								{#snippet panel()}
 									<Segment
-										value={options.valhallaOptions.routingOptions?.meansOfTransport}
+										value={options.valhallaOptions.routingOptions?.costingModel}
 										onValueChange={(e) => {
 											if (!options.valhallaOptions.routingOptions) {
 												options.valhallaOptions.routingOptions = {};
 											} else {
-												options.valhallaOptions.routingOptions.meansOfTransport =
-													e.value as routingMeansOfTransportType;
+												options.valhallaOptions.routingOptions.costingModel =
+													e.value as costingModelType;
 											}
 											if (drawControl && options.controlType === 'valhalla') {
-												(drawControl as MaplibreValhallaControl).routingMeansOfTransport =
-													options.valhallaOptions.routingOptions.meansOfTransport ?? 'pedestrian';
+												(drawControl as MaplibreValhallaControl).routingCostingModel =
+													options.valhallaOptions.routingOptions.costingModel ?? 'pedestrian';
 											}
 											onchange(options);
 										}}
 									>
-										{#each routingMeansOfTransportOptions as item (item.value)}
+										{#each costingModelOptions as item (item.value)}
 											<Segment.Item value={item.value}>
 												{item.label}
 											</Segment.Item>

@@ -76,16 +76,16 @@ export interface ValhallaError {
 /**
  * Options of means of transport for Valhalla routing API.
  */
-export const routingMeansOfTransportOptions = [
+export const costingModelOptions = [
 	{ value: 'pedestrian', label: 'Pedestrian' },
 	{ value: 'bicycle', label: 'Bicycle' },
 	{ value: 'auto', label: 'Car' }
 ] as const;
 
 /**
- * routingMeansOfTransportType is the type for means of transport in Valhalla routing API.
+ * costingModelType is the type for means of transport in Valhalla routing API.
  */
-export type routingMeansOfTransportType = (typeof routingMeansOfTransportOptions)[number]['value'];
+export type costingModelType = (typeof costingModelOptions)[number]['value'];
 
 /**
  * Options of distance unit for Valhalla routing API.
@@ -151,14 +151,14 @@ export class ValhallaRouting {
 	/**
 	 * Calculate the route using Valhalla routing API.
 	 * @param tripData array of LngLat coordinates for the trip
-	 * @param meansOfTransport means of transport for Valhalla routing API.
+	 * @param costingModel means of transport for Valhalla routing API.
 	 * @param distanceUnit distance unit for Valhalla routing API.
 	 * @returns returns a feature with LineString geometry and point features for the trip data
 	 * @throws Error if the trip data is invalid or if the Valhalla API returns
 	 */
 	public async calcRoute(
 		tripData: LngLat[],
-		meansOfTransport: routingMeansOfTransportType,
+		costingModel: costingModelType,
 		distanceUnit: routingDistanceUnitType
 	) {
 		this.tripData = tripData;
@@ -172,7 +172,7 @@ export class ValhallaRouting {
 			locations: this.tripData.map((pt) => {
 				return { lon: pt.lng, lat: pt.lat };
 			}),
-			costing: meansOfTransport,
+			costing: costingModel,
 			costing_options: { auto: { country_crossing_penalty: 2000.0 } },
 			units: distanceUnit,
 			id: 'my_work_route'
@@ -218,12 +218,11 @@ export class ValhallaRouting {
 			};
 		});
 
-		const transportLabel = routingMeansOfTransportOptions.find(
-			(opt) => opt.value === meansOfTransport
-		)?.label as string;
+		const transportLabel = costingModelOptions.find((opt) => opt.value === costingModel)
+			?.label as string;
 
 		const feature = this.geoLineString(combinedShape, {
-			meansOfTransport: transportLabel,
+			costingModel: transportLabel,
 			distance: sumLength,
 			distance_unit: distanceUnit === 'kilometers' ? 'km' : 'mi',
 			time: sumTime,
@@ -233,7 +232,7 @@ export class ValhallaRouting {
 		const firstFeature = pointFeatures.features[0];
 		firstFeature.properties = {
 			...firstFeature.properties,
-			meansOfTransport: transportLabel
+			costingModel: transportLabel
 		};
 		return { feature, pointFeatures };
 	}

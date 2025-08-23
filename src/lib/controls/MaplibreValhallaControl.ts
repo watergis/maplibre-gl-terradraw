@@ -23,9 +23,9 @@ import {
 	ModalDialog,
 	routingDistanceUnitOptions,
 	type routingDistanceUnitType,
-	routingMeansOfTransportOptions,
+	costingModelOptions,
 	ValhallaRouting,
-	type routingMeansOfTransportType,
+	type costingModelType,
 	TERRADRAW_SOURCE_IDS,
 	cleanMaplibreStyle,
 	ValhallaIsochrone,
@@ -58,22 +58,22 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 
 	/**
 	 * Get the means of transport for Valhalla routing api
-	 * @returns routingMeansOfTransportType
+	 * @returns costingModelType
 	 * @example 'pedestrian', 'bicycle', 'auto'
 	 */
-	get routingMeansOfTransport() {
-		return this.valhallaOptions.routingOptions?.meansOfTransport as routingMeansOfTransportType;
+	get routingCostingModel() {
+		return this.valhallaOptions.routingOptions?.costingModel as costingModelType;
 	}
 	/**
 	 * Set the means of transport for Valhalla routing api
-	 * @param value routingMeansOfTransportType
+	 * @param value costingModelType
 	 * @example 'pedestrian', 'bicycle', 'auto'
 	 */
-	set routingMeansOfTransport(value: routingMeansOfTransportType) {
+	set routingCostingModel(value: costingModelType) {
 		if (!this.valhallaOptions.routingOptions) {
 			this.valhallaOptions.routingOptions = {};
 		}
-		this.valhallaOptions.routingOptions.meansOfTransport = value;
+		this.valhallaOptions.routingOptions.costingModel = value;
 		this.createSettingsDialog();
 	}
 
@@ -122,22 +122,22 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 
 	/**
 	 * Get the means of transport for Valhalla isochrone api
-	 * @returns isochroneMeansOfTransportType
+	 * @returns isochronecostingModelType
 	 * @example 'pedestrian', 'bicycle', 'auto'
 	 */
-	get isochroneMeansOfTransport() {
-		return this.valhallaOptions.isochroneOptions?.meansOfTransport as routingMeansOfTransportType;
+	get isochronecostingModel() {
+		return this.valhallaOptions.isochroneOptions?.costingModel as costingModelType;
 	}
 	/**
 	 * Set the means of transport for Valhalla isochrone api
-	 * @param value isochroneMeansOfTransportType
+	 * @param value isochronecostingModelType
 	 * @example 'pedestrian', 'bicycle', 'auto'
 	 */
-	set isochroneMeansOfTransport(value: routingMeansOfTransportType) {
+	set isochronecostingModel(value: costingModelType) {
 		if (!this.valhallaOptions.isochroneOptions) {
 			this.valhallaOptions.isochroneOptions = {};
 		}
-		this.valhallaOptions.isochroneOptions.meansOfTransport = value;
+		this.valhallaOptions.isochroneOptions.costingModel = value;
 		this.createSettingsDialog();
 	}
 
@@ -430,14 +430,13 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 
 		transportSection.appendChild(
 			this.settingDialog.createSegmentButtons(
-				routingMeansOfTransportOptions as unknown as { value: string; label: string }[],
-				this.routingMeansOfTransport,
+				costingModelOptions as unknown as { value: string; label: string }[],
+				this.routingCostingModel,
 				(value: string) => {
 					if (!this.valhallaOptions.routingOptions) {
 						this.valhallaOptions.routingOptions = {};
 					}
-					this.valhallaOptions.routingOptions.meansOfTransport =
-						value as routingMeansOfTransportType;
+					this.valhallaOptions.routingOptions.costingModel = value as costingModelType;
 				}
 			)
 		);
@@ -509,14 +508,13 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 
 		transportSection.appendChild(
 			this.settingDialog.createSegmentButtons(
-				routingMeansOfTransportOptions as unknown as { value: string; label: string }[],
-				this.controlOptions.valhallaOptions?.isochroneOptions?.meansOfTransport || 'auto',
+				costingModelOptions as unknown as { value: string; label: string }[],
+				this.controlOptions.valhallaOptions?.isochroneOptions?.costingModel || 'auto',
 				(value: string) => {
 					if (!this.valhallaOptions.isochroneOptions) {
 						this.valhallaOptions.isochroneOptions = {};
 					}
-					this.valhallaOptions.isochroneOptions.meansOfTransport =
-						value as routingMeansOfTransportType;
+					this.valhallaOptions.isochroneOptions.costingModel = value as costingModelType;
 				}
 			)
 		);
@@ -925,7 +923,7 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 			coord[0],
 			coord[1],
 			this.isochroneContourType,
-			this.isochroneMeansOfTransport,
+			this.isochronecostingModel,
 			this.isochroneContours
 		);
 		const updatedFeatures = fc.features.map((f) => {
@@ -989,7 +987,7 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 
 		const result = await routingEngine.calcRoute(
 			tripData,
-			this.routingMeansOfTransport,
+			this.routingCostingModel,
 			this.routingDistanceUnit
 		);
 		if (!result || !result.feature) return;

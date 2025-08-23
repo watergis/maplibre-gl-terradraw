@@ -941,6 +941,17 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 			return f;
 		}) as unknown as GeoJSONStoreFeatures[];
 
+		feature.properties = {
+			...feature.properties,
+			contourType: this.isochroneContourType,
+			costingModel: this.isochroneCostingModel,
+			result: updatedFeatures as unknown as string
+		};
+
+		// to update the feature properties, remove and add are needed currently
+		this.terradraw?.removeFeatures([id]);
+		this.terradraw?.addFeatures([feature]);
+
 		const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
 			(this.controlOptions.isochronePolygonLayerSpec as FillLayerSpecification).source
 		] as GeoJSONSourceSpecification;
@@ -1077,5 +1088,54 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 				this.clearExtendedFeatures(sourceIds, undefined);
 			}
 		}
+	}
+
+	/**
+	 * get GeoJSON features
+	 * @param onlySelected If true, returns only selected features. Default is false.
+	 * @returns FeatureCollection in GeoJSON format
+	 */
+	public getFeatures(onlySelected = false) {
+		const fc = super.getFeatures(onlySelected);
+		if (!fc) return fc;
+		if (!this.terradraw) return fc;
+		if (!this.map) return;
+
+		const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
+			(this.controlOptions.isochronePolygonLayerSpec as FillLayerSpecification).source
+		] as GeoJSONSourceSpecification;
+
+		const features: GeoJSONStoreFeatures[] = [];
+
+		for (let i = 0; i < fc.features.length; i++) {
+			const feature = fc.features[i];
+			if (!this.map) continue;
+			if (!this.map.loaded()) continue;
+			const geomType = feature.geometry.type;
+			if (geomType === 'Point') {
+				const fid = feature.id;
+
+				if (geojsonSource) {
+					if (
+						typeof geojsonSource.data !== 'string' &&
+						geojsonSource.data.type === 'FeatureCollection'
+					) {
+						const filtered = geojsonSource.data.features.filter(
+							(f) => f.properties?.originalId === fid
+						) as unknown as GeoJSONStoreFeatures[];
+						features.push(feature);
+						if (filtered.length > 0) {
+							features.push(...filtered);
+						}
+					}
+				}
+			} else {
+				features.push(feature);
+			}
+		}
+		return {
+			type: 'FeatureCollection',
+			features: features
+		};
 	}
 }

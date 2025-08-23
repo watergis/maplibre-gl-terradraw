@@ -1,16 +1,38 @@
 import type { GeoJSONStoreFeatures } from 'terra-draw';
 import type { costingModelType } from './valhallaRouting';
 
+/**
+ * Contour type options
+ */
 export const contourTypeOptions = [
 	{ value: 'time', label: 'Time' },
 	{ value: 'distance', label: 'Distance' }
 ] as const;
 
+/**
+ * ContourType definition either time or distance
+ */
 export type ContourType = (typeof contourTypeOptions)[number]['value'];
 
+/**
+ * Contour definition.
+ * When it is passing to valhalla, both time and distance cannot be passed.
+ * If time exists, valhalla compute time isochrone.
+ * If distance exists, valhalla compute distance isochrone.
+ * If both parameters are passed to API, it throws error.
+ */
 export interface Contour {
+	/**
+	 * Time in minutes
+	 */
 	time?: number;
+	/**
+	 * Distance in kilometers
+	 */
 	distance?: number;
+	/**
+	 * HEX color with hash (#). However, hash needs to be eliminated when it is passed to valhalla API.
+	 */
 	color: string;
 }
 

@@ -24,6 +24,7 @@
 		roundFeatureCoordinates,
 		routingDistanceUnitOptions,
 		type AreaUnit,
+		type ContourType,
 		type costingModelType,
 		type DistanceUnit,
 		type routingDistanceUnitType,
@@ -33,7 +34,7 @@
 	} from '$lib';
 	import IconPlus from '@lucide/svelte/icons/plus';
 	import IconX from '@lucide/svelte/icons/x';
-	import { Accordion, Segment, Slider, TagsInput } from '@skeletonlabs/skeleton-svelte';
+	import { Accordion, Segment, Slider, Tabs, TagsInput } from '@skeletonlabs/skeleton-svelte';
 	import MaplibreStyleSwitcherControl, { type StyleDefinition } from '@undp-data/style-switcher';
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
 	import {
@@ -125,8 +126,12 @@
 	let valhallaAccordionValue = $state([
 		'valhalla-url',
 		'routing-means-of-transport',
-		'routing-distance-unit'
+		'routing-distance-unit',
+		'isochrone-means-of-transport',
+		'isochrone-contour-type'
 	]);
+
+	let valhallaGroup: 'routing' | 'isochrone' = $state('routing');
 
 	$effect(() => {
 		if (selectedFeature) {
@@ -211,6 +216,10 @@
 			if (selectedFeatures.length === 0) {
 				selectedFeature = '';
 			}
+		});
+		drawControl.on('setting-changed', () => {
+			console.log('setting-changed');
+			onchange(options);
 		});
 
 		// event listeners
@@ -649,65 +658,136 @@
 								{/snippet}
 							</Accordion.Item>
 
-							<Accordion.Item value="routing-means-of-transport">
-								{#snippet control()}
-									<p class="font-bold uppercase italic">Means of transport for routing</p>
+							<Tabs
+								value={valhallaGroup}
+								onValueChange={(e) => (valhallaGroup = e.value as 'routing' | 'isochrone')}
+							>
+								{#snippet list()}
+									<Tabs.Control value="routing">Routing</Tabs.Control>
+									<Tabs.Control value="isochrone">Isochrone</Tabs.Control>
 								{/snippet}
-								{#snippet panel()}
-									<Segment
-										value={options.valhallaOptions.routingOptions?.costingModel}
-										onValueChange={(e) => {
-											if (!options.valhallaOptions.routingOptions) {
-												options.valhallaOptions.routingOptions = {};
-											} else {
-												options.valhallaOptions.routingOptions.costingModel =
-													e.value as costingModelType;
-											}
-											if (drawControl && options.controlType === 'valhalla') {
-												(drawControl as MaplibreValhallaControl).routingCostingModel =
-													options.valhallaOptions.routingOptions.costingModel ?? 'pedestrian';
-											}
-											onchange(options);
-										}}
-									>
-										{#each costingModelOptions as item (item.value)}
-											<Segment.Item value={item.value}>
-												{item.label}
-											</Segment.Item>
-										{/each}
-									</Segment>
-								{/snippet}
-							</Accordion.Item>
+								{#snippet content()}
+									<Tabs.Panel value="routing">
+										<Accordion.Item value="routing-means-of-transport">
+											{#snippet control()}
+												<p class="font-bold uppercase italic">Means of transport</p>
+											{/snippet}
+											{#snippet panel()}
+												<Segment
+													value={options.valhallaOptions.routingOptions?.costingModel}
+													onValueChange={(e) => {
+														if (!options.valhallaOptions.routingOptions) {
+															options.valhallaOptions.routingOptions = {};
+														} else {
+															options.valhallaOptions.routingOptions.costingModel =
+																e.value as costingModelType;
+														}
+														if (drawControl && options.controlType === 'valhalla') {
+															(drawControl as MaplibreValhallaControl).routingCostingModel =
+																options.valhallaOptions.routingOptions.costingModel ?? 'pedestrian';
+														}
+														onchange(options);
+													}}
+												>
+													{#each costingModelOptions as item (item.value)}
+														<Segment.Item value={item.value}>
+															{item.label}
+														</Segment.Item>
+													{/each}
+												</Segment>
+											{/snippet}
+										</Accordion.Item>
 
-							<Accordion.Item value="routing-distance-unit">
-								{#snippet control()}
-									<p class="font-bold uppercase italic">Distance unit for routing</p>
+										<Accordion.Item value="routing-distance-unit">
+											{#snippet control()}
+												<p class="font-bold uppercase italic">Distance unit</p>
+											{/snippet}
+											{#snippet panel()}
+												<Segment
+													value={options.valhallaOptions.routingOptions?.distanceUnit}
+													onValueChange={(e) => {
+														if (!options.valhallaOptions.routingOptions) {
+															options.valhallaOptions.routingOptions = {};
+														} else {
+															options.valhallaOptions.routingOptions.distanceUnit =
+																e.value as routingDistanceUnitType;
+														}
+														if (drawControl && options.controlType === 'valhalla') {
+															(drawControl as MaplibreValhallaControl).routingDistanceUnit =
+																options.valhallaOptions.routingOptions.distanceUnit ?? 'kilometers';
+														}
+														onchange(options);
+													}}
+												>
+													{#each routingDistanceUnitOptions as item (item.value)}
+														<Segment.Item value={item.value}>
+															{item.label}
+														</Segment.Item>
+													{/each}
+												</Segment>
+											{/snippet}
+										</Accordion.Item>
+									</Tabs.Panel>
+									<Tabs.Panel value="isochrone">
+										<Accordion.Item value="isochrone-contour-type">
+											{#snippet control()}
+												<p class="font-bold uppercase italic">Type of contour</p>
+											{/snippet}
+											{#snippet panel()}
+												<Segment
+													value={options.valhallaOptions.isochroneOptions?.contourType}
+													onValueChange={(e) => {
+														if (!options.valhallaOptions.isochroneOptions) {
+															options.valhallaOptions.isochroneOptions = {};
+														} else {
+															options.valhallaOptions.isochroneOptions.contourType =
+																e.value as ContourType;
+														}
+														if (drawControl && options.controlType === 'valhalla') {
+															(drawControl as MaplibreValhallaControl).isochroneContourType =
+																options.valhallaOptions.isochroneOptions.contourType ?? 'time';
+														}
+														onchange(options);
+													}}
+												>
+													<Segment.Item value="time">Time</Segment.Item>
+													<Segment.Item value="distance">Distance</Segment.Item>
+												</Segment>
+											{/snippet}
+										</Accordion.Item>
+										<Accordion.Item value="isochrone-means-of-transport">
+											{#snippet control()}
+												<p class="font-bold uppercase italic">Means of transport</p>
+											{/snippet}
+											{#snippet panel()}
+												<Segment
+													value={options.valhallaOptions.isochroneOptions?.costingModel}
+													onValueChange={(e) => {
+														if (!options.valhallaOptions.isochroneOptions) {
+															options.valhallaOptions.isochroneOptions = {};
+														} else {
+															options.valhallaOptions.isochroneOptions.costingModel =
+																e.value as costingModelType;
+														}
+														if (drawControl && options.controlType === 'valhalla') {
+															(drawControl as MaplibreValhallaControl).isochroneCostingModel =
+																options.valhallaOptions.isochroneOptions.costingModel ??
+																'pedestrian';
+														}
+														onchange(options);
+													}}
+												>
+													{#each costingModelOptions as item (item.value)}
+														<Segment.Item value={item.value}>
+															{item.label}
+														</Segment.Item>
+													{/each}
+												</Segment>
+											{/snippet}
+										</Accordion.Item>
+									</Tabs.Panel>
 								{/snippet}
-								{#snippet panel()}
-									<Segment
-										value={options.valhallaOptions.routingOptions?.distanceUnit}
-										onValueChange={(e) => {
-											if (!options.valhallaOptions.routingOptions) {
-												options.valhallaOptions.routingOptions = {};
-											} else {
-												options.valhallaOptions.routingOptions.distanceUnit =
-													e.value as routingDistanceUnitType;
-											}
-											if (drawControl && options.controlType === 'valhalla') {
-												(drawControl as MaplibreValhallaControl).routingDistanceUnit =
-													options.valhallaOptions.routingOptions.distanceUnit ?? 'kilometers';
-											}
-											onchange(options);
-										}}
-									>
-										{#each routingDistanceUnitOptions as item (item.value)}
-											<Segment.Item value={item.value}>
-												{item.label}
-											</Segment.Item>
-										{/each}
-									</Segment>
-								{/snippet}
-							</Accordion.Item>
+							</Tabs>
 						</Accordion>
 					{/snippet}
 				</Accordion.Item>

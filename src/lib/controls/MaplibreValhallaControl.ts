@@ -122,18 +122,18 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 
 	/**
 	 * Get the means of transport for Valhalla isochrone api
-	 * @returns isochronecostingModelType
+	 * @returns isochroneCostingModelType
 	 * @example 'pedestrian', 'bicycle', 'auto'
 	 */
-	get isochronecostingModel() {
+	get isochroneCostingModel() {
 		return this.valhallaOptions.isochroneOptions?.costingModel as costingModelType;
 	}
 	/**
 	 * Set the means of transport for Valhalla isochrone api
-	 * @param value isochronecostingModelType
+	 * @param value isochroneCostingModelType
 	 * @example 'pedestrian', 'bicycle', 'auto'
 	 */
-	set isochronecostingModel(value: costingModelType) {
+	set isochroneCostingModel(value: costingModelType) {
 		if (!this.valhallaOptions.isochroneOptions) {
 			this.valhallaOptions.isochroneOptions = {};
 		}
@@ -437,6 +437,7 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 						this.valhallaOptions.routingOptions = {};
 					}
 					this.valhallaOptions.routingOptions.costingModel = value as costingModelType;
+					this.dispatchEvent('setting-changed');
 				}
 			)
 		);
@@ -460,6 +461,7 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 						this.valhallaOptions.routingOptions = {};
 					}
 					this.valhallaOptions.routingOptions.distanceUnit = value as routingDistanceUnitType;
+					this.dispatchEvent('setting-changed');
 				}
 			)
 		);
@@ -492,6 +494,7 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 						this.valhallaOptions.isochroneOptions = {};
 					}
 					this.valhallaOptions.isochroneOptions.contourType = value as ContourType;
+					this.dispatchEvent('setting-changed');
 				}
 			)
 		);
@@ -515,6 +518,7 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 						this.valhallaOptions.isochroneOptions = {};
 					}
 					this.valhallaOptions.isochroneOptions.costingModel = value as costingModelType;
+					this.dispatchEvent('setting-changed');
 				}
 			)
 		);
@@ -600,6 +604,7 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 			tbody.appendChild(row);
 			latestContours.push(newContour);
 			this.updateAddRowButtonState();
+			this.dispatchEvent('setting-changed');
 		});
 		tableContainer.appendChild(addButton);
 
@@ -625,6 +630,7 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 			this.valhallaOptions.isochroneOptions.contours[index].color = (
 				e.target as HTMLInputElement
 			).value.replace('#', '');
+			this.dispatchEvent('setting-changed');
 		});
 		colorCell.appendChild(colorInput);
 		row.appendChild(colorCell);
@@ -642,6 +648,7 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 			this.valhallaOptions.isochroneOptions.contours[index].time = parseFloat(
 				(e.target as HTMLInputElement).value
 			);
+			this.dispatchEvent('setting-changed');
 		});
 		timeCell.appendChild(timeInput);
 		row.appendChild(timeCell);
@@ -660,6 +667,7 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 			this.valhallaOptions.isochroneOptions.contours[index].distance = parseFloat(
 				(e.target as HTMLInputElement).value
 			);
+			this.dispatchEvent('setting-changed');
 		});
 		distanceCell.appendChild(distanceInput);
 		row.appendChild(distanceCell);
@@ -690,6 +698,7 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 				}
 
 				this.updateAddRowButtonState();
+				this.dispatchEvent('setting-changed');
 			});
 			actionCell.appendChild(deleteButton);
 		}
@@ -923,7 +932,7 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 			coord[0],
 			coord[1],
 			this.isochroneContourType,
-			this.isochronecostingModel,
+			this.isochroneCostingModel,
 			this.isochroneContours
 		);
 		const updatedFeatures = fc.features.map((f) => {

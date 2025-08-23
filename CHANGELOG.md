@@ -1,5 +1,15 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.7.0
+
+### Minor Changes
+
+- 21fc439: feat: add MaplibreValhallaControl to integrate routing/isochrone api with Terra Draw.
+
+### Patch Changes
+
+- 21fc439: fix: add setting-changed event type to trigger event when setting is changed within the control.
+
 ## 1.6.1
 
 ### Patch Changes

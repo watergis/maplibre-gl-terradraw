@@ -1,5 +1,19 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.7.1
+
+### Patch Changes
+
+- a5f4b8c: fix: fixed bug of getFeatures method of MaplibreValhallaControl to ensure returning all existing features.
+- bd90cb6: fix: add forceAreaUnit option for MaplibreMeasureControl to return specified area unit always.
+
+  `forceAreaUnit` parameter can accept from the following units:
+  - `auto`
+  - metric unit: `m2` `km2`, `a` or `ha`
+  - imperial unit: `ft2`, `yd2`, `acre` or `mi2`
+
+  Default is selected for `auto` which can convert area unit automatically depending on a scale. If an imperial unit is slected for this option, but you select `metric` for `areaUnit` option, `auto` will be applied. You has to select one of metric unit if you select `metric` for `areaUnit`.
+
 ## 1.7.0
 
 ### Minor Changes

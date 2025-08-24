@@ -2,7 +2,7 @@ import type { CircleLayerSpecification, SymbolLayerSpecification } from 'maplibr
 import type { ModeOptions } from './ModeOptions';
 import type { TerraDrawExtend } from 'terra-draw';
 import type { DistanceUnit } from './DistanceUnit';
-import type { AreaUnit } from './AreaUnit';
+import type { AreaUnit, forceAreaUnitType } from './AreaUnit';
 import type { TerradrawMode } from './TerradrawMode';
 import type { TerrainSource } from './TerrainSource';
 import type { ElevationCacheConfig } from './ElevationCacheConfig';
@@ -75,6 +75,11 @@ export interface MeasureControlOptions {
 	 * The precision of area value. Using setter to override the value if you want.
 	 */
 	areaPrecision?: number;
+
+	/**
+	 * Default is `auto`. If `auto` is set, unit is converted depending on the value and selection of area unit. If a specific unit is specified, it returns the value always the same. If a selected unit is not the same type of unit either metric of imperial, it will be ignored, and `auto` will be applied.
+	 */
+	forceAreaUnit?: forceAreaUnitType;
 
 	/**
 	 * Compute elevation for each node in linestring measure mode.

@@ -9,7 +9,13 @@ import {
 import { MaplibreTerradrawControl } from './MaplibreTerradrawControl';
 import { centroid } from '@turf/centroid';
 import { defaultMeasureControlOptions } from '../constants';
-import type { AreaUnit, DistanceUnit, MeasureControlOptions, TerradrawMode } from '../interfaces';
+import type {
+	AreaUnit,
+	DistanceUnit,
+	forceAreaUnitType,
+	MeasureControlOptions,
+	TerradrawMode
+} from '../interfaces';
 import { type GeoJSONStoreFeatures, TerraDrawExtend } from 'terra-draw';
 import {
 	calcArea,
@@ -83,6 +89,18 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	set areaPrecision(value: number) {
 		const isSame = this.measureOptions.areaPrecision === value;
 		this.measureOptions.areaPrecision = value;
+		if (!isSame) this.recalc();
+	}
+
+	/**
+	 * Default is `auto`. If `auto` is set, unit is converted depending on the value and selection of area unit. If a specific unit is specified, it returns the value always the same. If a selected unit is not the same type of unit either metric of imperial, it will be ignored, and `auto` will be applied.
+	 */
+	get forceAreaUnit() {
+		return this.measureOptions.forceAreaUnit ?? 'auto';
+	}
+	set forceAreaUnit(value: forceAreaUnitType) {
+		const isSame = this.measureOptions.forceAreaUnit === value;
+		this.measureOptions.forceAreaUnit = value;
 		if (!isSame) this.recalc();
 	}
 
@@ -749,7 +767,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				point.geometry = centroid(feature.geometry).geometry;
 				point.properties.originalId = feature.id;
 
-				feature = calcArea(feature, this.areaUnit, this.areaPrecision);
+				feature = calcArea(feature, this.areaUnit, this.areaPrecision, this.forceAreaUnit);
 				point.properties.area = feature.properties.area;
 				point.properties.unit = feature.properties.unit;
 
@@ -1044,7 +1062,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					this.measureOptions.terrainSource
 				);
 			} else if (geomType === 'Polygon') {
-				fc.features[i] = calcArea(feature, this.areaUnit, this.areaPrecision);
+				fc.features[i] = calcArea(feature, this.areaUnit, this.areaPrecision, this.forceAreaUnit);
 			} else if (geomType === 'Point') {
 				fc.features[i] = queryElevationByPoint(
 					feature,

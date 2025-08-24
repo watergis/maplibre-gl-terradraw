@@ -400,6 +400,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 	distancePrecision: 2,
 	areaUnit: 'metric',
 	areaPrecision: 2,
+	forceAreaUnit: 'auto',
 	elevationCacheConfig: {
 		enabled: true,
 		maxSize: 1000,

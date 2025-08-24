@@ -7,6 +7,7 @@
 		distancePrecision: number;
 		areaUnit: AreaUnit;
 		areaPrecision: number;
+		forceAreaUnit: forceAreaUnitType;
 		computeElevation: 'enabled' | 'disabled';
 		valhallaOptions: ValhallaOptions;
 	}
@@ -28,6 +29,7 @@
 		type ContourType,
 		type costingModelType,
 		type DistanceUnit,
+		type forceAreaUnitType,
 		type routingDistanceUnitType,
 		type TerradrawMode,
 		type TerradrawValhallaMode,
@@ -70,6 +72,7 @@
 			distancePrecision: 2,
 			areaUnit: 'metric',
 			areaPrecision: 2,
+			forceAreaUnit: 'auto',
 			computeElevation: 'enabled',
 			valhallaOptions: {
 				url: '',
@@ -121,6 +124,7 @@
 		'area-unit',
 		'distance-precision',
 		'area-precision',
+		'force-area-unit',
 		'compute-elevation'
 	]);
 
@@ -173,6 +177,7 @@
 				distancePrecision: options.distancePrecision,
 				areaUnit: options.areaUnit,
 				areaPrecision: options.areaPrecision,
+				forceAreaUnit: options.forceAreaUnit,
 				computeElevation: options.computeElevation === 'enabled',
 				adapterOptions: {
 					prefixId: 'td-measure'
@@ -547,6 +552,32 @@
 									</Segment>
 								{/snippet}
 							</Accordion.Item>
+
+							<Accordion.Item value="force-area-unit">
+								{#snippet control()}
+									<p class="font-bold uppercase italic">Force Area unit</p>
+								{/snippet}
+								{#snippet panel()}
+									<select
+										class="select"
+										value={options.forceAreaUnit}
+										onchange={(e) => {
+											options.forceAreaUnit = (e.target as HTMLSelectElement)
+												.value as forceAreaUnitType;
+											if (drawControl && options.controlType === 'measure') {
+												(drawControl as MaplibreMeasureControl).forceAreaUnit =
+													options.forceAreaUnit;
+											}
+											onchange(options);
+										}}
+									>
+										{#each ['auto', 'm2', 'km2', 'a', 'ha', 'ft2', 'yd2', 'acre', 'mi2'] as item (item)}
+											<option value={item}>{item}</option>
+										{/each}
+									</select>
+								{/snippet}
+							</Accordion.Item>
+
 							<Accordion.Item value="distance-precision">
 								{#snippet control()}
 									<p class="font-bold uppercase italic">Measure precision</p>

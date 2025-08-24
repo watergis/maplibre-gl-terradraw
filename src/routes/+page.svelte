@@ -6,6 +6,7 @@
 		debounce,
 		type AreaUnit,
 		type DistanceUnit,
+		type forceAreaUnitType,
 		type TerradrawMode,
 		type ValhallaOptions
 	} from '$lib';
@@ -40,6 +41,7 @@
 		distancePrecision: parseInt(page.url.searchParams.get('distancePrecision') ?? '2'),
 		areaUnit: (page.url.searchParams.get('areaUnit') as AreaUnit) ?? 'metric',
 		areaPrecision: parseInt(page.url.searchParams.get('areaPrecision') ?? '2'),
+		forceAreaUnit: (page.url.searchParams.get('forceAreaUnit') as forceAreaUnitType) ?? 'auto',
 		computeElevation:
 			(page.url.searchParams.get('computeElevation') as 'enabled' | 'disabled') ?? 'enabled',
 		valhallaOptions: (page.url.searchParams.get('valhallaOptions')
@@ -118,12 +120,14 @@
 			pageUrl.searchParams.set('distancePrecision', demoOptions.distancePrecision.toString());
 			pageUrl.searchParams.set('areaUnit', demoOptions.areaUnit);
 			pageUrl.searchParams.set('areaPrecision', demoOptions.areaPrecision.toString());
+			pageUrl.searchParams.set('forceAreaUnit', demoOptions.forceAreaUnit);
 			pageUrl.searchParams.set('computeElevation', demoOptions.computeElevation);
 		} else {
 			pageUrl.searchParams.delete('distanceUnit');
 			pageUrl.searchParams.delete('distancePrecision');
 			pageUrl.searchParams.delete('areaUnit');
 			pageUrl.searchParams.delete('areaPrecision');
+			pageUrl.searchParams.delete('forceAreaUnit');
 			pageUrl.searchParams.delete('computeElevation');
 		}
 		if (demoOptions.controlType == 'valhalla') {
@@ -144,6 +148,7 @@
 		options.push(`distancePrecision: ${demoOptions.distancePrecision}`);
 		options.push(`areaUnit: '${demoOptions.areaUnit}'`);
 		options.push(`areaPrecision: ${demoOptions.areaPrecision}`);
+		options.push(`forceAreaUnit: '${demoOptions.forceAreaUnit}'`);
 		options.push(
 			`computeElevation: ${demoOptions.computeElevation === 'enabled' ? 'true' : 'false'}`
 		);

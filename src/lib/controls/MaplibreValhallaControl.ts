@@ -1122,7 +1122,7 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 		const fc = super.getFeatures(onlySelected);
 		if (!fc) return fc;
 		if (!this.terradraw) return fc;
-		if (!this.map) return;
+		if (!this.map) return fc;
 
 		const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
 			(this.controlOptions.isochronePolygonLayerSpec as FillLayerSpecification).source
@@ -1132,8 +1132,6 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 
 		for (let i = 0; i < fc.features.length; i++) {
 			const feature = fc.features[i];
-			if (!this.map) continue;
-			if (!this.map.loaded()) continue;
 			const geomType = feature.geometry.type;
 			if (geomType === 'Point') {
 				const fid = feature.id;

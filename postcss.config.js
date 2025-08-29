@@ -6,8 +6,8 @@ export default {
 		postcssUrl({
 			url: 'inline',
 			filter: '**/*.svg',
-			optimizeSvgEncode: true,
-			maxSize: 14
+			optimizeSvgEncode: true
+			// maxSize: 14
 		}),
 		cssnano({
 			preset: 'default'

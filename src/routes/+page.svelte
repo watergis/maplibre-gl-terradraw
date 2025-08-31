@@ -21,8 +21,6 @@
 
 	let { data }: Props = $props();
 
-	let year = new Date().getFullYear();
-
 	let importTypeTabs = [
 		{ label: 'NPM', value: 'npm' },
 		{ label: 'CDN', value: 'cdn' }
@@ -231,18 +229,25 @@
 								<CodeBlock
 									lang="console"
 									code={`npm install --save-dev ${data.metadata.packageName}`}
+									showLineNumber={false}
 								/>
 							{:else if packageManager === 'yarn'}
-								<CodeBlock lang="console" code={`yarn add --dev ${data.metadata.packageName}`} />
+								<CodeBlock
+									lang="console"
+									code={`yarn add --dev ${data.metadata.packageName}`}
+									showLineNumber={false}
+								/>
 							{:else if packageManager === 'pnpm'}
 								<CodeBlock
 									lang="console"
 									code={`pnpm add --save-dev ${data.metadata.packageName}`}
+									showLineNumber={false}
 								/>
 							{:else if packageManager === 'bun'}
 								<CodeBlock
 									lang="console"
 									code={`bun install --save-dev ${data.metadata.packageName}`}
+									showLineNumber={false}
 								/>
 							{/if}
 						</div>
@@ -354,19 +359,6 @@
 			</div>
 		</div>
 	</section>
-
-	<footer class="bg-surface-50 dark:bg-surface-900 p-4">
-		<p class="text-center w-full">
-			<a
-				class="text-blue-800 dark:text-surface-50 visited:text-purple-800 dark:visited:text-error-400"
-				href={data.metadata.contact}
-				target="_blank"
-			>
-				©{year}
-				{data.metadata.author}
-			</a>
-		</p>
-	</footer>
 </div>
 
 <style lang="postcss">

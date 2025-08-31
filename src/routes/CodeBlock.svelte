@@ -28,6 +28,7 @@
 		preBase?: string;
 		prePadding?: string;
 		preClasses?: string;
+		showLineNumber?: boolean;
 	}
 
 	// https://shiki.style/guide/sync-usage
@@ -47,7 +48,8 @@
 		// Pre Style Props
 		preBase = '',
 		prePadding = '[&>pre]:p-4',
-		preClasses = ''
+		preClasses = '',
+		showLineNumber = true
 	}: CodeBlockProps = $props();
 
 	// Shiki convert to HTML
@@ -80,7 +82,10 @@
 	});
 </script>
 
-<div class="group {base} {rounded} {shadow} {classes} {preBase} {prePadding} {preClasses}">
+<div
+	class="group {base} {rounded} {shadow} {classes} {preBase} {prePadding} {preClasses}"
+	class:showLine={showLineNumber}
+>
 	<button
 		class="copy-button hover:bg-white/20 text-sm text-white px-2 py-1 rounded"
 		class:chip={copied}
@@ -113,6 +118,23 @@
 			position: absolute;
 			top: 0.6em;
 			right: 0.6em;
+		}
+
+		&.showLine {
+			:global(code) {
+				counter-reset: step;
+				counter-increment: step 0;
+			}
+
+			:global(code .line::before) {
+				content: counter(step);
+				counter-increment: step;
+				width: 1rem;
+				margin-right: 1.5rem;
+				display: inline-block;
+				text-align: right;
+				color: rgba(115, 138, 148, 0.4);
+			}
 		}
 	}
 </style>

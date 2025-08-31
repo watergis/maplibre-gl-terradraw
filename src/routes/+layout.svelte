@@ -15,6 +15,8 @@
 	}
 
 	let { data, children }: Props = $props();
+
+	let year = new Date().getFullYear();
 </script>
 
 <svelte:head>
@@ -72,4 +74,17 @@
 	<main class="w-screen overflow-y-auto">
 		{@render children?.()}
 	</main>
+
+	<footer class="bg-surface-50 dark:bg-surface-900 p-4">
+		<p class="text-center w-full">
+			<a
+				class="text-blue-800 dark:text-surface-50 visited:text-purple-800 dark:visited:text-error-400"
+				href={data.metadata.contact}
+				target="_blank"
+			>
+				©{year}
+				{data.metadata.author}
+			</a>
+		</p>
+	</footer>
 </div>

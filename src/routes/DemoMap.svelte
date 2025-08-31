@@ -237,9 +237,17 @@
 			console.log('feature-deleted', event);
 		});
 		drawControl.on('collapsed', () => {
+			if (drawControl) {
+				options.isOpen = drawControl.isExpanded ? 'open' : 'close';
+			}
+			onchange(options);
 			console.log('collapsed');
 		});
 		drawControl.on('expanded', () => {
+			if (drawControl) {
+				options.isOpen = drawControl.isExpanded ? 'open' : 'close';
+			}
+			onchange(options);
 			console.log('expanded');
 		});
 
@@ -457,7 +465,9 @@
 						value={options.isOpen}
 						onValueChange={(e) => {
 							options.isOpen = e.value as 'open' | 'close';
-							addControl();
+							if (drawControl) {
+								drawControl.isExpanded = options.isOpen === 'open';
+							}
 							onchange(options);
 						}}
 					>

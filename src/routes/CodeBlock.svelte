@@ -83,11 +83,11 @@
 </script>
 
 <div
-	class="group {base} {rounded} {shadow} {classes} {preBase} {prePadding} {preClasses}"
+	class="relative group {base} {rounded} {shadow} {classes} {preBase} {prePadding} {preClasses}"
 	class:showLine={showLineNumber}
 >
 	<button
-		class="copy-button hover:bg-white/20 text-sm text-white px-2 py-1 rounded"
+		class="copy-button hover:bg-white/20 text-sm text-white px-2 py-1 rounded sticky top-[0.6em] right-[0.6em] float-right z-10 -mb-[2.5em]"
 		class:chip={copied}
 		onclick={copyToClipboard}
 		title="Copy to clipboard"
@@ -106,18 +106,10 @@
 
 <style lang="scss">
 	.group {
-		position: relative;
-
 		:global(.shiki) {
 			width: 100%;
 			overflow-x: auto;
 			overflow-y: auto;
-		}
-
-		.copy-button {
-			position: absolute;
-			top: 0.6em;
-			right: 0.6em;
 		}
 
 		&.showLine {

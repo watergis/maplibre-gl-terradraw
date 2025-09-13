@@ -962,16 +962,18 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 			return f;
 		}) as unknown as GeoJSONStoreFeatures[];
 
-		feature.properties = {
-			...feature.properties,
+		const updateProperties = {
 			contourType: this.isochroneContourType,
 			costingModel: this.isochroneCostingModel,
 			result: updatedFeatures as unknown as string
 		};
 
-		// to update the feature properties, remove and add are needed currently
-		this.terradraw?.removeFeatures([id]);
-		this.terradraw?.addFeatures([feature]);
+		feature.properties = {
+			...feature.properties,
+			...updateProperties
+		};
+
+		this.terradraw?.updateFeatureProperties(id, updateProperties);
 
 		const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
 			(this.controlOptions.isochronePolygonLayerSpec as FillLayerSpecification).source
@@ -1033,17 +1035,14 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 		);
 		if (!result || !result.feature) return;
 		const newGeometry = result?.feature.geometry as GeoJSONStoreGeometries;
-		// this.terradraw?.updateFeatureGeometry(id, newGeometry);
+		this.terradraw?.updateFeatureGeometry(id, newGeometry);
 
 		feature.geometry = newGeometry;
 		feature.properties = {
 			...feature.properties,
 			...result?.feature.properties
 		};
-
-		// to update the feature properties, remove and add are needed currently
-		this.terradraw?.removeFeatures([id]);
-		this.terradraw?.addFeatures([feature]);
+		this.terradraw?.updateFeatureProperties(id, result?.feature.properties);
 
 		// add line node features to the map for label
 		const pointFeactureCollection = result?.pointFeatures;

@@ -614,7 +614,10 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				// in some conditions, features might already be deleted from terradraw
 				const updatedExistingFeatures: GeoJSONStoreFeatures[] = [];
 				for (const f of updatedFeatures) {
-					if (this.terradraw?.getSnapshotFeature(f.id as TerraDrawExtend.FeatureId)) {
+					if (
+						this.terradraw?.getSnapshotFeature(f.id as TerraDrawExtend.FeatureId) ||
+						this.terradraw?.getSnapshotFeature(f.properties.originalId as TerraDrawExtend.FeatureId)
+					) {
 						updatedExistingFeatures.push(f);
 					}
 				}
@@ -853,14 +856,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				const segments = feature.properties.segments as unknown as GeoJSONStoreFeatures[];
 				for (let i = 0; i < segments.length; i++) {
 					const segment = segments[i];
-
-					if (
-						typeof geojsonSource.data !== 'string' &&
-						geojsonSource.data.type === 'FeatureCollection'
-					) {
-						geojsonSource.data.features.push(segment);
-					}
-
 					const coordinates: number[][] = segment.geometry.coordinates as number[][];
 					const start = coordinates[0];
 					const end = coordinates[1];

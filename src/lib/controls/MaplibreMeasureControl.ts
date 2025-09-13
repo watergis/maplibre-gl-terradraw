@@ -614,7 +614,10 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				// in some conditions, features might already be deleted from terradraw
 				const updatedExistingFeatures: GeoJSONStoreFeatures[] = [];
 				for (const f of updatedFeatures) {
-					if (this.terradraw?.getSnapshotFeature(f.id as TerraDrawExtend.FeatureId)) {
+					if (
+						this.terradraw?.getSnapshotFeature(f.id as TerraDrawExtend.FeatureId) ||
+						this.terradraw?.getSnapshotFeature(f.properties.originalId as TerraDrawExtend.FeatureId)
+					) {
 						updatedExistingFeatures.push(f);
 					}
 				}

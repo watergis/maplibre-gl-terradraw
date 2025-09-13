@@ -1,5 +1,13 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.7.3
+
+### Patch Changes
+
+- 294976d: feat: upgraded terradraw to v1.14.0
+- 0d78aa7: fix: use updateFeatureGeometry and updateFeatureProeprties in ValhallaControl instead of adding/removing features.
+- bb415ed: fix: fixed the bug not updating elevation for line feature nodes.
+
 ## 1.7.2
 
 ### Patch Changes

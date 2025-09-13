@@ -856,14 +856,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				const segments = feature.properties.segments as unknown as GeoJSONStoreFeatures[];
 				for (let i = 0; i < segments.length; i++) {
 					const segment = segments[i];
-
-					if (
-						typeof geojsonSource.data !== 'string' &&
-						geojsonSource.data.type === 'FeatureCollection'
-					) {
-						geojsonSource.data.features.push(segment);
-					}
-
 					const coordinates: number[][] = segment.geometry.coordinates as number[][];
 					const start = coordinates[0];
 					const end = coordinates[1];

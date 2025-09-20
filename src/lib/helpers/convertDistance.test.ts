@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { convertDistance } from './convertDistance';
 
-describe('convertDistance with metric unito', () => {
+describe('convertDistance with metric unit', () => {
 	it('should return kilometers when distance is 1 or more', () => {
 		expect(convertDistance(1, 'kilometers', 'auto')).toEqual({ distance: 1, unit: 'km' });
 		expect(convertDistance(2.5, 'kilometers', 'auto')).toEqual({ distance: 2.5, unit: 'km' });

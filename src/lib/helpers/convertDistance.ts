@@ -1,4 +1,4 @@
-import type { DistanceUnit, DistanceUnitName } from '../interfaces';
+import type { DistanceUnit, DistanceUnitShortName } from '../interfaces';
 
 /**
  * Convert distance according to the distance unit given.
@@ -17,8 +17,8 @@ import type { DistanceUnit, DistanceUnitName } from '../interfaces';
 export const convertDistance = (
 	value: number,
 	unit: DistanceUnit = 'kilometers'
-): { distance: number; unit: DistanceUnitName } => {
-	const result: { distance: number; unit: DistanceUnitName } = {
+): { distance: number; unit: DistanceUnitShortName } => {
+	const result: { distance: number; unit: DistanceUnitShortName } = {
 		distance: value,
 		unit: 'km'
 	};

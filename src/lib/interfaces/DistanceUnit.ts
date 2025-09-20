@@ -4,4 +4,4 @@
  */
 export type DistanceUnit = 'degrees' | 'radians' | 'miles' | 'kilometers';
 
-export type DistanceUnitName = 'km' | 'm' | 'cm' | '°' | 'mi' | 'rad';
+export type DistanceUnitShortName = 'km' | 'm' | 'cm' | '°' | 'mi' | 'rad';

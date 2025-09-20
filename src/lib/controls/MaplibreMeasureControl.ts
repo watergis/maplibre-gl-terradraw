@@ -45,13 +45,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	set distanceUnit(value: DistanceUnit) {
 		const isSame = this.measureOptions.distanceUnit === value;
 		this.measureOptions.distanceUnit = value;
-
-		if (this.measureOptions.distanceUnit === 'degrees') {
-			this.distancePrecision = 6;
-		} else {
-			this.distancePrecision = 2;
-		}
-
 		if (!isSame) this.recalc();
 	}
 
@@ -59,7 +52,11 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * The precision of distance value. It will be set different value dwhen distance unit is changed. Using setter to override the value if you want.
 	 */
 	get distancePrecision() {
-		return this.measureOptions.distancePrecision ?? 2;
+		let defaultPrecision = 2;
+		if (this.measureOptions.distanceUnit === 'degrees') {
+			defaultPrecision = 6;
+		}
+		return this.measureOptions.distancePrecision ?? defaultPrecision;
 	}
 	set distancePrecision(value: number) {
 		const isSame = this.measureOptions.distancePrecision === value;

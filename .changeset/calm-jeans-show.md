@@ -1,5 +1,5 @@
 ---
-'@watergis/maplibre-gl-terradraw': minor
+'@watergis/maplibre-gl-terradraw': patch
 ---
 
 feat: added forceDistanceUnit property in MaplibreMeasureControl to allow users to use the same distance unit always.

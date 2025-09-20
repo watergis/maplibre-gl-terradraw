@@ -7,6 +7,7 @@
 		type AreaUnit,
 		type DistanceUnit,
 		type forceAreaUnitType,
+		type forceDistanceUnitType,
 		type TerradrawMode,
 		type ValhallaOptions
 	} from '$lib';
@@ -37,6 +38,8 @@
 			JSON.parse(JSON.stringify(AvailableModes)),
 		distanceUnit: (page.url.searchParams.get('distanceUnit') as DistanceUnit) ?? 'kilometers',
 		distancePrecision: parseInt(page.url.searchParams.get('distancePrecision') ?? '2'),
+		forceDistanceUnit:
+			(page.url.searchParams.get('forceDistanceUnit') as forceDistanceUnitType) ?? 'auto',
 		areaUnit: (page.url.searchParams.get('areaUnit') as AreaUnit) ?? 'metric',
 		areaPrecision: parseInt(page.url.searchParams.get('areaPrecision') ?? '2'),
 		forceAreaUnit: (page.url.searchParams.get('forceAreaUnit') as forceAreaUnitType) ?? 'auto',
@@ -116,6 +119,7 @@
 		if (demoOptions.controlType == 'measure') {
 			pageUrl.searchParams.set('distanceUnit', demoOptions.distanceUnit);
 			pageUrl.searchParams.set('distancePrecision', demoOptions.distancePrecision.toString());
+			pageUrl.searchParams.set('forceDistanceUnit', demoOptions.forceDistanceUnit);
 			pageUrl.searchParams.set('areaUnit', demoOptions.areaUnit);
 			pageUrl.searchParams.set('areaPrecision', demoOptions.areaPrecision.toString());
 			pageUrl.searchParams.set('forceAreaUnit', demoOptions.forceAreaUnit);
@@ -123,6 +127,7 @@
 		} else {
 			pageUrl.searchParams.delete('distanceUnit');
 			pageUrl.searchParams.delete('distancePrecision');
+			pageUrl.searchParams.delete('forceDistanceUnit');
 			pageUrl.searchParams.delete('areaUnit');
 			pageUrl.searchParams.delete('areaPrecision');
 			pageUrl.searchParams.delete('forceAreaUnit');
@@ -145,6 +150,7 @@
 		const options = [];
 		options.push(`distanceUnit: '${demoOptions.distanceUnit}'`);
 		options.push(`distancePrecision: ${demoOptions.distancePrecision}`);
+		options.push(`forceDistanceUnit: '${demoOptions.forceDistanceUnit}'`);
 		options.push(`areaUnit: '${demoOptions.areaUnit}'`);
 		options.push(`areaPrecision: ${demoOptions.areaPrecision}`);
 		options.push(`forceAreaUnit: '${demoOptions.forceAreaUnit}'`);

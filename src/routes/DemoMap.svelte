@@ -5,6 +5,7 @@
 		modes: TerradrawMode[];
 		distanceUnit: DistanceUnit;
 		distancePrecision: number;
+		forceDistanceUnit: forceDistanceUnitType;
 		areaUnit: AreaUnit;
 		areaPrecision: number;
 		forceAreaUnit: forceAreaUnitType;
@@ -30,6 +31,7 @@
 		type costingModelType,
 		type DistanceUnit,
 		type forceAreaUnitType,
+		type forceDistanceUnitType,
 		type routingDistanceUnitType,
 		type TerradrawMode,
 		type TerradrawValhallaMode,
@@ -70,6 +72,7 @@
 			modes: JSON.parse(JSON.stringify(AvailableModes)),
 			distanceUnit: 'kilometers',
 			distancePrecision: 2,
+			forceDistanceUnit: 'auto',
 			areaUnit: 'metric',
 			areaPrecision: 2,
 			forceAreaUnit: 'auto',
@@ -124,6 +127,7 @@
 		'area-unit',
 		'distance-precision',
 		'area-precision',
+		'force-distance-unit',
 		'force-area-unit',
 		'compute-elevation'
 	]);
@@ -560,6 +564,31 @@
 											</Segment.Item>
 										{/each}
 									</Segment>
+								{/snippet}
+							</Accordion.Item>
+
+							<Accordion.Item value="force-distance-unit">
+								{#snippet control()}
+									<p class="font-bold uppercase italic">Force Distance unit</p>
+								{/snippet}
+								{#snippet panel()}
+									<select
+										class="select"
+										value={options.forceDistanceUnit}
+										onchange={(e) => {
+											options.forceDistanceUnit = (e.target as HTMLSelectElement)
+												.value as forceDistanceUnitType;
+											if (drawControl && options.controlType === 'measure') {
+												(drawControl as MaplibreMeasureControl).forceDistanceUnit =
+													options.forceDistanceUnit;
+											}
+											onchange(options);
+										}}
+									>
+										{#each ['auto', 'km', 'm', 'cm'] as item (item)}
+											<option value={item}>{item}</option>
+										{/each}
+									</select>
 								{/snippet}
 							</Accordion.Item>
 

@@ -3,29 +3,44 @@ import { convertDistance } from './convertDistance';
 
 describe('convertDistance with metric unit', () => {
 	it('should return kilometers when distance is 1 or more', () => {
-		expect(convertDistance(1)).toEqual({ distance: 1, unit: 'km' });
-		expect(convertDistance(2.5)).toEqual({ distance: 2.5, unit: 'km' });
+		expect(convertDistance(1, 'kilometers', 'auto')).toEqual({ distance: 1, unit: 'km' });
+		expect(convertDistance(2.5, 'kilometers', 'auto')).toEqual({ distance: 2.5, unit: 'km' });
 	});
 
 	it('should return meters when distance is less than 1 km but 1 m or more', () => {
-		expect(convertDistance(0.5)).toEqual({ distance: 500, unit: 'm' });
-		expect(convertDistance(0.001)).toEqual({ distance: 1, unit: 'm' });
+		expect(convertDistance(0.5, 'kilometers', 'auto')).toEqual({ distance: 500, unit: 'm' });
+		expect(convertDistance(0.001, 'kilometers', 'auto')).toEqual({ distance: 1, unit: 'm' });
 	});
 
 	it('should return centimeters when distance is less than 1 meter', () => {
-		expect(convertDistance(0.0005)).toEqual({ distance: 50, unit: 'cm' });
-		expect(convertDistance(0.00001)).toEqual({ distance: 1, unit: 'cm' });
+		expect(convertDistance(0.0005, 'kilometers', 'auto')).toEqual({ distance: 50, unit: 'cm' });
+		expect(convertDistance(0.00001, 'kilometers', 'auto')).toEqual({ distance: 1, unit: 'cm' });
 	});
 
 	it('should handle edge case of 0 km', () => {
-		expect(convertDistance(0)).toEqual({ distance: 0, unit: 'cm' });
+		expect(convertDistance(0, 'kilometers', 'auto')).toEqual({ distance: 0, unit: 'cm' });
 	});
 
 	it('should handle floating point edge values accurately', () => {
-		expect(convertDistance(0.999)).toEqual({ distance: 999, unit: 'm' });
-		const result = convertDistance(0.000009);
+		expect(convertDistance(0.999, 'kilometers', 'auto')).toEqual({ distance: 999, unit: 'm' });
+		const result = convertDistance(0.000009, 'kilometers', 'auto');
 		expect(result.unit).toBe('cm');
 		expect(result.distance).toBeCloseTo(0.9, 5);
+	});
+
+	it('should return kilometers when forceDistanceUnit is kilometers', () => {
+		expect(convertDistance(1, 'kilometers', 'km')).toEqual({ distance: 1, unit: 'km' });
+		expect(convertDistance(2.5, 'kilometers', 'km')).toEqual({ distance: 2.5, unit: 'km' });
+	});
+
+	it('should return meters when forceDistanceUnit is meters', () => {
+		expect(convertDistance(1, 'kilometers', 'm')).toEqual({ distance: 1000, unit: 'm' });
+		expect(convertDistance(2.5, 'kilometers', 'm')).toEqual({ distance: 2500, unit: 'm' });
+	});
+
+	it('should return centimeters when forceDistanceUnit is centimeters', () => {
+		expect(convertDistance(1, 'kilometers', 'cm')).toEqual({ distance: 100000, unit: 'cm' });
+		expect(convertDistance(2.5, 'kilometers', 'cm')).toEqual({ distance: 250000, unit: 'cm' });
 	});
 });
 

@@ -1,7 +1,7 @@
 import type { CircleLayerSpecification, SymbolLayerSpecification } from 'maplibre-gl';
 import type { ModeOptions } from './ModeOptions';
 import type { TerraDrawExtend } from 'terra-draw';
-import type { DistanceUnit } from './DistanceUnit';
+import type { DistanceUnit, forceDistanceUnitType } from './DistanceUnit';
 import type { AreaUnit, forceAreaUnitType } from './AreaUnit';
 import type { TerradrawMode } from './TerradrawMode';
 import type { TerrainSource } from './TerrainSource';
@@ -65,6 +65,13 @@ export interface MeasureControlOptions {
 	 * The precision of distance value. It will be set different value dwhen distance unit is changed. Using setter to override the value if you want.
 	 */
 	distancePrecision?: number;
+
+	/**
+	 * Default is `auto`. If `auto` is set, unit is converted depending on the value in metric. If a specific unit is specified, it returns the value always the same.
+	 * This property is only effective when distanceUnit is set to 'kilometers'. If distanceUnit is set to other than 'kilometers', it will be ignored, and `auto` will be applied.
+	 * If you need to force other unit type, please use DistanceUnit property.
+	 */
+	forceDistanceUnit?: forceDistanceUnitType;
 
 	/**
 	 * The unit of area can be metric (m², ha, km²) or imperial (acre, mi²). Default is metric

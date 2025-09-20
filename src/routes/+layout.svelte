@@ -1,13 +1,12 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
+	import { page } from '$app/state';
 	import IconGithub from '@lucide/svelte/icons/github';
 	import IconTwitter from '@lucide/svelte/icons/twitter';
-	import LightSwitch from './LightSwitch.svelte';
-
-	import '../app.css';
-
-	import { page } from '$app/state';
 	import { AppBar } from '@skeletonlabs/skeleton-svelte';
+	import '../app.css';
 	import type { PageData } from './$types';
+	import LightSwitch from './LightSwitch.svelte';
 
 	interface Props {
 		data: PageData;
@@ -40,13 +39,14 @@
 	<header class="sticky top-0 z-10 bg-gray-200">
 		<AppBar>
 			{#snippet lead()}
-				<a href="/" class="font-bold text-base md:text-xl text-nowrap uppercase">
+				<a href={resolve('/')} class="font-bold text-base md:text-xl text-nowrap uppercase">
 					{data.metadata.title}
 				</a>
 			{/snippet}
 			{#snippet trail()}
 				<nav class="flex justify-end gap-1">
 					<LightSwitch />
+					<!-- eslint-disable svelte/no-navigation-without-resolve -->
 					{#each data.nav as link (link.href)}
 						<a
 							class="btn hover:preset-tonal px-1 md:px-2"
@@ -77,6 +77,7 @@
 
 	<footer class="bg-surface-50 dark:bg-surface-900 p-4">
 		<p class="text-center w-full">
+			<!-- eslint-disable svelte/no-navigation-without-resolve -->
 			<a
 				class="text-blue-800 dark:text-surface-50 visited:text-purple-800 dark:visited:text-error-400"
 				href={data.metadata.contact}

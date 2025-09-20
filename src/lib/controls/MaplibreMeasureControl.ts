@@ -13,6 +13,7 @@ import type {
 	AreaUnit,
 	DistanceUnit,
 	forceAreaUnitType,
+	forceDistanceUnitType,
 	MeasureControlOptions,
 	TerradrawMode
 } from '../interfaces';
@@ -61,6 +62,20 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	set distancePrecision(value: number) {
 		const isSame = this.measureOptions.distancePrecision === value;
 		this.measureOptions.distancePrecision = value;
+		if (!isSame) this.recalc();
+	}
+
+	/**
+	 * Default is `auto`. If `auto` is set, unit is converted depending on the value in metric. If a specific unit is specified, it returns the value always the same.
+	 * This property is only effective when distanceUnit is set to 'kilometers'. If distanceUnit is set to other than 'kilometers', it will be ignored, and `auto` will be applied.
+	 * If you need to force other unit type, please use DistanceUnit property.
+	 */
+	get forceDistanceUnit() {
+		return this.measureOptions.forceDistanceUnit ?? 'auto';
+	}
+	set forceDistanceUnit(value: forceDistanceUnitType) {
+		const isSame = this.measureOptions.forceDistanceUnit === value;
+		this.measureOptions.forceDistanceUnit = value;
 		if (!isSame) this.recalc();
 	}
 
@@ -846,6 +861,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					feature,
 					this.distanceUnit,
 					this.distancePrecision,
+					this.forceDistanceUnit,
 					this.map,
 					this.computeElevation,
 					this.measureOptions.terrainSource
@@ -1049,6 +1065,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					feature,
 					this.distanceUnit,
 					this.distancePrecision,
+					this.forceDistanceUnit,
 					this.map,
 					this.computeElevation,
 					this.measureOptions.terrainSource

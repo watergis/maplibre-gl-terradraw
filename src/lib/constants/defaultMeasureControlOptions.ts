@@ -398,6 +398,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 	},
 	distanceUnit: 'kilometers',
 	distancePrecision: 2,
+	forceDistanceUnit: 'auto',
 	areaUnit: 'metric',
 	areaPrecision: 2,
 	forceAreaUnit: 'auto',

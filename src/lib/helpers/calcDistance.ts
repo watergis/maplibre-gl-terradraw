@@ -1,7 +1,7 @@
 import distance from '@turf/distance';
 import type { GeoJSONStoreFeatures } from 'terra-draw';
 import type { LngLatLike, Map } from 'maplibre-gl';
-import type { DistanceUnit, TerrainSource } from '../interfaces';
+import type { DistanceUnit, forceDistanceUnitType, TerrainSource } from '../interfaces';
 import { convertDistance } from './convertDistance';
 
 /**
@@ -9,6 +9,7 @@ import { convertDistance } from './convertDistance';
  * @param feature LineString GeoJSON feature
  * @param distanceUnit Distance unit
  * @param distancePrecision Precision of distance
+ * @param forceUnit Default is `auto`. If `auto` is set, unit is converted depending on the value in metric.
  * @param map Maplibre map instance
  * @param computeElevation Compute elevation for each segment
  * @param terrainSource Terrain source for elevation calculation. If terrainSource is undefined, going to to query elevation from maplibre terrain.
@@ -18,6 +19,7 @@ export const calcDistance = (
 	feature: GeoJSONStoreFeatures,
 	distanceUnit: DistanceUnit,
 	distancePrecision: number,
+	forceUnit?: forceDistanceUnitType,
 	map?: Map,
 	computeElevation?: boolean,
 	terrainSource?: TerrainSource
@@ -62,19 +64,28 @@ export const calcDistance = (
 	feature.properties.segments = JSON.parse(JSON.stringify(segments));
 
 	// convert distance unit
-	const convertedDistance = convertDistance(feature.properties.distance as number, distanceUnit);
+	const convertedDistance = convertDistance(
+		feature.properties.distance as number,
+		distanceUnit,
+		forceUnit
+	);
 	feature.properties.distance = convertedDistance.distance;
 	feature.properties.unit = convertedDistance.unit;
 
 	(feature.properties.segments as unknown as GeoJSONStoreFeatures[]).forEach(
 		(segment: GeoJSONStoreFeatures) => {
-			const segmentDistance = convertDistance(segment.properties.distance as number, distanceUnit);
+			const segmentDistance = convertDistance(
+				segment.properties.distance as number,
+				distanceUnit,
+				forceUnit
+			);
 			segment.properties.distance = segmentDistance.distance;
 			segment.properties.unit = segmentDistance.unit;
 
 			const segmentTotalDistance = convertDistance(
 				segment.properties.total as number,
-				distanceUnit
+				distanceUnit,
+				forceUnit
 			);
 			segment.properties.total = segmentTotalDistance.distance;
 			segment.properties.totalUnit = segmentTotalDistance.unit;

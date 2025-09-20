@@ -49,7 +49,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	}
 
 	/**
-	 * The precision of distance value. It will be set different value dwhen distance unit is changed. Using setter to override the value if you want.
+	 * The precision of distance value. It will be set different value when distance unit is changed. Using setter to override the value if you want.
 	 */
 	get distancePrecision() {
 		let defaultPrecision = 2;

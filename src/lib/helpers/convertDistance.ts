@@ -10,25 +10,25 @@ import type { DistanceUnit, DistanceUnitName } from '$lib/interfaces/DistanceUni
  *
  * If distanceUnit is "degrees", "radians", or "miles", it returns the value unchanged with the corresponding unit symbol.
  *
- * @param distance - The distance in kilometers.
- * @param distanceUnit - The unit of the input distance type either "degrees" or "radians" or "miles" or "kilometers" (default is 'kilometers').
+ * @param value - The distance in kilometers.
+ * @param unit - The unit of the input distance type either "degrees" or "radians" or "miles" or "kilometers" (default is 'kilometers').
  * @returns the converted value and unit.
  */
 export const convertDistance = (
-	distance: number,
-	distanceUnit: DistanceUnit = 'kilometers'
+	value: number,
+	unit: DistanceUnit = 'kilometers'
 ): { distance: number; unit: DistanceUnitName } => {
 	const result: { distance: number; unit: DistanceUnitName } = {
-		distance: distance,
+		distance: value,
 		unit: 'km'
 	};
 
-	if (distanceUnit === 'kilometers') {
-		if (distance >= 1) {
-			result.distance = distance;
+	if (unit === 'kilometers') {
+		if (value >= 1) {
+			result.distance = value;
 			result.unit = 'km';
 		} else {
-			const meters = distance * 1000;
+			const meters = value * 1000;
 			if (meters >= 1) {
 				result.distance = meters;
 				result.unit = 'm';
@@ -38,11 +38,11 @@ export const convertDistance = (
 				result.unit = 'cm';
 			}
 		}
-	} else if (distanceUnit === 'degrees') {
+	} else if (unit === 'degrees') {
 		result.unit = '°';
-	} else if (distanceUnit === 'miles') {
+	} else if (unit === 'miles') {
 		result.unit = 'mi';
-	} else if (distanceUnit === 'radians') {
+	} else if (unit === 'radians') {
 		result.unit = 'rad';
 	}
 	// Default case: return kilometers if unit is not recognized

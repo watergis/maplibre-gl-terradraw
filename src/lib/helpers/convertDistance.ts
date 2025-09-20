@@ -1,4 +1,4 @@
-import type { DistanceUnit, DistanceUnitName } from '$lib/interfaces/DistanceUnit';
+import type { DistanceUnit, DistanceUnitName } from '../interfaces';
 
 /**
  * Convert distance according to the distance unit given.

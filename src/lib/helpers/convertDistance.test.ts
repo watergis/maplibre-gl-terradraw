@@ -44,6 +44,29 @@ describe('convertDistance with metric unit', () => {
 	});
 });
 
+describe('convertDistance with imperial unit', () => {
+	it('should return miles when forceDistanceUnit is miles', () => {
+		expect(convertDistance(1, 'miles', 'mi')).toEqual({ distance: 1, unit: 'mi' });
+		expect(convertDistance(2.5, 'miles', 'mi')).toEqual({ distance: 2.5, unit: 'mi' });
+	});
+
+	it('should return feet when forceDistanceUnit is feet', () => {
+		expect(convertDistance(1, 'miles', 'ft')).toEqual({ distance: 5280, unit: 'ft' });
+		expect(convertDistance(0.5, 'miles', 'ft')).toEqual({ distance: 2640, unit: 'ft' });
+	});
+
+	it('should return inches when forceDistanceUnit is inches', () => {
+		expect(convertDistance(1, 'miles', 'in')).toEqual({ distance: 63360, unit: 'in' });
+		expect(convertDistance(0.5, 'miles', 'in')).toEqual({ distance: 31680, unit: 'in' });
+	});
+
+	it('should auto-scale to the appropriate unit when forceDistanceUnit is auto', () => {
+		expect(convertDistance(1, 'miles', 'auto')).toEqual({ distance: 1, unit: 'mi' });
+		expect(convertDistance(0.5, 'miles', 'auto')).toEqual({ distance: 2640, unit: 'ft' });
+		expect(convertDistance(0.0001, 'miles', 'auto')).toEqual({ distance: 6.336, unit: 'in' });
+	});
+});
+
 describe('convertDistance with other units', () => {
 	it('should return degrees when distanceUnit is degrees', () => {
 		expect(convertDistance(10, 'degrees')).toEqual({ distance: 10, unit: '°' });
@@ -51,9 +74,5 @@ describe('convertDistance with other units', () => {
 
 	it('should return radians when distanceUnit is radians', () => {
 		expect(convertDistance(5, 'radians')).toEqual({ distance: 5, unit: 'rad' });
-	});
-
-	it('should return miles when distanceUnit is miles', () => {
-		expect(convertDistance(3, 'miles')).toEqual({ distance: 3, unit: 'mi' });
 	});
 });

@@ -585,7 +585,7 @@
 											onchange(options);
 										}}
 									>
-										{#each ['auto', 'km', 'm', 'cm'] as item (item)}
+										{#each ['auto', 'km', 'm', 'cm', 'mi', 'ft', 'in'] as item (item)}
 											<option value={item}>{item}</option>
 										{/each}
 									</select>

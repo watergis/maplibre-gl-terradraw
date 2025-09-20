@@ -66,8 +66,10 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	}
 
 	/**
-	 * Default is `auto`. If `auto` is set, unit is converted depending on the value in metric. If a specific unit is specified, it returns the value always the same.
-	 * This property is only effective when distanceUnit is set to 'kilometers'. If distanceUnit is set to other than 'kilometers', it will be ignored, and `auto` will be applied.
+	 * Default is `auto`. If `auto` is set, the unit is converted automatically based on the value.
+	 * If a specific unit is specified (e.g., 'km', 'm', 'cm', 'mi', 'ft', 'in'), the value is always returned in that unit.
+	 * This property is only effective when `distanceUnit` is set to 'kilometers' or 'miles'.
+	 * If `distanceUnit` is set to other values (e.g., 'degrees', 'radians'), it will be ignored, and `auto` will be applied.
 	 * If you need to force other unit type, please use DistanceUnit property.
 	 */
 	get forceDistanceUnit() {

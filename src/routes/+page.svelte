@@ -137,6 +137,7 @@
 			pageUrl.searchParams.delete('valhallaOptions');
 		}
 		pageUrl.searchParams.set('packageManager', packageManager);
+		// eslint-disable-next-line svelte/no-navigation-without-resolve
 		replaceState(pageUrl, '');
 	};
 
@@ -339,6 +340,7 @@
 
 			<div class="flex flex-wrap gap-4">
 				{#each examples as custom (custom.title)}
+					<!-- eslint-disable svelte/no-navigation-without-resolve -->
 					<a
 						class="card preset-filled-surface-100-900 border-[1px] border-surface-200-800 card-hover divide-surface-200-800 block overflow-hidden sm:w-auto md:max-w-48 lg:max-w-64 xl:max-w-80"
 						href={custom.href}

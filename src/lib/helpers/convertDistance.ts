@@ -10,7 +10,7 @@ import type { DistanceUnit, DistanceUnitShortName } from '../interfaces';
  *
  * If distanceUnit is "degrees", "radians", or "miles", it returns the value unchanged with the corresponding unit symbol.
  *
- * @param value - The distance in kilometers.
+ * @param value - The distance in the unit specified by the `unit` parameter.
  * @param unit - The unit of the input distance type either "degrees" or "radians" or "miles" or "kilometers" (default is 'kilometers').
  * @returns the converted value and unit.
  */

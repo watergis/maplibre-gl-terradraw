@@ -1,5 +1,20 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.7.5
+
+### Patch Changes
+
+- 1c5a84d: feat: added forceDistanceUnit property in MaplibreMeasureControl to allow users to use the same distance unit always.
+  - `forceDistanceUnit` parameter can accept from the following units:
+    - `auto`
+    - metric unit: `cm`, `m`, `km`
+
+  Default is selected for auto which can convert metric distance unit automatically depending on a scale. If other unit type other than `kilometers` is set to `distanceUnit` property (for example, `miles`, `degrees`, `radian`), this `forceDistanceUnit` is ignored and cosidered as `auto`. In case, if you want to use other units other than metric, please use `distanceUnit` property instead.
+
+- 9e5cbee: fixed and optimised `calcDistance` function used in MeasureControl as follows:
+  - fix: don't override distancePrecision when distanceUnit is changed. Instead, set default precision inside distancePrecision property
+  - refactor: merged getDistanceUnitName and convertMetricDistance into convertDistance helper function
+
 ## 1.7.4
 
 ### Patch Changes

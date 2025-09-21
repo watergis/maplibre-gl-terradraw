@@ -84,7 +84,11 @@ export interface MeasureControlOptions {
 	areaPrecision?: number;
 
 	/**
-	 * Default is `auto`. If `auto` is set, unit is converted depending on the value and selection of area unit. If a specific unit is specified, it returns the value always the same. If a selected unit is not the same type of unit either metric of imperial, it will be ignored, and `auto` will be applied.
+	 * Default is `auto`. If `auto` is set, the unit is converted automatically based on the value.
+	 * If a specific unit is specified (e.g., 'km', 'm', 'cm', 'mi', 'ft', 'in'), the value is always returned in that unit.
+	 * This property is only effective when `distanceUnit` is set to 'kilometers' or 'miles'.
+	 * If `distanceUnit` is set to other values (e.g., 'degrees', 'radians'), it will be ignored, and `auto` will be applied.
+	 * If you need to force other unit type, please use DistanceUnit property.
 	 */
 	forceAreaUnit?: forceAreaUnitType;
 

@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.7.6
+
+### Patch Changes
+
+- af38602: feat: add more imperial distance unit when `miles` is selected. It auto scales between inch, feet and miles depending on the length of segment.
+
 ## 1.7.5
 
 ### Patch Changes

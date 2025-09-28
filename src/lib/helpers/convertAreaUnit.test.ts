@@ -28,7 +28,7 @@ describe('convertAreaUnit', () => {
 		});
 
 		it('should convert to acres (acre) if imperial and value >= 4046.856', () => {
-			expect(convertAreaUnit(8093.712, 'imperial')).toEqual({ area: 2, unit: 'acre' });
+			expect(convertAreaUnit(8093.712, 'imperial')).toEqual({ area: 2, unit: 'acres' });
 		});
 
 		it('should convert to square miles (mi²) if imperial and value >= 2589988.11', () => {
@@ -78,7 +78,7 @@ describe('convertAreaUnit', () => {
 		it('should force conversion to acres when forceUnit is acres', () => {
 			expect(convertAreaUnit(8093.712, 'imperial', 'acres')).toEqual({
 				area: 2,
-				unit: 'acre'
+				unit: 'acres'
 			});
 		});
 
@@ -113,7 +113,7 @@ describe('convertAreaUnit', () => {
 	describe('ForceUnit - Explicit auto parameter', () => {
 		it('should behave normally when forceUnit is explicitly set to auto', () => {
 			expect(convertAreaUnit(20000, 'metric', 'auto')).toEqual({ area: 2, unit: 'ha' });
-			expect(convertAreaUnit(8093.712, 'imperial', 'auto')).toEqual({ area: 2, unit: 'acre' });
+			expect(convertAreaUnit(8093.712, 'imperial', 'auto')).toEqual({ area: 2, unit: 'acres' });
 		});
 	});
 

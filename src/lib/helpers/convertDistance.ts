@@ -1,4 +1,4 @@
-import type { DistanceUnit, DistanceUnitShortName, forceDistanceUnitType } from '../interfaces';
+import type { DistanceUnitShortName, forceDistanceUnitType, MeasureUnitType } from '../interfaces';
 
 /**
  * Convert distance according to the distance unit given.
@@ -9,13 +9,13 @@ import type { DistanceUnit, DistanceUnitShortName, forceDistanceUnitType } from 
  * - For `degrees` or `radians`, it returns the value unchanged with the corresponding unit symbol.
  *
  * @param value - The distance in the unit specified by the `unit` parameter.
- * @param unit - The unit of the input distance type: "degrees", "radians", "miles", or "kilometers" (default is 'kilometers').
+ * @param unit - The unit of the input distance type: "metric", or "imperial" (default is 'metric').
  * @param forceUnit - Default is `auto`. If `auto` is set, the unit is converted automatically based on the value. If a specific unit is set, the value is converted to that unit.
  * @returns The converted value and unit.
  */
 export const convertDistance = (
 	value: number,
-	unit: DistanceUnit = 'kilometers',
+	unit: MeasureUnitType = 'metric',
 	forceUnit: forceDistanceUnitType = 'auto'
 ): { distance: number; unit: DistanceUnitShortName } => {
 	// Define metric and imperial units
@@ -29,8 +29,8 @@ export const convertDistance = (
 		const isImperialForceUnit = imperialUnits.includes(forceUnit);
 
 		if (
-			(unit === 'kilometers' && !isMetricForceUnit) ||
-			(unit === 'miles' && !isImperialForceUnit)
+			(unit === 'metric' && !isMetricForceUnit) ||
+			(unit === 'imperial' && !isImperialForceUnit)
 		) {
 			effectiveForceUnit = 'auto';
 		}
@@ -41,14 +41,10 @@ export const convertDistance = (
 		unit: 'km'
 	};
 
-	if (unit === 'kilometers') {
+	if (unit === 'metric') {
 		result = convertMetricUnit(value, effectiveForceUnit);
-	} else if (unit === 'degrees') {
-		result.unit = '°';
-	} else if (unit === 'miles') {
+	} else if (unit === 'imperial') {
 		result = convertImperialUnit(value, effectiveForceUnit);
-	} else if (unit === 'radians') {
-		result.unit = 'rad';
 	}
 	// Default case: return kilometers if unit is not recognized
 	return result;

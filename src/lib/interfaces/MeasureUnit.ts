@@ -1,8 +1,22 @@
 /**
- * The unit of distance can be degrees, radians, miles, or kilometers (default 'kilometers')
- * See https://turfjs.org/docs/api/distance for more details
+ * The unit of measurement can be metric or imperial
  */
-export type DistanceUnit = 'degrees' | 'radians' | 'miles' | 'kilometers';
+export type MeasureUnitType = 'metric' | 'imperial';
+
+/**
+ * The area unit type for metric
+ */
+export type metricAreaUnit = 'm2' | 'km2' | 'a' | 'ha';
+
+/**
+ * The area unit type for imperial
+ */
+export type imperialAreaUnit = 'ft2' | 'yd2' | 'acre' | 'mi2';
+
+/**
+ * The type definition of forceAreaUnitType
+ */
+export type forceAreaUnitType = 'auto' | metricAreaUnit | imperialAreaUnit;
 
 /**
  * Short names for distance units in metric

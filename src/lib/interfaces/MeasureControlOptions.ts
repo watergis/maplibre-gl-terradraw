@@ -1,8 +1,8 @@
 import type { CircleLayerSpecification, SymbolLayerSpecification } from 'maplibre-gl';
 import type { ModeOptions } from './ModeOptions';
 import type { TerraDrawExtend } from 'terra-draw';
-import type { DistanceUnit, forceDistanceUnitType } from './DistanceUnit';
-import type { AreaUnit, forceAreaUnitType } from './AreaUnit';
+import type { forceDistanceUnitType } from './MeasureUnit';
+import type { MeasureUnitType, forceAreaUnitType } from './MeasureUnit';
 import type { TerradrawMode } from './TerradrawMode';
 import type { TerrainSource } from './TerrainSource';
 import type { ElevationCacheConfig } from './ElevationCacheConfig';
@@ -57,9 +57,9 @@ export interface MeasureControlOptions {
 	polygonLayerSpec?: SymbolLayerSpecification;
 
 	/**
-	 * The unit of distance can be degrees, radians, miles, or kilometers (default 'kilometers')
+	 * The unit of measurement can be metric or imperial. Default is metric
 	 */
-	distanceUnit?: DistanceUnit;
+	measureUnitType?: MeasureUnitType;
 
 	/**
 	 * The precision of distance value. It will be set different value dwhen distance unit is changed. Using setter to override the value if you want.
@@ -72,11 +72,6 @@ export interface MeasureControlOptions {
 	 * If you need to force other unit type, please use DistanceUnit property.
 	 */
 	forceDistanceUnit?: forceDistanceUnitType;
-
-	/**
-	 * The unit of area can be metric (m², ha, km²) or imperial (acre, mi²). Default is metric
-	 */
-	areaUnit?: AreaUnit;
 
 	/**
 	 * The precision of area value. Using setter to override the value if you want.

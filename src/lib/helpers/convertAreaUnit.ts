@@ -1,4 +1,9 @@
-import type { AreaUnit, forceAreaUnitType, imperialAreaUnit, metricAreaUnit } from '../interfaces';
+import type {
+	MeasureUnitType,
+	forceAreaUnitType,
+	imperialAreaUnit,
+	metricAreaUnit
+} from '../interfaces';
 
 /**
  * convert area unit to metric or imperial
@@ -9,7 +14,7 @@ import type { AreaUnit, forceAreaUnitType, imperialAreaUnit, metricAreaUnit } fr
  */
 export const convertAreaUnit = (
 	value: number,
-	unit: AreaUnit,
+	unit: MeasureUnitType,
 	forceUnit: forceAreaUnitType = 'auto'
 ) => {
 	// Define metric and imperial units

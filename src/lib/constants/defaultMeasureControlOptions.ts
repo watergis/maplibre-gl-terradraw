@@ -396,10 +396,9 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 		maxzoom: 15,
 		tms: false
 	},
-	distanceUnit: 'kilometers',
+	measureUnitType: 'metric',
 	distancePrecision: 2,
 	forceDistanceUnit: 'auto',
-	areaUnit: 'metric',
 	areaPrecision: 2,
 	forceAreaUnit: 'auto',
 	elevationCacheConfig: {

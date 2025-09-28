@@ -10,8 +10,7 @@ import { MaplibreTerradrawControl } from './MaplibreTerradrawControl';
 import { centroid } from '@turf/centroid';
 import { defaultMeasureControlOptions } from '../constants';
 import type {
-	AreaUnit,
-	DistanceUnit,
+	MeasureUnitType,
 	forceAreaUnitType,
 	forceDistanceUnitType,
 	MeasureControlOptions,
@@ -37,15 +36,15 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	private elevationCache: MemoryCache<number> | undefined;
 
 	/**
-	 * The unit of distance can be degrees, radians, miles, or kilometers (default 'kilometers')
+	 * The unit of measurement can be metric or imperial. Default is metric.
 	 * The measuring result will be recalculated once new value is set
 	 */
-	get distanceUnit() {
-		return this.measureOptions.distanceUnit ?? 'kilometers';
+	get measureUnitType() {
+		return this.measureOptions.measureUnitType ?? 'metric';
 	}
-	set distanceUnit(value: DistanceUnit) {
-		const isSame = this.measureOptions.distanceUnit === value;
-		this.measureOptions.distanceUnit = value;
+	set measureUnitType(value: MeasureUnitType) {
+		const isSame = this.measureOptions.measureUnitType === value;
+		this.measureOptions.measureUnitType = value;
 		if (!isSame) this.recalc();
 	}
 
@@ -53,10 +52,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * The precision of distance value. It will be set different value when distance unit is changed. Using setter to override the value if you want.
 	 */
 	get distancePrecision() {
-		let defaultPrecision = 2;
-		if (this.measureOptions.distanceUnit === 'degrees') {
-			defaultPrecision = 6;
-		}
+		const defaultPrecision = 2;
 		return this.measureOptions.distancePrecision ?? defaultPrecision;
 	}
 	set distancePrecision(value: number) {
@@ -78,19 +74,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	set forceDistanceUnit(value: forceDistanceUnitType) {
 		const isSame = this.measureOptions.forceDistanceUnit === value;
 		this.measureOptions.forceDistanceUnit = value;
-		if (!isSame) this.recalc();
-	}
-
-	/**
-	 * The unit of area can be metric (m², ha, km²) or imperial (yd², acre, mi²). Default is metric.
-	 * The measuring result will be recalculated once new value is set
-	 */
-	get areaUnit() {
-		return this.measureOptions.areaUnit ?? 'metric';
-	}
-	set areaUnit(value: AreaUnit) {
-		const isSame = this.measureOptions.areaUnit === value;
-		this.measureOptions.areaUnit = value;
 		if (!isSame) this.recalc();
 	}
 
@@ -784,7 +767,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				point.geometry = centroid(feature.geometry).geometry;
 				point.properties.originalId = feature.id;
 
-				feature = calcArea(feature, this.areaUnit, this.areaPrecision, this.forceAreaUnit);
+				feature = calcArea(feature, this.measureUnitType, this.areaPrecision, this.forceAreaUnit);
 				point.properties.area = feature.properties.area;
 				point.properties.unit = feature.properties.unit;
 
@@ -861,7 +844,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 
 				feature = calcDistance(
 					feature,
-					this.distanceUnit,
+					this.measureUnitType,
 					this.distancePrecision,
 					this.forceDistanceUnit,
 					this.map,
@@ -1065,7 +1048,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			if (geomType === 'LineString') {
 				fc.features[i] = calcDistance(
 					feature,
-					this.distanceUnit,
+					this.measureUnitType,
 					this.distancePrecision,
 					this.forceDistanceUnit,
 					this.map,
@@ -1073,7 +1056,12 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					this.measureOptions.terrainSource
 				);
 			} else if (geomType === 'Polygon') {
-				fc.features[i] = calcArea(feature, this.areaUnit, this.areaPrecision, this.forceAreaUnit);
+				fc.features[i] = calcArea(
+					feature,
+					this.measureUnitType,
+					this.areaPrecision,
+					this.forceAreaUnit
+				);
 			} else if (geomType === 'Point') {
 				fc.features[i] = queryElevationByPoint(
 					feature,

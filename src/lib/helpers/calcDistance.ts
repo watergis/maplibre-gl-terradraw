@@ -1,21 +1,15 @@
 import distance from '@turf/distance';
 import type { GeoJSONStoreFeatures } from 'terra-draw';
 import type { LngLatLike, Map } from 'maplibre-gl';
-import type {
-	MeasureUnitType,
-	forceDistanceUnitType,
-	TerrainSource,
-	MeasureUnitSymbolType
-} from '../interfaces';
+import type { DistanceUnit, forceDistanceUnitType, TerrainSource } from '../interfaces';
 import { convertDistance } from './convertDistance';
 
 /**
  * Caclulate distance for each segment on a given feature
  * @param feature LineString GeoJSON feature
- * @param unitType measure unit type either metric or imperial
+ * @param distanceUnit Distance unit
  * @param distancePrecision Precision of distance
  * @param forceUnit Default is `auto`. If `auto` is set, unit is converted depending on the value in metric.
- * @param measureUnitSymbols Optional parameter to provide custom unit symbols
  * @param map Maplibre map instance
  * @param computeElevation Compute elevation for each segment
  * @param terrainSource Terrain source for elevation calculation. If terrainSource is undefined, going to to query elevation from maplibre terrain.
@@ -23,10 +17,9 @@ import { convertDistance } from './convertDistance';
  */
 export const calcDistance = (
 	feature: GeoJSONStoreFeatures,
-	unitType: MeasureUnitType,
+	distanceUnit: DistanceUnit,
 	distancePrecision: number,
 	forceUnit?: forceDistanceUnitType,
-	measureUnitSymbols?: MeasureUnitSymbolType,
 	map?: Map,
 	computeElevation?: boolean,
 	terrainSource?: TerrainSource
@@ -41,7 +34,7 @@ export const calcDistance = (
 	for (let i = 0; i < coordinates.length - 1; i++) {
 		const start = coordinates[i];
 		const end = coordinates[i + 1];
-		const result = distance(start, end, { units: unitType === 'metric' ? 'kilometers' : 'miles' });
+		const result = distance(start, end, { units: distanceUnit });
 		totalDistance += result;
 
 		// segment
@@ -73,7 +66,7 @@ export const calcDistance = (
 	// convert distance unit
 	const convertedDistance = convertDistance(
 		feature.properties.distance as number,
-		unitType,
+		distanceUnit,
 		forceUnit
 	);
 	feature.properties.distance = convertedDistance.distance;
@@ -83,18 +76,16 @@ export const calcDistance = (
 		(segment: GeoJSONStoreFeatures) => {
 			const segmentDistance = convertDistance(
 				segment.properties.distance as number,
-				unitType,
-				forceUnit,
-				measureUnitSymbols
+				distanceUnit,
+				forceUnit
 			);
 			segment.properties.distance = segmentDistance.distance;
 			segment.properties.unit = segmentDistance.unit;
 
 			const segmentTotalDistance = convertDistance(
 				segment.properties.total as number,
-				unitType,
-				forceUnit,
-				measureUnitSymbols
+				distanceUnit,
+				forceUnit
 			);
 			segment.properties.total = segmentTotalDistance.distance;
 			segment.properties.totalUnit = segmentTotalDistance.unit;

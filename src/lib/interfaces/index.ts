@@ -1,4 +1,5 @@
-export * from './MeasureUnit';
+export * from './AreaUnit';
+export * from './DistanceUnit';
 export * from './ElevationCacheConfig';
 export * from './EventArgs';
 export * from './EventTypes';

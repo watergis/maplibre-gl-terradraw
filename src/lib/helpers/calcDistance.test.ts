@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { calcDistance } from './calcDistance';
 import type { GeoJSONStoreFeatures } from 'terra-draw';
 import { Map } from 'maplibre-gl';
-import { defaultMeasureUnitSymbols } from '../constants';
 
 describe('calcDistance', () => {
 	let mockFeature: GeoJSONStoreFeatures;
@@ -45,12 +44,12 @@ describe('calcDistance', () => {
 			properties: {}
 		};
 
-		const result = calcDistance(nonLineFeature, 'metric', 2, 'auto');
+		const result = calcDistance(nonLineFeature, 'kilometers', 2, 'auto');
 		expect(result).toEqual(nonLineFeature);
 	});
 
 	it('should add distance, unit, and segments properties', () => {
-		const result = calcDistance(mockFeature, 'metric', 2, 'auto');
+		const result = calcDistance(mockFeature, 'kilometers', 2, 'auto');
 		expect(result.properties).toHaveProperty('distance');
 		expect(result.properties).toHaveProperty('unit');
 		expect(result.properties).toHaveProperty('segments');
@@ -69,15 +68,7 @@ describe('calcDistance', () => {
 	});
 
 	it('should add elevation_start and elevation_end properties if computeElevation is true', () => {
-		const result = calcDistance(
-			mockFeature,
-			'metric',
-			2,
-			'auto',
-			defaultMeasureUnitSymbols,
-			mockMap,
-			true
-		);
+		const result = calcDistance(mockFeature, 'kilometers', 2, 'auto', mockMap, true);
 		if (Array.isArray(result.properties.segments)) {
 			result.properties.segments.forEach((segment: unknown) => {
 				if (!segment || typeof segment !== 'object' || !('properties' in segment)) return;

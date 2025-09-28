@@ -3,9 +3,10 @@
 		controlType: 'default' | 'measure' | 'valhalla';
 		isOpen: 'open' | 'close' | undefined;
 		modes: TerradrawMode[];
-		measureUnitType: MeasureUnitType;
+		distanceUnit: DistanceUnit;
 		distancePrecision: number;
 		forceDistanceUnit: forceDistanceUnitType;
+		areaUnit: AreaUnit;
 		areaPrecision: number;
 		forceAreaUnit: forceAreaUnitType;
 		computeElevation: 'enabled' | 'disabled';
@@ -18,19 +19,19 @@
 		AvailableModes,
 		AvailableValhallaModes,
 		costingModelOptions,
-		defaultMeasureUnitSymbols,
 		getDefaultModeOptions,
 		MaplibreMeasureControl,
 		MaplibreTerradrawControl,
 		MaplibreValhallaControl,
 		roundFeatureCoordinates,
 		routingDistanceUnitOptions,
+		type AreaUnit,
 		type Contour,
 		type ContourType,
 		type costingModelType,
+		type DistanceUnit,
 		type forceAreaUnitType,
 		type forceDistanceUnitType,
-		type MeasureUnitType,
 		type routingDistanceUnitType,
 		type TerradrawMode,
 		type TerradrawValhallaMode,
@@ -69,7 +70,7 @@
 			controlType: 'default',
 			isOpen: 'open',
 			modes: JSON.parse(JSON.stringify(AvailableModes)),
-			measureUnitType: 'metric',
+			distanceUnit: 'kilometers',
 			distancePrecision: 2,
 			forceDistanceUnit: 'auto',
 			areaUnit: 'metric',
@@ -122,7 +123,8 @@
 
 	let accordionValue = $state(['control-type']);
 	let measureAccordionValue = $state([
-		'measure-unit-type',
+		'distance-unit',
+		'area-unit',
 		'distance-precision',
 		'area-precision',
 		'force-distance-unit',
@@ -175,8 +177,9 @@
 			drawControl = new MaplibreMeasureControl({
 				modes: options.modes,
 				open: options.isOpen === 'open',
-				measureUnitType: options.measureUnitType,
+				distanceUnit: options.distanceUnit,
 				distancePrecision: options.distancePrecision,
+				areaUnit: options.areaUnit,
 				areaPrecision: options.areaPrecision,
 				forceAreaUnit: options.forceAreaUnit,
 				computeElevation: options.computeElevation === 'enabled',
@@ -509,18 +512,48 @@
 							onValueChange={(e) => (measureAccordionValue = e.value)}
 							multiple
 						>
-							<Accordion.Item value="measure-unit-type">
+							<Accordion.Item value="distance-unit">
 								{#snippet control()}
 									<p class="font-bold uppercase italic">Distance unit</p>
 								{/snippet}
 								{#snippet panel()}
 									<Segment
-										value={options.measureUnitType}
+										value={options.distanceUnit}
 										onValueChange={(e) => {
-											options.measureUnitType = e.value as MeasureUnitType;
+											options.distanceUnit = e.value as DistanceUnit;
 											if (drawControl && options.controlType === 'measure') {
-												(drawControl as MaplibreMeasureControl).measureUnitType =
-													options.measureUnitType;
+												(drawControl as MaplibreMeasureControl).distanceUnit = options.distanceUnit;
+											}
+											onchange(options);
+										}}
+									>
+										{#each ['kilometers', 'miles', 'degrees', 'radians'] as unit (unit)}
+											<Segment.Item value={unit}>
+												{#if unit === 'miles'}
+													mi
+												{:else if unit === 'degrees'}
+													°
+												{:else if unit === 'radians'}
+													rad
+												{:else}
+													km
+												{/if}
+											</Segment.Item>
+										{/each}
+									</Segment>
+								{/snippet}
+							</Accordion.Item>
+							<Accordion.Item value="area-unit">
+								{#snippet control()}
+									<p class="font-bold uppercase italic">Area unit</p>
+								{/snippet}
+								{#snippet panel()}
+									<Segment
+										value={options.areaUnit}
+										onValueChange={(e) => {
+											options.areaUnit = e.value as AreaUnit;
+											if (drawControl && options.controlType === 'measure') {
+												(drawControl as MaplibreMeasureControl).areaUnit = options.areaUnit;
 											}
 											onchange(options);
 										}}
@@ -552,15 +585,8 @@
 											onchange(options);
 										}}
 									>
-										{#each ['auto', 'kilometer', 'meter', 'centimeter', 'mile', 'foot', 'inch'] as item (item)}
-											<option value={item}>
-												{item}
-												{#if item !== 'auto'}
-													({defaultMeasureUnitSymbols[
-														item as keyof typeof defaultMeasureUnitSymbols
-													]})
-												{/if}
-											</option>
+										{#each ['auto', 'km', 'm', 'cm', 'mi', 'ft', 'in'] as item (item)}
+											<option value={item}>{item}</option>
 										{/each}
 									</select>
 								{/snippet}
@@ -584,15 +610,8 @@
 											onchange(options);
 										}}
 									>
-										{#each ['auto', 'square meters', 'square kilometers', 'ares', 'hectares', 'square feet', 'square yards', 'acres', 'square miles'] as item (item)}
-											<option value={item}>
-												{item}
-												{#if item !== 'auto'}
-													({defaultMeasureUnitSymbols[
-														item as keyof typeof defaultMeasureUnitSymbols
-													]})
-												{/if}
-											</option>
+										{#each ['auto', 'm2', 'km2', 'a', 'ha', 'ft2', 'yd2', 'acre', 'mi2'] as item (item)}
+											<option value={item}>{item}</option>
 										{/each}
 									</select>
 								{/snippet}

@@ -12,7 +12,6 @@ import {
 	TerraDrawSensorMode
 } from 'terra-draw';
 import type { MeasureControlOptions } from '../interfaces/MeasureControlOptions';
-import { defaultMeasureUnitSymbols } from './defaultMeasureUnitSymbols';
 
 /**
  * Default MeasureControl options
@@ -397,12 +396,12 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 		maxzoom: 15,
 		tms: false
 	},
-	measureUnitType: 'metric',
+	distanceUnit: 'kilometers',
 	distancePrecision: 2,
 	forceDistanceUnit: 'auto',
+	areaUnit: 'metric',
 	areaPrecision: 2,
 	forceAreaUnit: 'auto',
-	measureUnitSymbols: JSON.parse(JSON.stringify(defaultMeasureUnitSymbols)),
 	elevationCacheConfig: {
 		enabled: true,
 		maxSize: 1000,

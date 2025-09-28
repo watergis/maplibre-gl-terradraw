@@ -4,9 +4,10 @@
 	import {
 		AvailableModes,
 		debounce,
+		type AreaUnit,
+		type DistanceUnit,
 		type forceAreaUnitType,
 		type forceDistanceUnitType,
-		type MeasureUnitType,
 		type TerradrawMode,
 		type ValhallaOptions
 	} from '$lib';
@@ -35,10 +36,11 @@
 		modes:
 			((page.url.searchParams.get('modes') as string)?.split(',') as TerradrawMode[]) ??
 			JSON.parse(JSON.stringify(AvailableModes)),
-		measureUnitType: (page.url.searchParams.get('measureUnitType') as MeasureUnitType) ?? 'metric',
+		distanceUnit: (page.url.searchParams.get('distanceUnit') as DistanceUnit) ?? 'kilometers',
 		distancePrecision: parseInt(page.url.searchParams.get('distancePrecision') ?? '2'),
 		forceDistanceUnit:
 			(page.url.searchParams.get('forceDistanceUnit') as forceDistanceUnitType) ?? 'auto',
+		areaUnit: (page.url.searchParams.get('areaUnit') as AreaUnit) ?? 'metric',
 		areaPrecision: parseInt(page.url.searchParams.get('areaPrecision') ?? '2'),
 		forceAreaUnit: (page.url.searchParams.get('forceAreaUnit') as forceAreaUnitType) ?? 'auto',
 		computeElevation:
@@ -115,16 +117,18 @@
 		pageUrl.searchParams.set('isOpen', demoOptions.isOpen ?? 'open');
 		pageUrl.searchParams.set('modes', demoOptions.modes.join(','));
 		if (demoOptions.controlType == 'measure') {
-			pageUrl.searchParams.set('measureUnitType', demoOptions.measureUnitType);
+			pageUrl.searchParams.set('distanceUnit', demoOptions.distanceUnit);
 			pageUrl.searchParams.set('distancePrecision', demoOptions.distancePrecision.toString());
 			pageUrl.searchParams.set('forceDistanceUnit', demoOptions.forceDistanceUnit);
+			pageUrl.searchParams.set('areaUnit', demoOptions.areaUnit);
 			pageUrl.searchParams.set('areaPrecision', demoOptions.areaPrecision.toString());
 			pageUrl.searchParams.set('forceAreaUnit', demoOptions.forceAreaUnit);
 			pageUrl.searchParams.set('computeElevation', demoOptions.computeElevation);
 		} else {
-			pageUrl.searchParams.delete('measureUnitType');
+			pageUrl.searchParams.delete('distanceUnit');
 			pageUrl.searchParams.delete('distancePrecision');
 			pageUrl.searchParams.delete('forceDistanceUnit');
+			pageUrl.searchParams.delete('areaUnit');
 			pageUrl.searchParams.delete('areaPrecision');
 			pageUrl.searchParams.delete('forceAreaUnit');
 			pageUrl.searchParams.delete('computeElevation');
@@ -144,9 +148,10 @@
 
 	const getMeasureOptions = () => {
 		const options = [];
-		options.push(`measureUnitType: '${demoOptions.measureUnitType}'`);
+		options.push(`distanceUnit: '${demoOptions.distanceUnit}'`);
 		options.push(`distancePrecision: ${demoOptions.distancePrecision}`);
 		options.push(`forceDistanceUnit: '${demoOptions.forceDistanceUnit}'`);
+		options.push(`areaUnit: '${demoOptions.areaUnit}'`);
 		options.push(`areaPrecision: ${demoOptions.areaPrecision}`);
 		options.push(`forceAreaUnit: '${demoOptions.forceAreaUnit}'`);
 		options.push(

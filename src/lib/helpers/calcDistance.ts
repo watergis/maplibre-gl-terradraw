@@ -1,7 +1,12 @@
 import distance from '@turf/distance';
 import type { GeoJSONStoreFeatures } from 'terra-draw';
 import type { LngLatLike, Map } from 'maplibre-gl';
-import type { MeasureUnitType, forceDistanceUnitType, TerrainSource } from '../interfaces';
+import type {
+	MeasureUnitType,
+	forceDistanceUnitType,
+	TerrainSource,
+	MeasureUnitSymbolType
+} from '../interfaces';
 import { convertDistance } from './convertDistance';
 
 /**
@@ -10,6 +15,7 @@ import { convertDistance } from './convertDistance';
  * @param unitType measure unit type either metric or imperial
  * @param distancePrecision Precision of distance
  * @param forceUnit Default is `auto`. If `auto` is set, unit is converted depending on the value in metric.
+ * @param measureUnitSymbols Optional parameter to provide custom unit symbols
  * @param map Maplibre map instance
  * @param computeElevation Compute elevation for each segment
  * @param terrainSource Terrain source for elevation calculation. If terrainSource is undefined, going to to query elevation from maplibre terrain.
@@ -20,6 +26,7 @@ export const calcDistance = (
 	unitType: MeasureUnitType,
 	distancePrecision: number,
 	forceUnit?: forceDistanceUnitType,
+	measureUnitSymbols?: MeasureUnitSymbolType,
 	map?: Map,
 	computeElevation?: boolean,
 	terrainSource?: TerrainSource
@@ -77,7 +84,8 @@ export const calcDistance = (
 			const segmentDistance = convertDistance(
 				segment.properties.distance as number,
 				unitType,
-				forceUnit
+				forceUnit,
+				measureUnitSymbols
 			);
 			segment.properties.distance = segmentDistance.distance;
 			segment.properties.unit = segmentDistance.unit;
@@ -85,7 +93,8 @@ export const calcDistance = (
 			const segmentTotalDistance = convertDistance(
 				segment.properties.total as number,
 				unitType,
-				forceUnit
+				forceUnit,
+				measureUnitSymbols
 			);
 			segment.properties.total = segmentTotalDistance.distance;
 			segment.properties.totalUnit = segmentTotalDistance.unit;

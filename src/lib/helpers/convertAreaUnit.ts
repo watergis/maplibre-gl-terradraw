@@ -1,8 +1,10 @@
+import { defaultMeasureUnitSymbols } from '../constants';
 import type {
 	MeasureUnitType,
 	forceAreaUnitType,
-	imperialAreaUnit,
-	metricAreaUnit
+	ImperialAreaUnit,
+	MetricAreaUnit,
+	MeasureUnitSymbolType
 } from '../interfaces';
 
 /**
@@ -10,16 +12,18 @@ import type {
  * @param value area value in m2
  * @param unit area unit either metric or imperial
  * @param forceUnit Default is `auto`. If `auto` is set, unit is converted depending on the value and selection of area unit. If a specific unit is specified, it returns the value always the same. If a selected unit is not the same type of unit either metric of imperial, it will be ignored, and `auto` will be applied.
+ * @param measureUnitSymbols Optional parameter to provide custom unit symbols
  * @returns result object with area and unit properties adter unit conversion
  */
 export const convertAreaUnit = (
 	value: number,
 	unit: MeasureUnitType,
-	forceUnit: forceAreaUnitType = 'auto'
+	forceUnit: forceAreaUnitType = 'auto',
+	measureUnitSymbols = defaultMeasureUnitSymbols
 ) => {
 	// Define metric and imperial units
-	const metricUnits = ['m2', 'km2', 'a', 'ha'];
-	const imperialUnits = ['ft2', 'yd2', 'acre', 'mi2'];
+	const metricUnits = ['square meters', 'square kilometers', 'ares', 'hectares'];
+	const imperialUnits = ['square feet', 'square yards', 'acres', 'square miles'];
 
 	// Check if forceUnit matches the selected unit type, otherwise treat as 'auto'
 	let effectiveForceUnit = forceUnit;
@@ -37,57 +41,61 @@ export const convertAreaUnit = (
 
 	if (unit === 'metric') {
 		if (effectiveForceUnit !== 'auto') {
-			return convertMetricUnit(value, effectiveForceUnit as metricAreaUnit);
+			return convertMetricUnit(value, effectiveForceUnit as MetricAreaUnit, measureUnitSymbols);
 		} else {
 			if (value >= 1000000) {
-				return convertMetricUnit(value, 'km2');
+				return convertMetricUnit(value, 'square kilometers', measureUnitSymbols);
 			} else if (value >= 10000) {
-				return convertMetricUnit(value, 'ha');
+				return convertMetricUnit(value, 'hectares', measureUnitSymbols);
 			} else if (value >= 100) {
-				return convertMetricUnit(value, 'a');
+				return convertMetricUnit(value, 'ares', measureUnitSymbols);
 			} else {
-				return convertMetricUnit(value, 'm2');
+				return convertMetricUnit(value, 'square meters', measureUnitSymbols);
 			}
 		}
 	} else {
 		if (effectiveForceUnit !== 'auto') {
-			return convertImperialUnit(value, effectiveForceUnit as imperialAreaUnit);
+			return convertImperialUnit(value, effectiveForceUnit as ImperialAreaUnit, measureUnitSymbols);
 		} else {
 			if (value >= 2589988.11) {
-				return convertImperialUnit(value, 'mi2');
+				return convertImperialUnit(value, 'square miles', measureUnitSymbols);
 			} else if (value >= 4046.856) {
-				return convertImperialUnit(value, 'acre');
+				return convertImperialUnit(value, 'acres', measureUnitSymbols);
 			} else if (value >= 0.83612736) {
-				return convertImperialUnit(value, 'yd2');
+				return convertImperialUnit(value, 'square yards', measureUnitSymbols);
 			} else {
-				return convertImperialUnit(value, 'ft2');
+				return convertImperialUnit(value, 'square feet', measureUnitSymbols);
 			}
 		}
 	}
 };
 
-const convertMetricUnit = (value: number, unit: metricAreaUnit) => {
+const convertMetricUnit = (
+	value: number,
+	unit: MetricAreaUnit,
+	measureUnitSymbols: MeasureUnitSymbolType
+) => {
 	let outputArea = value;
-	let outputUnit = 'm²';
+	let outputUnit = measureUnitSymbols['square meters'];
 	switch (unit) {
-		case 'm2':
+		case 'square meters':
 			outputArea = value;
-			outputUnit = 'm²';
+			outputUnit = measureUnitSymbols['square meters'];
 			break;
-		case 'a':
+		case 'ares':
 			// 1a = 100 m²
 			outputArea = value / 100;
-			outputUnit = 'a';
+			outputUnit = measureUnitSymbols['ares'];
 			break;
-		case 'ha':
+		case 'hectares':
 			// 1 ha = 10,000 m²
 			outputArea = value / 10000;
-			outputUnit = 'ha';
+			outputUnit = measureUnitSymbols['hectares'];
 			break;
-		case 'km2':
+		case 'square kilometers':
 			// 1 km² = 1,000,000 m²
 			outputArea = value / 1000000;
-			outputUnit = 'km²';
+			outputUnit = measureUnitSymbols['square kilometers'];
 			break;
 	}
 	return {
@@ -96,29 +104,33 @@ const convertMetricUnit = (value: number, unit: metricAreaUnit) => {
 	};
 };
 
-const convertImperialUnit = (value: number, unit: imperialAreaUnit) => {
+const convertImperialUnit = (
+	value: number,
+	unit: ImperialAreaUnit,
+	measureUnitSymbols: MeasureUnitSymbolType
+) => {
 	let outputArea = value / 2589988.11;
-	let outputUnit = 'm²';
+	let outputUnit = measureUnitSymbols['square meters'];
 	switch (unit) {
-		case 'ft2':
+		case 'square feet':
 			// 1 ft² = 0.09290304 m²
 			outputArea = value / 0.09290304;
-			outputUnit = 'ft²';
+			outputUnit = measureUnitSymbols['square feet'];
 			break;
-		case 'yd2':
+		case 'square yards':
 			// 1 yd² = 0.83612736 m²
 			outputArea = value / 0.83612736;
-			outputUnit = 'yd²';
+			outputUnit = measureUnitSymbols['square yards'];
 			break;
-		case 'acre':
+		case 'acres':
 			// 1 acre = 4,046.856 m²
 			outputArea = value / 4046.856;
-			outputUnit = 'acre';
+			outputUnit = measureUnitSymbols['acres'];
 			break;
-		case 'mi2':
+		case 'square miles':
 			// 1 mi² = 2,589,988.11 m²
 			outputArea = value / 2589988.11;
-			outputUnit = 'mi²';
+			outputUnit = measureUnitSymbols['square miles'];
 			break;
 	}
 	return {

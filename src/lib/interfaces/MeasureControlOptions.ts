@@ -1,7 +1,13 @@
 import type { CircleLayerSpecification, SymbolLayerSpecification } from 'maplibre-gl';
 import type { ModeOptions } from './ModeOptions';
 import type { TerraDrawExtend } from 'terra-draw';
-import type { forceDistanceUnitType } from './MeasureUnit';
+import type {
+	forceDistanceUnitType,
+	ImperialAreaUnit,
+	ImperialDistanceUnit,
+	MetricAreaUnit,
+	MetricDistanceUnit
+} from './MeasureUnit';
 import type { MeasureUnitType, forceAreaUnitType } from './MeasureUnit';
 import type { TerradrawMode } from './TerradrawMode';
 import type { TerrainSource } from './TerrainSource';
@@ -86,6 +92,14 @@ export interface MeasureControlOptions {
 	 * If you need to force other unit type, please use DistanceUnit property.
 	 */
 	forceAreaUnit?: forceAreaUnitType;
+
+	/**
+	 * Measure unit symbols. If you want to change the default symbol, please overwrite the symbol by this option.
+	 */
+	measureUnitSymbols?: Record<
+		MetricDistanceUnit | ImperialDistanceUnit | MetricAreaUnit | ImperialAreaUnit,
+		string
+	>;
 
 	/**
 	 * Compute elevation for each node in linestring measure mode.

@@ -8,13 +8,14 @@ import {
 } from 'maplibre-gl';
 import { MaplibreTerradrawControl } from './MaplibreTerradrawControl';
 import { centroid } from '@turf/centroid';
-import { defaultMeasureControlOptions } from '../constants';
+import { defaultMeasureControlOptions, defaultMeasureUnitSymbols } from '../constants';
 import type {
 	MeasureUnitType,
 	forceAreaUnitType,
 	forceDistanceUnitType,
 	MeasureControlOptions,
-	TerradrawMode
+	TerradrawMode,
+	MeasureUnitSymbolType
 } from '../interfaces';
 import { type GeoJSONStoreFeatures, TerraDrawExtend } from 'terra-draw';
 import {
@@ -98,6 +99,21 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	set forceAreaUnit(value: forceAreaUnitType) {
 		const isSame = this.measureOptions.forceAreaUnit === value;
 		this.measureOptions.forceAreaUnit = value;
+		if (!isSame) this.recalc();
+	}
+
+	/**
+	 * Measure unit symbols. If you want to change the default symbol, please overwrite the symbol by this option.
+	 */
+	get measureUnitSymbols() {
+		return (
+			this.measureOptions.measureUnitSymbols ??
+			JSON.parse(JSON.stringify(defaultMeasureUnitSymbols))
+		);
+	}
+	set measureUnitSymbols(value: MeasureUnitSymbolType) {
+		const isSame = JSON.stringify(this.measureOptions.measureUnitSymbols) === JSON.stringify(value);
+		this.measureOptions.measureUnitSymbols = value;
 		if (!isSame) this.recalc();
 	}
 
@@ -767,7 +783,13 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				point.geometry = centroid(feature.geometry).geometry;
 				point.properties.originalId = feature.id;
 
-				feature = calcArea(feature, this.measureUnitType, this.areaPrecision, this.forceAreaUnit);
+				feature = calcArea(
+					feature,
+					this.measureUnitType,
+					this.areaPrecision,
+					this.forceAreaUnit,
+					this.measureUnitSymbols
+				);
 				point.properties.area = feature.properties.area;
 				point.properties.unit = feature.properties.unit;
 
@@ -847,6 +869,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					this.measureUnitType,
 					this.distancePrecision,
 					this.forceDistanceUnit,
+					this.measureUnitSymbols,
 					this.map,
 					this.computeElevation,
 					this.measureOptions.terrainSource
@@ -1051,6 +1074,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					this.measureUnitType,
 					this.distancePrecision,
 					this.forceDistanceUnit,
+					this.measureUnitSymbols,
 					this.map,
 					this.computeElevation,
 					this.measureOptions.terrainSource
@@ -1060,7 +1084,8 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					feature,
 					this.measureUnitType,
 					this.areaPrecision,
-					this.forceAreaUnit
+					this.forceAreaUnit,
+					this.measureUnitSymbols
 				);
 			} else if (geomType === 'Point') {
 				fc.features[i] = queryElevationByPoint(

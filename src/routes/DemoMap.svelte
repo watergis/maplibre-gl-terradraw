@@ -18,6 +18,7 @@
 		AvailableModes,
 		AvailableValhallaModes,
 		costingModelOptions,
+		defaultMeasureUnitSymbols,
 		getDefaultModeOptions,
 		MaplibreMeasureControl,
 		MaplibreTerradrawControl,
@@ -551,8 +552,15 @@
 											onchange(options);
 										}}
 									>
-										{#each ['auto', 'km', 'm', 'cm', 'mi', 'ft', 'in'] as item (item)}
-											<option value={item}>{item}</option>
+										{#each ['auto', 'kilometer', 'meter', 'centimeter', 'mile', 'foot', 'inch'] as item (item)}
+											<option value={item}>
+												{item}
+												{#if item !== 'auto'}
+													({defaultMeasureUnitSymbols[
+														item as keyof typeof defaultMeasureUnitSymbols
+													]})
+												{/if}
+											</option>
 										{/each}
 									</select>
 								{/snippet}
@@ -576,8 +584,15 @@
 											onchange(options);
 										}}
 									>
-										{#each ['auto', 'm2', 'km2', 'a', 'ha', 'ft2', 'yd2', 'acre', 'mi2'] as item (item)}
-											<option value={item}>{item}</option>
+										{#each ['auto', 'square meters', 'square kilometers', 'ares', 'hectares', 'square feet', 'square yards', 'acres', 'square miles'] as item (item)}
+											<option value={item}>
+												{item}
+												{#if item !== 'auto'}
+													({defaultMeasureUnitSymbols[
+														item as keyof typeof defaultMeasureUnitSymbols
+													]})
+												{/if}
+											</option>
 										{/each}
 									</select>
 								{/snippet}

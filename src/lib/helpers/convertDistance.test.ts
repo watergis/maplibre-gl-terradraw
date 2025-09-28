@@ -29,35 +29,35 @@ describe('convertDistance with metric unit', () => {
 	});
 
 	it('should return kilometers when forceDistanceUnit is kilometers', () => {
-		expect(convertDistance(1, 'metric', 'km')).toEqual({ distance: 1, unit: 'km' });
-		expect(convertDistance(2.5, 'metric', 'km')).toEqual({ distance: 2.5, unit: 'km' });
+		expect(convertDistance(1, 'metric', 'kilometer')).toEqual({ distance: 1, unit: 'km' });
+		expect(convertDistance(2.5, 'metric', 'kilometer')).toEqual({ distance: 2.5, unit: 'km' });
 	});
 
 	it('should return meters when forceDistanceUnit is meters', () => {
-		expect(convertDistance(1, 'metric', 'm')).toEqual({ distance: 1000, unit: 'm' });
-		expect(convertDistance(2.5, 'metric', 'm')).toEqual({ distance: 2500, unit: 'm' });
+		expect(convertDistance(1, 'metric', 'meter')).toEqual({ distance: 1000, unit: 'm' });
+		expect(convertDistance(2.5, 'metric', 'meter')).toEqual({ distance: 2500, unit: 'm' });
 	});
 
 	it('should return centimeters when forceDistanceUnit is centimeters', () => {
-		expect(convertDistance(1, 'metric', 'cm')).toEqual({ distance: 100000, unit: 'cm' });
-		expect(convertDistance(2.5, 'metric', 'cm')).toEqual({ distance: 250000, unit: 'cm' });
+		expect(convertDistance(1, 'metric', 'centimeter')).toEqual({ distance: 100000, unit: 'cm' });
+		expect(convertDistance(2.5, 'metric', 'centimeter')).toEqual({ distance: 250000, unit: 'cm' });
 	});
 });
 
 describe('convertDistance with imperial unit', () => {
 	it('should return miles when forceDistanceUnit is miles', () => {
-		expect(convertDistance(1, 'imperial', 'mi')).toEqual({ distance: 1, unit: 'mi' });
-		expect(convertDistance(2.5, 'imperial', 'mi')).toEqual({ distance: 2.5, unit: 'mi' });
+		expect(convertDistance(1, 'imperial', 'mile')).toEqual({ distance: 1, unit: 'mi' });
+		expect(convertDistance(2.5, 'imperial', 'mile')).toEqual({ distance: 2.5, unit: 'mi' });
 	});
 
 	it('should return feet when forceDistanceUnit is feet', () => {
-		expect(convertDistance(1, 'imperial', 'ft')).toEqual({ distance: 5280, unit: 'ft' });
-		expect(convertDistance(0.5, 'imperial', 'ft')).toEqual({ distance: 2640, unit: 'ft' });
+		expect(convertDistance(1, 'imperial', 'foot')).toEqual({ distance: 5280, unit: 'ft' });
+		expect(convertDistance(0.5, 'imperial', 'foot')).toEqual({ distance: 2640, unit: 'ft' });
 	});
 
 	it('should return inches when forceDistanceUnit is inches', () => {
-		expect(convertDistance(1, 'imperial', 'in')).toEqual({ distance: 63360, unit: 'in' });
-		expect(convertDistance(0.5, 'imperial', 'in')).toEqual({ distance: 31680, unit: 'in' });
+		expect(convertDistance(1, 'imperial', 'inch')).toEqual({ distance: 63360, unit: 'in' });
+		expect(convertDistance(0.5, 'imperial', 'inch')).toEqual({ distance: 31680, unit: 'in' });
 	});
 
 	it('should auto-scale to the appropriate unit when forceDistanceUnit is auto', () => {

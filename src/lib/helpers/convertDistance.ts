@@ -1,4 +1,5 @@
-import type { DistanceUnitShortName, forceDistanceUnitType, MeasureUnitType } from '../interfaces';
+import { defaultMeasureUnitSymbols } from '../constants';
+import type { forceDistanceUnitType, MeasureUnitSymbolType, MeasureUnitType } from '../interfaces';
 
 /**
  * Convert distance according to the distance unit given.
@@ -11,16 +12,18 @@ import type { DistanceUnitShortName, forceDistanceUnitType, MeasureUnitType } fr
  * @param value - The distance in the unit specified by the `unit` parameter.
  * @param unit - The unit of the input distance type: "metric", or "imperial" (default is 'metric').
  * @param forceUnit - Default is `auto`. If `auto` is set, the unit is converted automatically based on the value. If a specific unit is set, the value is converted to that unit.
+ * @param measureUnitSymbols Optional parameter to provide custom unit symbols
  * @returns The converted value and unit.
  */
 export const convertDistance = (
 	value: number,
 	unit: MeasureUnitType = 'metric',
-	forceUnit: forceDistanceUnitType = 'auto'
-): { distance: number; unit: DistanceUnitShortName } => {
+	forceUnit: forceDistanceUnitType = 'auto',
+	measureUnitSymbols = defaultMeasureUnitSymbols
+): { distance: number; unit: string } => {
 	// Define metric and imperial units
-	const metricUnits = ['cm', 'm', 'km'];
-	const imperialUnits = ['in', 'ft', 'mi'];
+	const metricUnits = ['centimeter', 'meter', 'kilometer'];
+	const imperialUnits = ['inch', 'foot', 'mile'];
 
 	// Check if forceUnit matches the selected unit type, otherwise treat as 'auto'
 	let effectiveForceUnit = forceUnit;
@@ -36,91 +39,99 @@ export const convertDistance = (
 		}
 	}
 
-	let result: { distance: number; unit: DistanceUnitShortName } = {
+	let result: { distance: number; unit: string } = {
 		distance: value,
-		unit: 'km'
+		unit: measureUnitSymbols['kilometer']
 	};
 
 	if (unit === 'metric') {
-		result = convertMetricUnit(value, effectiveForceUnit);
+		result = convertMetricUnit(value, effectiveForceUnit, measureUnitSymbols);
 	} else if (unit === 'imperial') {
-		result = convertImperialUnit(value, effectiveForceUnit);
+		result = convertImperialUnit(value, effectiveForceUnit, measureUnitSymbols);
 	}
 	// Default case: return kilometers if unit is not recognized
 	return result;
 };
 
-const convertMetricUnit = (value: number, unit: forceDistanceUnitType) => {
-	let result: { distance: number; unit: DistanceUnitShortName } = {
+const convertMetricUnit = (
+	value: number,
+	unit: forceDistanceUnitType,
+	measureUnitSymbols: MeasureUnitSymbolType
+) => {
+	let result: { distance: number; unit: string } = {
 		distance: value,
-		unit: 'km'
+		unit: measureUnitSymbols['kilometer']
 	};
 	// Convert based on the specified or auto-detected unit
 	switch (unit) {
-		case 'km':
+		case 'kilometer':
 			result.distance = value;
-			result.unit = 'km';
+			result.unit = measureUnitSymbols[unit];
 			break;
-		case 'm':
+		case 'meter':
 			result.distance = value * 1000;
-			result.unit = 'm';
+			result.unit = measureUnitSymbols[unit];
 			break;
-		case 'cm':
+		case 'centimeter':
 			result.distance = value * 100000;
-			result.unit = 'cm';
+			result.unit = measureUnitSymbols[unit];
 			break;
 		case 'auto':
 			// if auto, determine the best unit based on the value
 			if (value >= 1) {
-				result = convertMetricUnit(value, 'km');
+				result = convertMetricUnit(value, 'kilometer', measureUnitSymbols);
 			} else if (value * 1000 >= 1) {
-				result = convertMetricUnit(value, 'm');
+				result = convertMetricUnit(value, 'meter', measureUnitSymbols);
 			} else {
-				result = convertMetricUnit(value, 'cm');
+				result = convertMetricUnit(value, 'centimeter', measureUnitSymbols);
 			}
 			break;
 		default:
 			// km as a fallback
 			result.distance = value;
-			result.unit = 'km';
+			result.unit = measureUnitSymbols['kilometer'];
 			break;
 	}
 	return result;
 };
 
-const convertImperialUnit = (value: number, unit: forceDistanceUnitType) => {
-	let result: { distance: number; unit: DistanceUnitShortName } = {
+const convertImperialUnit = (
+	value: number,
+	unit: forceDistanceUnitType,
+	measureUnitSymbols: MeasureUnitSymbolType
+) => {
+	let result: { distance: number; unit: string } = {
 		distance: value,
-		unit: 'mi'
+		unit: measureUnitSymbols['mile']
 	};
 	// Convert based on the specified or auto-detected unit
 	switch (unit) {
-		case 'mi':
+		case 'mile':
 			result.distance = value;
-			result.unit = 'mi';
+			result.unit = measureUnitSymbols[unit];
 			break;
-		case 'ft':
+		case 'foot':
 			result.distance = value * 5280;
-			result.unit = 'ft';
+			result.unit = measureUnitSymbols[unit];
 			break;
-		case 'in':
+		case 'inch':
 			result.distance = value * 63360;
-			result.unit = 'in';
+			result.unit = measureUnitSymbols[unit];
 			break;
 		case 'auto':
 			// if auto, determine the best unit based on the value
 			if (value >= 1) {
-				result = convertImperialUnit(value, 'mi');
+				result = convertImperialUnit(value, 'mile', measureUnitSymbols);
 			} else if (value * 5280 >= 1) {
-				result = convertImperialUnit(value, 'ft');
+				result = convertImperialUnit(value, 'foot', measureUnitSymbols);
 			} else {
-				result = convertImperialUnit(value, 'in');
+				result = convertImperialUnit(value, 'inch', measureUnitSymbols);
 			}
 			break;
 		default:
-			// mi as a fallback
+			// mile as a fallback
 			result.distance = value;
-			result.unit = 'mi';
+			result.unit = measureUnitSymbols['mile'];
 			break;
 	}
 	return result;

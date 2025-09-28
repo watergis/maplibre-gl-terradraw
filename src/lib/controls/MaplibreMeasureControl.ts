@@ -8,14 +8,14 @@ import {
 } from 'maplibre-gl';
 import { MaplibreTerradrawControl } from './MaplibreTerradrawControl';
 import { centroid } from '@turf/centroid';
-import { defaultMeasureControlOptions } from '../constants';
+import { defaultMeasureControlOptions, defaultMeasureUnitSymbols } from '../constants';
 import type {
-	AreaUnit,
-	DistanceUnit,
+	MeasureUnitType,
 	forceAreaUnitType,
 	forceDistanceUnitType,
 	MeasureControlOptions,
-	TerradrawMode
+	TerradrawMode,
+	MeasureUnitSymbolType
 } from '../interfaces';
 import { type GeoJSONStoreFeatures, TerraDrawExtend } from 'terra-draw';
 import {
@@ -37,15 +37,15 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	private elevationCache: MemoryCache<number> | undefined;
 
 	/**
-	 * The unit of distance can be degrees, radians, miles, or kilometers (default 'kilometers')
+	 * The unit of measurement can be metric or imperial. Default is metric.
 	 * The measuring result will be recalculated once new value is set
 	 */
-	get distanceUnit() {
-		return this.measureOptions.distanceUnit ?? 'kilometers';
+	get measureUnitType() {
+		return this.measureOptions.measureUnitType ?? 'metric';
 	}
-	set distanceUnit(value: DistanceUnit) {
-		const isSame = this.measureOptions.distanceUnit === value;
-		this.measureOptions.distanceUnit = value;
+	set measureUnitType(value: MeasureUnitType) {
+		const isSame = this.measureOptions.measureUnitType === value;
+		this.measureOptions.measureUnitType = value;
 		if (!isSame) this.recalc();
 	}
 
@@ -53,10 +53,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * The precision of distance value. It will be set different value when distance unit is changed. Using setter to override the value if you want.
 	 */
 	get distancePrecision() {
-		let defaultPrecision = 2;
-		if (this.measureOptions.distanceUnit === 'degrees') {
-			defaultPrecision = 6;
-		}
+		const defaultPrecision = 2;
 		return this.measureOptions.distancePrecision ?? defaultPrecision;
 	}
 	set distancePrecision(value: number) {
@@ -82,19 +79,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	}
 
 	/**
-	 * The unit of area can be metric (m², ha, km²) or imperial (yd², acre, mi²). Default is metric.
-	 * The measuring result will be recalculated once new value is set
-	 */
-	get areaUnit() {
-		return this.measureOptions.areaUnit ?? 'metric';
-	}
-	set areaUnit(value: AreaUnit) {
-		const isSame = this.measureOptions.areaUnit === value;
-		this.measureOptions.areaUnit = value;
-		if (!isSame) this.recalc();
-	}
-
-	/**
 	 * The precision of area value. Using setter to override the value if you want.
 	 */
 	get areaPrecision() {
@@ -115,6 +99,21 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	set forceAreaUnit(value: forceAreaUnitType) {
 		const isSame = this.measureOptions.forceAreaUnit === value;
 		this.measureOptions.forceAreaUnit = value;
+		if (!isSame) this.recalc();
+	}
+
+	/**
+	 * Measure unit symbols. If you want to change the default symbol, please overwrite the symbol by this option.
+	 */
+	get measureUnitSymbols() {
+		return (
+			this.measureOptions.measureUnitSymbols ??
+			JSON.parse(JSON.stringify(defaultMeasureUnitSymbols))
+		);
+	}
+	set measureUnitSymbols(value: MeasureUnitSymbolType) {
+		const isSame = JSON.stringify(this.measureOptions.measureUnitSymbols) === JSON.stringify(value);
+		this.measureOptions.measureUnitSymbols = value;
 		if (!isSame) this.recalc();
 	}
 
@@ -784,7 +783,13 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				point.geometry = centroid(feature.geometry).geometry;
 				point.properties.originalId = feature.id;
 
-				feature = calcArea(feature, this.areaUnit, this.areaPrecision, this.forceAreaUnit);
+				feature = calcArea(
+					feature,
+					this.measureUnitType,
+					this.areaPrecision,
+					this.forceAreaUnit,
+					this.measureUnitSymbols
+				);
 				point.properties.area = feature.properties.area;
 				point.properties.unit = feature.properties.unit;
 
@@ -861,9 +866,10 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 
 				feature = calcDistance(
 					feature,
-					this.distanceUnit,
+					this.measureUnitType,
 					this.distancePrecision,
 					this.forceDistanceUnit,
+					this.measureUnitSymbols,
 					this.map,
 					this.computeElevation,
 					this.measureOptions.terrainSource
@@ -1065,15 +1071,22 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			if (geomType === 'LineString') {
 				fc.features[i] = calcDistance(
 					feature,
-					this.distanceUnit,
+					this.measureUnitType,
 					this.distancePrecision,
 					this.forceDistanceUnit,
+					this.measureUnitSymbols,
 					this.map,
 					this.computeElevation,
 					this.measureOptions.terrainSource
 				);
 			} else if (geomType === 'Polygon') {
-				fc.features[i] = calcArea(feature, this.areaUnit, this.areaPrecision, this.forceAreaUnit);
+				fc.features[i] = calcArea(
+					feature,
+					this.measureUnitType,
+					this.areaPrecision,
+					this.forceAreaUnit,
+					this.measureUnitSymbols
+				);
 			} else if (geomType === 'Point') {
 				fc.features[i] = queryElevationByPoint(
 					feature,

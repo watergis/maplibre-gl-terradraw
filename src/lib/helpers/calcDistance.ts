@@ -7,7 +7,7 @@ import { convertDistance } from './convertDistance';
 /**
  * Caclulate distance for each segment on a given feature
  * @param feature LineString GeoJSON feature
- * @param distanceUnit Distance unit
+ * @param unitType measure unit type either metric or imperial
  * @param distancePrecision Precision of distance
  * @param forceUnit Default is `auto`. If `auto` is set, unit is converted depending on the value in metric.
  * @param map Maplibre map instance

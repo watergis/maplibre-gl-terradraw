@@ -74,7 +74,8 @@ export const calcDistance = (
 	const convertedDistance = convertDistance(
 		feature.properties.distance as number,
 		unitType,
-		forceUnit
+		forceUnit,
+		measureUnitSymbols
 	);
 	feature.properties.distance = convertedDistance.distance;
 	feature.properties.unit = convertedDistance.unit;

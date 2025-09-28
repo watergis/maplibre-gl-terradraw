@@ -4,6 +4,8 @@
 
 feat: added `measureUnitType` and `measureUnitSymbols` options in MaplibreMeasureControl constructor options.
 
+This release contains breaking changes on MaplibreMeasureControl interfaces to simplify measure unit type interfaces. Please read carefully the following release notes.
+
 - **breaking change** deleted `distanceUnit` and `areaUnit` options and merged them into `measureUnitType`.
 - **breaking change** omitted `radian` and `degrees` unit for distance unit. Now both area and distance only support `metric` or `imperial`.
 - **breaking change** `forceAreaUnit` and `forceDistanceUnit` now use full unit names instead of short unit symbol names.

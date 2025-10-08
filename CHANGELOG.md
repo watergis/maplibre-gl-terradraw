@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.8.1
+
+### Patch Changes
+
+- 2ae8ed5: chore: upgraded TerraDraw to [v1.6.0](https://github.com/JamesLMilner/terra-draw/blob/main/packages/terra-draw/CHANGELOG.md#1160-2025-10-06)
+
 ## 1.8.0
 
 ### Minor Changes

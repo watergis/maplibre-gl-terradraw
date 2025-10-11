@@ -15,7 +15,7 @@ import type {
  * @param measureUnitSymbols Optional parameter to provide custom unit symbols
  * @returns result object with area and unit properties adter unit conversion
  */
-export const convertAreaUnit = (
+export const convertArea = (
 	value: number,
 	unit: MeasureUnitType,
 	forceUnit: forceAreaUnitType = 'auto',

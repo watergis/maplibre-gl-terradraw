@@ -5,7 +5,7 @@ import type {
 } from '../interfaces/MeasureUnit';
 import area from '@turf/area';
 import type { GeoJSONStoreFeatures } from 'terra-draw';
-import { convertAreaUnit } from './convertAreaUnit';
+import { convertArea } from './convertArea';
 
 /**
  * Calculate area from polygon feature
@@ -27,7 +27,7 @@ export const calcArea = (
 	// caculate area in m2 by using turf/area
 	const result = area(feature.geometry);
 
-	const converted = convertAreaUnit(result, unitType, forceUnit, measureUnitSymbols);
+	const converted = convertArea(result, unitType, forceUnit, measureUnitSymbols);
 	converted.area = parseFloat(converted.area.toFixed(areaPrecision));
 
 	feature.properties.area = converted.area;

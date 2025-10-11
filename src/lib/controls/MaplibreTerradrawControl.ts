@@ -296,12 +296,66 @@ export class MaplibreTerradrawControl implements IControl {
 	}
 
 	/**
+	 * Synchronize button states with the current Terra Draw mode
+	 * @param mode The active mode name
+	 */
+	protected syncButtonStates(mode: string) {
+		if (!this.controlContainer) return;
+
+		// Remove active class from all mode buttons
+		const controls = this.controlContainer.getElementsByClassName(
+			`maplibregl-terradraw-${this.cssPrefix}add-control`
+		);
+		for (let i = 0; i < controls.length; i++) {
+			const item = controls.item(i);
+			if (!item) continue;
+			item.classList.remove('active');
+		}
+
+		// Add active class to the current mode button if it exists
+		if (mode !== this.defaultMode && mode !== 'render') {
+			const modeButton = this.controlContainer.getElementsByClassName(
+				`maplibregl-terradraw-${this.cssPrefix}add-${mode}-button`
+			);
+			if (modeButton && modeButton.length > 0) {
+				modeButton[0].classList.add('active');
+			}
+		}
+
+		// Update other button states that depend on the mode
+		this.toggleDeleteSelectionButton();
+		this.toggleButtonsWhenNoFeature();
+	}
+
+	/**
 	 * Get the Terra Draw instance.
 	 * For the Terra Draw API, please refer to https://terradraw.io/#/api
-	 * @returns Terra Draw instance
+	 * @returns Terra Draw instance with wrapped setMode method that syncs button states
 	 */
 	public getTerraDrawInstance() {
-		return this.terradraw;
+		if (!this.terradraw) return this.terradraw;
+
+		// Create a proxy to intercept setMode calls
+		const self = this;
+		return new Proxy(this.terradraw, {
+			get(target, prop, receiver) {
+				if (prop === 'setMode') {
+					return function(mode: string) {
+						// Call the original setMode method
+						const result = target.setMode(mode);
+						
+						// Sync button states after mode change
+						self.syncButtonStates(mode);
+						
+						// Dispatch the mode-changed event
+						self.dispatchEvent('mode-changed');
+						
+						return result;
+					};
+				}
+				return Reflect.get(target, prop, receiver);
+			}
+		});
 	}
 
 	/**
@@ -320,15 +374,8 @@ export class MaplibreTerradrawControl implements IControl {
 		if (!this.terradraw.enabled) {
 			this.terradraw.start();
 		}
-		const controls = document.getElementsByClassName(
-			`maplibregl-terradraw-${this.cssPrefix}add-control`
-		);
-		for (let i = 0; i < controls.length; i++) {
-			const item = controls.item(i);
-			if (!item) continue;
-			item.classList.remove('active');
-		}
 		this.terradraw?.setMode(this.defaultMode);
+		this.syncButtonStates(this.defaultMode);
 	}
 
 	/**
@@ -407,12 +454,12 @@ export class MaplibreTerradrawControl implements IControl {
 					this.resetActiveMode();
 
 					if (!isActive) {
+						// Use the original terradraw instance to avoid triggering proxy twice
+						// The proxy will be triggered when users call getTerraDrawInstance().setMode()
 						this.terradraw.setMode(mode);
-						btn.classList.add('active');
+						this.syncButtonStates(mode);
 					}
 					this.dispatchEvent('mode-changed');
-					this.toggleDeleteSelectionButton();
-					this.toggleButtonsWhenNoFeature();
 				});
 			}
 		}

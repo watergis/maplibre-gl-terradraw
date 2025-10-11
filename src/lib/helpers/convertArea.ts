@@ -13,7 +13,7 @@ import type {
  * @param unit area unit either metric or imperial
  * @param forceUnit Default is `auto`. If `auto` is set, unit is converted depending on the value and selection of area unit. If a specific unit is specified, it returns the value always the same. If a selected unit is not the same type of unit either metric of imperial, it will be ignored, and `auto` will be applied.
  * @param measureUnitSymbols Optional parameter to provide custom unit symbols
- * @returns result object with area and unit properties adter unit conversion
+ * @returns result object with area and unit properties after unit conversion
  */
 export const convertArea = (
 	value: number,

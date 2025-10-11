@@ -44,18 +44,27 @@ describe('queryElevationByPoint', () => {
 		expect(result).toEqual(nonPointFeature);
 	});
 
-	it('should add elevation property if computeElevation is true and map instance is provided', () => {
-		const result = queryElevationByPoint(mockFeature, mockMap, true);
+	it('should add elevation and elevationUnit properties if computeElevation is true and map instance is provided (metric)', () => {
+		const result = queryElevationByPoint(mockFeature, mockMap, true, undefined, 'metric');
 		expect(result.properties).toHaveProperty('elevation', 100);
+		expect(result.properties).toHaveProperty('elevationUnit', 'm');
+	});
+
+	it('should add elevation and elevationUnit properties if computeElevation is true and map instance is provided (imperial)', () => {
+		const result = queryElevationByPoint(mockFeature, mockMap, true, undefined, 'imperial');
+		expect(result.properties.elevation).toBeCloseTo(328.084, 3);
+		expect(result.properties).toHaveProperty('elevationUnit', 'ft');
 	});
 
 	it('should not add elevation property if computeElevation is false', () => {
 		const result = queryElevationByPoint(mockFeature, mockMap, false, undefined);
 		expect(result.properties).not.toHaveProperty('elevation');
+		expect(result.properties).not.toHaveProperty('elevationUnit');
 	});
 
 	it('should add elevation property if terrainSource is undefined and computeElevation is true', () => {
 		const result = queryElevationByPoint(mockFeature, mockMap, true, undefined);
 		expect(result.properties).toHaveProperty('elevation');
+		expect(result.properties).toHaveProperty('elevationUnit');
 	});
 });

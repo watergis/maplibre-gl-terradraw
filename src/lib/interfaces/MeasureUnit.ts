@@ -35,9 +35,24 @@ export type ImperialDistanceUnit = 'mile' | 'foot' | 'inch';
 export type forceDistanceUnitType = 'auto' | MetricDistanceUnit | ImperialDistanceUnit;
 
 /**
+ * Elevation unit types for metric
+ */
+export type MetricElevationUnit = 'meter';
+
+/**
+ * Elevation unit types for imperial
+ */
+export type ImperialElevationUnit = 'foot';
+
+/**
  * Type definition for measure unit symbols
  */
 export type MeasureUnitSymbolType = Record<
-	MetricDistanceUnit | ImperialDistanceUnit | MetricAreaUnit | ImperialAreaUnit,
+	| MetricDistanceUnit
+	| ImperialDistanceUnit
+	| MetricAreaUnit
+	| ImperialAreaUnit
+	| MetricElevationUnit
+	| ImperialElevationUnit,
 	string
 >;

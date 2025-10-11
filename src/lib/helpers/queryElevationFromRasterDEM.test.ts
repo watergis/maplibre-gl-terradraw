@@ -53,14 +53,16 @@ describe('queryElevationFromRasterDEM', () => {
 		expect(result[0]).toEqual(mockPoints[0]);
 	});
 
-	it('should add elevation property to point features from terrarium when terrainSource is provided', async () => {
-		const result = await queryElevationFromRasterDEM(mockPoints, terrarium);
+	it('should add elevation and elevationUnit properties to point features from terrarium when terrainSource is provided (metric)', async () => {
+		const result = await queryElevationFromRasterDEM(mockPoints, terrarium, undefined, undefined, 'metric');
 		expect(result[0].properties).toHaveProperty('elevation', 150);
+		expect(result[0].properties).toHaveProperty('elevationUnit', 'm');
 	});
 
-	it('should add elevation property to point features from terrainrgb when terrainSource is provided', async () => {
-		const result = await queryElevationFromRasterDEM(mockPoints, terrainRGB);
-		expect(result[0].properties).toHaveProperty('elevation', 150);
+	it('should add elevation and elevationUnit properties to point features from terrainrgb when terrainSource is provided (imperial)', async () => {
+		const result = await queryElevationFromRasterDEM(mockPoints, terrainRGB, undefined, undefined, 'imperial');
+		expect(result[0].properties.elevation).toBeCloseTo(492.126, 3); // 150 meters to feet
+		expect(result[0].properties).toHaveProperty('elevationUnit', 'ft');
 	});
 
 	it('should not modify non-Point features', async () => {

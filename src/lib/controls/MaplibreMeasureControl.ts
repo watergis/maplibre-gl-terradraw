@@ -22,6 +22,7 @@ import {
 	calcArea,
 	calcDistance,
 	cleanMaplibreStyle,
+	convertElevation,
 	debounce,
 	MemoryCache,
 	queryElevationByPoint,
@@ -46,7 +47,10 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	set measureUnitType(value: MeasureUnitType) {
 		const isSame = this.measureOptions.measureUnitType === value;
 		this.measureOptions.measureUnitType = value;
-		if (!isSame) this.recalc();
+		if (!isSame) {
+			this.recalculateElevationUnits();
+			this.recalc();
+		}
 	}
 
 	/**
@@ -702,7 +706,9 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 							points as GeoJSONStoreFeatures[],
 							this.measureOptions.terrainSource,
 							this.measureOptions.elevationCacheConfig,
-							this.elevationCache
+							this.elevationCache,
+							this.measureUnitType,
+							this.measureUnitSymbols
 						);
 
 						this.replaceGeoJSONSource(
@@ -739,7 +745,9 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 							points as GeoJSONStoreFeatures[],
 							this.measureOptions.terrainSource,
 							this.measureOptions.elevationCacheConfig,
-							this.elevationCache
+							this.elevationCache,
+							this.measureUnitType,
+							this.measureUnitSymbols
 						);
 						this.replaceGeoJSONSource(
 							updatedFeatures,
@@ -751,6 +759,57 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			}
 		}
 	};
+
+	/**
+	 * Recalculate elevation units for existing features without re-querying elevation data
+	 * This is called when measureUnitType changes to convert elevation values between metric and imperial
+	 */
+	private recalculateElevationUnits() {
+		if (!this.map) return;
+		
+		// Update point elevation units
+		const pointSource = (this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).source;
+		this.updateElevationUnitsInSource(pointSource);
+		
+		// Update line elevation units  
+		const lineSource = (this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source;
+		this.updateElevationUnitsInSource(lineSource);
+	}
+
+	/**
+	 * Update elevation units in a specific GeoJSON source
+	 */
+	private updateElevationUnitsInSource(sourceName: string) {
+		if (!this.map) return;
+		
+		const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[sourceName] as GeoJSONSourceSpecification;
+		if (geojsonSource && typeof geojsonSource.data !== 'string' && geojsonSource.data.type === 'FeatureCollection') {
+			let updated = false;
+			
+			for (const feature of geojsonSource.data.features) {
+				if (feature.properties?.elevation !== undefined) {
+					// Convert the elevation from current display value back to meters, then to new unit
+					const currentUnit = feature.properties.elevationUnit;
+					let elevationInMeters = feature.properties.elevation;
+					
+					// Convert to meters if currently in feet
+					if (currentUnit === 'ft' || currentUnit === 'foot') {
+						elevationInMeters = elevationInMeters / 3.28084;
+					}
+					
+					// Convert to new unit
+					const { elevation, unit } = convertElevation(elevationInMeters, this.measureUnitType, this.measureUnitSymbols);
+					feature.properties.elevation = elevation;
+					feature.properties.elevationUnit = unit;
+					updated = true;
+				}
+			}
+			
+			if (updated) {
+				(this.map.getSource(sourceName) as GeoJSONSource).setData(geojsonSource.data);
+			}
+		}
+	}
 
 	/**
 	 * measure polygon area for given feature ID
@@ -981,7 +1040,9 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					feature,
 					this.map,
 					this.computeElevation,
-					this.measureOptions.terrainSource
+					this.measureOptions.terrainSource,
+					this.measureUnitType,
+					this.measureUnitSymbols
 				);
 
 				// add elevation label feature if computeElevation is only enabled.
@@ -1092,7 +1153,9 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					feature,
 					this.map,
 					this.computeElevation,
-					this.measureOptions.terrainSource
+					this.measureOptions.terrainSource,
+					this.measureUnitType,
+					this.measureUnitSymbols
 				);
 			}
 		}

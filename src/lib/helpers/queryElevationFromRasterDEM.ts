@@ -1,7 +1,9 @@
-import type { ElevationCacheConfig, TerrainSource } from '../interfaces';
+import type { ElevationCacheConfig, TerrainSource, MeasureUnitType, MeasureUnitSymbolType } from '../interfaces';
 import { TerrainRGB, Terrarium } from '@watergis/terrain-rgb';
 import type { GeoJSONStoreFeatures } from 'terra-draw';
 import { MemoryCache, type CacheInterface } from './memoryCache';
+import { convertElevation } from './convertElevation';
+import { defaultMeasureUnitSymbols } from '../constants';
 
 /**
  * Convert coordinates to string key
@@ -17,13 +19,20 @@ const coordinateToKey = (coordinates: number[], precision = 8): string => {
 /**
  * Query elvation for point features from Raster DEM
  * @param points Point GeoJSON features
+ * @param terrainDource terrain source for computing elevation from raster DEM
+ * @param cacheConfig cache configuration for elevation values
+ * @param cacheInstance optional cache instance
+ * @param measureUnitType The unit type for elevation display (metric or imperial)
+ * @param measureUnitSymbols Optional custom unit symbols
  * @returns points features after adding elevation property
  */
 export const queryElevationFromRasterDEM = async (
 	points: GeoJSONStoreFeatures[],
 	terrainDource?: TerrainSource,
 	cacheConfig?: ElevationCacheConfig,
-	cacheInstance?: CacheInterface<number>
+	cacheInstance?: CacheInterface<number>,
+	measureUnitType: MeasureUnitType = 'metric',
+	measureUnitSymbols: MeasureUnitSymbolType = defaultMeasureUnitSymbols
 ) => {
 	const promises: Promise<GeoJSONStoreFeatures>[] = [];
 
@@ -68,7 +77,9 @@ export const queryElevationFromRasterDEM = async (
 					const cachedElevation = cache.get(cacheKey);
 					if (cachedElevation !== undefined) {
 						if (!isNaN(cachedElevation)) {
-							point.properties.elevation = cachedElevation;
+							const { elevation, unit } = convertElevation(cachedElevation, measureUnitType, measureUnitSymbols);
+							point.properties.elevation = elevation;
+							point.properties.elevationUnit = unit;
 						}
 						resolve(point);
 						return;
@@ -78,12 +89,14 @@ export const queryElevationFromRasterDEM = async (
 				if (terrainInstance) {
 					terrainInstance
 						.getElevation(point.geometry.coordinates as number[], maxzoom)
-						.then((elevation) => {
-							if (elevation !== undefined && elevation !== null && typeof elevation === 'number') {
+						.then((elevationInMeters) => {
+							if (elevationInMeters !== undefined && elevationInMeters !== null && typeof elevationInMeters === 'number') {
 								if (cache) {
-									cache.set(cacheKey, elevation);
+									cache.set(cacheKey, elevationInMeters);
 								}
+								const { elevation, unit } = convertElevation(elevationInMeters, measureUnitType, measureUnitSymbols);
 								point.properties.elevation = elevation;
+								point.properties.elevationUnit = unit;
 							}
 							resolve(point);
 						})

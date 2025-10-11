@@ -2,6 +2,7 @@ export * from './calcArea';
 export * from './calcDistance';
 export * from './convertArea';
 export * from './convertDistance';
+export * from './convertElevation';
 export * from './capitalize';
 export * from './cleanMaplibreStyle';
 export * from './debounce';

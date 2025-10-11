@@ -260,7 +260,13 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 			'text-field': [
 				'case',
 				['all', ['has', 'elevation'], ['>', ['get', 'elevation'], 0]],
-				['concat', 'Alt. ', ['to-string', ['floor', ['get', 'elevation']]], ' m'],
+				[
+					'concat',
+					'Alt. ',
+					['to-string', ['floor', ['get', 'elevation']]],
+					' ',
+					['case', ['has', 'elevationUnit'], ['get', 'elevationUnit'], 'm']
+				],
 				''
 			],
 			'symbol-placement': 'point',
@@ -311,7 +317,13 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 				[
 					'case',
 					['all', ['has', 'elevation'], ['>', ['get', 'elevation'], 0]],
-					['concat', '\nAlt. ', ['to-string', ['floor', ['get', 'elevation']]], ' m'],
+					[
+						'concat',
+						'\nAlt. ',
+						['to-string', ['floor', ['get', 'elevation']]],
+						' ',
+						['case', ['has', 'elevationUnit'], ['get', 'elevationUnit'], 'm']
+					],
 					''
 				]
 			],

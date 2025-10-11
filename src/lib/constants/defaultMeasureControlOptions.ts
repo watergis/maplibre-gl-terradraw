@@ -265,7 +265,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 					'Alt. ',
 					['to-string', ['floor', ['get', 'elevation']]],
 					' ',
-					['case', ['has', 'elevationUnit'], ['get', 'elevationUnit'], 'm']
+					['get', 'elevationUnit']
 				],
 				''
 			],
@@ -322,7 +322,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 						'\nAlt. ',
 						['to-string', ['floor', ['get', 'elevation']]],
 						' ',
-						['case', ['has', 'elevationUnit'], ['get', 'elevationUnit'], 'm']
+						['get', 'elevationUnit']
 					],
 					''
 				]

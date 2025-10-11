@@ -48,7 +48,9 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		const isSame = this.measureOptions.measureUnitType === value;
 		this.measureOptions.measureUnitType = value;
 		if (!isSame) {
-			this.recalculateElevationUnits();
+			if (this.computeElevation) {
+				this.recalculateElevationUnits();
+			}
 			this.recalc();
 		}
 	}

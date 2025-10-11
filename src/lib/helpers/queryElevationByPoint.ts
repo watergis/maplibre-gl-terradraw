@@ -26,16 +26,43 @@ export const queryElevationByPoint = (
 
 	const coordinates: number[] = (feature as GeoJSONStoreFeatures).geometry.coordinates as number[];
 
-	if (computeElevation === true && terrainSource === undefined) {
-		const elevationInMeters = map?.queryTerrainElevation(coordinates as LngLatLike);
-		if (elevationInMeters) {
-			const { elevation, unit } = convertElevation(
-				elevationInMeters,
-				measureUnitType,
-				measureUnitSymbols
-			);
-			feature.properties.elevation = elevation;
-			feature.properties.elevationUnit = unit;
+	if (computeElevation === true) {
+		if (terrainSource === undefined) {
+			// Use maplibre terrain API when no terrain source is provided
+			const elevationInMeters = map?.queryTerrainElevation(coordinates as LngLatLike);
+			if (elevationInMeters) {
+				const { elevation, unit } = convertElevation(
+					elevationInMeters,
+					measureUnitType,
+					measureUnitSymbols
+				);
+				feature.properties.elevation = elevation;
+				feature.properties.elevationUnit = unit;
+			}
+		} else {
+			// When terrain source is provided, elevation will be set by async functions
+			// But we need to ensure unit is set properly if elevation already exists
+			if (
+				feature.properties.elevation !== undefined &&
+				typeof feature.properties.elevation === 'number'
+			) {
+				// Convert existing elevation value to appropriate unit
+				let elevationInMeters = feature.properties.elevation;
+				const currentUnit = feature.properties.elevationUnit;
+
+				// Convert to meters if currently in feet
+				if (currentUnit === 'ft' || currentUnit === 'foot') {
+					elevationInMeters = elevationInMeters / 3.28084;
+				}
+
+				const { elevation, unit } = convertElevation(
+					elevationInMeters,
+					measureUnitType,
+					measureUnitSymbols
+				);
+				feature.properties.elevation = elevation;
+				feature.properties.elevationUnit = unit;
+			}
 		}
 	}
 	return feature;

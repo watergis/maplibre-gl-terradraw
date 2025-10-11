@@ -1,4 +1,9 @@
-import type { ElevationCacheConfig, TerrainSource, MeasureUnitType, MeasureUnitSymbolType } from '../interfaces';
+import type {
+	ElevationCacheConfig,
+	TerrainSource,
+	MeasureUnitType,
+	MeasureUnitSymbolType
+} from '../interfaces';
 import { TerrainRGB, Terrarium } from '@watergis/terrain-rgb';
 import type { GeoJSONStoreFeatures } from 'terra-draw';
 import { MemoryCache, type CacheInterface } from './memoryCache';
@@ -77,7 +82,11 @@ export const queryElevationFromRasterDEM = async (
 					const cachedElevation = cache.get(cacheKey);
 					if (cachedElevation !== undefined) {
 						if (!isNaN(cachedElevation)) {
-							const { elevation, unit } = convertElevation(cachedElevation, measureUnitType, measureUnitSymbols);
+							const { elevation, unit } = convertElevation(
+								cachedElevation,
+								measureUnitType,
+								measureUnitSymbols
+							);
 							point.properties.elevation = elevation;
 							point.properties.elevationUnit = unit;
 						}
@@ -90,11 +99,19 @@ export const queryElevationFromRasterDEM = async (
 					terrainInstance
 						.getElevation(point.geometry.coordinates as number[], maxzoom)
 						.then((elevationInMeters) => {
-							if (elevationInMeters !== undefined && elevationInMeters !== null && typeof elevationInMeters === 'number') {
+							if (
+								elevationInMeters !== undefined &&
+								elevationInMeters !== null &&
+								typeof elevationInMeters === 'number'
+							) {
 								if (cache) {
 									cache.set(cacheKey, elevationInMeters);
 								}
-								const { elevation, unit } = convertElevation(elevationInMeters, measureUnitType, measureUnitSymbols);
+								const { elevation, unit } = convertElevation(
+									elevationInMeters,
+									measureUnitType,
+									measureUnitSymbols
+								);
 								point.properties.elevation = elevation;
 								point.properties.elevationUnit = unit;
 							}

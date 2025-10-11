@@ -29,7 +29,11 @@ export const queryElevationByPoint = (
 	if (computeElevation === true && terrainSource === undefined) {
 		const elevationInMeters = map?.queryTerrainElevation(coordinates as LngLatLike);
 		if (elevationInMeters) {
-			const { elevation, unit } = convertElevation(elevationInMeters, measureUnitType, measureUnitSymbols);
+			const { elevation, unit } = convertElevation(
+				elevationInMeters,
+				measureUnitType,
+				measureUnitSymbols
+			);
 			feature.properties.elevation = elevation;
 			feature.properties.elevationUnit = unit;
 		}

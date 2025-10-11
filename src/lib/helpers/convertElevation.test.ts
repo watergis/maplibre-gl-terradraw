@@ -21,10 +21,10 @@ describe('convertElevation', () => {
 			meter: 'meters',
 			foot: 'feet'
 		};
-		
+
 		const metricResult = convertElevation(50, 'metric', customSymbols);
 		expect(metricResult.unit).toBe('meters');
-		
+
 		const imperialResult = convertElevation(50, 'imperial', customSymbols);
 		expect(imperialResult.unit).toBe('feet');
 	});

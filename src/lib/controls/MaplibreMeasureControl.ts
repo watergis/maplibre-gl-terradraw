@@ -766,12 +766,13 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 */
 	private recalculateElevationUnits() {
 		if (!this.map) return;
-		
+
 		// Update point elevation units
-		const pointSource = (this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).source;
+		const pointSource = (this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification)
+			.source;
 		this.updateElevationUnitsInSource(pointSource);
-		
-		// Update line elevation units  
+
+		// Update line elevation units
 		const lineSource = (this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source;
 		this.updateElevationUnitsInSource(lineSource);
 	}
@@ -781,30 +782,40 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 */
 	private updateElevationUnitsInSource(sourceName: string) {
 		if (!this.map) return;
-		
-		const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[sourceName] as GeoJSONSourceSpecification;
-		if (geojsonSource && typeof geojsonSource.data !== 'string' && geojsonSource.data.type === 'FeatureCollection') {
+
+		const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
+			sourceName
+		] as GeoJSONSourceSpecification;
+		if (
+			geojsonSource &&
+			typeof geojsonSource.data !== 'string' &&
+			geojsonSource.data.type === 'FeatureCollection'
+		) {
 			let updated = false;
-			
+
 			for (const feature of geojsonSource.data.features) {
 				if (feature.properties?.elevation !== undefined) {
 					// Convert the elevation from current display value back to meters, then to new unit
 					const currentUnit = feature.properties.elevationUnit;
 					let elevationInMeters = feature.properties.elevation;
-					
+
 					// Convert to meters if currently in feet
 					if (currentUnit === 'ft' || currentUnit === 'foot') {
 						elevationInMeters = elevationInMeters / 3.28084;
 					}
-					
+
 					// Convert to new unit
-					const { elevation, unit } = convertElevation(elevationInMeters, this.measureUnitType, this.measureUnitSymbols);
+					const { elevation, unit } = convertElevation(
+						elevationInMeters,
+						this.measureUnitType,
+						this.measureUnitSymbols
+					);
 					feature.properties.elevation = elevation;
 					feature.properties.elevationUnit = unit;
 					updated = true;
 				}
 			}
-			
+
 			if (updated) {
 				(this.map.getSource(sourceName) as GeoJSONSource).setData(geojsonSource.data);
 			}

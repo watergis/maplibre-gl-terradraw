@@ -48,6 +48,11 @@ export type ImperialElevationUnit = 'foot';
  * Type definition for measure unit symbols
  */
 export type MeasureUnitSymbolType = Record<
-	MetricDistanceUnit | ImperialDistanceUnit | MetricAreaUnit | ImperialAreaUnit | MetricElevationUnit | ImperialElevationUnit,
+	| MetricDistanceUnit
+	| ImperialDistanceUnit
+	| MetricAreaUnit
+	| ImperialAreaUnit
+	| MetricElevationUnit
+	| ImperialElevationUnit,
 	string
 >;

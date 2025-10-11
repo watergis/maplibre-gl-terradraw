@@ -66,3 +66,86 @@ describe('convertDistance with imperial unit', () => {
 		expect(convertDistance(0.0001, 'imperial', 'auto')).toEqual({ distance: 6.336, unit: 'in' });
 	});
 });
+
+describe('convertDistance with custom unit symbols (measureUnitSymbols)', () => {
+	const customSymbols = {
+		kilometer: 'kilometre',
+		meter: 'metre',
+		centimeter: 'centimetre',
+		mile: 'miles',
+		foot: 'feet',
+		inch: 'inches',
+		'square meters': 'm²',
+		'square kilometers': 'km²',
+		ares: 'a',
+		hectares: 'ha',
+		'square feet': 'ft²',
+		'square yards': 'yd²',
+		acres: 'acres',
+		'square miles': 'mi²'
+	};
+
+	describe('Metric units with custom symbols', () => {
+		it('should use custom symbols in auto mode', () => {
+			expect(convertDistance(1, 'metric', 'auto', customSymbols)).toEqual({
+				distance: 1,
+				unit: 'kilometre'
+			});
+			expect(convertDistance(0.5, 'metric', 'auto', customSymbols)).toEqual({
+				distance: 500,
+				unit: 'metre'
+			});
+			expect(convertDistance(0.0005, 'metric', 'auto', customSymbols)).toEqual({
+				distance: 50,
+				unit: 'centimetre'
+			});
+		});
+
+		it('should use custom symbols when forceUnit is specified', () => {
+			expect(convertDistance(1, 'metric', 'kilometer', customSymbols)).toEqual({
+				distance: 1,
+				unit: 'kilometre'
+			});
+			expect(convertDistance(1, 'metric', 'meter', customSymbols)).toEqual({
+				distance: 1000,
+				unit: 'metre'
+			});
+			expect(convertDistance(1, 'metric', 'centimeter', customSymbols)).toEqual({
+				distance: 100000,
+				unit: 'centimetre'
+			});
+		});
+	});
+
+	describe('Imperial units with custom symbols', () => {
+		it('should use custom symbols in auto mode', () => {
+			expect(convertDistance(1, 'imperial', 'auto', customSymbols)).toEqual({
+				distance: 1,
+				unit: 'miles'
+			});
+			expect(convertDistance(0.5, 'imperial', 'auto', customSymbols)).toEqual({
+				distance: 2640,
+				unit: 'feet'
+			});
+			expect(convertDistance(0.0001, 'imperial', 'auto', customSymbols)).toEqual({
+				distance: 6.336,
+				unit: 'inches'
+			});
+		});
+
+		it('should use custom symbols when forceUnit is specified', () => {
+			expect(convertDistance(1, 'imperial', 'mile', customSymbols)).toEqual({
+				distance: 1,
+				unit: 'miles'
+			});
+			expect(convertDistance(1, 'imperial', 'foot', customSymbols)).toEqual({
+				distance: 5280,
+				unit: 'feet'
+			});
+			expect(convertDistance(1, 'imperial', 'inch', customSymbols)).toEqual({
+				distance: 63360,
+				unit: 'inches'
+			});
+		});
+	});
+});

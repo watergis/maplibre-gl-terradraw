@@ -534,18 +534,18 @@
 </g>
 <text text-anchor="middle" x="423.52" y="-482.41" font-family="Helvetica,sans-Serif" font-size="9.00" fill="orange">no&#45;circular</text>
 </g>
-<!-- src/lib/helpers/convertAreaUnit.ts -->
+<!-- src/lib/helpers/convertArea.ts -->
 <g id="node20" class="node">
-<title>src/lib/helpers/convertAreaUnit.ts</title>
-<g id="a_node20"><a xlink:href="src/lib/helpers/convertAreaUnit.ts" xlink:title="convertAreaUnit.ts">
-<path fill="#ddfeff" stroke="black" d="M702.08,-421.88C702.08,-421.88 622.92,-421.88 622.92,-421.88 619.96,-421.88 617,-418.92 617,-415.96 617,-415.96 617,-410.04 617,-410.04 617,-407.08 619.96,-404.12 622.92,-404.12 622.92,-404.12 702.08,-404.12 702.08,-404.12 705.04,-404.12 708,-407.08 708,-410.04 708,-410.04 708,-415.96 708,-415.96 708,-418.92 705.04,-421.88 702.08,-421.88"/>
-<text text-anchor="start" x="625" y="-409.32" font-family="Helvetica,sans-Serif" font-size="9.00">convertAreaUnit.ts</text>
+<title>src/lib/helpers/convertArea.ts</title>
+<g id="a_node20"><a xlink:href="src/lib/helpers/convertArea.ts" xlink:title="convertArea.ts">
+<path fill="#ddfeff" stroke="black" d="M693.83,-421.88C693.83,-421.88 631.17,-421.88 631.17,-421.88 628.21,-421.88 625.25,-418.92 625.25,-415.96 625.25,-415.96 625.25,-410.04 625.25,-410.04 625.25,-407.08 628.21,-404.12 631.17,-404.12 631.17,-404.12 693.83,-404.12 693.83,-404.12 696.79,-404.12 699.75,-407.08 699.75,-410.04 699.75,-410.04 699.75,-415.96 699.75,-415.96 699.75,-418.92 696.79,-421.88 693.83,-421.88"/>
+<text text-anchor="start" x="633.25" y="-409.32" font-family="Helvetica,sans-Serif" font-size="9.00">convertArea.ts</text>
 </a>
 </g>
 </g>
-<!-- src/lib/helpers/index.ts&#45;&gt;src/lib/helpers/convertAreaUnit.ts -->
+<!-- src/lib/helpers/index.ts&#45;&gt;src/lib/helpers/convertArea.ts -->
 <g id="edge40" class="edge">
-<title>src/lib/helpers/index.ts&#45;&gt;src/lib/helpers/convertAreaUnit.ts</title>
+<title>src/lib/helpers/index.ts&#45;&gt;src/lib/helpers/convertArea.ts</title>
 <g id="a_edge40"><a xlink:title="no&#45;circular">
 <path fill="none" stroke="orange" stroke-width="2" d="M394.49,-380.39C410.34,-380.38 429.62,-383.39 441.25,-396 453.96,-409.78 435.38,-467.39 449.25,-480 461.97,-491.57 588.38,-487.18 604,-480 622.72,-471.4 637.63,-453.36 647.57,-438.17"/>
 <polygon fill="orange" stroke="orange" stroke-width="2" points="654.25,-430.97 655.49,-424.73 650.64,-428.84 654.25,-430.97"/>
@@ -849,9 +849,9 @@
 <path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M557.55,-593.95C571.71,-591.35 588.82,-587.9 604,-584 782.12,-538.2 990.3,-465.13 1069.02,-436.78"/>
 <polygon fill="none" stroke="#000000" stroke-opacity="0.200000" points="1069.44,-438.86 1074.37,-434.85 1068.01,-434.91 1069.44,-438.86"/>
 </g>
-<!-- src/lib/helpers/calcArea.ts&#45;&gt;src/lib/helpers/convertAreaUnit.ts -->
+<!-- src/lib/helpers/calcArea.ts&#45;&gt;src/lib/helpers/convertArea.ts -->
 <g id="edge28" class="edge">
-<title>src/lib/helpers/calcArea.ts&#45;&gt;src/lib/helpers/convertAreaUnit.ts</title>
+<title>src/lib/helpers/calcArea.ts&#45;&gt;src/lib/helpers/convertArea.ts</title>
 <g id="a_edge28"><a xlink:title="no&#45;circular">
 <path fill="none" stroke="orange" stroke-width="2" d="M557.56,-599.96C573.09,-598.92 591.4,-595.05 604,-584 645.92,-547.22 657.34,-478.88 660.41,-440.67"/>
 <polygon fill="orange" stroke="orange" stroke-width="2" points="663.03,-431.26 661.26,-425.15 658.84,-431.03 663.03,-431.26"/>
@@ -861,29 +861,29 @@
 </g>
 <text text-anchor="middle" x="621.38" y="-514.84" font-family="Helvetica,sans-Serif" font-size="9.00" fill="orange">no&#45;circular</text>
 </g>
-<!-- src/lib/helpers/convertAreaUnit.ts&#45;&gt;src/lib/interfaces/index.ts -->
+<!-- src/lib/helpers/convertArea.ts&#45;&gt;src/lib/interfaces/index.ts -->
 <g id="edge33" class="edge">
-<title>src/lib/helpers/convertAreaUnit.ts&#45;&gt;src/lib/interfaces/index.ts</title>
+<title>src/lib/helpers/convertArea.ts&#45;&gt;src/lib/interfaces/index.ts</title>
 <g id="a_edge33"><a xlink:title="no&#45;circular">
-<path fill="none" stroke="orange" d="M705.36,-403.67C721.51,-400.07 739.96,-395.96 756.13,-392.36"/>
-<polygon fill="orange" stroke="orange" points="765.08,-392.51 770.48,-389.16 764.17,-388.42 765.08,-392.51"/>
-<polyline fill="none" stroke="orange" points="764.14,-390.57 761.21,-391.23"/>
-<ellipse fill="none" stroke="orange" cx="758.38" cy="-391.86" rx="2.4" ry="2.4"/>
+<path fill="none" stroke="orange" d="M699.93,-404.88C717.25,-401.02 738.05,-396.39 756.05,-392.38"/>
+<polygon fill="orange" stroke="orange" points="765.03,-392.53 770.43,-389.17 764.12,-388.43 765.03,-392.53"/>
+<polyline fill="none" stroke="orange" points="764.09,-390.58 761.16,-391.24"/>
+<ellipse fill="none" stroke="orange" cx="758.33" cy="-391.87" rx="2.4" ry="2.4"/>
 </a>
 </g>
-<text text-anchor="middle" x="760.18" y="-397.5" font-family="Helvetica,sans-Serif" font-size="9.00" fill="orange">no&#45;circular</text>
+<text text-anchor="middle" x="757.6" y="-398.08" font-family="Helvetica,sans-Serif" font-size="9.00" fill="orange">no&#45;circular</text>
 </g>
-<!-- src/lib/helpers/convertAreaUnit.ts&#45;&gt;src/lib/constants/index.ts -->
+<!-- src/lib/helpers/convertArea.ts&#45;&gt;src/lib/constants/index.ts -->
 <g id="edge32" class="edge">
-<title>src/lib/helpers/convertAreaUnit.ts&#45;&gt;src/lib/constants/index.ts</title>
+<title>src/lib/helpers/convertArea.ts&#45;&gt;src/lib/constants/index.ts</title>
 <g id="a_edge32"><a xlink:title="no&#45;circular">
-<path fill="none" stroke="orange" stroke-width="2" d="M620.88,-403.72C616.41,-400.81 612.69,-396.99 610.5,-392 604.57,-378.46 606.46,-273.21 610.5,-259 616.84,-236.71 630.98,-214.55 642.91,-198.59"/>
+<path fill="none" stroke="orange" stroke-width="2" d="M624.88,-406C618.65,-402.89 613.31,-398.42 610.5,-392 604.57,-378.46 606.46,-273.21 610.5,-259 616.84,-236.71 630.98,-214.55 642.91,-198.59"/>
 <polygon fill="orange" stroke="orange" stroke-width="2" points="650.55,-192.36 652.64,-186.36 647.26,-189.75 650.55,-192.36"/>
 <polyline fill="none" stroke="orange" stroke-width="2" points="648.28,-191.84 646.41,-194.19"/>
 <ellipse fill="none" stroke="orange" stroke-width="2" cx="644.29" cy="-196.85" rx="2.4" ry="2.4"/>
 </a>
 </g>
-<text text-anchor="middle" x="629.71" y="-275.31" font-family="Helvetica,sans-Serif" font-size="9.00" fill="orange">no&#45;circular</text>
+<text text-anchor="middle" x="585.78" y="-284.56" font-family="Helvetica,sans-Serif" font-size="9.00" fill="orange">no&#45;circular</text>
 </g>
 <!-- src/lib/helpers/calcDistance.ts&#45;&gt;src/lib/interfaces/index.ts -->
 <g id="edge29" class="edge">

@@ -1,6 +1,6 @@
 export * from './calcArea';
 export * from './calcDistance';
-export { convertArea } from './convertArea';
+export * from './convertArea';
 export * from './convertDistance';
 export * from './capitalize';
 export * from './cleanMaplibreStyle';

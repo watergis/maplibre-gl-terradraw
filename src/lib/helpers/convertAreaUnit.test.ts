@@ -117,6 +117,101 @@ describe('convertAreaUnit', () => {
 		});
 	});
 
+	describe('Custom unit symbols (measureUnitSymbols)', () => {
+		const customSymbols = {
+			kilometer: 'km',
+			meter: 'm',
+			centimeter: 'cm',
+			mile: 'mi',
+			foot: 'ft',
+			inch: 'in',
+			'square meters': 'sqm',
+			'square kilometers': 'sqkm',
+			ares: 'are',
+			hectares: 'hect',
+			'square feet': 'sqft',
+			'square yards': 'sqyd',
+			acres: 'ac',
+			'square miles': 'sqmi'
+		};
+
+		it('should use custom symbols for metric units in auto mode', () => {
+			expect(convertAreaUnit(50, 'metric', 'auto', customSymbols)).toEqual({
+				area: 50,
+				unit: 'sqm'
+			});
+			expect(convertAreaUnit(5000, 'metric', 'auto', customSymbols)).toEqual({
+				area: 50,
+				unit: 'are'
+			});
+			expect(convertAreaUnit(20000, 'metric', 'auto', customSymbols)).toEqual({
+				area: 2,
+				unit: 'hect'
+			});
+			expect(convertAreaUnit(5000000, 'metric', 'auto', customSymbols)).toEqual({
+				area: 5,
+				unit: 'sqkm'
+			});
+		});
+
+		it('should use custom symbols for imperial units in auto mode', () => {
+			expect(convertAreaUnit(0.5, 'imperial', 'auto', customSymbols)).toEqual({
+				area: 5.381955208354861,
+				unit: 'sqft'
+			});
+			expect(convertAreaUnit(1, 'imperial', 'auto', customSymbols)).toEqual({
+				area: 1.1959900463010802,
+				unit: 'sqyd'
+			});
+			expect(convertAreaUnit(8093.712, 'imperial', 'auto', customSymbols)).toEqual({
+				area: 2,
+				unit: 'ac'
+			});
+			expect(convertAreaUnit(5179976.22, 'imperial', 'auto', customSymbols)).toEqual({
+				area: 2,
+				unit: 'sqmi'
+			});
+		});
+
+		it('should use custom symbols when forceUnit is specified for metric units', () => {
+			expect(convertAreaUnit(20000, 'metric', 'square meters', customSymbols)).toEqual({
+				area: 20000,
+				unit: 'sqm'
+			});
+			expect(convertAreaUnit(20000, 'metric', 'ares', customSymbols)).toEqual({
+				area: 200,
+				unit: 'are'
+			});
+			expect(convertAreaUnit(5000, 'metric', 'hectares', customSymbols)).toEqual({
+				area: 0.5,
+				unit: 'hect'
+			});
+			expect(convertAreaUnit(500000, 'metric', 'square kilometers', customSymbols)).toEqual({
+				area: 0.5,
+				unit: 'sqkm'
+			});
+		});
+
+		it('should use custom symbols when forceUnit is specified for imperial units', () => {
+			expect(convertAreaUnit(1, 'imperial', 'square feet', customSymbols)).toEqual({
+				area: 10.763910416709722,
+				unit: 'sqft'
+			});
+			expect(convertAreaUnit(10, 'imperial', 'square yards', customSymbols)).toEqual({
+				area: 11.959900463010802,
+				unit: 'sqyd'
+			});
+			expect(convertAreaUnit(8093.712, 'imperial', 'acres', customSymbols)).toEqual({
+				area: 2,
+				unit: 'ac'
+			});
+			expect(convertAreaUnit(2589988.11, 'imperial', 'square miles', customSymbols)).toEqual({
+				area: 1,
+				unit: 'sqmi'
+			});
+		});
+	});
+
 	describe('Edge cases', () => {
 		it('should handle zero values correctly', () => {
 			expect(convertAreaUnit(0, 'metric')).toEqual({ area: 0, unit: 'm²' });

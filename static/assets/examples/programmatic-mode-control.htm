@@ -93,19 +93,17 @@
 					<h3>External Mode Controls</h3>
 					<div class="button-group">
 						<button class="mode-button" data-mode="render" title="Switch to render mode">
-							📋 Render
+							Render
 						</button>
-						<button class="mode-button" data-mode="point" title="Draw points">⚫ Point</button>
-						<button class="mode-button" data-mode="linestring" title="Draw lines">📏 Line</button>
-						<button class="mode-button" data-mode="polygon" title="Draw polygons">
-							🔺 Polygon
-						</button>
+						<button class="mode-button" data-mode="point" title="Draw points">Point</button>
+						<button class="mode-button" data-mode="linestring" title="Draw lines">Line</button>
+						<button class="mode-button" data-mode="polygon" title="Draw polygons">Polygon</button>
 						<button class="mode-button" data-mode="rectangle" title="Draw rectangles">
-							▭ Rectangle
+							Rectangle
 						</button>
-						<button class="mode-button" data-mode="circle" title="Draw circles">⭕ Circle</button>
+						<button class="mode-button" data-mode="circle" title="Draw circles">Circle</button>
 						<button class="mode-button" data-mode="select" title="Select and edit features">
-							👆 Select
+							Select
 						</button>
 					</div>
 					<div class="info-text">
@@ -187,42 +185,6 @@
 				console.log(`Mode changed via plugin to: ${event.mode}`);
 				currentMode = event.mode;
 				updateExternalButtons(event.mode);
-			});
-
-			// Add some demo features after map loads
-			map.once('load', () => {
-				const drawInstance = drawControl.getTerraDrawInstance();
-				if (drawInstance) {
-					// Add a sample polygon to demonstrate selection
-					const sampleFeatures = [
-						{
-							id: 'demo-polygon',
-							type: 'Feature',
-							geometry: {
-								type: 'Polygon',
-								coordinates: [
-									[
-										[-74.01, 40.71],
-										[-74.005, 40.71],
-										[-74.005, 40.715],
-										[-74.01, 40.715],
-										[-74.01, 40.71]
-									]
-								]
-							},
-							properties: {
-								mode: 'polygon'
-							}
-						}
-					];
-
-					try {
-						drawInstance.addFeatures(sampleFeatures);
-						console.log('Added demo polygon - try selecting it!');
-					} catch (error) {
-						console.log('Demo features could not be added:', error);
-					}
-				}
 			});
 		</script>
 	</body>

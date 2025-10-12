@@ -330,7 +330,7 @@ export class MaplibreTerradrawControl implements IControl {
 	/**
 	 * Get the Terra Draw instance.
 	 * For the Terra Draw API, please refer to https://terradraw.io/#/api
-	 * @returns Terra Draw instance with wrapped setMode method that syncs button states
+	 * @returns Terra Draw instance with additional extensions for the plugin control
 	 */
 	public getTerraDrawInstance() {
 		if (!this.terradraw) return this.terradraw;

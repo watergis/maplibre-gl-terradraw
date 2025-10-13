@@ -295,11 +295,13 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				if (['linestring', 'freehand-linestring'].includes(mode) && geometryType === 'LineString') {
 					this.measureLine(id);
 					this.computeElevationByLineFeatureID(id);
-				} else if (mode === 'point' && geometryType === 'Point') {
+				} else if (['point', 'marker'].includes(mode) && geometryType === 'Point') {
 					this.measurePoint(id);
 					this.computeElevationByPointFeatureID(id);
 				} else if (
-					!['point', 'linestring', 'freehand-linestring', 'select', 'render'].includes(mode) &&
+					!['point', 'marker', 'linestring', 'freehand-linestring', 'select', 'render'].includes(
+						mode
+					) &&
 					geometryType === 'Polygon'
 				) {
 					this.measurePolygon(id);
@@ -355,7 +357,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		const lineModes = this.options.modes?.filter((m) =>
 			['linestring', 'freehand-linestring'].includes(m)
 		);
-		const pointMode = this.options.modes?.find((m) => m === 'point');
+		const pointMode = this.options.modes?.find((m) => ['point', 'marker'].includes(m));
 
 		if (pointMode) {
 			// add GeoJSON source for distance label
@@ -483,7 +485,8 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			}
 
 			const pointFeatures = snapshot.filter(
-				(f) => f.properties.mode === 'point' && f.geometry.type === 'Point'
+				(f) =>
+					['point', 'marker'].includes(f.properties.mode as string) && f.geometry.type === 'Point'
 			);
 			if (pointFeatures.length > 0) {
 				for (const f of pointFeatures) {
@@ -537,10 +540,12 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				const mode = feature.properties.mode as TerradrawMode;
 				if (['linestring', 'freehand-linestring'].includes(mode) && geometryType === 'LineString') {
 					this.measureLine(id);
-				} else if (mode === 'point' && geometryType === 'Point') {
+				} else if (['point', 'marker'].includes(mode) && geometryType === 'Point') {
 					this.measurePoint(id);
 				} else if (
-					!['point', 'linestring', 'freehand-linestring', 'select', 'render'].includes(mode) &&
+					!['point', 'marker', 'linestring', 'freehand-linestring', 'select', 'render'].includes(
+						mode
+					) &&
 					geometryType === 'Polygon'
 				) {
 					this.measurePolygon(id);
@@ -740,7 +745,10 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					geojsonSource.data.type === 'FeatureCollection'
 				) {
 					const points: GeoJSONStoreFeatures[] = geojsonSource.data.features.filter(
-						(f) => f.id === id && f.geometry.type === 'Point' && f.properties?.mode === 'point'
+						(f) =>
+							f.id === id &&
+							f.geometry.type === 'Point' &&
+							['point', 'marker'].includes(f.properties?.mode as string)
 					) as unknown as GeoJSONStoreFeatures[];
 					if (points && points.length > 0) {
 						const updatedFeatures = await queryElevationFromRasterDEM(

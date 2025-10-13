@@ -4,6 +4,7 @@ import {
 	TerraDrawFreehandMode,
 	TerraDrawFreehandLineStringMode,
 	TerraDrawLineStringMode,
+	TerraDrawMarkerMode,
 	TerraDrawPointMode,
 	TerraDrawPolygonMode,
 	TerraDrawRectangleMode,
@@ -22,6 +23,7 @@ export type TerradrawModeClass =
 	| TerraDrawFreehandMode
 	| TerraDrawFreehandLineStringMode
 	| TerraDrawLineStringMode
+	| TerraDrawMarkerMode
 	| TerraDrawPointMode
 	| TerraDrawPolygonMode
 	| TerraDrawRectangleMode

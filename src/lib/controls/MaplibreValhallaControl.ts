@@ -1123,8 +1123,16 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 		if (!this.terradraw) return fc;
 		if (!this.map) return fc;
 
-		const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
-			(this.controlOptions.isochronePolygonLayerSpec as FillLayerSpecification).source
+		// Check if map style and sources are available
+		const style = this.map.getStyle();
+		if (!style || !style.sources) return fc;
+
+		const sourceId = (this.controlOptions.isochronePolygonLayerSpec as FillLayerSpecification)
+			.source;
+		if (!sourceId || !style.sources[sourceId]) return fc;
+
+		const geojsonSource: GeoJSONSourceSpecification = style.sources[
+			sourceId
 		] as GeoJSONSourceSpecification;
 
 		const features: GeoJSONStoreFeatures[] = [];

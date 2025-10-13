@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>Programmatic Mode Control with Button Synchronization</title>
+		<meta
+			property="og:description"
+			content="Demonstrates how to control Terra Draw modes programmatically while keeping button states synchronized. External buttons can activate drawing modes and the plugin buttons will reflect the current state automatically."
+		/>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
+		<script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+			}
+			html,
+			body {
+				height: 100%;
+			}
+			#container {
+				display: flex;
+				flex-direction: column;
+				height: 100%;
+			}
+			#controls {
+				padding: 16px;
+				background-color: #f8f9fa;
+				border-bottom: 1px solid #e9ecef;
+				box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+			}
+			#map {
+				flex: 1;
+			}
+			.control-section {
+				margin-bottom: 16px;
+			}
+			.control-section h3 {
+				margin: 0 0 8px 0;
+				font-size: 14px;
+				font-weight: 600;
+				color: #495057;
+			}
+			.button-group {
+				display: flex;
+				gap: 8px;
+				flex-wrap: wrap;
+			}
+			.mode-button {
+				padding: 8px 16px;
+				border: 2px solid #6c757d;
+				background: white;
+				color: #6c757d;
+				border-radius: 6px;
+				cursor: pointer;
+				font-size: 13px;
+				font-weight: 500;
+				transition: all 0.2s ease;
+				min-width: 80px;
+			}
+			.mode-button:hover {
+				background: #f8f9fa;
+				border-color: #495057;
+			}
+			.mode-button.active {
+				background: #007bff;
+				color: white;
+				border-color: #007bff;
+			}
+			.mode-button:disabled {
+				opacity: 0.6;
+				cursor: not-allowed;
+			}
+			.info-text {
+				font-size: 12px;
+				color: #6c757d;
+				margin-top: 8px;
+			}
+		</style>
+	</head>
+	<body>
+		<script src="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.umd.js"></script>
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.css"
+		/>
+
+		<div id="container">
+			<div id="controls">
+				<div class="control-section">
+					<h3>External Mode Controls</h3>
+					<div class="button-group">
+						<button class="mode-button" data-mode="render" title="Switch to render mode">
+							Render
+						</button>
+						<button class="mode-button" data-mode="point" title="Draw points">Point</button>
+						<button class="mode-button" data-mode="linestring" title="Draw lines">Line</button>
+						<button class="mode-button" data-mode="polygon" title="Draw polygons">Polygon</button>
+						<button class="mode-button" data-mode="rectangle" title="Draw rectangles">
+							Rectangle
+						</button>
+						<button class="mode-button" data-mode="circle" title="Draw circles">Circle</button>
+						<button class="mode-button" data-mode="select" title="Select and edit features">
+							Select
+						</button>
+					</div>
+					<div class="info-text">
+						Click these buttons to programmatically change Terra Draw modes. Notice how the plugin
+						buttons (top-left corner) automatically synchronize their active state.
+					</div>
+				</div>
+			</div>
+			<div id="map"></div>
+		</div>
+
+		<script>
+			const map = new maplibregl.Map({
+				container: 'map',
+				style: 'https://demotiles.maplibre.org/style.json',
+				center: [0, 0],
+				zoom: 1,
+				maxPitch: 85
+			});
+
+			// Initialize Terra Draw control with various modes
+			const drawControl = new MaplibreTerradrawControl.MaplibreTerradrawControl({
+				modes: [
+					'render',
+					'point',
+					'linestring',
+					'polygon',
+					'rectangle',
+					'circle',
+					'select',
+					'delete',
+					'download'
+				],
+				open: true
+			});
+
+			map.addControl(drawControl, 'top-left');
+
+			let currentMode = 'render';
+			const externalButtons = document.querySelectorAll('.mode-button');
+
+			// Function to update external button states
+			function updateExternalButtons(activeMode) {
+				externalButtons.forEach((button) => {
+					const buttonMode = button.getAttribute('data-mode');
+					if (buttonMode === activeMode) {
+						button.classList.add('active');
+					} else {
+						button.classList.remove('active');
+					}
+				});
+			}
+
+			// Set initial active state
+			updateExternalButtons(currentMode);
+
+			// Handle external button clicks
+			externalButtons.forEach((button) => {
+				button.addEventListener('click', () => {
+					const mode = button.getAttribute('data-mode');
+					const drawInstance = drawControl.getTerraDrawInstance();
+
+					if (drawInstance && mode) {
+						console.log(`Programmatically setting mode to: ${mode}`);
+
+						// This will automatically sync the plugin button states
+						// thanks to the proxy wrapper in getTerraDrawInstance()
+						drawInstance.setMode(mode);
+
+						currentMode = mode;
+						updateExternalButtons(mode);
+					}
+				});
+			});
+
+			// Listen to Terra Draw mode changes to keep external buttons in sync
+			// This handles cases where users click the plugin buttons directly
+			drawControl.on('mode-changed', (event) => {
+				console.log(`Mode changed via plugin to: ${event.mode}`);
+				currentMode = event.mode;
+				updateExternalButtons(event.mode);
+			});
+		</script>
+	</body>
+</html>

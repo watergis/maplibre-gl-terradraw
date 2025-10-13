@@ -217,3 +217,32 @@ describe('cleanStyle method', () => {
 		expect(Object.keys(result.sources).every((source) => sourceIds.includes(source))).toBe(true);
 	});
 });
+
+describe('getTerraDrawInstance method', () => {
+	it('should return undefined when terra draw instance is not initialized', () => {
+		const control = new MaplibreTerradrawControl();
+		const instance = control.getTerraDrawInstance();
+		expect(instance).toBe(undefined);
+	});
+
+	it('should return a proxy that wraps setMode method when terra draw instance exists', () => {
+		const control = new MaplibreTerradrawControl();
+
+		// Mock a basic terra draw instance
+		const mockTerradraw = {
+			setMode: () => {},
+			getMode: () => 'render',
+			enabled: true,
+			start: () => {},
+			stop: () => {}
+		};
+
+		// Set the private terradraw property using type assertion for testing
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(control as any).terradraw = mockTerradraw;
+
+		const instance = control.getTerraDrawInstance();
+		expect(instance).toBeDefined();
+		expect(typeof instance?.setMode).toBe('function');
+	});
+});

@@ -16,7 +16,7 @@ import {
 	TerraDrawSensorMode,
 	ValidateNotSelfIntersecting
 } from 'terra-draw';
-import markerSvgUrl from '../../scss/icons/marker.svg';
+import markerSvgUrl from '../../scss/icons/marker-blue.svg';
 
 /**
  * get default Terra Draw mode instances.
@@ -35,8 +35,8 @@ export const getDefaultModeOptions = () => {
 			editable: true,
 			styles: {
 				markerUrl: markerSvgUrl,
-				markerWidth: 24,
-				markerHeight: 24
+				markerWidth: 27,
+				markerHeight: 27
 			}
 		}),
 		linestring: new TerraDrawLineStringMode({

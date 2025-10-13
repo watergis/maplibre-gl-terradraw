@@ -14,7 +14,7 @@ import {
 } from 'terra-draw';
 import type { MeasureControlOptions } from '../interfaces/MeasureControlOptions';
 import { defaultMeasureUnitSymbols } from './defaultMeasureUnitSymbols';
-import markerSvgUrl from '../../scss/icons/marker.svg';
+import markerSvgUrl from '../../scss/icons/marker-grey.svg';
 
 /**
  * Default MeasureControl options
@@ -54,8 +54,8 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 			editable: true,
 			styles: {
 				markerUrl: markerSvgUrl,
-				markerWidth: 24,
-				markerHeight: 24
+				markerWidth: 27,
+				markerHeight: 27
 			}
 		}),
 		linestring: new TerraDrawLineStringMode({

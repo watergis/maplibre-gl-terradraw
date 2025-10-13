@@ -22,6 +22,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 	modes: [
 		'render',
 		'point',
+		'marker',
 		'linestring',
 		'polygon',
 		'rectangle',

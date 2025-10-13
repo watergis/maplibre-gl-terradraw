@@ -358,14 +358,11 @@ export class MaplibreTerradrawControl implements IControl {
 	public getTerraDrawInstance() {
 		if (!this.terradraw) return this.terradraw;
 
-		// Create a proxy to intercept setMode calls
-		// eslint-disable-next-line @typescript-eslint/no-this-alias
-		const control = this;
 		return new Proxy(this.terradraw, {
-			get(target, prop, receiver) {
+			get: (target, prop, receiver) => {
 				if (prop === 'setMode') {
-					return function (mode: string) {
-						return control.handleModeChange(mode, target);
+					return (mode: string) => {
+						return this.handleModeChange(mode, target);
 					};
 				}
 				return Reflect.get(target, prop, receiver);

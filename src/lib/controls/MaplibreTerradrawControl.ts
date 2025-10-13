@@ -296,6 +296,29 @@ export class MaplibreTerradrawControl implements IControl {
 	}
 
 	/**
+	 * Handle mode change operations that should be executed after setMode is called
+	 * @param mode The active mode name
+	 * @param target The Terra Draw instance
+	 * @returns The result of the setMode operation
+	 */
+	protected handleModeChange(mode: string, target: TerraDraw) {
+		// Call the original setMode method
+		const result = target.setMode(mode);
+
+		// Sync button states after mode change
+		this.syncButtonStates(mode);
+
+		if (mode !== this.defaultMode) {
+			this.activate();
+		}
+
+		// Dispatch the mode-changed event
+		this.dispatchEvent('mode-changed');
+
+		return result;
+	}
+
+	/**
 	 * Synchronize button states with the current Terra Draw mode
 	 * @param mode The active mode name
 	 */
@@ -342,16 +365,7 @@ export class MaplibreTerradrawControl implements IControl {
 			get(target, prop, receiver) {
 				if (prop === 'setMode') {
 					return function (mode: string) {
-						// Call the original setMode method
-						const result = target.setMode(mode);
-
-						// Sync button states after mode change
-						control.syncButtonStates(mode);
-
-						// Dispatch the mode-changed event
-						control.dispatchEvent('mode-changed');
-
-						return result;
+						return control.handleModeChange(mode, target);
 					};
 				}
 				return Reflect.get(target, prop, receiver);

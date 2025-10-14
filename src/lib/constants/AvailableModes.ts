@@ -11,6 +11,7 @@
 export const AvailableModes = [
 	'render',
 	'point',
+	'marker',
 	'linestring',
 	'polygon',
 	'rectangle',

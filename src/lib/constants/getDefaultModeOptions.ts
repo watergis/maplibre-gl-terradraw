@@ -6,6 +6,7 @@ import {
 	TerraDrawFreehandLineStringMode,
 	TerraDrawFreehandMode,
 	TerraDrawLineStringMode,
+	TerraDrawMarkerMode,
 	TerraDrawPointMode,
 	TerraDrawPolygonMode,
 	TerraDrawRectangleMode,
@@ -15,6 +16,7 @@ import {
 	TerraDrawSensorMode,
 	ValidateNotSelfIntersecting
 } from 'terra-draw';
+import markerSvgUrl from '../../scss/icons/marker-blue.svg';
 
 /**
  * get default Terra Draw mode instances.
@@ -28,6 +30,14 @@ export const getDefaultModeOptions = () => {
 		}),
 		point: new TerraDrawPointMode({
 			editable: true
+		}),
+		marker: new TerraDrawMarkerMode({
+			editable: true,
+			styles: {
+				markerUrl: markerSvgUrl,
+				markerWidth: 27,
+				markerHeight: 27
+			}
 		}),
 		linestring: new TerraDrawLineStringMode({
 			editable: true
@@ -56,6 +66,11 @@ export const getDefaultModeOptions = () => {
 		select: new TerraDrawSelectMode({
 			flags: {
 				point: {
+					feature: {
+						draggable: true
+					}
+				},
+				marker: {
 					feature: {
 						draggable: true
 					}

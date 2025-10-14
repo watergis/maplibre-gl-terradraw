@@ -49,6 +49,14 @@
 	background-size: 80%;
 }
 
+.maplibregl-terradraw-measure-add-marker-button,
+.maplibregl-terradraw-add-marker-button {
+	background: url('./icons/marker-grey.svg');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 80%;
+}
+
 .maplibregl-terradraw-measure-add-linestring-button,
 .maplibregl-terradraw-add-linestring-button {
 	background: url('./icons/linestring.svg');

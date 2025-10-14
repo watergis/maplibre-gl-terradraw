@@ -4,6 +4,7 @@ import {
 	TerraDrawFreehandLineStringMode,
 	TerraDrawFreehandMode,
 	TerraDrawLineStringMode,
+	TerraDrawMarkerMode,
 	TerraDrawPointMode,
 	TerraDrawPolygonMode,
 	TerraDrawRectangleMode,
@@ -13,6 +14,7 @@ import {
 } from 'terra-draw';
 import type { MeasureControlOptions } from '../interfaces/MeasureControlOptions';
 import { defaultMeasureUnitSymbols } from './defaultMeasureUnitSymbols';
+import markerSvgUrl from '../../scss/icons/marker-grey.svg';
 
 /**
  * Default MeasureControl options
@@ -21,6 +23,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 	modes: [
 		'render',
 		'point',
+		'marker',
 		'linestring',
 		'polygon',
 		'rectangle',
@@ -45,6 +48,14 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 				pointWidth: 5,
 				pointOutlineColor: '#666666',
 				pointOutlineWidth: 1
+			}
+		}),
+		marker: new TerraDrawMarkerMode({
+			editable: true,
+			styles: {
+				markerUrl: markerSvgUrl,
+				markerWidth: 27,
+				markerHeight: 27
 			}
 		}),
 		linestring: new TerraDrawLineStringMode({
@@ -140,6 +151,11 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 		select: new TerraDrawSelectMode({
 			flags: {
 				point: {
+					feature: {
+						draggable: false
+					}
+				},
+				marker: {
 					feature: {
 						draggable: false
 					}
@@ -255,7 +271,11 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 		id: '{prefix}-point-label',
 		type: 'symbol',
 		source: '{prefix}-point-source',
-		filter: ['all', ['==', '$type', 'Point'], ['==', 'mode', 'point']],
+		filter: [
+			'all',
+			['==', '$type', 'Point'],
+			['any', ['==', 'mode', 'point'], ['==', 'mode', 'marker']]
+		],
 		layout: {
 			'text-field': [
 				'case',

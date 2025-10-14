@@ -7,6 +7,7 @@ export const defaultControlOptions: TerradrawControlOptions = {
 	modes: [
 		'render',
 		'point',
+		'marker',
 		'linestring',
 		'polygon',
 		'rectangle',

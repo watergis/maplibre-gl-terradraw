@@ -30,7 +30,7 @@ importers:
         specifier: ^6.1.1
         version: 6.1.1(@sveltejs/kit@2.46.4(@sveltejs/vite-plugin-svelte@6.2.1(svelte@5.39.11)(vite@7.1.9(@types/node@24.7.2)(jiti@2.6.1)(lightningcss@1.30.1)(sass-embedded@1.93.2)(sass@1.93.2)(yaml@2.8.1)))(svelte@5.39.11)(vite@7.1.9(@types/node@24.7.2)(jiti@2.6.1)(lightningcss@1.30.1)(sass-embedded@1.93.2)(sass@1.93.2)(yaml@2.8.1)))
       '@sveltejs/kit':
-        specifier: ^2.46.2
+        specifier: ^2.46.4
         version: 2.46.4(@sveltejs/vite-plugin-svelte@6.2.1(svelte@5.39.11)(vite@7.1.9(@types/node@24.7.2)(jiti@2.6.1)(lightningcss@1.30.1)(sass-embedded@1.93.2)(sass@1.93.2)(yaml@2.8.1)))(svelte@5.39.11)(vite@7.1.9(@types/node@24.7.2)(jiti@2.6.1)(lightningcss@1.30.1)(sass-embedded@1.93.2)(sass@1.93.2)(yaml@2.8.1))
       '@sveltejs/vite-plugin-svelte':
         specifier: ^6.2.1
@@ -57,7 +57,7 @@ importers:
         specifier: ^7946.0.16
         version: 7946.0.16
       '@types/node':
-        specifier: ^24.7.0
+        specifier: ^24.7.2
         version: 24.7.2
       '@undp-data/style-switcher':
         specifier: ^2.0.15
@@ -93,7 +93,7 @@ importers:
         specifier: ^1.13.6
         version: 1.13.6
       maplibre-gl:
-        specifier: ^5.8.0
+        specifier: ^5.9.0
         version: 5.9.0
       postcss:
         specifier: ^8.5.6
@@ -126,22 +126,22 @@ importers:
         specifier: ^3.13.0
         version: 3.13.0
       svelte:
-        specifier: ^5.39.10
+        specifier: ^5.39.11
         version: 5.39.11
       svelte-check:
-        specifier: ^4.3.2
+        specifier: ^4.3.3
         version: 4.3.3(picomatch@4.0.3)(svelte@5.39.11)(typescript@5.9.3)
       tailwindcss:
         specifier: ^4.1.14
         version: 4.1.14
       terra-draw:
-        specifier: ^1.16.0
+        specifier: ^1.17.0
         version: 1.17.0
       terra-draw-maplibre-gl-adapter:
-        specifier: ^1.1.2
-        version: 1.2.0(maplibre-gl@5.9.0)(terra-draw@1.17.0)
+        specifier: ^1.2.1
+        version: 1.2.1(maplibre-gl@5.9.0)(terra-draw@1.17.0)
       typedoc:
-        specifier: ^0.28.13
+        specifier: ^0.28.14
         version: 0.28.14(typescript@5.9.3)
       typescript:
         specifier: ^5.9.3
@@ -3349,8 +3349,8 @@ packages:
     resolution: {integrity: sha512-wK0Ri4fOGjv/XPy8SBHZChl8CM7uMc5VML7SqiQ0zG7+J5Vr+RMQDoHa2CNT6KHUnTGIXH34UDMkPzAUyapBZg==}
     engines: {node: '>=8'}
 
-  terra-draw-maplibre-gl-adapter@1.2.0:
-    resolution: {integrity: sha512-VoMH/3tCNG/2307IMCDwLxguaDq7uHkIcaz5vRJ6eNFsyJfZE9xxWTsivyNy5I85/CBj46bObY2xOTHQ8ZXdVw==}
+  terra-draw-maplibre-gl-adapter@1.2.1:
+    resolution: {integrity: sha512-wT5NLmQgtFuiU92Xdz9+dCwv3Lz8yh81mqYTHiDGN+f7A8sUaxb+uxJWzvRbD2+p7lAkytOAJTZiUp9QaQU0Fw==}
     peerDependencies:
       maplibre-gl: '>=4'
       terra-draw: ^1.0.0
@@ -7074,7 +7074,7 @@ snapshots:
 
   term-size@2.2.1: {}
 
-  terra-draw-maplibre-gl-adapter@1.2.0(maplibre-gl@5.9.0)(terra-draw@1.17.0):
+  terra-draw-maplibre-gl-adapter@1.2.1(maplibre-gl@5.9.0)(terra-draw@1.17.0):
     dependencies:
       maplibre-gl: 5.9.0
       terra-draw: 1.17.0

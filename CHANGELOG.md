@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.9.0
+
+### Minor Changes
+
+- f3fa252: feat: add Marker mode to MaplibreTerradrawControl and MaplibreMeasureControl by upgrading terra-draw to v1.17.0.
+
 ## 1.8.3
 
 ### Patch Changes

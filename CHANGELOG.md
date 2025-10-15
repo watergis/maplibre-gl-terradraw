@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.9.1
+
+### Patch Changes
+
+- 82636b2: fix: upgraded terradraw to v1.8.0 and maplibre-gl-adapter to v1.2.2
+
 ## 1.9.0
 
 ### Minor Changes

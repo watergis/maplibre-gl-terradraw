@@ -416,8 +416,8 @@
 						<TagsInput.Control>
 							<TagsInput.Context>
 								{#snippet children(tagsInput)}
-									{#each tagsInput().value as value, index (index)}
-										<TagsInput.Item {value} {index}>
+									{#each tagsInput().value as value, index (value)}
+										<TagsInput.Item {value}>
 											<TagsInput.ItemPreview>
 												<TagsInput.ItemText>{value}</TagsInput.ItemText>
 												<TagsInput.ItemDeleteTrigger />

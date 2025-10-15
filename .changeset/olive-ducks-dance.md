@@ -2,4 +2,4 @@
 '@watergis/maplibre-gl-terradraw': patch
 ---
 
-fix: upgraded maplibre-gl-adapter to v1.2.2
+fix: upgraded terradraw to v1.8.0 and maplibre-gl-adapter to v1.2.2

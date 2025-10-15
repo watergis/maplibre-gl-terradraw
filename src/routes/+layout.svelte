@@ -38,36 +38,39 @@
 <div class="h-dvh grid grid-rows-[auto_1fr_auto]">
 	<header class="sticky top-0 z-10 bg-gray-200">
 		<AppBar>
-			{#snippet lead()}
-				<a href={resolve('/')} class="font-bold text-base md:text-xl text-nowrap uppercase">
-					{data.metadata.title}
-				</a>
-			{/snippet}
-			{#snippet trail()}
-				<nav class="flex justify-end gap-1">
-					<LightSwitch />
-					<!-- eslint-disable svelte/no-navigation-without-resolve -->
-					{#each data.nav as link (link.href)}
-						<a
-							class="btn hover:preset-tonal px-1 md:px-2"
-							href={link.href}
-							target="_blank"
-							title={link.icon}
-							aria-label={link.icon}
-						>
-							<span>
-								{#if link.icon === 'github'}
-									<IconGithub />
-								{:else if link.icon === 'twitter'}
-									<IconTwitter />
-								{:else}
-									<i class={link.icon}></i>
-								{/if}
-							</span>
-						</a>
-					{/each}
-				</nav>
-			{/snippet}
+			<AppBar.Toolbar class="grid-cols-[auto_1fr_auto]">
+				<AppBar.Lead></AppBar.Lead>
+				<AppBar.Headline>
+					<a href={resolve('/')} class="font-bold text-base md:text-xl text-nowrap uppercase">
+						{data.metadata.title}
+					</a>
+				</AppBar.Headline>
+				<AppBar.Trail>
+					<nav class="flex justify-end gap-1">
+						<LightSwitch />
+						<!-- eslint-disable svelte/no-navigation-without-resolve -->
+						{#each data.nav as link (link.href)}
+							<a
+								class="btn hover:preset-tonal px-1 md:px-2"
+								href={link.href}
+								target="_blank"
+								title={link.icon}
+								aria-label={link.icon}
+							>
+								<span>
+									{#if link.icon === 'github'}
+										<IconGithub />
+									{:else if link.icon === 'twitter'}
+										<IconTwitter />
+									{:else}
+										<i class={link.icon}></i>
+									{/if}
+								</span>
+							</a>
+						{/each}
+					</nav>
+				</AppBar.Trail>
+			</AppBar.Toolbar>
 		</AppBar>
 	</header>
 

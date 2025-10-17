@@ -67,6 +67,7 @@
 		"@types/node": "^24.8.1",
 		"@undp-data/style-switcher": "^2.0.15",
 		"@vitest/coverage-v8": "^3.2.4",
+		"@watergis/maplibre-gl-export": "^4.1.0",
 		"@watergis/terrain-rgb": "^2.1.1",
 		"cssnano": "^7.1.1",
 		"dependency-cruiser": "^17.1.0",

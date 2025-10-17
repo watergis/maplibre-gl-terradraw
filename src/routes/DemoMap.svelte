@@ -40,10 +40,12 @@
 	import IconX from '@lucide/svelte/icons/x';
 	import {
 		Accordion,
+		Combobox,
+		Portal,
 		SegmentedControl,
 		Slider,
 		Tabs,
-		TagsInput
+		useListCollection
 	} from '@skeletonlabs/skeleton-svelte';
 	import MaplibreStyleSwitcherControl, { type StyleDefinition } from '@undp-data/style-switcher';
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
@@ -125,6 +127,7 @@
 
 	let drawControl: MaplibreTerradrawControl | undefined = $state();
 	let selectedFeature: string = $state('');
+	let modeSearchText: string = $state('');
 
 	let accordionValue = $state(['control-type']);
 	let measureAccordionValue = $state([
@@ -394,6 +397,17 @@
 						options.controlType === 'valhalla'
 							? (AvailableValhallaModes as unknown as TerradrawMode[])
 							: AvailableModes}
+					{@const modeData = availableModes.map((mode) => ({ label: mode, value: mode }))}
+					{@const filteredModeData = modeSearchText
+						? modeData.filter((item) =>
+								item.label.toLowerCase().includes(modeSearchText.toLowerCase())
+							)
+						: modeData}
+					{@const collection = useListCollection({
+						items: filteredModeData,
+						itemToString: (item) => item.label,
+						itemToValue: (item) => item.value
+					})}
 					<p class="pb-4">
 						Your chosen options are automatically applied at the demo and the below usage code.
 					</p>
@@ -402,42 +416,57 @@
 						to remove some drawing modes from your app.
 					</p>
 
-					<TagsInput
-						name="terradraw-modes"
-						defaultValue={options.modes}
-						onValueChange={(e) => {
-							options.modes = e.value as TerradrawMode[];
-							addControl();
-							onchange(options);
-						}}
-						validate={(details) => availableModes.includes(details.inputValue as TerradrawMode)}
-						editable={false}
-					>
-						<TagsInput.Control>
-							<TagsInput.Context>
-								{#snippet children(tagsInput)}
-									{#each tagsInput().value as value, index (value)}
-										<TagsInput.Item {value}>
-											<TagsInput.ItemPreview>
-												<TagsInput.ItemText>{value}</TagsInput.ItemText>
-												<TagsInput.ItemDeleteTrigger />
-											</TagsInput.ItemPreview>
-											<TagsInput.ItemInput />
-										</TagsInput.Item>
-									{/each}
-								{/snippet}
-							</TagsInput.Context>
-							<TagsInput.Input
-								placeholder="{options.modes.length === 0
-									? 'Select at least a mode. '
-									: ''}Select TerraDraw modes to be added"
-							/>
-						</TagsInput.Control>
-						<TagsInput.ClearTrigger>Clear All</TagsInput.ClearTrigger>
-						<TagsInput.HiddenInput />
-					</TagsInput>
+					<div class="grid gap-2 w-full">
+						<Combobox
+							placeholder="Search Terra Draw modes..."
+							{collection}
+							value={options.modes}
+							onInputValueChange={(e) => {
+								modeSearchText = e.inputValue;
+							}}
+							onValueChange={(e) => {
+								options.modes = e.value as TerradrawMode[];
+								addControl();
+								onchange(options);
+							}}
+							multiple
+						>
+							<Combobox.Control>
+								<Combobox.Input />
+								<Combobox.Trigger />
+							</Combobox.Control>
+							<Portal>
+								<Combobox.Positioner class="z-[1]!">
+									<Combobox.Content class="max-h-[200px] overflow-y-auto">
+										{#each filteredModeData as item (item.value)}
+											<Combobox.Item {item}>
+												<Combobox.ItemText>{item.label}</Combobox.ItemText>
+												<Combobox.ItemIndicator />
+											</Combobox.Item>
+										{/each}
+									</Combobox.Content>
+								</Combobox.Positioner>
+							</Portal>
+						</Combobox>
+						<div class="flex flex-wrap gap-2">
+							{#each options.modes as mode (mode)}
+								<button
+									class="badge preset-filled cursor-pointer hover:opacity-80 transition-opacity"
+									type="button"
+									onclick={() => {
+										options.modes = options.modes.filter((m) => m !== mode);
+										addControl();
+										onchange(options);
+									}}
+								>
+									<span>{mode}</span>
+									<IconX size={16} />
+								</button>
+							{/each}
+						</div>
+					</div>
 
-					<!-- <nav class="flex flex-row mt-2 gap-2">
+					<nav class="flex flex-row mt-2 gap-2">
 						<button
 							type="button"
 							class="btn preset-filled-primary-500"
@@ -468,25 +497,6 @@
 							<span>Delete all</span>
 						</button>
 					</nav>
-
-					{#if options.modes.length < availableModes.length}
-						{@const selectSize = availableModes.filter((m) => !options.modes.includes(m)).length}
-						<select
-							class="select rounded-container mt-2"
-							size={selectSize === 1 ? selectSize + 1 : selectSize > 5 ? 5 : selectSize}
-							onclick={(e) => {
-								if (!(e.target && 'value' in e.target)) return;
-								const selected = e.target.value as TerradrawMode;
-								options.modes.push(selected);
-								addControl();
-								onchange(options);
-							}}
-						>
-							{#each availableModes.filter((m) => !options.modes.includes(m)) as mode (mode)}
-								<option value={mode}>{mode}</option>
-							{/each}
-						</select>
-					{/if} -->
 				</Accordion.ItemContent>
 			</Accordion.Item>
 
@@ -571,6 +581,7 @@
 											}
 											onchange(options);
 										}}
+										class="w-fit"
 									>
 										<SegmentedControl.Control>
 											<SegmentedControl.Indicator />
@@ -676,7 +687,7 @@
 										>
 											<Slider.Control>
 												<Slider.Track>
-													<Slider.Range />
+													<Slider.Range class="bg-primary-500" />
 												</Slider.Track>
 												<Slider.Thumb index={0}>
 													<Slider.HiddenInput />
@@ -709,7 +720,7 @@
 										>
 											<Slider.Control>
 												<Slider.Track>
-													<Slider.Range />
+													<Slider.Range class="bg-primary-500" />
 												</Slider.Track>
 												<Slider.Thumb index={0}>
 													<Slider.HiddenInput />
@@ -739,6 +750,7 @@
 											}
 											onchange(options);
 										}}
+										class="w-fit"
 									>
 										<SegmentedControl.Control>
 											<SegmentedControl.Indicator />
@@ -822,6 +834,7 @@
 													}
 													onchange(options);
 												}}
+												class="w-fit"
 											>
 												<SegmentedControl.Control>
 													<SegmentedControl.Indicator />
@@ -856,6 +869,7 @@
 													}
 													onchange(options);
 												}}
+												class="w-fit"
 											>
 												<SegmentedControl.Control>
 													<SegmentedControl.Indicator />
@@ -891,6 +905,7 @@
 													}
 													onchange(options);
 												}}
+												class="w-fit"
 											>
 												<SegmentedControl.Control>
 													<SegmentedControl.Indicator />
@@ -926,6 +941,7 @@
 													}
 													onchange(options);
 												}}
+												class="w-fit"
 											>
 												<SegmentedControl.Control>
 													<SegmentedControl.Indicator />
@@ -976,7 +992,7 @@
 															<th>&nbsp;</th>
 														</tr>
 													</thead>
-													<tbody>
+													<tbody class="[&>tr]:hover:preset-tonal-primary">
 														{#each contours as row, index (index)}
 															<tr>
 																<td
@@ -1003,7 +1019,7 @@
 																<td class="text-right">
 																	{#if index > 0}
 																		<button
-																			class="btn btn-sm preset-filled rounded-full w-8 h-8"
+																			class="btn btn-sm preset-filled rounded-full"
 																			onclick={() => {
 																				if (options.valhallaOptions.isochroneOptions?.contours) {
 																					options.valhallaOptions.isochroneOptions.contours.splice(
@@ -1013,7 +1029,7 @@
 																				}
 																			}}
 																		>
-																			<IconX />
+																			<IconX size={16} />
 																		</button>
 																	{/if}
 																</td>

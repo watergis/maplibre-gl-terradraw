@@ -20,6 +20,12 @@ export const getTitle = (body: string) => {
 	return match[1];
 };
 
+export const getTags = (body: string) => {
+	const match = body.match(/<meta\s+property="tag"\s+content="([^"]+)"\s*\/?>/);
+	if (!match || typeof match[1] !== 'string') return '';
+	return match[1];
+};
+
 export const getDescription = (body: string) => {
 	const match = body.match(/<meta\s+property="og:description"\s+content="([^"]+)"\s*\/?>/);
 	if (!match || typeof match[1] !== 'string') return '';

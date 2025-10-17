@@ -211,7 +211,7 @@
 
 				<Tabs.Content value="npm">
 					<h3 class="h3 pt-6 pb-4">Install</h3>
-					<p>Getting start with installing the package</p>
+					<p class="pb-2">Getting start with installing the package</p>
 
 					<SegmentedControl
 						name="package-manager"
@@ -220,6 +220,7 @@
 							packageManager = e.value as string;
 							updatePageUrl();
 						}}
+						class="w-fit"
 					>
 						<SegmentedControl.Control>
 							<SegmentedControl.Indicator />
@@ -358,20 +359,24 @@
 				{#each examples as custom (custom.title)}
 					<!-- eslint-disable svelte/no-navigation-without-resolve -->
 					<a
-						class="card preset-filled-surface-100-900 border-[1px] border-surface-200-800 card-hover divide-surface-200-800 block overflow-hidden sm:w-auto md:max-w-48 lg:max-w-64 xl:max-w-80"
 						href={custom.href}
+						class="card preset-filled-surface-100-900 border-[1px] border-surface-200-800 card-hover divide-surface-200-800 flex flex-col max-w-md divide-y overflow-hidden sm:w-auto md:max-w-64 lg:max-w-80 xl:max-w-100"
 					>
-						<header class="aspect-[21/9] w-full">
-							<img class="preview-image pt-2" src={custom.image} alt={custom.title} />
+						<header>
+							<img src={custom.image} class="aspect-[21/9] w-full" alt={custom.title} />
 						</header>
-						<article class="space-y-4 p-4">
+						<article class="space-y-4 p-4 flex-grow">
 							<div>
-								<h2 class="h6">{custom.title}</h2>
+								<h2 class="h7">{custom.tags}</h2>
+								<h3 class="h5 title">{custom.title}</h3>
 							</div>
-							<p class="description">
+							<p class="opacity-60 description">
 								{custom.description}
 							</p>
 						</article>
+						<footer class="flex items-center justify-between gap-4 p-4 mt-auto">
+							<small class="opacity-60">{data.metadata.author}</small>
+						</footer>
 					</a>
 				{/each}
 			</div>
@@ -384,10 +389,16 @@
 		max-height: 130px;
 		margin: 0 auto;
 	}
-	.description {
+	.title {
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: 3;
+		overflow: hidden;
+	}
+	.description {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 4;
 		overflow: hidden;
 	}
 </style>

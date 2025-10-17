@@ -49,6 +49,7 @@
 	} from '@skeletonlabs/skeleton-svelte';
 	import MaplibreStyleSwitcherControl, { type StyleDefinition } from '@undp-data/style-switcher';
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
+	import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
 	import {
 		GeolocateControl,
 		GlobeControl,
@@ -321,6 +322,22 @@
 
 			const styleSwitcherControl = new MaplibreStyleSwitcherControl(styles);
 			map.addControl(styleSwitcherControl, 'bottom-left');
+
+			import('@watergis/maplibre-gl-export').then(
+				({ MaplibreExportControl, DPI, Format, PageOrientation, Size }) => {
+					if (!map) return;
+					const exportControl = new MaplibreExportControl({
+						PageSize: Size.A4,
+						PageOrientation: PageOrientation.Landscape,
+						Format: Format.PNG,
+						DPI: DPI[96],
+						Crosshair: true,
+						PrintableArea: true,
+						Local: 'en'
+					});
+					map.addControl(exportControl, 'bottom-right');
+				}
+			);
 
 			map.once('load', () => {
 				styleSwitcherControl.initialise();

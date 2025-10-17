@@ -385,10 +385,6 @@
 </div>
 
 <style lang="postcss">
-	.preview-image {
-		max-height: 130px;
-		margin: 0 auto;
-	}
 	.title {
 		display: -webkit-box;
 		-webkit-box-orient: vertical;

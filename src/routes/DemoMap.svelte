@@ -38,7 +38,15 @@
 	} from '$lib';
 	import IconPlus from '@lucide/svelte/icons/plus';
 	import IconX from '@lucide/svelte/icons/x';
-	import { Accordion, Segment, Slider, Tabs, TagsInput } from '@skeletonlabs/skeleton-svelte';
+	import {
+		Accordion,
+		Combobox,
+		Portal,
+		SegmentedControl,
+		Slider,
+		Tabs,
+		useListCollection
+	} from '@skeletonlabs/skeleton-svelte';
 	import MaplibreStyleSwitcherControl, { type StyleDefinition } from '@undp-data/style-switcher';
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
 	import {
@@ -119,6 +127,7 @@
 
 	let drawControl: MaplibreTerradrawControl | undefined = $state();
 	let selectedFeature: string = $state('');
+	let modeSearchText: string = $state('');
 
 	let accordionValue = $state(['control-type']);
 	let measureAccordionValue = $state([
@@ -326,18 +335,18 @@
 	<aside class="sidebar col-span-1 h-screen p-4 w-sm overflow-y-auto hidden md:block">
 		<Accordion value={accordionValue} onValueChange={(e) => (accordionValue = e.value)} multiple>
 			<Accordion.Item value="control-type">
-				{#snippet control()}
+				<Accordion.ItemTrigger>
 					<p class="font-bold uppercase">Control type</p>
-				{/snippet}
-				{#snippet panel()}
+				</Accordion.ItemTrigger>
+				<Accordion.ItemContent>
 					<p class="pb-4">
 						Default control is MaplibreTerradrawControl. If you want to use more advanced control,
 						enable to choose MaplibreMeasureControl or MaplibreValhallaControl.
 					</p>
 
-					<Segment
+					<SegmentedControl
 						name="control-type"
-						value={options.controlType}
+						defaultValue={options.controlType}
 						orientation="horizontal"
 						onValueChange={(e) => {
 							options.controlType = e.value as 'default' | 'measure';
@@ -360,22 +369,45 @@
 							}
 						}}
 					>
-						<Segment.Item value="default">Default</Segment.Item>
-						<Segment.Item value="measure">Measure</Segment.Item>
-						<Segment.Item value="valhalla">Valhalla</Segment.Item>
-					</Segment>
-				{/snippet}
+						<SegmentedControl.Control>
+							<SegmentedControl.Indicator />
+							<SegmentedControl.Item value="default">
+								<SegmentedControl.ItemText>Default</SegmentedControl.ItemText>
+								<SegmentedControl.ItemHiddenInput />
+							</SegmentedControl.Item>
+							<SegmentedControl.Item value="measure">
+								<SegmentedControl.ItemText>Measure</SegmentedControl.ItemText>
+								<SegmentedControl.ItemHiddenInput />
+							</SegmentedControl.Item>
+							<SegmentedControl.Item value="valhalla">
+								<SegmentedControl.ItemText>Valhalla</SegmentedControl.ItemText>
+								<SegmentedControl.ItemHiddenInput />
+							</SegmentedControl.Item>
+						</SegmentedControl.Control>
+					</SegmentedControl>
+				</Accordion.ItemContent>
 			</Accordion.Item>
 
 			<Accordion.Item value="mode-selection">
-				{#snippet control()}
+				<Accordion.ItemTrigger>
 					<p class="font-bold uppercase">Mode selection</p>
-				{/snippet}
-				{#snippet panel()}
+				</Accordion.ItemTrigger>
+				<Accordion.ItemContent>
 					{@const availableModes =
 						options.controlType === 'valhalla'
 							? (AvailableValhallaModes as unknown as TerradrawMode[])
 							: AvailableModes}
+					{@const modeData = availableModes.map((mode) => ({ label: mode, value: mode }))}
+					{@const filteredModeData = modeSearchText
+						? modeData.filter((item) =>
+								item.label.toLowerCase().includes(modeSearchText.toLowerCase())
+							)
+						: modeData}
+					{@const collection = useListCollection({
+						items: filteredModeData,
+						itemToString: (item) => item.label,
+						itemToValue: (item) => item.value
+					})}
 					<p class="pb-4">
 						Your chosen options are automatically applied at the demo and the below usage code.
 					</p>
@@ -384,20 +416,55 @@
 						to remove some drawing modes from your app.
 					</p>
 
-					<TagsInput
-						name="terradraw-modes"
-						placeholder="{options.modes.length === 0
-							? 'Select at least a mode. '
-							: ''}Select TerraDraw modes to be added"
-						value={options.modes}
-						onValueChange={(e) => {
-							options.modes = e.value as TerradrawMode[];
-							addControl();
-							onchange(options);
-						}}
-						validate={(details) => availableModes.includes(details.inputValue as TerradrawMode)}
-						editable={false}
-					/>
+					<div class="grid gap-2 w-full">
+						<Combobox
+							placeholder="Search Terra Draw modes..."
+							{collection}
+							value={options.modes}
+							onInputValueChange={(e) => {
+								modeSearchText = e.inputValue;
+							}}
+							onValueChange={(e) => {
+								options.modes = e.value as TerradrawMode[];
+								addControl();
+								onchange(options);
+							}}
+							multiple
+						>
+							<Combobox.Control>
+								<Combobox.Input />
+								<Combobox.Trigger />
+							</Combobox.Control>
+							<Portal>
+								<Combobox.Positioner class="z-[1]!">
+									<Combobox.Content class="max-h-[200px] overflow-y-auto">
+										{#each filteredModeData as item (item.value)}
+											<Combobox.Item {item}>
+												<Combobox.ItemText>{item.label}</Combobox.ItemText>
+												<Combobox.ItemIndicator />
+											</Combobox.Item>
+										{/each}
+									</Combobox.Content>
+								</Combobox.Positioner>
+							</Portal>
+						</Combobox>
+						<div class="flex flex-wrap gap-2">
+							{#each options.modes as mode (mode)}
+								<button
+									class="badge preset-filled cursor-pointer hover:opacity-80 transition-opacity"
+									type="button"
+									onclick={() => {
+										options.modes = options.modes.filter((m) => m !== mode);
+										addControl();
+										onchange(options);
+									}}
+								>
+									<span>{mode}</span>
+									<IconX size={16} />
+								</button>
+							{/each}
+						</div>
+					</div>
 
 					<nav class="flex flex-row mt-2 gap-2">
 						<button
@@ -430,40 +497,21 @@
 							<span>Delete all</span>
 						</button>
 					</nav>
-
-					{#if options.modes.length < availableModes.length}
-						{@const selectSize = availableModes.filter((m) => !options.modes.includes(m)).length}
-						<select
-							class="select rounded-container mt-2"
-							size={selectSize === 1 ? selectSize + 1 : selectSize > 5 ? 5 : selectSize}
-							onclick={(e) => {
-								if (!(e.target && 'value' in e.target)) return;
-								const selected = e.target.value as TerradrawMode;
-								options.modes.push(selected);
-								addControl();
-								onchange(options);
-							}}
-						>
-							{#each availableModes.filter((m) => !options.modes.includes(m)) as mode (mode)}
-								<option value={mode}>{mode}</option>
-							{/each}
-						</select>
-					{/if}
-				{/snippet}
+				</Accordion.ItemContent>
 			</Accordion.Item>
 
 			<Accordion.Item value="open-as-default">
-				{#snippet control()}
+				<Accordion.ItemTrigger>
 					<p class="font-bold uppercase">Open as default</p>
-				{/snippet}
-				{#snippet panel()}
+				</Accordion.ItemTrigger>
+				<Accordion.ItemContent>
 					<p class="pb-4">
 						if you want the drawing tool to be always expanded, simplely remove `render` mode from
 						constuctor options, then set `true` to `open` property.
 					</p>
-					<Segment
+					<SegmentedControl
 						name="is-open"
-						value={options.isOpen}
+						defaultValue={options.isOpen}
 						onValueChange={(e) => {
 							options.isOpen = e.value as 'open' | 'close';
 							if (drawControl) {
@@ -472,18 +520,27 @@
 							onchange(options);
 						}}
 					>
-						<Segment.Item value="open">Open as default</Segment.Item>
-						<Segment.Item value="close">Close as default</Segment.Item>
-					</Segment>
-				{/snippet}
+						<SegmentedControl.Control>
+							<SegmentedControl.Indicator />
+							<SegmentedControl.Item value="open">
+								<SegmentedControl.ItemText>Open as default</SegmentedControl.ItemText>
+								<SegmentedControl.ItemHiddenInput />
+							</SegmentedControl.Item>
+							<SegmentedControl.Item value="close">
+								<SegmentedControl.ItemText>Close as default</SegmentedControl.ItemText>
+								<SegmentedControl.ItemHiddenInput />
+							</SegmentedControl.Item>
+						</SegmentedControl.Control>
+					</SegmentedControl>
+				</Accordion.ItemContent>
 			</Accordion.Item>
 
 			{#if selectedFeature.length > 0}
 				<Accordion.Item value="selected-feature">
-					{#snippet control()}
+					<Accordion.ItemTrigger>
 						<p class="font-bold uppercase">Selected feature</p>
-					{/snippet}
-					{#snippet panel()}
+					</Accordion.ItemTrigger>
+					<Accordion.ItemContent>
 						<div class="p-2">
 							<p class="text-black">
 								For Polygon, use <b>ctrl+s</b> to resize the feature, and use <b>ctrl+r</b> to rotate
@@ -494,28 +551,28 @@
 							<CodeBlock lang="js" code={selectedFeature} base="max-h-64 overflow-y-auto "
 							></CodeBlock>
 						</div>
-					{/snippet}
+					</Accordion.ItemContent>
 				</Accordion.Item>
 			{/if}
 
 			{#if options.controlType === 'measure'}
 				<Accordion.Item value="measure-option">
-					{#snippet control()}
+					<Accordion.ItemTrigger>
 						<p class="font-bold uppercase">Measure control options</p>
-					{/snippet}
-					{#snippet panel()}
+					</Accordion.ItemTrigger>
+					<Accordion.ItemContent>
 						<Accordion
 							value={measureAccordionValue}
 							onValueChange={(e) => (measureAccordionValue = e.value)}
 							multiple
 						>
 							<Accordion.Item value="measure-unit-type">
-								{#snippet control()}
+								<Accordion.ItemTrigger>
 									<p class="font-bold uppercase italic">Distance unit</p>
-								{/snippet}
-								{#snippet panel()}
-									<Segment
-										value={options.measureUnitType}
+								</Accordion.ItemTrigger>
+								<Accordion.ItemContent>
+									<SegmentedControl
+										defaultValue={options.measureUnitType}
 										onValueChange={(e) => {
 											options.measureUnitType = e.value as MeasureUnitType;
 											if (drawControl && options.controlType === 'measure') {
@@ -524,21 +581,26 @@
 											}
 											onchange(options);
 										}}
+										class="w-fit"
 									>
-										{#each ['metric', 'imperial'] as unit (unit)}
-											<Segment.Item value={unit}>
-												{unit}
-											</Segment.Item>
-										{/each}
-									</Segment>
-								{/snippet}
+										<SegmentedControl.Control>
+											<SegmentedControl.Indicator />
+											{#each ['metric', 'imperial'] as unit (unit)}
+												<SegmentedControl.Item value={unit}>
+													<SegmentedControl.ItemText>{unit}</SegmentedControl.ItemText>
+													<SegmentedControl.ItemHiddenInput />
+												</SegmentedControl.Item>
+											{/each}
+										</SegmentedControl.Control>
+									</SegmentedControl>
+								</Accordion.ItemContent>
 							</Accordion.Item>
 
 							<Accordion.Item value="force-distance-unit">
-								{#snippet control()}
+								<Accordion.ItemTrigger>
 									<p class="font-bold uppercase italic">Force Distance unit</p>
-								{/snippet}
-								{#snippet panel()}
+								</Accordion.ItemTrigger>
+								<Accordion.ItemContent>
 									<select
 										class="select"
 										value={options.forceDistanceUnit}
@@ -563,14 +625,14 @@
 											</option>
 										{/each}
 									</select>
-								{/snippet}
+								</Accordion.ItemContent>
 							</Accordion.Item>
 
 							<Accordion.Item value="force-area-unit">
-								{#snippet control()}
+								<Accordion.ItemTrigger>
 									<p class="font-bold uppercase italic">Force Area unit</p>
-								{/snippet}
-								{#snippet panel()}
+								</Accordion.ItemTrigger>
+								<Accordion.ItemContent>
 									<select
 										class="select"
 										value={options.forceAreaUnit}
@@ -595,26 +657,25 @@
 											</option>
 										{/each}
 									</select>
-								{/snippet}
+								</Accordion.ItemContent>
 							</Accordion.Item>
 
 							<Accordion.Item value="distance-precision">
-								{#snippet control()}
+								<Accordion.ItemTrigger>
 									<p class="font-bold uppercase italic">Measure precision</p>
-								{/snippet}
-								{#snippet panel()}
+								</Accordion.ItemTrigger>
+								<Accordion.ItemContent>
 									<div class="py-4">
 										<div class="flex justify-between items-center mb-4">
 											<div class="font-bold">Distance precision (Line)</div>
 											<div class="text-xs">{options.distancePrecision}</div>
 										</div>
 										<Slider
+											defaultValue={[options.distancePrecision]}
 											name="range-slider"
-											value={[options.distancePrecision]}
 											min={0}
 											max={10}
 											step={1}
-											markers={[0, 5, 10]}
 											onValueChange={(e) => {
 												options.distancePrecision = e.value[0] as number;
 												if (drawControl && options.controlType === 'measure') {
@@ -623,18 +684,31 @@
 												}
 												onchange(options);
 											}}
-										></Slider>
+										>
+											<Slider.Control>
+												<Slider.Track>
+													<Slider.Range class="bg-primary-500" />
+												</Slider.Track>
+												<Slider.Thumb index={0}>
+													<Slider.HiddenInput />
+												</Slider.Thumb>
+											</Slider.Control>
+											<Slider.MarkerGroup>
+												<Slider.Marker value={0} />
+												<Slider.Marker value={5} />
+												<Slider.Marker value={10} />
+											</Slider.MarkerGroup>
+										</Slider>
 										<div class="flex justify-between items-center mt-8 mb-4">
 											<div class="font-bold">Area precision (Polygon)</div>
 											<div class="text-xs">{options.areaPrecision}</div>
 										</div>
 										<Slider
+											defaultValue={[options.areaPrecision]}
 											name="range-slider"
-											value={[options.areaPrecision]}
 											min={0}
 											max={10}
 											step={1}
-											markers={[0, 5, 10]}
 											onValueChange={(e) => {
 												options.areaPrecision = e.value[0] as number;
 												if (drawControl && options.controlType === 'measure') {
@@ -643,17 +717,31 @@
 												}
 												onchange(options);
 											}}
-										></Slider>
+										>
+											<Slider.Control>
+												<Slider.Track>
+													<Slider.Range class="bg-primary-500" />
+												</Slider.Track>
+												<Slider.Thumb index={0}>
+													<Slider.HiddenInput />
+												</Slider.Thumb>
+											</Slider.Control>
+											<Slider.MarkerGroup>
+												<Slider.Marker value={0} />
+												<Slider.Marker value={5} />
+												<Slider.Marker value={10} />
+											</Slider.MarkerGroup>
+										</Slider>
 									</div>
-								{/snippet}
+								</Accordion.ItemContent>
 							</Accordion.Item>
 							<Accordion.Item value="compute-elevation">
-								{#snippet control()}
+								<Accordion.ItemTrigger>
 									<p class="font-bold uppercase italic">Compute elevation</p>
-								{/snippet}
-								{#snippet panel()}
-									<Segment
-										value={options.computeElevation}
+								</Accordion.ItemTrigger>
+								<Accordion.ItemContent>
+									<SegmentedControl
+										defaultValue={options.computeElevation}
 										onValueChange={(e) => {
 											options.computeElevation = e.value as 'enabled' | 'disabled';
 											if (drawControl && options.controlType === 'measure') {
@@ -662,36 +750,41 @@
 											}
 											onchange(options);
 										}}
+										class="w-fit"
 									>
-										{#each ['enabled', 'disabled'] as option (option)}
-											<Segment.Item value={option}>
-												{option}
-											</Segment.Item>
-										{/each}
-									</Segment>
-								{/snippet}
+										<SegmentedControl.Control>
+											<SegmentedControl.Indicator />
+											{#each ['enabled', 'disabled'] as option (option)}
+												<SegmentedControl.Item value={option}>
+													<SegmentedControl.ItemText>{option}</SegmentedControl.ItemText>
+													<SegmentedControl.ItemHiddenInput />
+												</SegmentedControl.Item>
+											{/each}
+										</SegmentedControl.Control>
+									</SegmentedControl>
+								</Accordion.ItemContent>
 							</Accordion.Item>
 						</Accordion>
-					{/snippet}
+					</Accordion.ItemContent>
 				</Accordion.Item>
 			{/if}
 
 			{#if options.controlType === 'valhalla'}
 				<Accordion.Item value="valhalla-option">
-					{#snippet control()}
+					<Accordion.ItemTrigger>
 						<p class="font-bold uppercase">Valhalla control options</p>
-					{/snippet}
-					{#snippet panel()}
+					</Accordion.ItemTrigger>
+					<Accordion.ItemContent>
 						<Accordion
 							value={valhallaAccordionValue}
 							onValueChange={(e) => (valhallaAccordionValue = e.value)}
 							multiple
 						>
 							<Accordion.Item value="valhalla-url">
-								{#snippet control()}
+								<Accordion.ItemTrigger>
 									<p class="font-bold uppercase italic">Valhalla API URL</p>
-								{/snippet}
-								{#snippet panel()}
+								</Accordion.ItemTrigger>
+								<Accordion.ItemContent>
 									<input
 										type="text"
 										class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -708,227 +801,249 @@
 										Kenya, Uganda and Rwanda in this demo. You need to deploy your own Valhalla API
 										server for your application.
 									</p>
-								{/snippet}
+								</Accordion.ItemContent>
 							</Accordion.Item>
 
 							<Tabs
-								value={valhallaGroup}
+								defaultValue={valhallaGroup}
 								onValueChange={(e) => (valhallaGroup = e.value as 'routing' | 'isochrone')}
-								fluid
 							>
-								{#snippet list()}
-									<Tabs.Control value="routing">Routing</Tabs.Control>
-									<Tabs.Control value="isochrone">Isochrone</Tabs.Control>
-								{/snippet}
-								{#snippet content()}
-									<Tabs.Panel value="routing">
-										<Accordion.Item value="routing-means-of-transport">
-											{#snippet control()}
-												<p class="font-bold uppercase italic">Means of transport</p>
-											{/snippet}
-											{#snippet panel()}
-												<Segment
-													value={options.valhallaOptions.routingOptions?.costingModel}
-													onValueChange={(e) => {
-														if (!options.valhallaOptions.routingOptions) {
-															options.valhallaOptions.routingOptions = {};
-														} else {
-															options.valhallaOptions.routingOptions.costingModel =
-																e.value as costingModelType;
-														}
-														if (drawControl && options.controlType === 'valhalla') {
-															(drawControl as MaplibreValhallaControl).routingCostingModel =
-																options.valhallaOptions.routingOptions.costingModel ?? 'pedestrian';
-														}
-														onchange(options);
-													}}
-												>
+								<Tabs.List>
+									<Tabs.Trigger value="routing">Routing</Tabs.Trigger>
+									<Tabs.Trigger value="isochrone">Isochrone</Tabs.Trigger>
+									<Tabs.Indicator />
+								</Tabs.List>
+								<Tabs.Content value="routing">
+									<Accordion.Item value="routing-means-of-transport">
+										<Accordion.ItemTrigger>
+											<p class="font-bold uppercase italic">Means of transport</p>
+										</Accordion.ItemTrigger>
+										<Accordion.ItemContent>
+											<SegmentedControl
+												defaultValue={options.valhallaOptions.routingOptions?.costingModel}
+												onValueChange={(e) => {
+													if (!options.valhallaOptions.routingOptions) {
+														options.valhallaOptions.routingOptions = {};
+													} else {
+														options.valhallaOptions.routingOptions.costingModel =
+															e.value as costingModelType;
+													}
+													if (drawControl && options.controlType === 'valhalla') {
+														(drawControl as MaplibreValhallaControl).routingCostingModel =
+															options.valhallaOptions.routingOptions.costingModel ?? 'pedestrian';
+													}
+													onchange(options);
+												}}
+												class="w-fit"
+											>
+												<SegmentedControl.Control>
+													<SegmentedControl.Indicator />
 													{#each costingModelOptions as item (item.value)}
-														<Segment.Item value={item.value}>
-															{item.label}
-														</Segment.Item>
+														<SegmentedControl.Item value={item.value}>
+															<SegmentedControl.ItemText>{item.label}</SegmentedControl.ItemText>
+															<SegmentedControl.ItemHiddenInput />
+														</SegmentedControl.Item>
 													{/each}
-												</Segment>
-											{/snippet}
-										</Accordion.Item>
+												</SegmentedControl.Control>
+											</SegmentedControl>
+										</Accordion.ItemContent>
+									</Accordion.Item>
 
-										<Accordion.Item value="routing-distance-unit">
-											{#snippet control()}
-												<p class="font-bold uppercase italic">Distance unit</p>
-											{/snippet}
-											{#snippet panel()}
-												<Segment
-													value={options.valhallaOptions.routingOptions?.distanceUnit}
-													onValueChange={(e) => {
-														if (!options.valhallaOptions.routingOptions) {
-															options.valhallaOptions.routingOptions = {};
-														} else {
-															options.valhallaOptions.routingOptions.distanceUnit =
-																e.value as routingDistanceUnitType;
-														}
-														if (drawControl && options.controlType === 'valhalla') {
-															(drawControl as MaplibreValhallaControl).routingDistanceUnit =
-																options.valhallaOptions.routingOptions.distanceUnit ?? 'kilometers';
-														}
-														onchange(options);
-													}}
-												>
+									<Accordion.Item value="routing-distance-unit">
+										<Accordion.ItemTrigger>
+											<p class="font-bold uppercase italic">Distance unit</p>
+										</Accordion.ItemTrigger>
+										<Accordion.ItemContent>
+											<SegmentedControl
+												defaultValue={options.valhallaOptions.routingOptions?.distanceUnit}
+												onValueChange={(e) => {
+													if (!options.valhallaOptions.routingOptions) {
+														options.valhallaOptions.routingOptions = {};
+													} else {
+														options.valhallaOptions.routingOptions.distanceUnit =
+															e.value as routingDistanceUnitType;
+													}
+													if (drawControl && options.controlType === 'valhalla') {
+														(drawControl as MaplibreValhallaControl).routingDistanceUnit =
+															options.valhallaOptions.routingOptions.distanceUnit ?? 'kilometers';
+													}
+													onchange(options);
+												}}
+												class="w-fit"
+											>
+												<SegmentedControl.Control>
+													<SegmentedControl.Indicator />
 													{#each routingDistanceUnitOptions as item (item.value)}
-														<Segment.Item value={item.value}>
-															{item.label}
-														</Segment.Item>
+														<SegmentedControl.Item value={item.value}>
+															<SegmentedControl.ItemText>{item.label}</SegmentedControl.ItemText>
+															<SegmentedControl.ItemHiddenInput />
+														</SegmentedControl.Item>
 													{/each}
-												</Segment>
-											{/snippet}
-										</Accordion.Item>
-									</Tabs.Panel>
-									<Tabs.Panel value="isochrone">
-										<Accordion.Item value="isochrone-contour-type">
-											{#snippet control()}
-												<p class="font-bold uppercase italic">Type of contour</p>
-											{/snippet}
-											{#snippet panel()}
-												<Segment
-													value={options.valhallaOptions.isochroneOptions?.contourType}
-													onValueChange={(e) => {
-														if (!options.valhallaOptions.isochroneOptions) {
-															options.valhallaOptions.isochroneOptions = {};
-														} else {
-															options.valhallaOptions.isochroneOptions.contourType =
-																e.value as ContourType;
-														}
-														if (drawControl && options.controlType === 'valhalla') {
-															(drawControl as MaplibreValhallaControl).isochroneContourType =
-																options.valhallaOptions.isochroneOptions.contourType ?? 'time';
-														}
-														onchange(options);
-													}}
-												>
-													<Segment.Item value="time">Time</Segment.Item>
-													<Segment.Item value="distance">Distance</Segment.Item>
-												</Segment>
-											{/snippet}
-										</Accordion.Item>
-										<Accordion.Item value="isochrone-means-of-transport">
-											{#snippet control()}
-												<p class="font-bold uppercase italic">Means of transport</p>
-											{/snippet}
-											{#snippet panel()}
-												<Segment
-													value={options.valhallaOptions.isochroneOptions?.costingModel}
-													onValueChange={(e) => {
-														if (!options.valhallaOptions.isochroneOptions) {
-															options.valhallaOptions.isochroneOptions = {};
-														} else {
-															options.valhallaOptions.isochroneOptions.costingModel =
-																e.value as costingModelType;
-														}
-														if (drawControl && options.controlType === 'valhalla') {
-															(drawControl as MaplibreValhallaControl).isochroneCostingModel =
-																options.valhallaOptions.isochroneOptions.costingModel ??
-																'pedestrian';
-														}
-														onchange(options);
-													}}
-												>
+												</SegmentedControl.Control>
+											</SegmentedControl>
+										</Accordion.ItemContent>
+									</Accordion.Item>
+								</Tabs.Content>
+								<Tabs.Content value="isochrone">
+									<Accordion.Item value="isochrone-contour-type">
+										<Accordion.ItemTrigger>
+											<p class="font-bold uppercase italic">Type of contour</p>
+										</Accordion.ItemTrigger>
+										<Accordion.ItemContent>
+											<SegmentedControl
+												defaultValue={options.valhallaOptions.isochroneOptions?.contourType}
+												onValueChange={(e) => {
+													if (!options.valhallaOptions.isochroneOptions) {
+														options.valhallaOptions.isochroneOptions = {};
+													} else {
+														options.valhallaOptions.isochroneOptions.contourType =
+															e.value as ContourType;
+													}
+													if (drawControl && options.controlType === 'valhalla') {
+														(drawControl as MaplibreValhallaControl).isochroneContourType =
+															options.valhallaOptions.isochroneOptions.contourType ?? 'time';
+													}
+													onchange(options);
+												}}
+												class="w-fit"
+											>
+												<SegmentedControl.Control>
+													<SegmentedControl.Indicator />
+													<SegmentedControl.Item value="time">
+														<SegmentedControl.ItemText>Time</SegmentedControl.ItemText>
+														<SegmentedControl.ItemHiddenInput />
+													</SegmentedControl.Item>
+													<SegmentedControl.Item value="distance">
+														<SegmentedControl.ItemText>Distance</SegmentedControl.ItemText>
+														<SegmentedControl.ItemHiddenInput />
+													</SegmentedControl.Item>
+												</SegmentedControl.Control>
+											</SegmentedControl>
+										</Accordion.ItemContent>
+									</Accordion.Item>
+									<Accordion.Item value="isochrone-means-of-transport">
+										<Accordion.ItemTrigger>
+											<p class="font-bold uppercase italic">Means of transport</p>
+										</Accordion.ItemTrigger>
+										<Accordion.ItemContent>
+											<SegmentedControl
+												defaultValue={options.valhallaOptions.isochroneOptions?.costingModel}
+												onValueChange={(e) => {
+													if (!options.valhallaOptions.isochroneOptions) {
+														options.valhallaOptions.isochroneOptions = {};
+													} else {
+														options.valhallaOptions.isochroneOptions.costingModel =
+															e.value as costingModelType;
+													}
+													if (drawControl && options.controlType === 'valhalla') {
+														(drawControl as MaplibreValhallaControl).isochroneCostingModel =
+															options.valhallaOptions.isochroneOptions.costingModel ?? 'pedestrian';
+													}
+													onchange(options);
+												}}
+												class="w-fit"
+											>
+												<SegmentedControl.Control>
+													<SegmentedControl.Indicator />
 													{#each costingModelOptions as item (item.value)}
-														<Segment.Item value={item.value}>
-															{item.label}
-														</Segment.Item>
+														<SegmentedControl.Item value={item.value}>
+															<SegmentedControl.ItemText>{item.label}</SegmentedControl.ItemText>
+															<SegmentedControl.ItemHiddenInput />
+														</SegmentedControl.Item>
 													{/each}
-												</Segment>
-											{/snippet}
-										</Accordion.Item>
-										<Accordion.Item value="isochrone-contours">
-											{#snippet control()}
-												<p class="font-bold uppercase italic">Contours</p>
-											{/snippet}
-											{#snippet panel()}
-												{@const contours = options.valhallaOptions.isochroneOptions
-													?.contours as Contour[]}
+												</SegmentedControl.Control>
+											</SegmentedControl>
+										</Accordion.ItemContent>
+									</Accordion.Item>
+									<Accordion.Item value="isochrone-contours">
+										<Accordion.ItemTrigger>
+											<p class="font-bold uppercase italic">Contours</p>
+										</Accordion.ItemTrigger>
+										<Accordion.ItemContent>
+											{@const contours = options.valhallaOptions.isochroneOptions
+												?.contours as Contour[]}
 
-												<button
-													type="button"
-													class="btn preset-filled"
-													hidden={contours.length > 3}
-													onclick={() => {
-														const lastContour = contours[contours.length - 1];
-														contours.push(JSON.parse(JSON.stringify(lastContour)));
-													}}
-												>
-													<IconPlus size={18} />
-													<span>Add contour</span>
-												</button>
+											<button
+												type="button"
+												class="btn preset-filled"
+												hidden={contours.length > 3}
+												onclick={() => {
+													const lastContour = contours[contours.length - 1];
+													contours.push(JSON.parse(JSON.stringify(lastContour)));
+												}}
+											>
+												<IconPlus size={18} />
+												<span>Add contour</span>
+											</button>
 
-												<div class="table-wrap">
-													<table class="table table-fixed w-full max-w-md">
-														<colgroup>
-															<col class="w-20" />
-															<col class="w-20" />
-															<col class="w-20" />
-															<col />
-														</colgroup>
-														<thead>
+											<div class="table-wrap">
+												<table class="table table-fixed w-full max-w-md">
+													<colgroup>
+														<col class="w-20" />
+														<col class="w-20" />
+														<col class="w-20" />
+														<col />
+													</colgroup>
+													<thead>
+														<tr>
+															<th class="text-xs">Color</th>
+															<th class="text-xs">Time (min)</th>
+															<th class="text-xs">Distance (km)</th>
+															<th>&nbsp;</th>
+														</tr>
+													</thead>
+													<tbody class="[&>tr]:hover:preset-tonal-primary">
+														{#each contours as row, index (index)}
 															<tr>
-																<th class="text-xs">Color</th>
-																<th class="text-xs">Time (min)</th>
-																<th class="text-xs">Distance (km)</th>
-																<th>&nbsp;</th>
+																<td
+																	><input
+																		type="color"
+																		bind:value={row.color}
+																		class="cursor-pointer w-10 h-6"
+																	/></td
+																>
+																<td
+																	><input
+																		type="number"
+																		bind:value={row.time}
+																		class="cursor-pointer w-10 text-xs px-1"
+																	/></td
+																>
+																<td
+																	><input
+																		type="number"
+																		bind:value={row.distance}
+																		class="cursor-pointer w-10 text-xs px-1"
+																	/></td
+																>
+																<td class="text-right">
+																	{#if index > 0}
+																		<button
+																			class="btn btn-sm preset-filled rounded-full"
+																			onclick={() => {
+																				if (options.valhallaOptions.isochroneOptions?.contours) {
+																					options.valhallaOptions.isochroneOptions.contours.splice(
+																						index,
+																						1
+																					);
+																				}
+																			}}
+																		>
+																			<IconX size={16} />
+																		</button>
+																	{/if}
+																</td>
 															</tr>
-														</thead>
-														<tbody>
-															{#each contours as row, index (index)}
-																<tr>
-																	<td
-																		><input
-																			type="color"
-																			bind:value={row.color}
-																			class="cursor-pointer w-10 h-6"
-																		/></td
-																	>
-																	<td
-																		><input
-																			type="number"
-																			bind:value={row.time}
-																			class="cursor-pointer w-10 text-xs px-1"
-																		/></td
-																	>
-																	<td
-																		><input
-																			type="number"
-																			bind:value={row.distance}
-																			class="cursor-pointer w-10 text-xs px-1"
-																		/></td
-																	>
-																	<td class="text-right">
-																		{#if index > 0}
-																			<button
-																				class="btn btn-sm preset-filled rounded-full w-8 h-8"
-																				onclick={() => {
-																					if (options.valhallaOptions.isochroneOptions?.contours) {
-																						options.valhallaOptions.isochroneOptions.contours.splice(
-																							index,
-																							1
-																						);
-																					}
-																				}}
-																			>
-																				<IconX />
-																			</button>
-																		{/if}
-																	</td>
-																</tr>
-															{/each}
-														</tbody>
-													</table>
-												</div>
-											{/snippet}
-										</Accordion.Item>
-									</Tabs.Panel>
-								{/snippet}
+														{/each}
+													</tbody>
+												</table>
+											</div>
+										</Accordion.ItemContent>
+									</Accordion.Item>
+								</Tabs.Content>
 							</Tabs>
 						</Accordion>
-					{/snippet}
+					</Accordion.ItemContent>
 				</Accordion.Item>
 			{/if}
 		</Accordion>

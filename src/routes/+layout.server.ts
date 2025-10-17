@@ -1,4 +1,4 @@
-import { exampleIds, getDescription, getPackageInfo, getTitle } from './helpers';
+import { exampleIds, getDescription, getPackageInfo, getTitle, getTags } from './helpers';
 import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async ({ fetch }) => {
@@ -11,15 +11,21 @@ export const load: LayoutServerLoad = async ({ fetch }) => {
 		const html = await res.text();
 
 		const title = getTitle(html);
+		const tags = getTags(html);
 		const description = getDescription(html);
 
 		examples.push({
 			href: `/examples/${item}`,
 			title: title,
+			tags: tags,
 			image: `/assets/images/${item}.webp`,
 			description: description
 		});
 	}
+
+	examples.sort((a, b) => {
+		return a.title.localeCompare(b.title);
+	});
 
 	const styles = [
 		{

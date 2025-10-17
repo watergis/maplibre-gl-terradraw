@@ -10,7 +10,7 @@
 		type TerradrawMode,
 		type ValhallaOptions
 	} from '$lib';
-	import { Segment, Tabs } from '@skeletonlabs/skeleton-svelte';
+	import { SegmentedControl, Tabs } from '@skeletonlabs/skeleton-svelte';
 	import type { PageData } from './$types';
 	import CodeBlock from './CodeBlock.svelte';
 	import DemoMap, { type DemoOptions } from './DemoMap.svelte';
@@ -196,122 +196,138 @@
 
 		<div class="space-y-2">
 			<Tabs
-				value={importTypeTabSet}
+				defaultValue={importTypeTabSet}
 				onValueChange={(e) => {
 					importTypeTabSet = e.value;
 					updatePageUrl();
 				}}
 			>
-				{#snippet list()}
+				<Tabs.List>
 					{#each importTypeTabs as tab (tab.value)}
-						<Tabs.Control value={tab.value}>{tab.label}</Tabs.Control>
+						<Tabs.Trigger value={tab.value}>{tab.label}</Tabs.Trigger>
 					{/each}
-				{/snippet}
-				{#snippet content()}
-					<Tabs.Panel value="npm">
-						<h3 class="h3 pt-6 pb-4">Install</h3>
-						<p>Getting start with installing the package</p>
+					<Tabs.Indicator />
+				</Tabs.List>
 
-						<Segment
-							name="package-manager"
-							value={packageManager}
-							onValueChange={(e) => {
-								packageManager = e.value as string;
-								updatePageUrl();
-							}}
-						>
-							<Segment.Item value="npm">npm</Segment.Item>
-							<Segment.Item value="yarn">yarn</Segment.Item>
-							<Segment.Item value="pnpm">pnpm</Segment.Item>
-							<Segment.Item value="bun">bun</Segment.Item>
-						</Segment>
+				<Tabs.Content value="npm">
+					<h3 class="h3 pt-6 pb-4">Install</h3>
+					<p class="pb-2">Getting start with installing the package</p>
 
-						<div class="pt-2">
-							{#if packageManager === 'npm'}
-								<CodeBlock
-									lang="console"
-									code={`npm install --save-dev ${data.metadata.packageName}`}
-									showLineNumber={false}
-								/>
-							{:else if packageManager === 'yarn'}
-								<CodeBlock
-									lang="console"
-									code={`yarn add --dev ${data.metadata.packageName}`}
-									showLineNumber={false}
-								/>
-							{:else if packageManager === 'pnpm'}
-								<CodeBlock
-									lang="console"
-									code={`pnpm add --save-dev ${data.metadata.packageName}`}
-									showLineNumber={false}
-								/>
-							{:else if packageManager === 'bun'}
-								<CodeBlock
-									lang="console"
-									code={`bun install --save-dev ${data.metadata.packageName}`}
-									showLineNumber={false}
-								/>
-							{/if}
-						</div>
+					<SegmentedControl
+						name="package-manager"
+						defaultValue={packageManager}
+						onValueChange={(e) => {
+							packageManager = e.value as string;
+							updatePageUrl();
+						}}
+						class="w-fit"
+					>
+						<SegmentedControl.Control>
+							<SegmentedControl.Indicator />
+							<SegmentedControl.Item value="npm">
+								<SegmentedControl.ItemText>npm</SegmentedControl.ItemText>
+								<SegmentedControl.ItemHiddenInput />
+							</SegmentedControl.Item>
+							<SegmentedControl.Item value="yarn">
+								<SegmentedControl.ItemText>yarn</SegmentedControl.ItemText>
+								<SegmentedControl.ItemHiddenInput />
+							</SegmentedControl.Item>
+							<SegmentedControl.Item value="pnpm">
+								<SegmentedControl.ItemText>pnpm</SegmentedControl.ItemText>
+								<SegmentedControl.ItemHiddenInput />
+							</SegmentedControl.Item>
+							<SegmentedControl.Item value="bun">
+								<SegmentedControl.ItemText>bun</SegmentedControl.ItemText>
+								<SegmentedControl.ItemHiddenInput />
+							</SegmentedControl.Item>
+						</SegmentedControl.Control>
+					</SegmentedControl>
 
-						<h3 class="h3 pt-6 pb-4">Usage</h3>
-
-						<p>Copy and paste the below code.</p>
-
-						{#key updateDemo}
+					<div class="pt-2">
+						{#if packageManager === 'npm'}
 							<CodeBlock
-								lang="js"
-								code={data.codes.npm
-									.replace(
-										/MaplibreTerradrawControl/g,
-										demoOptions.controlType === 'default'
-											? 'MaplibreTerradrawControl'
-											: demoOptions.controlType === 'measure'
-												? 'MaplibreMeasureControl'
-												: 'MaplibreValhallaControl'
-									)
-									.replace('{modes}', demoOptions.modes.map((m) => `'${m}'`).join(','))
-									.replace('{open}', demoOptions.isOpen === 'open' ? 'true' : 'false')
-									.replace(
-										'{control_options}',
-										demoOptions.controlType === 'default'
-											? ''
-											: demoOptions.controlType === 'valhalla'
-												? getValhallaOptions()
-												: getMeasureOptions()
-									)}
+								lang="console"
+								code={`npm install --save-dev ${data.metadata.packageName}`}
+								showLineNumber={false}
 							/>
-						{/key}
-					</Tabs.Panel>
-					<Tabs.Panel value="cdn">
-						<h3 class="h3 pt-6">Usage</h3>
-
-						{#key updateDemo}
+						{:else if packageManager === 'yarn'}
 							<CodeBlock
-								lang="html"
-								code={data.codes.cdn
-									.replace(
-										/MaplibreTerradrawControl\(/g,
-										demoOptions.controlType === 'default'
-											? 'MaplibreTerradrawControl('
-											: demoOptions.controlType === 'measure'
-												? 'MaplibreMeasureControl('
-												: 'MaplibreValhallaControl('
-									)
-									.replace('{modes}', demoOptions.modes.map((m) => `'${m}'`).join(','))
-									.replace('{open}', demoOptions.isOpen === 'open' ? 'true' : 'false')
-									.replace(
-										'{control_options}',
-										demoOptions.controlType === 'default'
-											? ''
-											: demoOptions.controlType === 'valhalla'
-												? getValhallaOptions()
-												: getMeasureOptions()
-									)}
+								lang="console"
+								code={`yarn add --dev ${data.metadata.packageName}`}
+								showLineNumber={false}
 							/>
-						{/key}
-					</Tabs.Panel>
-				{/snippet}
+						{:else if packageManager === 'pnpm'}
+							<CodeBlock
+								lang="console"
+								code={`pnpm add --save-dev ${data.metadata.packageName}`}
+								showLineNumber={false}
+							/>
+						{:else if packageManager === 'bun'}
+							<CodeBlock
+								lang="console"
+								code={`bun install --save-dev ${data.metadata.packageName}`}
+								showLineNumber={false}
+							/>
+						{/if}
+					</div>
+
+					<h3 class="h3 pt-6 pb-4">Usage</h3>
+
+					<p>Copy and paste the below code.</p>
+
+					{#key updateDemo}
+						<CodeBlock
+							lang="js"
+							code={data.codes.npm
+								.replace(
+									/MaplibreTerradrawControl/g,
+									demoOptions.controlType === 'default'
+										? 'MaplibreTerradrawControl'
+										: demoOptions.controlType === 'measure'
+											? 'MaplibreMeasureControl'
+											: 'MaplibreValhallaControl'
+								)
+								.replace('{modes}', demoOptions.modes.map((m) => `'${m}'`).join(','))
+								.replace('{open}', demoOptions.isOpen === 'open' ? 'true' : 'false')
+								.replace(
+									'{control_options}',
+									demoOptions.controlType === 'default'
+										? ''
+										: demoOptions.controlType === 'valhalla'
+											? getValhallaOptions()
+											: getMeasureOptions()
+								)}
+						/>
+					{/key}
+				</Tabs.Content>
+				<Tabs.Content value="cdn">
+					<h3 class="h3 pt-6">Usage</h3>
+
+					{#key updateDemo}
+						<CodeBlock
+							lang="html"
+							code={data.codes.cdn
+								.replace(
+									/MaplibreTerradrawControl\(/g,
+									demoOptions.controlType === 'default'
+										? 'MaplibreTerradrawControl('
+										: demoOptions.controlType === 'measure'
+											? 'MaplibreMeasureControl('
+											: 'MaplibreValhallaControl('
+								)
+								.replace('{modes}', demoOptions.modes.map((m) => `'${m}'`).join(','))
+								.replace('{open}', demoOptions.isOpen === 'open' ? 'true' : 'false')
+								.replace(
+									'{control_options}',
+									demoOptions.controlType === 'default'
+										? ''
+										: demoOptions.controlType === 'valhalla'
+											? getValhallaOptions()
+											: getMeasureOptions()
+								)}
+						/>
+					{/key}
+				</Tabs.Content>
 			</Tabs>
 		</div>
 	</section>
@@ -343,20 +359,24 @@
 				{#each examples as custom (custom.title)}
 					<!-- eslint-disable svelte/no-navigation-without-resolve -->
 					<a
-						class="card preset-filled-surface-100-900 border-[1px] border-surface-200-800 card-hover divide-surface-200-800 block overflow-hidden sm:w-auto md:max-w-48 lg:max-w-64 xl:max-w-80"
 						href={custom.href}
+						class="card preset-filled-surface-100-900 border-[1px] border-surface-200-800 card-hover divide-surface-200-800 flex flex-col max-w-md divide-y overflow-hidden sm:w-auto md:max-w-64 lg:max-w-80 xl:max-w-100"
 					>
-						<header class="aspect-[21/9] w-full">
-							<img class="preview-image pt-2" src={custom.image} alt={custom.title} />
+						<header>
+							<img src={custom.image} class="aspect-[21/9] w-full" alt={custom.title} />
 						</header>
-						<article class="space-y-4 p-4">
+						<article class="space-y-4 p-4 flex-grow">
 							<div>
-								<h2 class="h6">{custom.title}</h2>
+								<h2 class="h7">{custom.tags}</h2>
+								<h3 class="h5 title">{custom.title}</h3>
 							</div>
-							<p class="description">
+							<p class="opacity-60 description">
 								{custom.description}
 							</p>
 						</article>
+						<footer class="flex items-center justify-between gap-4 p-4 mt-auto">
+							<small class="opacity-60">{data.metadata.author}</small>
+						</footer>
 					</a>
 				{/each}
 			</div>
@@ -369,10 +389,16 @@
 		max-height: 130px;
 		margin: 0 auto;
 	}
-	.description {
+	.title {
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: 3;
+		overflow: hidden;
+	}
+	.description {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 4;
 		overflow: hidden;
 	}
 </style>

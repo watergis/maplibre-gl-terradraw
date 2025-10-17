@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { afterNavigate } from '$app/navigation';
-	import { ProgressRing } from '@skeletonlabs/skeleton-svelte';
+	import { Progress } from '@skeletonlabs/skeleton-svelte';
 	import CodeBlock from '../../CodeBlock.svelte';
 	import type { PageData } from './$types';
 
@@ -32,12 +32,13 @@
 
 <div class="p-4">
 	{#await getHtml()}
-		<ProgressRing
-			value={null}
-			size="size-14"
-			meterStroke="stroke-tertiary-600-400"
-			trackStroke="stroke-tertiary-50-950"
-		/>
+		<Progress class="items-center w-fit" value={null}>
+			<Progress.Circle>
+				<Progress.CircleTrack />
+				<Progress.CircleRange />
+			</Progress.Circle>
+			<Progress.ValueText />
+		</Progress>
 	{:then html}
 		<CodeBlock lang="html" code={html} />
 	{/await}

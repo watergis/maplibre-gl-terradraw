@@ -344,24 +344,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	}
 
 	/**
-	 * wrapter to update feature properties in terradraw instance
-	 * This function unsubscribes and resubscribes 'change' event of terradraw to avoid multiple calls of handleTerradrawFeatureChanged
-	 * @param id Feature ID
-	 * @param properties properties to update
-	 * @returns void
-	 */
-	private updateFeatureProperties(
-		id: TerraDrawExtend.FeatureId,
-		properties: { [key: string]: string | number }
-	) {
-		if (!this.terradraw) return;
-		if (!this.terradraw.getSnapshotFeature(id)) return;
-		this.terradraw.off('change', this.handleTerradrawFeatureChanged.bind(this));
-		this.terradraw.updateFeatureProperties(id, properties);
-		this.terradraw.on('change', this.handleTerradrawFeatureChanged.bind(this));
-	}
-
-	/**
 	 * Register  measure control related maplibre sources and layers
 	 */
 	private registerMesureControl() {
@@ -836,10 +818,10 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				point.properties.unit = feature.properties.unit;
 
 				if (!isCurrentDrawing) {
-					this.updateFeatureProperties(id, {
+					this.terradraw?.updateFeatureProperties(id, {
 						area: point.properties.area,
 						unit: point.properties.unit
-					} as { [key: string]: string | number });
+					});
 				}
 
 				if (
@@ -980,11 +962,11 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					const lastSegment = segments[segments.length - 1];
 					const distanceUnit = lastSegment.properties.totalUnit;
 
-					this.updateFeatureProperties(id, {
+					this.terradraw?.updateFeatureProperties(id, {
 						distance: feature.properties.distance,
 						distanceUnit: distanceUnit,
 						segments: feature.properties.segments
-					} as { [key: string]: string | number });
+					});
 				}
 
 				// update GeoJSON source with new data
@@ -1060,7 +1042,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				} as { [key: string]: string | number };
 			}
 			if (!isCurrentDrawing) {
-				this.updateFeatureProperties(id, props as { [key: string]: string | number });
+				this.terradraw?.updateFeatureProperties(id, props);
 			}
 		}
 	}

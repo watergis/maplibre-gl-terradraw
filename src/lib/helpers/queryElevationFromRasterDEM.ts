@@ -24,7 +24,7 @@ const coordinateToKey = (coordinates: number[], precision = 8): string => {
 /**
  * Query elvation for point features from Raster DEM
  * @param points Point GeoJSON features
- * @param terrainDource terrain source for computing elevation from raster DEM
+ * @param terrainSource terrain source for computing elevation from raster DEM
  * @param cacheConfig cache configuration for elevation values
  * @param cacheInstance optional cache instance
  * @param measureUnitType The unit type for elevation display (metric or imperial)

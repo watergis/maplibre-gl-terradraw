@@ -270,7 +270,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 	pointLayerLabelSpec: {
 		id: '{prefix}-point-label',
 		type: 'symbol',
-		source: '{prefix}-point-source',
+		source: '{prefix}-point',
 		filter: [
 			'all',
 			['==', '$type', 'Point'],

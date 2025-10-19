@@ -293,18 +293,16 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				const geometryType = feature.geometry.type;
 				const mode = feature.properties.mode as TerradrawMode;
 				if (['linestring', 'freehand-linestring'].includes(mode) && geometryType === 'LineString') {
-					this.measureLine(id);
-					this.computeElevationByLineFeatureID(id);
+					this.measureLine(id, false);
 				} else if (['point', 'marker'].includes(mode) && geometryType === 'Point') {
-					this.measurePoint(id);
-					this.computeElevationByPointFeatureID(id);
+					this.measurePoint(id, false);
 				} else if (
 					!['point', 'marker', 'linestring', 'freehand-linestring', 'select', 'render'].includes(
 						mode
 					) &&
 					geometryType === 'Polygon'
 				) {
-					this.measurePolygon(id);
+					this.measurePolygon(id, false);
 				}
 			}
 		}
@@ -337,9 +335,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		const lineSource = this.measureOptions.lineLayerLabelSpec?.source;
 		if (lineSource) sourceIds.push(lineSource);
 
-		const pointSource = this.measureOptions.pointLayerLabelSpec?.source;
-		if (pointSource) sourceIds.push(pointSource);
-
 		return cleanMaplibreStyle(
 			style,
 			options,
@@ -360,21 +355,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		const pointMode = this.options.modes?.find((m) => ['point', 'marker'].includes(m));
 
 		if (pointMode) {
-			// add GeoJSON source for distance label
-			if (
-				!this.map.getSource(
-					(this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).source
-				)
-			) {
-				this.map.addSource(
-					(this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).source,
-					{
-						type: 'geojson',
-						data: { type: 'FeatureCollection', features: [] }
-					}
-				);
-			}
-
 			// add GeoJSON layer for distance label node appearance
 			if (
 				!this.map.getLayer((this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).id)
@@ -490,7 +470,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			);
 			if (pointFeatures.length > 0) {
 				for (const f of pointFeatures) {
-					this.computeElevationByPointFeatureID(f.id as string);
+					this.measurePoint(f.id as string);
 				}
 			}
 		}
@@ -502,8 +482,23 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 */
 	private handleTerradrawFeatureReady = debounce((id: TerraDrawExtend.FeatureId) => {
 		if (!this.map) return;
-		this.computeElevationByLineFeatureID(id);
-		this.computeElevationByPointFeatureID(id);
+		if (!this.terradraw) return;
+		const feature = this.terradraw.getSnapshotFeature(id);
+		if (!feature) return;
+		const geometryType = feature.geometry.type;
+		const mode = feature.properties.mode as TerradrawMode;
+		if (['linestring', 'freehand-linestring'].includes(mode) && geometryType === 'LineString') {
+			this.measureLine(id, false);
+		} else if (['point', 'marker'].includes(mode) && geometryType === 'Point') {
+			this.measurePoint(id, false);
+		} else if (
+			!['point', 'marker', 'linestring', 'freehand-linestring', 'select', 'render'].includes(
+				mode
+			) &&
+			geometryType === 'Polygon'
+		) {
+			this.measurePolygon(id, false);
+		}
 	}, 300);
 
 	/**
@@ -516,7 +511,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		if (type === 'styling') return;
 
 		const sources = [
-			this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification,
 			this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification,
 			this.measureOptions.routingLineLayerNodeSpec as CircleLayerSpecification,
 			this.measureOptions.polygonLayerSpec as SymbolLayerSpecification
@@ -532,23 +526,23 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 
 		const drawInstance = this.getTerraDrawInstance();
 		if (!drawInstance) return;
-		const snapshot = drawInstance.getSnapshot();
+
 		for (const id of ids) {
-			const feature = snapshot.find((f) => f.id === id);
+			const feature = drawInstance.getSnapshotFeature(id);
 			if (feature) {
 				const geometryType = feature.geometry.type;
 				const mode = feature.properties.mode as TerradrawMode;
 				if (['linestring', 'freehand-linestring'].includes(mode) && geometryType === 'LineString') {
-					this.measureLine(id);
+					this.measureLine(id, true);
 				} else if (['point', 'marker'].includes(mode) && geometryType === 'Point') {
-					this.measurePoint(id);
+					this.measurePoint(id, true);
 				} else if (
 					!['point', 'marker', 'linestring', 'freehand-linestring', 'select', 'render'].includes(
 						mode
 					) &&
 					geometryType === 'Polygon'
 				) {
-					this.measurePolygon(id);
+					this.measurePolygon(id, true);
 				}
 			} else {
 				// if editing ID does not exist, delete all related features from measure layers
@@ -586,15 +580,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		}
 		if (this.map.getLayer((this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).id)) {
 			this.map.removeLayer((this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).id);
-		}
-		if (
-			this.map.getSource(
-				(this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).source
-			)
-		) {
-			this.map.removeSource(
-				(this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).source
-			);
 		}
 		if (
 			this.map.getSource(
@@ -730,47 +715,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	};
 
 	/**
-	 * Compute elevation by a Point feature ID
-	 * @param id FeatureID
-	 */
-	private computeElevationByPointFeatureID = async (id: TerraDrawExtend.FeatureId) => {
-		if (!this.map) return;
-		if (this.computeElevation === true) {
-			const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
-				(this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).source
-			] as GeoJSONSourceSpecification;
-			if (geojsonSource) {
-				if (
-					typeof geojsonSource.data !== 'string' &&
-					geojsonSource.data.type === 'FeatureCollection'
-				) {
-					const points: GeoJSONStoreFeatures[] = geojsonSource.data.features.filter(
-						(f) =>
-							f.id === id &&
-							f.geometry.type === 'Point' &&
-							['point', 'marker'].includes(f.properties?.mode as string)
-					) as unknown as GeoJSONStoreFeatures[];
-					if (points && points.length > 0) {
-						const updatedFeatures = await queryElevationFromRasterDEM(
-							points as GeoJSONStoreFeatures[],
-							this.measureOptions.terrainSource,
-							this.measureOptions.elevationCacheConfig,
-							this.elevationCache,
-							this.measureUnitType,
-							this.measureUnitSymbols
-						);
-						this.replaceGeoJSONSource(
-							updatedFeatures,
-							(this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).source,
-							'point'
-						);
-					}
-				}
-			}
-		}
-	};
-
-	/**
 	 * Recalculate elevation units for existing features without re-querying elevation data
 	 * This is called when measureUnitType changes to convert elevation values between metric and imperial
 	 */
@@ -836,7 +780,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * measure polygon area for given feature ID
 	 * @param id terradraw feature id
 	 */
-	private measurePolygon(id: TerraDrawExtend.FeatureId) {
+	private async measurePolygon(id: TerraDrawExtend.FeatureId, isCurrentDrawing = false) {
 		if (!this.map) return;
 		const drawInstance = this.getTerraDrawInstance();
 		if (!drawInstance) return;
@@ -872,6 +816,13 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				);
 				point.properties.area = feature.properties.area;
 				point.properties.unit = feature.properties.unit;
+
+				if (!isCurrentDrawing) {
+					this.terradraw?.updateFeatureProperties(id, {
+						area: point.properties.area,
+						unit: point.properties.unit
+					});
+				}
 
 				if (
 					typeof geojsonSource.data !== 'string' &&
@@ -922,13 +873,12 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * measure line distance for given feature ID
 	 * @param id terradraw feature id
 	 */
-	private measureLine(id: TerraDrawExtend.FeatureId) {
+	private measureLine(id: TerraDrawExtend.FeatureId, isCurrentDrawing = false) {
 		if (!this.map) return;
 		const drawInstance = this.getTerraDrawInstance();
 		if (!drawInstance) return;
 
-		const snapshot = drawInstance.getSnapshot();
-		let feature = snapshot?.find((f) => f.id === id && f.geometry.type === 'LineString');
+		let feature = drawInstance.getSnapshotFeature(id);
 		if (feature) {
 			const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
 				(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source
@@ -1002,6 +952,23 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					}
 				}
 
+				if (!isCurrentDrawing) {
+					if (this.computeElevation === true) {
+						if (this.measureOptions.terrainSource !== undefined) {
+							this.computeElevationByLineFeatureID(id);
+						}
+					}
+
+					const lastSegment = segments[segments.length - 1];
+					const distanceUnit = lastSegment.properties.totalUnit;
+
+					this.terradraw?.updateFeatureProperties(id, {
+						distance: feature.properties.distance,
+						distanceUnit: distanceUnit,
+						segments: feature.properties.segments
+					});
+				}
+
 				// update GeoJSON source with new data
 				(
 					this.map.getSource(
@@ -1037,71 +1004,45 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * measure point elevation for given feature ID
 	 * @param id terradraw feature id
 	 */
-	private measurePoint(id: TerraDrawExtend.FeatureId) {
+	private async measurePoint(id: TerraDrawExtend.FeatureId, isCurrentDrawing = false) {
 		if (!this.map) return;
 		const drawInstance = this.getTerraDrawInstance();
 		if (!drawInstance) return;
 
-		const snapshot = drawInstance.getSnapshot();
-		let feature = snapshot?.find((f) => f.id === id && f.geometry.type === 'Point');
+		let feature = drawInstance.getSnapshotFeature(id);
 		if (feature) {
-			const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
-				(this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).source
-			] as GeoJSONSourceSpecification;
-			if (geojsonSource) {
-				// delete old nodes
-				if (
-					typeof geojsonSource.data !== 'string' &&
-					geojsonSource.data.type === 'FeatureCollection'
-				) {
-					geojsonSource.data.features = geojsonSource.data.features.filter((f) => f.id !== id);
-				}
-
-				feature = queryElevationByPoint(
-					feature,
-					this.map,
-					this.computeElevation,
-					this.measureOptions.terrainSource,
-					this.measureUnitType,
-					this.measureUnitSymbols
-				);
-
-				// add elevation label feature if computeElevation is only enabled.
-				if (this.computeElevation === true) {
-					if (
-						typeof geojsonSource.data !== 'string' &&
-						geojsonSource.data.type === 'FeatureCollection'
-					) {
-						geojsonSource.data.features.push(feature);
-					}
-				}
-
-				// update GeoJSON source with new data
-				(
-					this.map.getSource(
-						(this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).source
-					) as GeoJSONSource
-				)?.setData(geojsonSource.data);
-
-				if (
-					this.map.getLayer((this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).id)
-				) {
-					this.map.moveLayer((this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).id);
-				}
-				if (
-					this.map.getLayer((this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).id)
-				) {
-					this.map.moveLayer(
-						(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).id
+			let props = {
+				elevation: undefined,
+				elevationUnit: undefined
+			} as unknown as { [key: string]: string | number };
+			if (this.computeElevation) {
+				if (this.measureOptions.terrainSource === undefined) {
+					feature = queryElevationByPoint(
+						feature,
+						this.map,
+						this.computeElevation,
+						this.measureOptions.terrainSource,
+						this.measureUnitType,
+						this.measureUnitSymbols
 					);
-					this.map.moveLayer(
-						(this.measureOptions.routingLineLayerNodeSpec as CircleLayerSpecification).id
+				} else {
+					const features = await queryElevationFromRasterDEM(
+						[feature],
+						this.measureOptions.terrainSource,
+						this.measureOptions.elevationCacheConfig,
+						this.elevationCache,
+						this.measureUnitType,
+						this.measureUnitSymbols
 					);
+					feature = features[0];
 				}
-
-				this.map.moveLayer(
-					(this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).id
-				);
+				props = {
+					elevation: feature.properties.elevation,
+					elevationUnit: feature.properties.elevationUnit
+				} as { [key: string]: string | number };
+			}
+			if (!isCurrentDrawing) {
+				this.terradraw?.updateFeatureProperties(id, props);
 			}
 		}
 	}
@@ -1119,7 +1060,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			}
 
 			const sources = [
-				this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification,
 				this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification,
 				this.measureOptions.routingLineLayerNodeSpec as CircleLayerSpecification,
 				this.measureOptions.polygonLayerSpec as SymbolLayerSpecification
@@ -1133,53 +1073,5 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				this.clearExtendedFeatures(sourceIds, undefined);
 			}
 		}
-	}
-
-	/**
-	 * get GeoJSON features
-	 * @param onlySelected If true, returns only selected features. Default is false.
-	 * @returns FeatureCollection in GeoJSON format
-	 */
-	public getFeatures(onlySelected = false) {
-		const fc = super.getFeatures(onlySelected);
-		if (!fc) return fc;
-		if (!this.terradraw) return fc;
-
-		for (let i = 0; i < fc.features.length; i++) {
-			const feature = fc.features[i];
-			if (!this.map) continue;
-			if (!this.map.loaded()) continue;
-			const geomType = feature.geometry.type;
-			if (geomType === 'LineString') {
-				fc.features[i] = calcDistance(
-					feature,
-					this.measureUnitType,
-					this.distancePrecision,
-					this.forceDistanceUnit,
-					this.measureUnitSymbols,
-					this.map,
-					this.computeElevation,
-					this.measureOptions.terrainSource
-				);
-			} else if (geomType === 'Polygon') {
-				fc.features[i] = calcArea(
-					feature,
-					this.measureUnitType,
-					this.areaPrecision,
-					this.forceAreaUnit,
-					this.measureUnitSymbols
-				);
-			} else if (geomType === 'Point') {
-				fc.features[i] = queryElevationByPoint(
-					feature,
-					this.map,
-					this.computeElevation,
-					this.measureOptions.terrainSource,
-					this.measureUnitType,
-					this.measureUnitSymbols
-				);
-			}
-		}
-		return fc;
 	}
 }

@@ -24,7 +24,7 @@ const coordinateToKey = (coordinates: number[], precision = 8): string => {
 /**
  * Query elvation for point features from Raster DEM
  * @param points Point GeoJSON features
- * @param terrainDource terrain source for computing elevation from raster DEM
+ * @param terrainSource terrain source for computing elevation from raster DEM
  * @param cacheConfig cache configuration for elevation values
  * @param cacheInstance optional cache instance
  * @param measureUnitType The unit type for elevation display (metric or imperial)
@@ -33,7 +33,7 @@ const coordinateToKey = (coordinates: number[], precision = 8): string => {
  */
 export const queryElevationFromRasterDEM = async (
 	points: GeoJSONStoreFeatures[],
-	terrainDource?: TerrainSource,
+	terrainSource?: TerrainSource,
 	cacheConfig?: ElevationCacheConfig,
 	cacheInstance?: CacheInterface<number>,
 	measureUnitType: MeasureUnitType = 'metric',
@@ -58,13 +58,13 @@ export const queryElevationFromRasterDEM = async (
 
 	let terrainInstance: TerrainRGB | Terrarium | undefined = undefined;
 	let maxzoom = 15;
-	if (terrainDource) {
-		const url = terrainDource.url;
-		const encoding = terrainDource.encoding ?? 'mapbox';
-		const tileSize = terrainDource.tileSize ?? 512;
-		const minzoom = terrainDource.minzoom ?? 5;
-		maxzoom = terrainDource.maxzoom ?? 15;
-		const tms = terrainDource.tms ?? false;
+	if (terrainSource) {
+		const url = terrainSource.url;
+		const encoding = terrainSource.encoding ?? 'mapbox';
+		const tileSize = terrainSource.tileSize ?? 512;
+		const minzoom = terrainSource.minzoom ?? 5;
+		maxzoom = terrainSource.maxzoom ?? 15;
+		const tms = terrainSource.tms ?? false;
 		terrainInstance =
 			encoding === 'mapbox'
 				? new TerrainRGB(url, tileSize, minzoom, maxzoom, tms)

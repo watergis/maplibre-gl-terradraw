@@ -208,8 +208,11 @@ export class MaplibreTerradrawControl implements IControl {
 			this.controlContainer?.appendChild(ele);
 		});
 
-		this.terradraw?.on('change', this.toggleButtonsWhenNoFeature.bind(this));
 		this.toggleButtonsWhenNoFeature();
+		this.terradraw?.on('finish', this.toggleButtonsWhenNoFeature.bind(this));
+		this.map.once('idle', () => {
+			this.toggleButtonsWhenNoFeature();
+		});
 		return this.controlContainer;
 	}
 
@@ -424,7 +427,7 @@ export class MaplibreTerradrawControl implements IControl {
 					if (!this.terradraw.enabled) return;
 
 					this.terradraw.clear();
-					this.deactivate();
+					this.resetActiveMode();
 					this.toggleDeleteSelectionButton();
 					this.toggleButtonsWhenNoFeature();
 					this.dispatchEvent('feature-deleted');
@@ -545,8 +548,9 @@ export class MaplibreTerradrawControl implements IControl {
 	 */
 	protected toggleButtonsWhenNoFeature() {
 		if (!this.controlContainer) return;
-		const fc = this.getFeatures(false);
-		const isActive = fc && fc.features.length > 0 ? true : false;
+		const snapshot = this.terradraw?.getSnapshot();
+		const features = snapshot?.filter((f) => f.properties.mode !== 'select');
+		const isActive = features && features.length > 0 ? true : false;
 
 		const targets = [
 			`maplibregl-terradraw-${this.cssPrefix}add-select-button`,

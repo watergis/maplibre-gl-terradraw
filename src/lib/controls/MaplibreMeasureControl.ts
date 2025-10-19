@@ -303,7 +303,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					) &&
 					geometryType === 'Polygon'
 				) {
-					this.measurePolygon(id);
+					this.measurePolygon(id, false);
 				}
 			}
 		}
@@ -503,6 +503,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		if (!this.map) return;
 		this.computeElevationByLineFeatureID(id);
 		this.measurePoint(id);
+		this.measurePolygon(id, false);
 	}, 300);
 
 	/**
@@ -544,7 +545,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					) &&
 					geometryType === 'Polygon'
 				) {
-					this.measurePolygon(id);
+					this.measurePolygon(id, true);
 				}
 			} else {
 				// if editing ID does not exist, delete all related features from measure layers
@@ -782,7 +783,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * measure polygon area for given feature ID
 	 * @param id terradraw feature id
 	 */
-	private measurePolygon(id: TerraDrawExtend.FeatureId) {
+	private async measurePolygon(id: TerraDrawExtend.FeatureId, isCurrentDrawing = false) {
 		if (!this.map) return;
 		const drawInstance = this.getTerraDrawInstance();
 		if (!drawInstance) return;
@@ -818,6 +819,13 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				);
 				point.properties.area = feature.properties.area;
 				point.properties.unit = feature.properties.unit;
+
+				if (!isCurrentDrawing) {
+					this.updateFeatureProperties(id, {
+						area: point.properties.area,
+						unit: point.properties.unit
+					} as { [key: string]: string | number });
+				}
 
 				if (
 					typeof geojsonSource.data !== 'string' &&
@@ -1078,14 +1086,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					this.map,
 					this.computeElevation,
 					this.measureOptions.terrainSource
-				);
-			} else if (geomType === 'Polygon') {
-				fc.features[i] = calcArea(
-					feature,
-					this.measureUnitType,
-					this.areaPrecision,
-					this.forceAreaUnit,
-					this.measureUnitSymbols
 				);
 			}
 		}

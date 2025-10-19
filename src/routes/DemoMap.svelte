@@ -585,7 +585,7 @@
 						>
 							<Accordion.Item value="measure-unit-type">
 								<Accordion.ItemTrigger>
-									<p class="font-bold uppercase italic">Distance unit</p>
+									<p class="font-bold uppercase italic">Measure unit</p>
 								</Accordion.ItemTrigger>
 								<Accordion.ItemContent>
 									<SegmentedControl

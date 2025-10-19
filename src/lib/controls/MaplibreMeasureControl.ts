@@ -985,37 +985,43 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 */
 	private async measurePoint(id: TerraDrawExtend.FeatureId) {
 		if (!this.map) return;
-		if (!(this.computeElevation === true)) return;
 		const drawInstance = this.getTerraDrawInstance();
 		if (!drawInstance) return;
 
 		let feature = drawInstance.getSnapshotFeature(id);
 		if (feature) {
-			if (this.measureOptions.terrainSource === undefined) {
-				feature = queryElevationByPoint(
-					feature,
-					this.map,
-					this.computeElevation,
-					this.measureOptions.terrainSource,
-					this.measureUnitType,
-					this.measureUnitSymbols
-				);
-			} else {
-				const features = await queryElevationFromRasterDEM(
-					[feature],
-					this.measureOptions.terrainSource,
-					this.measureOptions.elevationCacheConfig,
-					this.elevationCache,
-					this.measureUnitType,
-					this.measureUnitSymbols
-				);
-				feature = features[0];
+			let props = {
+				elevation: undefined,
+				elevationUnit: undefined
+			} as unknown as { [key: string]: string | number };
+			if (this.computeElevation) {
+				if (this.measureOptions.terrainSource === undefined) {
+					feature = queryElevationByPoint(
+						feature,
+						this.map,
+						this.computeElevation,
+						this.measureOptions.terrainSource,
+						this.measureUnitType,
+						this.measureUnitSymbols
+					);
+				} else {
+					const features = await queryElevationFromRasterDEM(
+						[feature],
+						this.measureOptions.terrainSource,
+						this.measureOptions.elevationCacheConfig,
+						this.elevationCache,
+						this.measureUnitType,
+						this.measureUnitSymbols
+					);
+					feature = features[0];
+				}
+				props = {
+					elevation: feature.properties.elevation,
+					elevationUnit: feature.properties.elevationUnit
+				} as { [key: string]: string | number };
 			}
 
-			this.updateFeatureProperties(id, {
-				elevation: feature.properties.elevation,
-				elevationUnit: feature.properties.elevationUnit
-			} as { [key: string]: string | number });
+			this.updateFeatureProperties(id, props as { [key: string]: string | number });
 		}
 	}
 

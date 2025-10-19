@@ -297,7 +297,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					this.computeElevationByLineFeatureID(id);
 				} else if (['point', 'marker'].includes(mode) && geometryType === 'Point') {
 					this.measurePoint(id);
-					this.computeElevationByPointFeatureID(id);
 				} else if (
 					!['point', 'marker', 'linestring', 'freehand-linestring', 'select', 'render'].includes(
 						mode
@@ -337,15 +336,30 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		const lineSource = this.measureOptions.lineLayerLabelSpec?.source;
 		if (lineSource) sourceIds.push(lineSource);
 
-		const pointSource = this.measureOptions.pointLayerLabelSpec?.source;
-		if (pointSource) sourceIds.push(pointSource);
-
 		return cleanMaplibreStyle(
 			style,
 			options,
 			sourceIds,
 			this.measureOptions.adapterOptions?.prefixId
 		);
+	}
+
+	/**
+	 * wrapter to update feature properties in terradraw instance
+	 * This function unsubscribes and resubscribes 'change' event of terradraw to avoid multiple calls of handleTerradrawFeatureChanged
+	 * @param id Feature ID
+	 * @param properties properties to update
+	 * @returns void
+	 */
+	private updateFeatureProperties(
+		id: TerraDrawExtend.FeatureId,
+		properties: { [key: string]: string | number }
+	) {
+		if (!this.terradraw) return;
+		if (!this.terradraw.getSnapshotFeature(id)) return;
+		this.terradraw.off('change', this.handleTerradrawFeatureChanged.bind(this));
+		this.terradraw.updateFeatureProperties(id, properties);
+		this.terradraw.on('change', this.handleTerradrawFeatureChanged.bind(this));
 	}
 
 	/**
@@ -360,21 +374,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		const pointMode = this.options.modes?.find((m) => ['point', 'marker'].includes(m));
 
 		if (pointMode) {
-			// add GeoJSON source for distance label
-			if (
-				!this.map.getSource(
-					(this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).source
-				)
-			) {
-				this.map.addSource(
-					(this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).source,
-					{
-						type: 'geojson',
-						data: { type: 'FeatureCollection', features: [] }
-					}
-				);
-			}
-
 			// add GeoJSON layer for distance label node appearance
 			if (
 				!this.map.getLayer((this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).id)
@@ -490,7 +489,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			);
 			if (pointFeatures.length > 0) {
 				for (const f of pointFeatures) {
-					this.computeElevationByPointFeatureID(f.id as string);
+					this.measurePoint(f.id as string);
 				}
 			}
 		}
@@ -503,7 +502,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	private handleTerradrawFeatureReady = debounce((id: TerraDrawExtend.FeatureId) => {
 		if (!this.map) return;
 		this.computeElevationByLineFeatureID(id);
-		this.computeElevationByPointFeatureID(id);
+		this.measurePoint(id);
 	}, 300);
 
 	/**
@@ -516,7 +515,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		if (type === 'styling') return;
 
 		const sources = [
-			this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification,
 			this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification,
 			this.measureOptions.routingLineLayerNodeSpec as CircleLayerSpecification,
 			this.measureOptions.polygonLayerSpec as SymbolLayerSpecification
@@ -540,8 +538,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				const mode = feature.properties.mode as TerradrawMode;
 				if (['linestring', 'freehand-linestring'].includes(mode) && geometryType === 'LineString') {
 					this.measureLine(id);
-				} else if (['point', 'marker'].includes(mode) && geometryType === 'Point') {
-					this.measurePoint(id);
 				} else if (
 					!['point', 'marker', 'linestring', 'freehand-linestring', 'select', 'render'].includes(
 						mode
@@ -586,15 +582,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		}
 		if (this.map.getLayer((this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).id)) {
 			this.map.removeLayer((this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).id);
-		}
-		if (
-			this.map.getSource(
-				(this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).source
-			)
-		) {
-			this.map.removeSource(
-				(this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).source
-			);
 		}
 		if (
 			this.map.getSource(
@@ -722,47 +709,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 							updatedFeatures,
 							(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).source,
 							'linestring'
-						);
-					}
-				}
-			}
-		}
-	};
-
-	/**
-	 * Compute elevation by a Point feature ID
-	 * @param id FeatureID
-	 */
-	private computeElevationByPointFeatureID = async (id: TerraDrawExtend.FeatureId) => {
-		if (!this.map) return;
-		if (this.computeElevation === true) {
-			const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
-				(this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).source
-			] as GeoJSONSourceSpecification;
-			if (geojsonSource) {
-				if (
-					typeof geojsonSource.data !== 'string' &&
-					geojsonSource.data.type === 'FeatureCollection'
-				) {
-					const points: GeoJSONStoreFeatures[] = geojsonSource.data.features.filter(
-						(f) =>
-							f.id === id &&
-							f.geometry.type === 'Point' &&
-							['point', 'marker'].includes(f.properties?.mode as string)
-					) as unknown as GeoJSONStoreFeatures[];
-					if (points && points.length > 0) {
-						const updatedFeatures = await queryElevationFromRasterDEM(
-							points as GeoJSONStoreFeatures[],
-							this.measureOptions.terrainSource,
-							this.measureOptions.elevationCacheConfig,
-							this.elevationCache,
-							this.measureUnitType,
-							this.measureUnitSymbols
-						);
-						this.replaceGeoJSONSource(
-							updatedFeatures,
-							(this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).source,
-							'point'
 						);
 					}
 				}
@@ -1037,26 +983,15 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * measure point elevation for given feature ID
 	 * @param id terradraw feature id
 	 */
-	private measurePoint(id: TerraDrawExtend.FeatureId) {
+	private async measurePoint(id: TerraDrawExtend.FeatureId) {
 		if (!this.map) return;
+		if (!(this.computeElevation === true)) return;
 		const drawInstance = this.getTerraDrawInstance();
 		if (!drawInstance) return;
 
-		const snapshot = drawInstance.getSnapshot();
-		let feature = snapshot?.find((f) => f.id === id && f.geometry.type === 'Point');
+		let feature = drawInstance.getSnapshotFeature(id);
 		if (feature) {
-			const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
-				(this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).source
-			] as GeoJSONSourceSpecification;
-			if (geojsonSource) {
-				// delete old nodes
-				if (
-					typeof geojsonSource.data !== 'string' &&
-					geojsonSource.data.type === 'FeatureCollection'
-				) {
-					geojsonSource.data.features = geojsonSource.data.features.filter((f) => f.id !== id);
-				}
-
+			if (this.measureOptions.terrainSource === undefined) {
 				feature = queryElevationByPoint(
 					feature,
 					this.map,
@@ -1065,44 +1000,22 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					this.measureUnitType,
 					this.measureUnitSymbols
 				);
-
-				// add elevation label feature if computeElevation is only enabled.
-				if (this.computeElevation === true) {
-					if (
-						typeof geojsonSource.data !== 'string' &&
-						geojsonSource.data.type === 'FeatureCollection'
-					) {
-						geojsonSource.data.features.push(feature);
-					}
-				}
-
-				// update GeoJSON source with new data
-				(
-					this.map.getSource(
-						(this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).source
-					) as GeoJSONSource
-				)?.setData(geojsonSource.data);
-
-				if (
-					this.map.getLayer((this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).id)
-				) {
-					this.map.moveLayer((this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).id);
-				}
-				if (
-					this.map.getLayer((this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).id)
-				) {
-					this.map.moveLayer(
-						(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).id
-					);
-					this.map.moveLayer(
-						(this.measureOptions.routingLineLayerNodeSpec as CircleLayerSpecification).id
-					);
-				}
-
-				this.map.moveLayer(
-					(this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).id
+			} else {
+				const features = await queryElevationFromRasterDEM(
+					[feature],
+					this.measureOptions.terrainSource,
+					this.measureOptions.elevationCacheConfig,
+					this.elevationCache,
+					this.measureUnitType,
+					this.measureUnitSymbols
 				);
+				feature = features[0];
 			}
+
+			this.updateFeatureProperties(id, {
+				elevation: feature.properties.elevation,
+				elevationUnit: feature.properties.elevationUnit
+			} as { [key: string]: string | number });
 		}
 	}
 
@@ -1119,7 +1032,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			}
 
 			const sources = [
-				this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification,
 				this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification,
 				this.measureOptions.routingLineLayerNodeSpec as CircleLayerSpecification,
 				this.measureOptions.polygonLayerSpec as SymbolLayerSpecification
@@ -1167,15 +1079,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					this.measureUnitType,
 					this.areaPrecision,
 					this.forceAreaUnit,
-					this.measureUnitSymbols
-				);
-			} else if (geomType === 'Point') {
-				fc.features[i] = queryElevationByPoint(
-					feature,
-					this.map,
-					this.computeElevation,
-					this.measureOptions.terrainSource,
-					this.measureUnitType,
 					this.measureUnitSymbols
 				);
 			}

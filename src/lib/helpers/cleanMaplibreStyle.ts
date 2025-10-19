@@ -11,8 +11,7 @@ export const TERRADRAW_SOURCE_IDS = [
 export const TERRADRAW_MEASURE_SOURCE_IDS = [
 	...TERRADRAW_SOURCE_IDS,
 	defaultMeasureControlOptions.polygonLayerSpec?.source as string,
-	defaultMeasureControlOptions.lineLayerLabelSpec?.source as string,
-	defaultMeasureControlOptions.pointLayerLabelSpec?.source as string
+	defaultMeasureControlOptions.lineLayerLabelSpec?.source as string
 ];
 export const TERRADRAW_VALHALLA_SOURCE_IDS = [
 	...TERRADRAW_SOURCE_IDS,

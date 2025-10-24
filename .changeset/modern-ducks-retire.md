@@ -4,7 +4,7 @@
 
 fix: refine the default parameters of circle and rectangle of TerraDrawSelectMode.
 
-As suggested by khoshbin via [#455](https://github.com/watergis/maplibre-gl-terradraw/issues/455). New default parameters of TerraDrawSelectMode for `circle` and `rectangle` are as follows.
+As suggested by khoshbin via [#455](https://github.com/watergis/maplibre-gl-terradraw/issues/455). New default parameters of TerraDrawSelectMode for `circle` and `rectangle` and `angled-rectangle` are as follows.
 
 As default, users cannot insert, edit or delete of each node now. Instead, the size of circle of rectangle will be scaled.
 
@@ -25,6 +25,17 @@ new TerraDrawSelectMode({
 			feature: {
 				draggable: true,
 				// I kept rotateable as true, since rotating can be useful for some circumstances.
+				rotateable: true,
+				coordinates: {
+					resizable: 'opposite',
+					deletable: false,
+					midpoints: true
+				}
+			}
+		},
+		'angled-rectangle': {
+			feature: {
+				draggable: true,
 				rotateable: true,
 				coordinates: {
 					resizable: 'opposite',

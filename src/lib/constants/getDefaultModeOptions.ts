@@ -146,11 +146,10 @@ export const getDefaultModeOptions = () => {
 					feature: {
 						draggable: true,
 						rotateable: true,
-						scaleable: true,
 						coordinates: {
-							midpoints: true,
-							draggable: true,
-							deletable: true
+							resizable: 'opposite',
+							deletable: false,
+							midpoints: true
 						}
 					}
 				},

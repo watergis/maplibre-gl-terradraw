@@ -42,6 +42,11 @@ describe('convertDistance with metric unit', () => {
 		expect(convertDistance(1, 'metric', 'centimeter')).toEqual({ distance: 100000, unit: 'cm' });
 		expect(convertDistance(2.5, 'metric', 'centimeter')).toEqual({ distance: 250000, unit: 'cm' });
 	});
+
+	it('should return metric distance with auto if distance unit is metric, but forceDistanceUnit is imperial', () => {
+		expect(convertDistance(0.5, 'metric', 'mile')).toEqual({ distance: 500, unit: 'm' });
+		expect(convertDistance(0.001, 'metric', 'mile')).toEqual({ distance: 1, unit: 'm' });
+	});
 });
 
 describe('convertDistance with imperial unit', () => {
@@ -64,6 +69,11 @@ describe('convertDistance with imperial unit', () => {
 		expect(convertDistance(1, 'imperial', 'auto')).toEqual({ distance: 1, unit: 'mi' });
 		expect(convertDistance(0.5, 'imperial', 'auto')).toEqual({ distance: 2640, unit: 'ft' });
 		expect(convertDistance(0.0001, 'imperial', 'auto')).toEqual({ distance: 6.336, unit: 'in' });
+	});
+
+	it('should return imperial distance with auto if distance unit is imperial, but forceDistanceUnit is metric', () => {
+		expect(convertDistance(1, 'imperial', 'meter')).toEqual({ distance: 1, unit: 'mi' });
+		expect(convertDistance(0.5, 'imperial', 'meter')).toEqual({ distance: 2640, unit: 'ft' });
 	});
 });
 

@@ -74,14 +74,14 @@ export class ModalDialog {
 
 		this.dialog.addEventListener('click', (event) => {
 			const target = event.target as Element | null;
-			if (!target) return;
-			const rect = target.getBoundingClientRect();
+			const rect = target?.getBoundingClientRect();
 
 			if (
-				rect.left > event.clientX ||
-				rect.right < event.clientX ||
-				rect.top > event.clientY ||
-				rect.bottom < event.clientY
+				rect &&
+				(rect.left > event.clientX ||
+					rect.right < event.clientX ||
+					rect.top > event.clientY ||
+					rect.bottom < event.clientY)
 			) {
 				this.close();
 			}

@@ -1,8 +1,9 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { MaplibreTerradrawControl } from './MaplibreTerradrawControl';
-import type { StyleSpecification, Map } from 'maplibre-gl';
+import type { StyleSpecification } from 'maplibre-gl';
+import { Map } from 'maplibre-gl';
+import { type GeoJSONStoreFeatures } from 'terra-draw';
 import { TERRADRAW_SOURCE_IDS } from '../helpers/cleanMaplibreStyle';
-import { createMockMaplibreMap } from '../../setupTest';
 
 const maplibreStyle: StyleSpecification = {
 	version: 8,
@@ -21,13 +22,6 @@ const maplibreStyle: StyleSpecification = {
 		maplibre: {
 			type: 'vector',
 			url: 'https://demotiles.maplibre.org/tiles/tiles.json'
-		},
-		crimea: {
-			type: 'geojson',
-			data: {
-				type: 'FeatureCollection',
-				features: []
-			}
 		},
 		'td-point': {
 			type: 'geojson',
@@ -67,88 +61,6 @@ const maplibreStyle: StyleSpecification = {
 			}
 		},
 		{
-			id: 'coastline',
-			type: 'line',
-			source: 'maplibre',
-			'source-layer': 'countries',
-			minzoom: 0,
-			maxzoom: 24,
-			filter: ['all'],
-			layout: {
-				'line-cap': 'round',
-				'line-join': 'round',
-				visibility: 'visible'
-			},
-			paint: {}
-		},
-		{
-			id: 'countries-fill',
-			type: 'fill',
-			source: 'maplibre',
-			'source-layer': 'countries',
-			maxzoom: 24,
-			filter: ['all'],
-			layout: {
-				visibility: 'visible'
-			},
-			paint: {}
-		},
-		{
-			id: 'countries-boundary',
-			type: 'line',
-			source: 'maplibre',
-			'source-layer': 'countries',
-			maxzoom: 24,
-			layout: {
-				'line-cap': 'round',
-				'line-join': 'round',
-				visibility: 'visible'
-			},
-			paint: {}
-		},
-		{
-			id: 'geolines',
-			type: 'line',
-			source: 'maplibre',
-			'source-layer': 'geolines',
-			maxzoom: 24,
-			filter: ['all', ['!=', 'name', 'International Date Line']],
-			layout: {
-				visibility: 'visible'
-			},
-			paint: {}
-		},
-		{
-			id: 'geolines-label',
-			type: 'symbol',
-			source: 'maplibre',
-			'source-layer': 'geolines',
-			minzoom: 1,
-			maxzoom: 24,
-			filter: ['all', ['!=', 'name', 'International Date Line']],
-			layout: {},
-			paint: {}
-		},
-		{
-			id: 'countries-label',
-			type: 'symbol',
-			source: 'maplibre',
-			'source-layer': 'centroids',
-			minzoom: 2,
-			maxzoom: 24,
-			filter: ['all'],
-			layout: {},
-			paint: {}
-		},
-		{
-			id: 'crimea-fill',
-			type: 'fill',
-			source: 'crimea',
-			paint: {
-				'fill-color': '#D6C7FF'
-			}
-		},
-		{
 			id: 'td-linestring',
 			type: 'line',
 			source: 'td-linestring',
@@ -167,15 +79,6 @@ const maplibreStyle: StyleSpecification = {
 			}
 		},
 		{
-			id: 'td-polygon-outline',
-			type: 'line',
-			source: 'td-polygon',
-			paint: {
-				'line-width': ['get', 'polygonOutlineWidth'],
-				'line-color': ['get', 'polygonOutlineColor']
-			}
-		},
-		{
 			id: 'td-point',
 			type: 'circle',
 			source: 'td-point',
@@ -189,7 +92,57 @@ const maplibreStyle: StyleSpecification = {
 	]
 };
 
-describe('cleanStyle method', () => {
+const mockFeatures: GeoJSONStoreFeatures[] = [
+	{
+		id: '1',
+		type: 'Feature',
+		geometry: { type: 'Point', coordinates: [0, 0] },
+		properties: { mode: 'point', selected: false }
+	},
+	{
+		id: '2',
+		type: 'Feature',
+		geometry: {
+			type: 'LineString',
+			coordinates: [
+				[0, 0],
+				[1, 1]
+			]
+		},
+		properties: { mode: 'linestring', selected: true }
+	},
+	{
+		id: '3',
+		type: 'Feature',
+		geometry: { type: 'Point', coordinates: [1, 1] },
+		properties: { mode: 'select', selected: false }
+	}
+];
+
+describe('basic functionality', () => {
+	beforeEach(() => {
+		document.body.innerHTML = '';
+	});
+	it('should return top-right as default position', () => {
+		const control = new MaplibreTerradrawControl();
+		expect(control.getDefaultPosition()).toBe('top-right');
+	});
+
+	it('should handle constructor without options', () => {
+		const control = new MaplibreTerradrawControl();
+		expect(control).toBeDefined();
+	});
+
+	it('should handle constructor with options', () => {
+		const control = new MaplibreTerradrawControl({
+			modes: ['point', 'linestring'],
+			open: true
+		});
+		expect(control).toBeDefined();
+	});
+});
+
+describe('style cleaning', () => {
 	const sourceIds = TERRADRAW_SOURCE_IDS.map((id) => id.replace('{prefix}', 'td'));
 
 	it('should return the original style when no options are set', () => {
@@ -219,7 +172,7 @@ describe('cleanStyle method', () => {
 	});
 });
 
-describe('getTerraDrawInstance method', () => {
+describe('getTerraDrawInstance', () => {
 	it('should return undefined when terra draw instance is not initialized', () => {
 		const control = new MaplibreTerradrawControl();
 		const instance = control.getTerraDrawInstance();
@@ -228,19 +181,10 @@ describe('getTerraDrawInstance method', () => {
 
 	it('should return a proxy that wraps setMode method when terra draw instance exists', () => {
 		const control = new MaplibreTerradrawControl();
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
 
-		// Mock a basic terra draw instance
-		const mockTerradraw = {
-			setMode: () => {},
-			getMode: () => 'render',
-			enabled: true,
-			start: () => {},
-			stop: () => {}
-		};
-
-		// Set the private terradraw property using type assertion for testing
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		(control as any).terradraw = mockTerradraw;
+		// Initialize terra draw by calling onAdd
+		control.onAdd(mockMap);
 
 		const instance = control.getTerraDrawInstance();
 		expect(instance).toBeDefined();
@@ -248,109 +192,429 @@ describe('getTerraDrawInstance method', () => {
 	});
 });
 
-describe('defaultPosition property', () => {
-	it('should return top-right as default position', () => {
+describe('event handling', () => {
+	it('should register and trigger event handlers', () => {
 		const control = new MaplibreTerradrawControl();
-		expect(control.getDefaultPosition()).toBe('top-right');
+		const callback = vi.fn();
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		control.on('mode-changed', callback);
+		control.onAdd(mockMap);
+
+		// Mock the getMode method to return a specific mode
+		const terradraw = control.getTerraDrawInstance()!;
+		terradraw.getMode = vi.fn(() => 'point');
+
+		// Dispatch event directly
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(control as any).dispatchEvent('mode-changed');
+
+		expect(callback).toHaveBeenCalled();
+	});
+
+	it('should unregister event handlers', () => {
+		const control = new MaplibreTerradrawControl();
+		const callback = vi.fn();
+
+		control.on('mode-changed', callback);
+		control.off('mode-changed', callback);
+
+		// Access private events property to verify
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const events = (control as any).events;
+		expect(events['mode-changed']).toHaveLength(0);
+	});
+
+	it('should handle off method when event does not exist', () => {
+		const control = new MaplibreTerradrawControl();
+		const callback = vi.fn();
+		expect(() => control.off('mode-changed', callback)).not.toThrow();
 	});
 });
 
-describe('map integration', () => {
-	it('should add control to map successfully', () => {
-		const control = new MaplibreTerradrawControl({ open: true });
-		const mockMap = createMockMaplibreMap(maplibreStyle);
+describe('state management', () => {
+	it('should handle isExpanded property changes', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['render', 'point'], open: false });
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
 
-		// Add control to map
-		mockMap.addControl(control);
+		control.onAdd(mockMap);
 
-		// Verify addControl was called
-		expect(mockMap.addControl).toHaveBeenCalledWith(control);
-		expect(mockMap.addControl).toHaveBeenCalledTimes(1);
+		expect(control.isExpanded).toBe(false);
+
+		// Set to expanded
+		control.isExpanded = true;
+		expect(control.isExpanded).toBe(true);
+
+		// Set back to collapsed
+		control.isExpanded = false;
+		expect(control.isExpanded).toBe(false);
 	});
 
-	it('should handle onAdd method when added to map', () => {
-		const control = new MaplibreTerradrawControl({ open: false });
-		const mockMap = createMockMaplibreMap(maplibreStyle);
+	it('should dispatch expanded event', () => {
+		const control = new MaplibreTerradrawControl();
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+		const callback = vi.fn();
 
-		// Call onAdd method directly (normally called by MapLibre when adding control)
-		const container = control.onAdd(mockMap as unknown as Map);
+		control.on('expanded', callback);
+		control.onAdd(mockMap);
 
-		// Verify container is returned
+		control.isExpanded = true;
+		expect(callback).toHaveBeenCalled();
+	});
+
+	it('should dispatch collapsed event', () => {
+		const control = new MaplibreTerradrawControl({ open: true });
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+		const callback = vi.fn();
+
+		control.on('collapsed', callback);
+		control.onAdd(mockMap);
+
+		control.isExpanded = false;
+		expect(callback).toHaveBeenCalled();
+	});
+});
+
+describe('map lifecycle', () => {
+	it('should handle onAdd method', () => {
+		const control = new MaplibreTerradrawControl();
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		const container = control.onAdd(mockMap);
 		expect(container).toBeDefined();
 		expect(container).toBeInstanceOf(HTMLElement);
 		expect(container.classList.contains('maplibregl-ctrl')).toBe(true);
 	});
 
-	it('should handle onRemove method when removed from map', () => {
-		const control = new MaplibreTerradrawControl({ open: true });
-		const mockMap = createMockMaplibreMap(maplibreStyle);
+	it('should handle onRemove method', () => {
+		const control = new MaplibreTerradrawControl();
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
 
-		// First add the control
-		const container = control.onAdd(mockMap as unknown as Map);
+		const container = control.onAdd(mockMap);
 		expect(container).toBeDefined();
 
-		// Then remove it
 		control.onRemove();
-
-		// Verify the control can be removed without errors
 		expect(() => control.onRemove()).not.toThrow();
 	});
 
-	it('should initialize with collapsed state when added to map', () => {
-		const control = new MaplibreTerradrawControl({ open: false });
-		const mockMap = createMockMaplibreMap(maplibreStyle);
-
-		// Initially collapsed (before adding to map)
-		expect(control.isExpanded).toBe(false);
-
-		// Add to map
-		const container = control.onAdd(mockMap as unknown as Map);
-
-		// Should be collapsed as per config
-		expect(control.isExpanded).toBe(false);
-		expect(container.classList.contains('maplibregl-ctrl')).toBe(true);
-	});
-
-	it('should initialize with expanded state when added to map', () => {
-		const control = new MaplibreTerradrawControl({ open: true });
-		const mockMap = createMockMaplibreMap(maplibreStyle);
-
-		// Initially collapsed (before adding to map)
-		expect(control.isExpanded).toBe(false);
-
-		// Add to map
-		const container = control.onAdd(mockMap as unknown as Map);
-
-		// Should be expanded after adding to map due to open: true
-		expect(control.isExpanded).toBe(true);
-		expect(container.classList.contains('maplibregl-ctrl')).toBe(true);
-	});
-	it('should handle multiple add/remove cycles', () => {
-		const control = new MaplibreTerradrawControl({ open: true });
-		const mockMap = createMockMaplibreMap(maplibreStyle);
-
-		// Add control multiple times
-		const container1 = control.onAdd(mockMap as unknown as Map);
-		expect(container1).toBeDefined();
-
-		// Remove it
-		control.onRemove();
-
-		// Add it again
-		const container2 = control.onAdd(mockMap as unknown as Map);
-		expect(container2).toBeDefined();
-		expect(container2.classList.contains('maplibregl-ctrl')).toBe(true);
-
-		// Remove it again
+	it('should handle onRemove when not added', () => {
+		const control = new MaplibreTerradrawControl();
 		expect(() => control.onRemove()).not.toThrow();
 	});
 
-	it('should handle error if no modes are added in the constructor', () => {
+	it('should throw error with empty modes', () => {
 		const control = new MaplibreTerradrawControl({ modes: [] });
-		const mockMap = createMockMaplibreMap(maplibreStyle);
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
 
-		expect(() => control.onAdd(mockMap as unknown as Map)).toThrowError(
-			'At least a mode must be enabled.'
-		);
+		expect(() => control.onAdd(mockMap)).toThrowError('At least a mode must be enabled.');
+	});
+
+	it('should handle map load event when not loaded', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['point'] });
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).loaded = vi.fn(() => false);
+
+		const container = control.onAdd(mockMap);
+		expect(container).toBeDefined();
+		expect(mockMap.once).toHaveBeenCalledWith('load', expect.any(Function));
+	});
+});
+
+describe('features management', () => {
+	it('should return undefined when terradraw is not initialized', () => {
+		const control = new MaplibreTerradrawControl();
+		const result = control.getFeatures();
+		expect(result).toBeUndefined();
+	});
+
+	it('should return all features when onlySelected is false', () => {
+		const control = new MaplibreTerradrawControl();
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		control.onAdd(mockMap);
+
+		// Mock the getSnapshot method
+		const terradraw = control.getTerraDrawInstance()!;
+		terradraw.getSnapshot = vi.fn(() => mockFeatures);
+
+		const result = control.getFeatures(false);
+		expect(result).toBeDefined();
+		expect(result?.type).toBe('FeatureCollection');
+		expect(result?.features).toHaveLength(2); // select mode filtered out
+	});
+
+	it('should return only selected features when onlySelected is true', () => {
+		const control = new MaplibreTerradrawControl();
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		control.onAdd(mockMap);
+
+		// Mock the getSnapshot method
+		const terradraw = control.getTerraDrawInstance()!;
+		terradraw.getSnapshot = vi.fn(() => mockFeatures);
+
+		const result = control.getFeatures(true);
+		expect(result).toBeDefined();
+		expect(result?.type).toBe('FeatureCollection');
+		expect(result?.features).toHaveLength(1);
+		expect(result?.features.every((f) => f.properties.selected === true)).toBe(true);
+	});
+});
+
+describe('activation and deactivation', () => {
+	it('should handle activate when terradraw is not initialized', () => {
+		const control = new MaplibreTerradrawControl();
+		expect(() => control.activate()).not.toThrow();
+	});
+
+	it('should handle deactivate when terradraw is not initialized', () => {
+		const control = new MaplibreTerradrawControl();
+		expect(() => control.deactivate()).not.toThrow();
+	});
+
+	it('should handle activate when already enabled', () => {
+		const control = new MaplibreTerradrawControl();
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		control.onAdd(mockMap);
+
+		// Set enabled to true and spy on start method
+		const terradraw = control.getTerraDrawInstance()!;
+		terradraw.enabled = true;
+		const startSpy = vi.spyOn(terradraw, 'start');
+
+		control.activate();
+		expect(startSpy).not.toHaveBeenCalled();
+	});
+
+	it('should handle deactivate when disabled', () => {
+		const control = new MaplibreTerradrawControl();
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		control.onAdd(mockMap);
+
+		// Set enabled to false and spy on stop method
+		const terradraw = control.getTerraDrawInstance()!;
+		terradraw.enabled = false;
+		const stopSpy = vi.spyOn(terradraw, 'stop');
+
+		control.deactivate();
+		expect(stopSpy).not.toHaveBeenCalled();
+	});
+
+	it('should handle resetActiveMode when terradraw is not initialized', () => {
+		const control = new MaplibreTerradrawControl();
+		expect(() => control.resetActiveMode()).not.toThrow();
+	});
+
+	it('should start terradraw when disabled and reset mode', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['render', 'point'] });
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		control.onAdd(mockMap);
+
+		// Configure the mocked terradraw instance
+		const terradraw = control.getTerraDrawInstance()!;
+		terradraw.enabled = false;
+		terradraw.getMode = vi.fn(() => 'render');
+
+		// Create spies for the methods we want to test
+		const startSpy = vi.spyOn(terradraw, 'start');
+		const setModeSpy = vi.spyOn(terradraw, 'setMode');
+
+		control.resetActiveMode();
+
+		expect(startSpy).toHaveBeenCalled();
+		expect(setModeSpy).toHaveBeenCalledWith('render');
+	});
+});
+
+describe('internal methods', () => {
+	it('should handle toggleEditor', () => {
+		const control = new MaplibreTerradrawControl();
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		control.onAdd(mockMap);
+
+		// Configure the mocked terradraw instance
+		const terradraw = control.getTerraDrawInstance()!;
+		terradraw.getMode = vi.fn(() => 'render');
+		terradraw.enabled = true;
+
+		const initialState = control.isExpanded;
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(control as any).toggleEditor();
+		expect(control.isExpanded).toBe(!initialState);
+	});
+
+	it('should handle toggleEditor when terradraw is not initialized', () => {
+		const control = new MaplibreTerradrawControl();
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		expect(() => (control as any).toggleEditor()).not.toThrow();
+	});
+
+	it('should handle handleDownload', () => {
+		const control = new MaplibreTerradrawControl();
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		control.onAdd(mockMap);
+
+		// Mock the getSnapshot method
+		const terradraw = control.getTerraDrawInstance()!;
+		terradraw.getSnapshot = vi.fn(() => mockFeatures);
+
+		// Mock DOM elements
+		const mockAnchor = {
+			setAttribute: vi.fn(),
+			click: vi.fn(),
+			remove: vi.fn()
+		};
+
+		const originalCreateElement = document.createElement;
+		const originalAppendChild = document.body.appendChild;
+
+		document.createElement = vi.fn((tagName) => {
+			if (tagName === 'a') return mockAnchor as unknown as HTMLAnchorElement;
+			return originalCreateElement.call(document, tagName);
+		});
+		document.body.appendChild = vi.fn();
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(control as any).handleDownload();
+
+		expect(mockAnchor.setAttribute).toHaveBeenCalledWith('download', 'data.geojson');
+		expect(mockAnchor.click).toHaveBeenCalled();
+		expect(mockAnchor.remove).toHaveBeenCalled();
+
+		// Restore
+		document.createElement = originalCreateElement;
+		document.body.appendChild = originalAppendChild;
+	});
+
+	it('should handle clearExtendedFeatures when map is not initialized', () => {
+		const control = new MaplibreTerradrawControl();
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		expect(() => (control as any).clearExtendedFeatures(['source1'])).not.toThrow();
+	});
+
+	it('should clear all features when ids is undefined', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['point'] });
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		const mockGeojsonSource = {
+			data: {
+				type: 'FeatureCollection',
+				features: [
+					{ id: '1', properties: {} },
+					{ id: '2', properties: {} }
+				]
+			}
+		};
+
+		const mockSource = {
+			setData: vi.fn()
+		};
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).getSource = vi.fn(() => mockSource);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).getStyle = vi.fn(() => ({
+			sources: {
+				testSource: mockGeojsonSource
+			}
+		}));
+
+		control.onAdd(mockMap);
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(control as any).clearExtendedFeatures(['testSource']);
+
+		expect(mockGeojsonSource.data.features).toHaveLength(0);
+		expect(mockSource.setData).toHaveBeenCalledWith(mockGeojsonSource.data);
+	});
+});
+
+describe('button state management', () => {
+	it('should handle toggleButtonsWhenNoFeature', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['point'] });
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		control.onAdd(mockMap);
+
+		// The terradraw instance is already mocked, no need to manually assign
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		expect(() => (control as any).toggleButtonsWhenNoFeature()).not.toThrow();
+	});
+
+	it('should handle toggleDeleteSelectionButton', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['point'] });
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		control.onAdd(mockMap);
+
+		// Configure the mocked terradraw instance
+		const terradraw = control.getTerraDrawInstance()!;
+		terradraw.enabled = true;
+		terradraw.getMode = vi.fn(() => 'select');
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		expect(() => (control as any).toggleDeleteSelectionButton()).not.toThrow();
+	});
+
+	it('should handle syncButtonStates', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['point'] });
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		control.onAdd(mockMap);
+
+		// Configure the mocked terradraw instance
+		const terradraw = control.getTerraDrawInstance()!;
+		terradraw.getMode = vi.fn(() => 'render');
+		terradraw.enabled = true;
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		expect(() => (control as any).syncButtonStates('point')).not.toThrow();
+	});
+});
+
+describe('dispatchEvent method', () => {
+	it('should dispatch events with feature snapshot', () => {
+		const control = new MaplibreTerradrawControl();
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+		const callback = vi.fn();
+
+		control.on('mode-changed', callback);
+		control.onAdd(mockMap);
+
+		const mockFeatures: GeoJSONStoreFeatures[] = [
+			{
+				id: '1',
+				type: 'Feature',
+				geometry: { type: 'Point', coordinates: [0, 0] },
+				properties: { mode: 'point', selected: true }
+			}
+		];
+
+		// Configure the mocked terradraw instance
+		const terradraw = control.getTerraDrawInstance()!;
+		terradraw.getSnapshot = vi.fn(() => mockFeatures);
+		terradraw.getMode = vi.fn(() => 'point');
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(control as any).dispatchEvent('mode-changed', { custom: 'data' });
+
+		expect(callback).toHaveBeenCalledWith({
+			feature: mockFeatures,
+			mode: 'point',
+			custom: 'data'
+		});
+	});
+
+	it('should handle dispatchEvent when no callbacks registered', () => {
+		const control = new MaplibreTerradrawControl();
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		expect(() => (control as any).dispatchEvent('mode-changed')).not.toThrow();
 	});
 });

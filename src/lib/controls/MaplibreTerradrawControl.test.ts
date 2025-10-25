@@ -297,7 +297,7 @@ describe('state management', () => {
 		control.isExpanded = true;
 		expect(control.isExpanded).toBe(true);
 
-		// Test collapsing to cover lines 59-62, 70
+		// Test collapsing
 		control.isExpanded = false;
 		expect(control.isExpanded).toBe(false);
 	});
@@ -445,14 +445,14 @@ describe('map lifecycle', () => {
 			writable: true
 		});
 
-		// Call onRemove to trigger cleanup (lines 227-231)
+		// Call onRemove to trigger cleanup
 		control.onRemove();
 
-		// Verify terradraw instance is undefined after removal (line 229)
+		// Verify terradraw instance is undefined after removal
 		const terradrawAfter = control.getTerraDrawInstance();
 		expect(terradrawAfter).toBeUndefined();
 
-		// Verify DOM element was removed (line 231)
+		// Verify DOM element was removed
 		expect(mockParentNode.removeChild).toHaveBeenCalledWith(container);
 
 		// Verify second call doesn't throw (when already removed)
@@ -1454,7 +1454,7 @@ describe('advanced button interactions', () => {
 });
 
 describe('button event handlers tests', () => {
-	it('should execute button event handlers to cover lines 423-477', () => {
+	it('should execute button event handlers to cover', () => {
 		const control = new MaplibreTerradrawControl({
 			modes: ['delete', 'delete-selection', 'download', 'point']
 		});
@@ -1465,7 +1465,7 @@ describe('button event handlers tests', () => {
 		const terradraw = control.getTerraDrawInstance()!;
 		terradraw.enabled = true;
 
-		// Test delete button handler (lines 423-433)
+		// Test delete button handler
 		const clearSpy = vi.spyOn(terradraw, 'clear');
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const resetActiveModeSpy = vi.spyOn(control as any, 'resetActiveMode');
@@ -1496,7 +1496,7 @@ describe('button event handlers tests', () => {
 		expect(toggleButtonsWhenNoFeatureSpy).toHaveBeenCalled();
 		expect(featureDeletedSpy).toHaveBeenCalled();
 
-		// Test delete-selection button handler (lines 436-456)
+		// Test delete-selection button handler
 		const mockFeatures = [
 			{
 				id: 'feature1',
@@ -1533,7 +1533,7 @@ describe('button event handlers tests', () => {
 		expect(removeFeaturesSpy).toHaveBeenCalledWith(['feature1']);
 		expect(deselectFeatureSpy).toHaveBeenCalledWith('feature1');
 
-		// Test download button handler (lines 459-460)
+		// Test download button handler
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const handleDownloadSpy = vi.spyOn(control as any, 'handleDownload');
 
@@ -1543,7 +1543,7 @@ describe('button event handlers tests', () => {
 
 		expect(handleDownloadSpy).toHaveBeenCalled();
 
-		// Test mode button handler (lines 465-477)
+		// Test mode button handler
 		const setModeSpy = vi.spyOn(terradraw, 'setMode');
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const syncButtonStatesSpy = vi.spyOn(control as any, 'syncButtonStates');
@@ -1573,7 +1573,7 @@ describe('button event handlers tests', () => {
 		expect(modeChangedSpy).toHaveBeenCalled();
 	});
 
-	it('should execute actual button click events to cover lines 423-477', () => {
+	it('should execute actual button click events to cover', () => {
 		// Include select mode to enable delete-selection button
 		const control = new MaplibreTerradrawControl({
 			modes: ['delete', 'delete-selection', 'download', 'point', 'select']
@@ -1632,7 +1632,7 @@ describe('button event handlers tests', () => {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		(control as any).toggleDeleteSelectionButton();
 
-		// Test delete button event handler directly (lines 423-433)
+		// Test delete button event handler directly
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		(control as any).addTerradrawButton('delete');
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -1646,7 +1646,7 @@ describe('button event handlers tests', () => {
 			expect(featureDeletedSpy).toHaveBeenCalled();
 		}
 
-		// Test delete-selection button event handler directly (lines 436-456)
+		// Test delete-selection button event handler directly
 		const mockFeatures = [
 			{
 				id: 'feature1',
@@ -1671,7 +1671,7 @@ describe('button event handlers tests', () => {
 			expect(deselectFeatureSpy).toHaveBeenCalledWith('feature1');
 		}
 
-		// Test download button event handler directly (lines 459-460)
+		// Test download button event handler directly
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		(control as any).addTerradrawButton('download');
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -1681,7 +1681,7 @@ describe('button event handlers tests', () => {
 			expect(handleDownloadSpy).toHaveBeenCalled();
 		}
 
-		// Test mode button event handler directly (lines 465-477)
+		// Test mode button event handler directly
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		(control as any).addTerradrawButton('point');
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -1699,7 +1699,7 @@ describe('button event handlers tests', () => {
 		getFeaturesStub.mockRestore();
 	});
 
-	it('should handle select mode with custom modeOptions to cover lines 137-156', () => {
+	it('should handle select mode with custom modeOptions to cover', () => {
 		// Test with a control that has modeOptions to trigger the specific code path
 		const control = new MaplibreTerradrawControl({
 			modes: ['select']
@@ -1713,7 +1713,7 @@ describe('button event handlers tests', () => {
 		expect(control.getTerraDrawInstance()).toBeTruthy();
 	});
 
-	it('should cover map idle event and terradraw finish event (lines 214, 243)', () => {
+	it('should cover map idle event and terradraw finish event', () => {
 		const control = new MaplibreTerradrawControl();
 		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
 

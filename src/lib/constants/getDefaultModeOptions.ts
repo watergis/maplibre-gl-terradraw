@@ -1,4 +1,3 @@
-import type { MapGeoJSONFeature } from 'maplibre-gl';
 import type { ModeOptions } from '../interfaces/ModeOptions';
 import {
 	TerraDrawAngledRectangleMode,
@@ -14,9 +13,24 @@ import {
 	TerraDrawSectorMode,
 	TerraDrawSelectMode,
 	TerraDrawSensorMode,
-	ValidateNotSelfIntersecting
+	ValidateNotSelfIntersecting,
+	type GeoJSONStoreFeatures
 } from 'terra-draw';
 import markerSvgUrl from '../../scss/icons/marker-blue.svg';
+
+/**
+ * Validation function for polygon features to prevent self-intersecting polygons
+ * @param feature - The GeoJSON feature to validate
+ * @param e - Event object containing updateType
+ * @returns Validation result with valid flag
+ */
+export const polygonValidation = (feature: GeoJSONStoreFeatures, e: { updateType: string }) => {
+	const updateType = e.updateType;
+	if (updateType === 'finish' || updateType === 'commit') {
+		return ValidateNotSelfIntersecting(feature);
+	}
+	return { valid: true };
+};
 
 /**
  * get default Terra Draw mode instances.
@@ -44,17 +58,7 @@ export const getDefaultModeOptions = () => {
 		}),
 		polygon: new TerraDrawPolygonMode({
 			editable: true,
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			validation: (feature: MapGeoJSONFeature, e: { updateType: string }) => {
-				const updateType = e.updateType;
-				if (updateType === 'finish' || updateType === 'commit') {
-					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-					// @ts-ignore
-					return ValidateNotSelfIntersecting(feature);
-				}
-				return { valid: true };
-			}
+			validation: polygonValidation
 		}),
 		rectangle: new TerraDrawRectangleMode(),
 		'angled-rectangle': new TerraDrawAngledRectangleMode(),

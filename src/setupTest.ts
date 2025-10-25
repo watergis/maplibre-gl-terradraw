@@ -18,8 +18,8 @@ vi.mock('terra-draw', () => ({
 			deselectFeature: vi.fn()
 		};
 	}),
-	TerraDrawRenderMode: vi.fn().mockImplementation(function () {
-		return { mode: 'render' };
+	TerraDrawRenderMode: vi.fn().mockImplementation(function (options) {
+		return { mode: options?.modeName || 'render' };
 	}),
 	TerraDrawSelectMode: vi.fn().mockImplementation(function () {
 		return { mode: 'select' };
@@ -57,9 +57,7 @@ vi.mock('terra-draw', () => ({
 	TerraDrawSensorMode: vi.fn().mockImplementation(function () {
 		return { mode: 'sensor' };
 	}),
-	ValidateNotSelfIntersecting: vi.fn().mockImplementation(function () {
-		return {};
-	}),
+	ValidateNotSelfIntersecting: vi.fn(),
 	TerraDrawExtend: vi.fn().mockImplementation(function () {
 		return {};
 	})

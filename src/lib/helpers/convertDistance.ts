@@ -64,10 +64,6 @@ const convertMetricUnit = (
 	};
 	// Convert based on the specified or auto-detected unit
 	switch (unit) {
-		case 'kilometer':
-			result.distance = value;
-			result.unit = measureUnitSymbols[unit];
-			break;
 		case 'meter':
 			result.distance = value * 1000;
 			result.unit = measureUnitSymbols[unit];
@@ -86,6 +82,7 @@ const convertMetricUnit = (
 				result = convertMetricUnit(value, 'centimeter', measureUnitSymbols);
 			}
 			break;
+		case 'kilometer':
 		default:
 			// km as a fallback
 			result.distance = value;
@@ -106,10 +103,6 @@ const convertImperialUnit = (
 	};
 	// Convert based on the specified or auto-detected unit
 	switch (unit) {
-		case 'mile':
-			result.distance = value;
-			result.unit = measureUnitSymbols[unit];
-			break;
 		case 'foot':
 			result.distance = value * 5280;
 			result.unit = measureUnitSymbols[unit];
@@ -128,6 +121,7 @@ const convertImperialUnit = (
 				result = convertImperialUnit(value, 'inch', measureUnitSymbols);
 			}
 			break;
+		case 'mile':
 		default:
 			// mile as a fallback
 			result.distance = value;

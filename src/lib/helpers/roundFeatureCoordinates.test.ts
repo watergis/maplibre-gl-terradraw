@@ -186,4 +186,19 @@ describe('roundFeatureCoordinates', () => {
 		const result = roundFeatureCoordinates(features as unknown as GeoJSONStoreFeatures[], 2);
 		expect(result[0].geometry.coordinates).toEqual([1.23, 2.35]);
 	});
+
+	it('should return original geometry when geometry type is not supported either', () => {
+		const features = [
+			{
+				type: 'Feature',
+				geometry: {
+					type: 'Points',
+					coordinates: [12.34567891234, 98.76543219876]
+				},
+				properties: {}
+			}
+		];
+		const result = roundFeatureCoordinates(features as GeoJSONStoreFeatures[]);
+		expect(result[0].geometry.coordinates).toEqual([12.34567891234, 98.76543219876]);
+	});
 });

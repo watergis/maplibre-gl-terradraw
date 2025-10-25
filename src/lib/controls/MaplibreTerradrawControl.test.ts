@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { MaplibreTerradrawControl } from './MaplibreTerradrawControl';
-import type { StyleSpecification } from 'maplibre-gl';
+import type { StyleSpecification, Map } from 'maplibre-gl';
 import { TERRADRAW_SOURCE_IDS } from '../helpers/cleanMaplibreStyle';
+import { createMockMaplibreMap } from '../../setupTest';
 
 const maplibreStyle: StyleSpecification = {
 	version: 8,
@@ -244,5 +245,112 @@ describe('getTerraDrawInstance method', () => {
 		const instance = control.getTerraDrawInstance();
 		expect(instance).toBeDefined();
 		expect(typeof instance?.setMode).toBe('function');
+	});
+});
+
+describe('defaultPosition property', () => {
+	it('should return top-right as default position', () => {
+		const control = new MaplibreTerradrawControl();
+		expect(control.getDefaultPosition()).toBe('top-right');
+	});
+});
+
+describe('map integration', () => {
+	it('should add control to map successfully', () => {
+		const control = new MaplibreTerradrawControl({ open: true });
+		const mockMap = createMockMaplibreMap(maplibreStyle);
+
+		// Add control to map
+		mockMap.addControl(control);
+
+		// Verify addControl was called
+		expect(mockMap.addControl).toHaveBeenCalledWith(control);
+		expect(mockMap.addControl).toHaveBeenCalledTimes(1);
+	});
+
+	it('should handle onAdd method when added to map', () => {
+		const control = new MaplibreTerradrawControl({ open: false });
+		const mockMap = createMockMaplibreMap(maplibreStyle);
+
+		// Call onAdd method directly (normally called by MapLibre when adding control)
+		const container = control.onAdd(mockMap as unknown as Map);
+
+		// Verify container is returned
+		expect(container).toBeDefined();
+		expect(container).toBeInstanceOf(HTMLElement);
+		expect(container.classList.contains('maplibregl-ctrl')).toBe(true);
+	});
+
+	it('should handle onRemove method when removed from map', () => {
+		const control = new MaplibreTerradrawControl({ open: true });
+		const mockMap = createMockMaplibreMap(maplibreStyle);
+
+		// First add the control
+		const container = control.onAdd(mockMap as unknown as Map);
+		expect(container).toBeDefined();
+
+		// Then remove it
+		control.onRemove();
+
+		// Verify the control can be removed without errors
+		expect(() => control.onRemove()).not.toThrow();
+	});
+
+	it('should initialize with collapsed state when added to map', () => {
+		const control = new MaplibreTerradrawControl({ open: false });
+		const mockMap = createMockMaplibreMap(maplibreStyle);
+
+		// Initially collapsed (before adding to map)
+		expect(control.isExpanded).toBe(false);
+
+		// Add to map
+		const container = control.onAdd(mockMap as unknown as Map);
+
+		// Should be collapsed as per config
+		expect(control.isExpanded).toBe(false);
+		expect(container.classList.contains('maplibregl-ctrl')).toBe(true);
+	});
+
+	it('should initialize with expanded state when added to map', () => {
+		const control = new MaplibreTerradrawControl({ open: true });
+		const mockMap = createMockMaplibreMap(maplibreStyle);
+
+		// Initially collapsed (before adding to map)
+		expect(control.isExpanded).toBe(false);
+
+		// Add to map
+		const container = control.onAdd(mockMap as unknown as Map);
+
+		// Should be expanded after adding to map due to open: true
+		expect(control.isExpanded).toBe(true);
+		expect(container.classList.contains('maplibregl-ctrl')).toBe(true);
+	});
+	it('should handle multiple add/remove cycles', () => {
+		const control = new MaplibreTerradrawControl({ open: true });
+		const mockMap = createMockMaplibreMap(maplibreStyle);
+
+		// Add control multiple times
+		const container1 = control.onAdd(mockMap as unknown as Map);
+		expect(container1).toBeDefined();
+
+		// Remove it
+		control.onRemove();
+
+		// Add it again
+		const container2 = control.onAdd(mockMap as unknown as Map);
+		expect(container2).toBeDefined();
+		expect(container2.classList.contains('maplibregl-ctrl')).toBe(true);
+
+		// Remove it again
+		expect(() => control.onRemove()).not.toThrow();
+	});
+
+	it('should handle error if no modes are added in the constructor', () => {
+		const control = new MaplibreTerradrawControl({ modes: [] });
+		const mockMap = createMockMaplibreMap(maplibreStyle);
+
+		expect(() => control.onAdd(mockMap as unknown as Map)).toThrowError(
+			'At least a mode must be enabled.'
+		);
 	});
 });

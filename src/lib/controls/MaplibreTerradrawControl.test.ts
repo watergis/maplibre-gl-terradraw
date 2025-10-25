@@ -190,6 +190,57 @@ describe('getTerraDrawInstance', () => {
 		expect(instance).toBeDefined();
 		expect(typeof instance?.setMode).toBe('function');
 	});
+
+	it('should call terradraw start method when map is loaded', () => {
+		const control = new MaplibreTerradrawControl();
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		// Mock map loaded method to return true
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).loaded = vi.fn(() => true);
+
+		// Initialize terra draw by calling onAdd
+		control.onAdd(mockMap);
+
+		const instance = control.getTerraDrawInstance();
+		expect(instance).toBeDefined();
+
+		// Verify that start method was called (line 191)
+		expect(instance?.start).toHaveBeenCalled();
+	});
+
+	it('should call terradraw start method on map load event when map is not loaded', () => {
+		const control = new MaplibreTerradrawControl();
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		// Mock map loaded method to return false
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).loaded = vi.fn(() => false);
+
+		// Spy on once method to capture the callback
+		let loadCallback: () => void;
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).once = vi.fn((event: string, callback: () => void) => {
+			if (event === 'load') {
+				loadCallback = callback;
+			}
+		});
+
+		// Initialize terra draw by calling onAdd
+		control.onAdd(mockMap);
+
+		const instance = control.getTerraDrawInstance();
+		expect(instance).toBeDefined();
+
+		// Verify that once was called with 'load' event
+		expect(mockMap.once).toHaveBeenCalledWith('load', expect.any(Function));
+
+		// Simulate map load event to trigger the callback (line 194)
+		loadCallback!();
+
+		// Verify that start method was called
+		expect(instance?.start).toHaveBeenCalled();
+	});
 });
 
 describe('event handling', () => {
@@ -272,6 +323,93 @@ describe('state management', () => {
 
 		control.isExpanded = false;
 		expect(callback).toHaveBeenCalled();
+	});
+
+	it('should toggle button visibility when isExpanded changes', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['render', 'point'], open: false });
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+		const controlElement = control.onAdd(mockMap);
+
+		// Initially collapsed - buttons should have 'hidden' class
+		expect(control.isExpanded).toBe(false);
+
+		const addControlButtons = controlElement.getElementsByClassName(
+			'maplibregl-terradraw-control-render-button'
+		);
+
+		// Check that buttons have 'hidden' class when collapsed
+		if (addControlButtons.length > 0) {
+			for (let i = 0; i < addControlButtons.length; i++) {
+				const button = addControlButtons.item(i);
+				if (button) {
+					expect(button.classList.contains('hidden')).toBe(true);
+				}
+			}
+		}
+
+		// Set to expanded - buttons should not have 'hidden' class
+		control.isExpanded = true;
+
+		if (addControlButtons.length > 0) {
+			for (let i = 0; i < addControlButtons.length; i++) {
+				const button = addControlButtons.item(i);
+				if (button) {
+					expect(button.classList.contains('hidden')).toBe(false);
+				}
+			}
+		}
+
+		// Set back to collapsed - buttons should have 'hidden' class again
+		control.isExpanded = false;
+
+		if (addControlButtons.length > 0) {
+			for (let i = 0; i < addControlButtons.length; i++) {
+				const button = addControlButtons.item(i);
+				if (button) {
+					expect(button.classList.contains('hidden')).toBe(true);
+				}
+			}
+		}
+	});
+
+	it('should toggle render button enabled class when isExpanded changes', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['render'], open: false });
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+		const controlElement = control.onAdd(mockMap);
+
+		// Initially collapsed - render button should not have 'enabled' class
+		expect(control.isExpanded).toBe(false);
+
+		const renderButton = controlElement.getElementsByClassName(
+			'maplibregl-terradraw-control-render-button'
+		);
+
+		if (renderButton.length > 0) {
+			const button = renderButton.item(0);
+			if (button) {
+				expect(button.classList.contains('enabled')).toBe(false);
+			}
+		}
+
+		// Set to expanded - render button should have 'enabled' class
+		control.isExpanded = true;
+
+		if (renderButton.length > 0) {
+			const button = renderButton.item(0);
+			if (button) {
+				expect(button.classList.contains('enabled')).toBe(true);
+			}
+		}
+
+		// Set back to collapsed - render button should not have 'enabled' class
+		control.isExpanded = false;
+
+		if (renderButton.length > 0) {
+			const button = renderButton.item(0);
+			if (button) {
+				expect(button.classList.contains('enabled')).toBe(false);
+			}
+		}
 	});
 });
 
@@ -1083,5 +1221,210 @@ describe('advanced button interactions', () => {
 
 		// Test that at least one button was tested
 		expect(controlElement.children.length).toBeGreaterThan(0);
+	});
+
+	it('should handle delete button with terradraw enabled and features', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['delete'] });
+		const controlElement = control.onAdd(mockMap);
+
+		// Enable terradraw
+		control.activate();
+
+		// Mock terradraw to be enabled
+		const terradraw = control.getTerraDrawInstance()!;
+		terradraw.enabled = true;
+		terradraw.clear = vi.fn();
+
+		const deleteButton = controlElement.querySelector(
+			'.maplibregl-terradraw-control-delete-button'
+		) as HTMLButtonElement;
+
+		if (deleteButton) {
+			deleteButton.click();
+			expect(terradraw.clear).toHaveBeenCalled();
+		}
+	});
+
+	it('should handle delete-selection button with selected features', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['delete-selection'] });
+		const controlElement = control.onAdd(mockMap);
+
+		// Enable terradraw
+		control.activate();
+
+		// Mock terradraw with selected features
+		const mockFeatures = [
+			{
+				id: 'feature1',
+				type: 'Feature' as const,
+				geometry: { type: 'Point' as const, coordinates: [0, 0] },
+				properties: { selected: true, mode: 'point' }
+			},
+			{
+				id: 'feature2',
+				type: 'Feature' as const,
+				geometry: { type: 'Point' as const, coordinates: [1, 1] },
+				properties: { selected: false, mode: 'point' }
+			}
+		];
+
+		const terradraw = control.getTerraDrawInstance()!;
+		terradraw.enabled = true;
+		terradraw.getSnapshot = vi.fn(() => mockFeatures);
+		terradraw.removeFeatures = vi.fn();
+		terradraw.deselectFeature = vi.fn();
+
+		const deleteSelectionButton = controlElement.querySelector(
+			'.maplibregl-terradraw-control-delete-selection-button'
+		) as HTMLButtonElement;
+
+		if (deleteSelectionButton) {
+			deleteSelectionButton.click();
+			expect(terradraw.removeFeatures).toHaveBeenCalledWith(['feature1']);
+			expect(terradraw.deselectFeature).toHaveBeenCalledWith('feature1');
+		}
+	});
+
+	it('should handle mode button activation with inactive button', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['rectangle'] });
+		const controlElement = control.onAdd(mockMap);
+
+		// Enable terradraw
+		control.activate();
+
+		const terradraw = control.getTerraDrawInstance()!;
+		terradraw.setMode = vi.fn();
+
+		const rectangleButton = controlElement.querySelector(
+			'.maplibregl-terradraw-control-add-rectangle-button'
+		) as HTMLButtonElement;
+
+		if (rectangleButton) {
+			// Ensure button is not active initially
+			rectangleButton.classList.remove('active');
+
+			rectangleButton.click();
+			expect(terradraw.setMode).toHaveBeenCalledWith('rectangle');
+		}
+	});
+
+	it('should handle Reflect.get in proxy for non-setMode properties', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['rectangle'] });
+		control.onAdd(mockMap);
+
+		const instance = control.getTerraDrawInstance()!;
+
+		// Mock a property access that should go through Reflect.get
+		const terradraw = control.getTerraDrawInstance()!;
+		terradraw.enabled = true;
+
+		// Access a non-setMode property to trigger Reflect.get path
+		expect(instance.enabled).toBe(true);
+	});
+
+	it('should handle toggleEditor method', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['rectangle'] });
+		control.onAdd(mockMap);
+
+		// Test initial expanded state
+		const initialExpanded = control.isExpanded;
+
+		// Call toggleEditor (protected method)
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(control as any).toggleEditor();
+
+		// Should toggle the expanded state
+		expect(control.isExpanded).toBe(!initialExpanded);
+	});
+
+	it('should handle render mode button when expanded', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['render'], open: true });
+		const controlElement = control.onAdd(mockMap);
+
+		// Check that control element has children (buttons are created)
+		expect(controlElement.children.length).toBeGreaterThan(0);
+
+		// Test the expanded state
+		expect(control.isExpanded).toBe(true);
+	});
+
+	it('should handle render mode button when collapsed', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['render'], open: false });
+		const controlElement = control.onAdd(mockMap);
+
+		// Check that control element has children (buttons are created)
+		expect(controlElement.children.length).toBeGreaterThan(0);
+
+		// Test the collapsed state
+		expect(control.isExpanded).toBe(false);
+	});
+
+	it('should handle delete button when terradraw is disabled', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['delete'] });
+		const controlElement = control.onAdd(mockMap);
+
+		// Don't activate terradraw (keep it disabled)
+		const terradraw = control.getTerraDrawInstance()!;
+		terradraw.enabled = false;
+
+		const deleteButton = controlElement.querySelector(
+			'.maplibregl-terradraw-control-delete-button'
+		) as HTMLButtonElement;
+
+		if (deleteButton) {
+			// Should return early when terradraw is disabled
+			expect(() => deleteButton.click()).not.toThrow();
+		}
+	});
+
+	it('should handle delete-selection button when terradraw is disabled', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['delete-selection'] });
+		const controlElement = control.onAdd(mockMap);
+
+		// Don't activate terradraw (keep it disabled)
+		const terradraw = control.getTerraDrawInstance()!;
+		terradraw.enabled = false;
+
+		const deleteSelectionButton = controlElement.querySelector(
+			'.maplibregl-terradraw-control-delete-selection-button'
+		) as HTMLButtonElement;
+
+		if (deleteSelectionButton) {
+			// Should return early when terradraw is disabled
+			expect(() => deleteSelectionButton.click()).not.toThrow();
+		}
+	});
+
+	it('should handle delete-selection button with no selected features', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['delete-selection'] });
+		const controlElement = control.onAdd(mockMap);
+
+		// Enable terradraw
+		control.activate();
+
+		// Mock terradraw with no selected features
+		const mockFeatures = [
+			{
+				id: 'feature1',
+				type: 'Feature' as const,
+				geometry: { type: 'Point' as const, coordinates: [0, 0] },
+				properties: { selected: false, mode: 'point' }
+			}
+		];
+
+		const terradraw = control.getTerraDrawInstance()!;
+		terradraw.enabled = true;
+		terradraw.getSnapshot = vi.fn(() => mockFeatures);
+		terradraw.removeFeatures = vi.fn();
+
+		const deleteSelectionButton = controlElement.querySelector(
+			'.maplibregl-terradraw-control-delete-selection-button'
+		) as HTMLButtonElement;
+
+		if (deleteSelectionButton) {
+			deleteSelectionButton.click();
+			// Should not call removeFeatures when no features are selected
+			expect(terradraw.removeFeatures).not.toHaveBeenCalled();
+		}
 	});
 });

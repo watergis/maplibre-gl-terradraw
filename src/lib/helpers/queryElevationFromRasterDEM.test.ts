@@ -3,16 +3,19 @@ import { queryElevationFromRasterDEM } from './queryElevationFromRasterDEM';
 import type { GeoJSONStoreFeatures } from 'terra-draw';
 import type { TerrainSource } from '../interfaces';
 
-vi.mock('@watergis/terrain-rgb', () => {
-	return {
-		TerrainRGB: vi.fn().mockImplementation(() => ({
+// Mock the terrain classes as constructors for Vitest v4
+vi.mock('@watergis/terrain-rgb', () => ({
+	TerrainRGB: vi.fn(function TerrainRGB() {
+		return {
 			getElevation: vi.fn().mockResolvedValue(150)
-		})),
-		Terrarium: vi.fn().mockImplementation(() => ({
+		};
+	}),
+	Terrarium: vi.fn(function Terrarium() {
+		return {
 			getElevation: vi.fn().mockResolvedValue(150)
-		}))
-	};
-});
+		};
+	})
+}));
 
 describe('queryElevationFromRasterDEM', () => {
 	let mockPoints: GeoJSONStoreFeatures[];
@@ -36,6 +39,8 @@ describe('queryElevationFromRasterDEM', () => {
 	};
 
 	beforeEach(() => {
+		vi.clearAllMocks();
+
 		mockPoints = [
 			{
 				type: 'Feature',

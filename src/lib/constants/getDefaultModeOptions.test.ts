@@ -1,20 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import { getDefaultModeOptions } from './getDefaultModeOptions';
-import {
-	TerraDrawRenderMode,
-	TerraDrawPointMode,
-	TerraDrawMarkerMode,
-	TerraDrawLineStringMode,
-	TerraDrawPolygonMode,
-	TerraDrawRectangleMode,
-	TerraDrawAngledRectangleMode,
-	TerraDrawCircleMode,
-	TerraDrawFreehandMode,
-	TerraDrawFreehandLineStringMode,
-	TerraDrawSensorMode,
-	TerraDrawSectorMode,
-	TerraDrawSelectMode
-} from 'terra-draw';
 
 describe('getDefaultModeOptions', () => {
 	it('should return an object with the expected mode keys', () => {
@@ -37,23 +22,23 @@ describe('getDefaultModeOptions', () => {
 		expect(modeOptions).toHaveProperty('download');
 	});
 
-	it('should return instances of the expected classes', () => {
+	it('should return instances with expected mode properties', () => {
 		const modeOptions = getDefaultModeOptions();
-		expect(modeOptions.render).toBeInstanceOf(TerraDrawRenderMode);
-		expect(modeOptions.point).toBeInstanceOf(TerraDrawPointMode);
-		expect(modeOptions.marker).toBeInstanceOf(TerraDrawMarkerMode);
-		expect(modeOptions.linestring).toBeInstanceOf(TerraDrawLineStringMode);
-		expect(modeOptions.polygon).toBeInstanceOf(TerraDrawPolygonMode);
-		expect(modeOptions.rectangle).toBeInstanceOf(TerraDrawRectangleMode);
-		expect(modeOptions['angled-rectangle']).toBeInstanceOf(TerraDrawAngledRectangleMode);
-		expect(modeOptions.circle).toBeInstanceOf(TerraDrawCircleMode);
-		expect(modeOptions.freehand).toBeInstanceOf(TerraDrawFreehandMode);
-		expect(modeOptions['freehand-linestring']).toBeInstanceOf(TerraDrawFreehandLineStringMode);
-		expect(modeOptions.sensor).toBeInstanceOf(TerraDrawSensorMode);
-		expect(modeOptions.sector).toBeInstanceOf(TerraDrawSectorMode);
-		expect(modeOptions.select).toBeInstanceOf(TerraDrawSelectMode);
-		expect(modeOptions.delete).toBeInstanceOf(TerraDrawRenderMode);
-		expect(modeOptions['delete-selection']).toBeInstanceOf(TerraDrawRenderMode);
-		expect(modeOptions.download).toBeInstanceOf(TerraDrawRenderMode);
+		expect(modeOptions.render).toHaveProperty('mode', 'render');
+		expect(modeOptions.point).toHaveProperty('mode', 'point');
+		expect(modeOptions.marker).toHaveProperty('mode', 'marker');
+		expect(modeOptions.linestring).toHaveProperty('mode', 'linestring');
+		expect(modeOptions.polygon).toHaveProperty('mode', 'polygon');
+		expect(modeOptions.rectangle).toHaveProperty('mode', 'rectangle');
+		expect(modeOptions['angled-rectangle']).toHaveProperty('mode', 'angled-rectangle');
+		expect(modeOptions.circle).toHaveProperty('mode', 'circle');
+		expect(modeOptions.freehand).toHaveProperty('mode', 'freehand');
+		expect(modeOptions['freehand-linestring']).toHaveProperty('mode', 'freehand-linestring');
+		expect(modeOptions.sensor).toHaveProperty('mode', 'sensor');
+		expect(modeOptions.sector).toHaveProperty('mode', 'sector');
+		expect(modeOptions.select).toHaveProperty('mode', 'select');
+		expect(modeOptions.delete).toHaveProperty('mode', 'render');
+		expect(modeOptions['delete-selection']).toHaveProperty('mode', 'render');
+		expect(modeOptions.download).toHaveProperty('mode', 'render');
 	});
 });

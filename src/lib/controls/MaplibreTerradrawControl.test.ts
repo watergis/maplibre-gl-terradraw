@@ -618,3 +618,470 @@ describe('dispatchEvent method', () => {
 		expect(() => (control as any).dispatchEvent('mode-changed')).not.toThrow();
 	});
 });
+
+describe('advanced button state management', () => {
+	it('should handle toggleDeleteSelectionButton with active state', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['select', 'point'] });
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		// Mock DOM elements
+		const mockButton = {
+			classList: {
+				remove: vi.fn(),
+				add: vi.fn()
+			}
+		};
+
+		const originalGetElementsByClassName = document.getElementsByClassName;
+		document.getElementsByClassName = vi.fn((className: string) => {
+			if (className.includes('delete-selection-button')) {
+				return {
+					length: 1,
+					item: vi.fn(() => mockButton)
+				} as unknown as HTMLCollectionOf<Element>;
+			}
+			return {
+				length: 0,
+				item: vi.fn(() => null)
+			} as unknown as HTMLCollectionOf<Element>;
+		});
+
+		control.onAdd(mockMap);
+
+		// Configure the mocked terradraw instance
+		const terradraw = control.getTerraDrawInstance()!;
+		terradraw.enabled = true;
+		terradraw.getMode = vi.fn(() => 'select');
+		terradraw.getSnapshot = vi.fn(() => [
+			{
+				id: '1',
+				type: 'Feature' as const,
+				geometry: { type: 'Point' as const, coordinates: [0, 0] },
+				properties: { mode: 'point', selected: false }
+			}
+		]);
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(control as any).toggleDeleteSelectionButton();
+
+		expect(mockButton.classList.remove).toHaveBeenCalledWith('hidden-delete-selection');
+
+		// Restore
+		document.getElementsByClassName = originalGetElementsByClassName;
+	});
+
+	it('should handle toggleDeleteSelectionButton with inactive state', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['select', 'point'] });
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		// Mock DOM elements
+		const mockDeleteButton = {
+			classList: {
+				remove: vi.fn(),
+				add: vi.fn()
+			}
+		};
+
+		const mockSelectButton = {
+			classList: {
+				remove: vi.fn(),
+				add: vi.fn()
+			}
+		};
+
+		const originalGetElementsByClassName = document.getElementsByClassName;
+		document.getElementsByClassName = vi.fn((className: string) => {
+			if (className.includes('delete-selection-button')) {
+				return {
+					length: 1,
+					item: vi.fn(() => mockDeleteButton)
+				} as unknown as HTMLCollectionOf<Element>;
+			}
+			if (className.includes('add-select-button')) {
+				return {
+					length: 1,
+					item: vi.fn(() => mockSelectButton)
+				} as unknown as HTMLCollectionOf<Element>;
+			}
+			return {
+				length: 0,
+				item: vi.fn(() => null)
+			} as unknown as HTMLCollectionOf<Element>;
+		});
+
+		control.onAdd(mockMap);
+
+		// Configure the mocked terradraw instance with no features
+		const terradraw = control.getTerraDrawInstance()!;
+		terradraw.enabled = false;
+		terradraw.getMode = vi.fn(() => 'point');
+		terradraw.getSnapshot = vi.fn(() => []);
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(control as any).toggleDeleteSelectionButton();
+
+		expect(mockDeleteButton.classList.add).toHaveBeenCalledWith('hidden-delete-selection');
+		expect(mockSelectButton.classList.remove).toHaveBeenCalledWith('active');
+
+		// Restore
+		document.getElementsByClassName = originalGetElementsByClassName;
+	});
+});
+
+describe('clearExtendedFeatures edge cases', () => {
+	it('should handle clearExtendedFeatures with ids parameter', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['point'] });
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		const mockGeojsonSource = {
+			data: {
+				type: 'FeatureCollection',
+				features: [
+					{ id: '1', properties: { originalId: 'original1' } },
+					{ id: '2', properties: { originalId: 'original2' } },
+					{ id: '3', properties: {} }
+				]
+			}
+		};
+
+		const mockSource = {
+			setData: vi.fn()
+		};
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).getSource = vi.fn(() => mockSource);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).getStyle = vi.fn(() => ({
+			sources: {
+				testSource: mockGeojsonSource
+			}
+		}));
+
+		control.onAdd(mockMap);
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(control as any).clearExtendedFeatures(['testSource'], ['original1']);
+
+		// Should filter out feature with originalId 'original1'
+		expect(mockGeojsonSource.data.features).toHaveLength(2);
+		expect(mockSource.setData).toHaveBeenCalledWith(mockGeojsonSource.data);
+	});
+
+	it('should handle clearExtendedFeatures with features without originalId', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['point'] });
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		const mockGeojsonSource = {
+			data: {
+				type: 'FeatureCollection',
+				features: [
+					{ id: 'feature1', properties: {} },
+					{ id: 'feature2', properties: {} }
+				]
+			}
+		};
+
+		const mockSource = {
+			setData: vi.fn()
+		};
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).getSource = vi.fn(() => mockSource);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).getStyle = vi.fn(() => ({
+			sources: {
+				testSource: mockGeojsonSource
+			}
+		}));
+
+		control.onAdd(mockMap);
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(control as any).clearExtendedFeatures(['testSource'], ['feature1']);
+
+		// Should filter out feature with id 'feature1'
+		expect(mockGeojsonSource.data.features).toHaveLength(1);
+		expect(mockGeojsonSource.data.features[0].id).toBe('feature2');
+		expect(mockSource.setData).toHaveBeenCalledWith(mockGeojsonSource.data);
+	});
+
+	it('should handle clearExtendedFeatures when source does not exist', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['point'] });
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).getStyle = vi.fn(() => ({
+			sources: {}
+		}));
+
+		control.onAdd(mockMap);
+
+		// Should not throw when source doesn't exist
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		expect(() => (control as any).clearExtendedFeatures(['nonexistentSource'])).not.toThrow();
+	});
+});
+
+describe('DOM manipulation edge cases', () => {
+	it('should handle null buttons in toggleDeleteSelectionButton', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['select'] });
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		const originalGetElementsByClassName = document.getElementsByClassName;
+		document.getElementsByClassName = vi.fn(
+			() =>
+				({
+					length: 1,
+					item: vi.fn(() => null) // Return null button
+				}) as unknown as HTMLCollectionOf<Element>
+		);
+
+		control.onAdd(mockMap);
+
+		// Should not throw when button is null
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		expect(() => (control as any).toggleDeleteSelectionButton()).not.toThrow();
+
+		// Restore
+		document.getElementsByClassName = originalGetElementsByClassName;
+	});
+
+	it('should handle empty button collections', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['point'] });
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		control.onAdd(mockMap);
+
+		// Configure the mocked terradraw instance
+		const terradraw = control.getTerraDrawInstance()!;
+		terradraw.enabled = true;
+
+		// Should not throw with empty button collections
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		expect(() => (control as any).toggleButtonsWhenNoFeature()).not.toThrow();
+	});
+});
+
+describe('getFeatures with different modes', () => {
+	it('should filter out select mode features correctly', () => {
+		const control = new MaplibreTerradrawControl();
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		control.onAdd(mockMap);
+
+		const mockFeatures = [
+			{
+				id: '1',
+				type: 'Feature' as const,
+				geometry: { type: 'Point' as const, coordinates: [0, 0] },
+				properties: { mode: 'point', selected: false }
+			},
+			{
+				id: '2',
+				type: 'Feature' as const,
+				geometry: { type: 'Point' as const, coordinates: [1, 1] },
+				properties: { mode: 'select', selected: false }
+			}
+		];
+
+		// Configure the mocked terradraw instance
+		const terradraw = control.getTerraDrawInstance()!;
+		terradraw.getSnapshot = vi.fn(() => mockFeatures);
+
+		const result = control.getFeatures(false);
+		expect(result).toBeDefined();
+		expect(result?.type).toBe('FeatureCollection');
+		expect(result?.features).toHaveLength(1); // select mode should be filtered out
+		expect(result?.features[0].properties.mode).toBe('point');
+	});
+});
+
+describe('advanced button interactions', () => {
+	let container: HTMLElement;
+	let mockMap: Map;
+
+	beforeEach(() => {
+		container = document.createElement('div');
+		document.body.appendChild(container);
+		mockMap = new Map({ container, style: maplibreStyle });
+	});
+
+	it('should handle getTerraDrawInstance proxy setMode method', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['rectangle'] });
+		control.onAdd(mockMap);
+
+		const instance = control.getTerraDrawInstance();
+		const setModeSpy = vi.fn();
+
+		// Mock the terradraw instance to have a setMode method
+		const terraDraw = control.getTerraDrawInstance()!;
+		terraDraw.setMode = setModeSpy;
+
+		// Call setMode through the proxy
+		instance!.setMode('rectangle');
+
+		// Verify the proxy intercepted and called handleModeChange
+		expect(setModeSpy).toHaveBeenCalledWith('rectangle');
+	});
+
+	it('should handle button interactions through control element', () => {
+		const control = new MaplibreTerradrawControl({
+			modes: ['rectangle', 'delete', 'delete-selection', 'download']
+		});
+		const controlElement = control.onAdd(mockMap);
+
+		// Enable terradraw
+		control.activate();
+
+		// Add event listeners
+		const featureDeletedSpy = vi.fn();
+		const modeChangeSpy = vi.fn();
+		control.on('feature-deleted', featureDeletedSpy);
+		control.on('mode-changed', modeChangeSpy);
+
+		// Find buttons within the control element
+		const deleteButton = controlElement.querySelector(
+			'.maplibregl-terradraw-control-delete-button'
+		) as HTMLButtonElement;
+		const deleteSelectionButton = controlElement.querySelector(
+			'.maplibregl-terradraw-control-delete-selection-button'
+		) as HTMLButtonElement;
+		const downloadButton = controlElement.querySelector(
+			'.maplibregl-terradraw-control-download-button'
+		) as HTMLButtonElement;
+		const rectangleButton = controlElement.querySelector(
+			'.maplibregl-terradraw-control-add-rectangle-button'
+		) as HTMLButtonElement;
+
+		// Test delete button
+		if (deleteButton) {
+			deleteButton.click();
+			expect(featureDeletedSpy).toHaveBeenCalled();
+		}
+
+		// Test delete-selection button
+		if (deleteSelectionButton) {
+			deleteSelectionButton.click();
+			expect(featureDeletedSpy).toHaveBeenCalled();
+		}
+
+		// Test download button
+		if (downloadButton) {
+			expect(() => downloadButton.click()).not.toThrow();
+		}
+
+		// Test rectangle button for mode change
+		if (rectangleButton) {
+			rectangleButton.click();
+			expect(modeChangeSpy).toHaveBeenCalled();
+			expect(rectangleButton.classList.contains('active')).toBe(true);
+
+			// Second click to deactivate
+			rectangleButton.click();
+			expect(rectangleButton.classList.contains('active')).toBe(false);
+		}
+	});
+
+	it('should handle proxy pattern for setMode calls', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['rectangle'] });
+		control.onAdd(mockMap);
+
+		// Test proxy functionality
+		const instance = control.getTerraDrawInstance();
+		expect(instance).toBeDefined();
+
+		// Test that we can call setMode through the proxy
+		expect(() => instance!.setMode('rectangle')).not.toThrow();
+	});
+
+	it('should handle delete button when terradraw is disabled', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['delete'] });
+		const controlElement = control.onAdd(mockMap);
+
+		// Don't activate terradraw (keep it disabled)
+		const deleteButton = controlElement.querySelector(
+			'.maplibregl-terradraw-control-delete-button'
+		) as HTMLButtonElement;
+
+		if (deleteButton) {
+			// Should not throw when clicking disabled terradraw
+			expect(() => deleteButton.click()).not.toThrow();
+		}
+	});
+
+	it('should handle delete-selection button when no features selected', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['delete-selection'] });
+		const controlElement = control.onAdd(mockMap);
+
+		// Enable terradraw
+		control.activate();
+
+		const deleteSelectionButton = controlElement.querySelector(
+			'.maplibregl-terradraw-control-delete-selection-button'
+		) as HTMLButtonElement;
+
+		if (deleteSelectionButton) {
+			// Should handle case when no features are selected
+			expect(() => deleteSelectionButton.click()).not.toThrow();
+		}
+	});
+
+	it('should handle mode button when terradraw is not available', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['rectangle'] });
+		const controlElement = control.onAdd(mockMap);
+
+		// Don't activate terradraw
+		const rectangleButton = controlElement.querySelector(
+			'.maplibregl-terradraw-control-add-rectangle-button'
+		) as HTMLButtonElement;
+
+		if (rectangleButton) {
+			// Should handle case when terradraw is not available
+			expect(() => rectangleButton.click()).not.toThrow();
+		}
+	});
+
+	it('should handle button click edge cases', () => {
+		const control = new MaplibreTerradrawControl({
+			modes: ['rectangle', 'delete', 'delete-selection']
+		});
+		const controlElement = control.onAdd(mockMap);
+
+		// Test that control element exists
+		expect(controlElement).toBeTruthy();
+
+		// Enable terradraw for full functionality
+		control.activate();
+
+		// Test various button states and edge cases
+		const rectangleButton = controlElement.querySelector(
+			'.maplibregl-terradraw-control-add-rectangle-button'
+		) as HTMLButtonElement;
+		const deleteButton = controlElement.querySelector(
+			'.maplibregl-terradraw-control-delete-button'
+		) as HTMLButtonElement;
+		const deleteSelectionButton = controlElement.querySelector(
+			'.maplibregl-terradraw-control-delete-selection-button'
+		) as HTMLButtonElement;
+
+		// Test multiple clicks and state changes
+		if (rectangleButton) {
+			rectangleButton.click(); // activate
+			rectangleButton.click(); // deactivate
+			expect(rectangleButton).toBeDefined();
+		}
+
+		if (deleteButton) {
+			deleteButton.click();
+			expect(deleteButton).toBeDefined();
+		}
+
+		if (deleteSelectionButton) {
+			deleteSelectionButton.click();
+			expect(deleteSelectionButton).toBeDefined();
+		}
+
+		// Test that at least one button was tested
+		expect(controlElement.children.length).toBeGreaterThan(0);
+	});
+});

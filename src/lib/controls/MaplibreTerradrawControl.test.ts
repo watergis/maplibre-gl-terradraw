@@ -431,7 +431,30 @@ describe('map lifecycle', () => {
 		const container = control.onAdd(mockMap);
 		expect(container).toBeDefined();
 
+		// Verify terradraw instance exists before removal
+		const terradrawBefore = control.getTerraDrawInstance();
+		expect(terradrawBefore).toBeDefined();
+
+		// Mock parent node to test DOM removal
+		const mockParentNode = {
+			removeChild: vi.fn()
+		};
+		Object.defineProperty(container, 'parentNode', {
+			value: mockParentNode,
+			writable: true
+		});
+
+		// Call onRemove to trigger cleanup (lines 227-231)
 		control.onRemove();
+
+		// Verify terradraw instance is undefined after removal (line 229)
+		const terradrawAfter = control.getTerraDrawInstance();
+		expect(terradrawAfter).toBeUndefined();
+
+		// Verify DOM element was removed (line 231)
+		expect(mockParentNode.removeChild).toHaveBeenCalledWith(container);
+
+		// Verify second call doesn't throw (when already removed)
 		expect(() => control.onRemove()).not.toThrow();
 	});
 

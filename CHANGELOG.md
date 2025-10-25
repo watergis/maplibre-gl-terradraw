@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.9.4
+
+### Patch Changes
+
+- 8bcea4f: fix: added more tests for helper methods.
+
 ## 1.9.3
 
 ### Patch Changes

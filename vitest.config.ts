@@ -11,7 +11,7 @@ export default defineConfig({
 		coverage: {
 			include: ['src/lib/**/*.{js,ts}'],
 			exclude: ['src/lib/**/index.{js,ts}', 'src/lib/interfaces/**/*.{js,ts}'],
-			reporter: ['text', 'json', 'html']
+			reporter: ['text', 'json-summary', 'json', 'html']
 		}
 	}
 });

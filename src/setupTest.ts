@@ -12,7 +12,10 @@ vi.mock('terra-draw', () => ({
 			enabled: true,
 			start: vi.fn(),
 			stop: vi.fn(),
-			on: vi.fn()
+			on: vi.fn(),
+			clear: vi.fn(),
+			removeFeatures: vi.fn(),
+			deselectFeature: vi.fn()
 		};
 	}),
 	TerraDrawRenderMode: vi.fn().mockImplementation(function () {

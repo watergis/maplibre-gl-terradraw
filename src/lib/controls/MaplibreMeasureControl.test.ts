@@ -576,3 +576,237 @@ describe('activate method tests', () => {
 		expect(registerSpy).toHaveBeenCalledTimes(3);
 	});
 });
+
+describe('recalc method tests', () => {
+	let control: MaplibreMeasureControl;
+
+	beforeEach(() => {
+		control = new MaplibreMeasureControl({
+			modes: ['point', 'linestring', 'polygon']
+		});
+	});
+
+	it('should call registerMesureControl when terra draw instance exists', () => {
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		// Mock map methods
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).getLayer = vi.fn(() => undefined);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).addLayer = vi.fn();
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).getSource = vi.fn(() => undefined);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).addSource = vi.fn();
+
+		// First add the control to initialize terra draw
+		control.onAdd(mockMap);
+
+		const terradraw = control.getTerraDrawInstance()!;
+		// Mock getSnapshot to return test data
+		const testFeatures = [
+			{
+				type: 'Feature' as const,
+				id: 'line-1',
+				geometry: {
+					type: 'LineString' as const,
+					coordinates: [
+						[0, 0],
+						[1, 1]
+					]
+				},
+				properties: { mode: 'linestring' }
+			},
+			{
+				type: 'Feature' as const,
+				id: 'point-1',
+				geometry: { type: 'Point' as const, coordinates: [0, 0] },
+				properties: { mode: 'point' }
+			},
+			{
+				type: 'Feature' as const,
+				id: 'polygon-1',
+				geometry: {
+					type: 'Polygon' as const,
+					coordinates: [
+						[
+							[0, 0],
+							[1, 0],
+							[1, 1],
+							[0, 1],
+							[0, 0]
+						]
+					]
+				},
+				properties: { mode: 'polygon' }
+			}
+		];
+		vi.spyOn(terradraw, 'getSnapshot').mockReturnValue(testFeatures);
+
+		const registerSpy = vi.spyOn(
+			control as MaplibreMeasureControl & { registerMesureControl: () => void },
+			'registerMesureControl'
+		);
+		const measureLineSpy = vi
+			.spyOn(
+				control as MaplibreMeasureControl & { measureLine: (id: string, show: boolean) => void },
+				'measureLine'
+			)
+			.mockImplementation(() => {});
+		const measurePointSpy = vi
+			.spyOn(
+				control as MaplibreMeasureControl & { measurePoint: (id: string, show: boolean) => void },
+				'measurePoint'
+			)
+			.mockImplementation(() => {});
+		const measurePolygonSpy = vi
+			.spyOn(
+				control as MaplibreMeasureControl & { measurePolygon: (id: string, show: boolean) => void },
+				'measurePolygon'
+			)
+			.mockImplementation(() => {});
+
+		control.recalc();
+
+		expect(registerSpy).toHaveBeenCalled();
+		expect(measureLineSpy).toHaveBeenCalledWith('line-1', false);
+		expect(measurePointSpy).toHaveBeenCalledWith('point-1', false);
+		expect(measurePolygonSpy).toHaveBeenCalledWith('polygon-1', false);
+	});
+
+	it('should handle empty snapshot gracefully', () => {
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		// Mock map methods
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).getLayer = vi.fn(() => undefined);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).addLayer = vi.fn();
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).getSource = vi.fn(() => undefined);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).addSource = vi.fn();
+
+		control.onAdd(mockMap);
+
+		const terradraw = control.getTerraDrawInstance()!;
+		vi.spyOn(terradraw, 'getSnapshot').mockReturnValue([]);
+
+		const registerSpy = vi.spyOn(
+			control as MaplibreMeasureControl & { registerMesureControl: () => void },
+			'registerMesureControl'
+		);
+
+		// Should not throw error with empty snapshot
+		expect(() => control.recalc()).not.toThrow();
+		expect(registerSpy).toHaveBeenCalled();
+	});
+
+	it('should do nothing when terra draw instance does not exist', () => {
+		// Mock getTerraDrawInstance to return undefined
+		vi.spyOn(control, 'getTerraDrawInstance').mockReturnValue(undefined);
+
+		const registerSpy = vi.spyOn(
+			control as MaplibreMeasureControl & { registerMesureControl: () => void },
+			'registerMesureControl'
+		);
+
+		control.recalc();
+
+		expect(registerSpy).not.toHaveBeenCalled();
+	});
+
+	it('should only measure appropriate geometry types', () => {
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		// Mock map methods
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).getLayer = vi.fn(() => undefined);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).addLayer = vi.fn();
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).getSource = vi.fn(() => undefined);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).addSource = vi.fn();
+
+		control.onAdd(mockMap);
+
+		const terradraw = control.getTerraDrawInstance()!;
+		// Mock getSnapshot to return features with geometry/mode mismatches
+		const testFeatures = [
+			{
+				type: 'Feature' as const,
+				id: 'line-with-polygon-geometry',
+				geometry: {
+					type: 'Polygon' as const,
+					coordinates: [
+						[
+							[0, 0],
+							[1, 0],
+							[1, 1],
+							[0, 1],
+							[0, 0]
+						]
+					]
+				},
+				properties: { mode: 'linestring' }
+			},
+			{
+				type: 'Feature' as const,
+				id: 'point-with-line-geometry',
+				geometry: {
+					type: 'LineString' as const,
+					coordinates: [
+						[0, 0],
+						[1, 1]
+					]
+				},
+				properties: { mode: 'point' }
+			},
+			{
+				type: 'Feature' as const,
+				id: 'select-mode-feature',
+				geometry: {
+					type: 'Polygon' as const,
+					coordinates: [
+						[
+							[0, 0],
+							[1, 0],
+							[1, 1],
+							[0, 1],
+							[0, 0]
+						]
+					]
+				},
+				properties: { mode: 'select' }
+			}
+		];
+		vi.spyOn(terradraw, 'getSnapshot').mockReturnValue(testFeatures);
+
+		const measureLineSpy = vi
+			.spyOn(
+				control as MaplibreMeasureControl & { measureLine: (id: string, show: boolean) => void },
+				'measureLine'
+			)
+			.mockImplementation(() => {});
+		const measurePointSpy = vi
+			.spyOn(
+				control as MaplibreMeasureControl & { measurePoint: (id: string, show: boolean) => void },
+				'measurePoint'
+			)
+			.mockImplementation(() => {});
+		const measurePolygonSpy = vi
+			.spyOn(
+				control as MaplibreMeasureControl & { measurePolygon: (id: string, show: boolean) => void },
+				'measurePolygon'
+			)
+			.mockImplementation(() => {});
+
+		control.recalc();
+
+		// Should not call measure methods for mismatched geometry types or excluded modes
+		expect(measureLineSpy).not.toHaveBeenCalled();
+		expect(measurePointSpy).not.toHaveBeenCalled();
+		expect(measurePolygonSpy).not.toHaveBeenCalled();
+	});
+});

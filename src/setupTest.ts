@@ -13,6 +13,7 @@ vi.mock('terra-draw', () => ({
 			start: vi.fn(),
 			stop: vi.fn(),
 			on: vi.fn(),
+			off: vi.fn(),
 			clear: vi.fn(),
 			removeFeatures: vi.fn(),
 			deselectFeature: vi.fn()
@@ -86,6 +87,7 @@ vi.mock('maplibre-gl', () => {
 					getSource: vi.fn(),
 					addSource: vi.fn(),
 					addLayer: vi.fn(),
+					getLayer: vi.fn(),
 					removeLayer: vi.fn(),
 					removeSource: vi.fn(),
 					hasImage: vi.fn(() => false),

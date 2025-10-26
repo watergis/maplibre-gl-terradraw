@@ -1,7 +1,8 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MaplibreMeasureControl } from './MaplibreMeasureControl';
 import type { StyleSpecification } from 'maplibre-gl';
 import { TERRADRAW_MEASURE_SOURCE_IDS } from '../helpers/cleanMaplibreStyle';
+import { defaultMeasureUnitSymbols } from '$lib/constants/defaultMeasureUnitSymbols';
 
 const maplibreStyle: StyleSpecification = {
 	version: 8,
@@ -215,6 +216,175 @@ describe('cleanStyle method', () => {
 			)
 		).toBe(true);
 		expect(Object.keys(result.sources).every((source) => sourceIds.includes(source))).toBe(true);
+	});
+});
+
+describe('measureUnitType', () => {
+	it('should return imperial measure unit type value user set', () => {
+		const control = new MaplibreMeasureControl({ measureUnitType: 'imperial' });
+		expect(control.measureUnitType).toEqual('imperial');
+	});
+
+	it('should return metric measure unit type value user set', () => {
+		const control = new MaplibreMeasureControl({ measureUnitType: 'metric' });
+		expect(control.measureUnitType).toEqual('metric');
+	});
+
+	it('should return metric measure unit type value if user does not specify', () => {
+		const control = new MaplibreMeasureControl();
+		expect(control.measureUnitType).toEqual('metric');
+	});
+
+	it('should return imperial measure unit type value if user set through property', () => {
+		const control = new MaplibreMeasureControl({ computeElevation: true });
+
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore;
+		const spy = vi.spyOn(control, 'recalculateElevationUnits');
+		control.measureUnitType = 'imperial';
+		expect(control.measureUnitType).toEqual('imperial');
+		expect(spy).toHaveBeenCalled();
+	});
+});
+
+describe('distancePrecision', () => {
+	it('should return distance precision value user set', () => {
+		const control = new MaplibreMeasureControl({ distancePrecision: 6 });
+		expect(control.distancePrecision).toEqual(6);
+	});
+
+	it('should return default distance precision value if user does not specify', () => {
+		const control = new MaplibreMeasureControl();
+		expect(control.distancePrecision).toEqual(2);
+	});
+
+	it('should return imperial measure unit type value if user set through property', () => {
+		const control = new MaplibreMeasureControl({ distancePrecision: 6 });
+
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore;
+		const spy = vi.spyOn(control, 'recalc');
+		control.distancePrecision = 8;
+		expect(control.distancePrecision).toEqual(8);
+		expect(spy).toHaveBeenCalled();
+	});
+});
+
+describe('areaPrecision', () => {
+	it('should return area precision value user set', () => {
+		const control = new MaplibreMeasureControl({ areaPrecision: 6 });
+		expect(control.areaPrecision).toEqual(6);
+	});
+
+	it('should return default area precision value if user does not specify', () => {
+		const control = new MaplibreMeasureControl();
+		expect(control.areaPrecision).toEqual(2);
+	});
+
+	it('should return imperial measure unit type value if user set through property', () => {
+		const control = new MaplibreMeasureControl({ areaPrecision: 6 });
+
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore;
+		const spy = vi.spyOn(control, 'recalc');
+		control.areaPrecision = 8;
+		expect(control.areaPrecision).toEqual(8);
+		expect(spy).toHaveBeenCalled();
+	});
+});
+
+describe('forceDistanceUnit', () => {
+	it('should return forceDistanceUnit value user set', () => {
+		const control = new MaplibreMeasureControl({ forceDistanceUnit: 'meter' });
+		expect(control.forceDistanceUnit).toEqual('meter');
+	});
+
+	it('should return default forceDistanceUnit value if user does not specify', () => {
+		const control = new MaplibreMeasureControl();
+		expect(control.forceDistanceUnit).toEqual('auto');
+	});
+
+	it('should return forceDistanceUnit value if user set through property', () => {
+		const control = new MaplibreMeasureControl({
+			forceDistanceUnit: 'meter',
+			measureUnitType: 'metric'
+		});
+
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore;
+		const spy = vi.spyOn(control, 'recalc');
+		control.forceDistanceUnit = 'centimeter';
+		expect(control.forceDistanceUnit).toEqual('centimeter');
+		expect(spy).toHaveBeenCalled();
+	});
+});
+
+describe('forceAreaUnit', () => {
+	it('should return forceAreaUnit value user set', () => {
+		const control = new MaplibreMeasureControl({
+			forceAreaUnit: 'hectares',
+			measureUnitType: 'imperial'
+		});
+		expect(control.forceAreaUnit).toEqual('hectares');
+	});
+
+	it('should return default forceAreaUnit value if user does not specify', () => {
+		const control = new MaplibreMeasureControl();
+		expect(control.forceAreaUnit).toEqual('auto');
+	});
+
+	it('should return forceAreaUnit value if user set through property', () => {
+		const control = new MaplibreMeasureControl({
+			forceAreaUnit: 'hectares',
+			measureUnitType: 'imperial'
+		});
+
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore;
+		const spy = vi.spyOn(control, 'recalc');
+		control.forceAreaUnit = 'acres';
+		expect(control.forceAreaUnit).toEqual('acres');
+		expect(spy).toHaveBeenCalled();
+	});
+});
+
+describe('measureUnitSymbols', () => {
+	it('should return default measure unit symbols if user does not specify', () => {
+		const control = new MaplibreMeasureControl();
+		expect(control.measureUnitSymbols).toEqual(defaultMeasureUnitSymbols);
+	});
+
+	it('should return default measure unit symbols if user does not specify', () => {
+		const control = new MaplibreMeasureControl();
+
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore;
+		const spy = vi.spyOn(control, 'recalc');
+
+		const testSymbols = JSON.parse(JSON.stringify(defaultMeasureUnitSymbols));
+		testSymbols.meter = 'meters_custom';
+		control.measureUnitSymbols = testSymbols;
+		expect(control.measureUnitSymbols).toEqual(testSymbols);
+		expect(spy).toHaveBeenCalled();
+	});
+});
+
+describe('computeElevation', () => {
+	it('should return default computeElevation value if user does not specify', () => {
+		const control = new MaplibreMeasureControl();
+		expect(control.computeElevation).toEqual(false);
+	});
+
+	it('should return computeElevation value if user set through property', () => {
+		const control = new MaplibreMeasureControl({ computeElevation: false });
+
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore;
+		const spy = vi.spyOn(control, 'recalc');
+
+		control.computeElevation = true;
+		expect(control.computeElevation).toEqual(true);
+		expect(spy).toHaveBeenCalled();
 	});
 });
 

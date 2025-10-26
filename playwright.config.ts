@@ -74,6 +74,8 @@ export default defineConfig({
 	webServer: {
 		command: 'pnpm dev',
 		port: 5173,
-		reuseExistingServer: !process.env.CI
+		reuseExistingServer: !process.env.CI,
+		// stdout: 'ignore'
+		stderr: 'ignore' // ignore sveltekit ssr warnings
 	}
 });

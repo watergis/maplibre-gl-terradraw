@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { afterNavigate } from '$app/navigation';
-	import { Progress } from '@skeletonlabs/skeleton-svelte';
 	import CodeBlock from '../../CodeBlock.svelte';
 	import type { PageData } from './$types';
 
@@ -14,12 +13,6 @@
 	afterNavigate(() => {
 		titleElement?.scrollIntoView();
 	});
-
-	const getHtml = async () => {
-		const response = await fetch(data.url);
-		const text = await response.text();
-		return text;
-	};
 </script>
 
 <h4 class="h3 py-5 px-4" bind:this={titleElement}>{data.title}</h4>
@@ -31,17 +24,7 @@
 <iframe class="map-iframe" src={data.url} title={data.title}></iframe>
 
 <div class="p-4">
-	{#await getHtml()}
-		<Progress class="items-center w-fit" value={null}>
-			<Progress.Circle>
-				<Progress.CircleTrack />
-				<Progress.CircleRange />
-			</Progress.Circle>
-			<Progress.ValueText />
-		</Progress>
-	{:then html}
-		<CodeBlock lang="html" code={html} />
-	{/await}
+	<CodeBlock lang="html" code={data.html} />
 </div>
 
 <style lang="scss">

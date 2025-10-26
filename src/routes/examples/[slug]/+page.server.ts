@@ -25,6 +25,7 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
 		title,
 		description,
 		url: filePath,
-		socialImage: `/assets/images/${slug}.png`
+		socialImage: `/assets/images/${slug}.png`,
+		html: html
 	};
 };

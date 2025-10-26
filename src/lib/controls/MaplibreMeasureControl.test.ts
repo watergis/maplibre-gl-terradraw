@@ -3,7 +3,7 @@ import { MaplibreMeasureControl } from './MaplibreMeasureControl';
 import type { StyleSpecification } from 'maplibre-gl';
 import { Map } from 'maplibre-gl';
 import { TERRADRAW_MEASURE_SOURCE_IDS } from '../helpers/cleanMaplibreStyle';
-import { defaultMeasureUnitSymbols } from '$lib/constants/defaultMeasureUnitSymbols';
+import { defaultMeasureUnitSymbols } from '../constants/defaultMeasureUnitSymbols';
 
 const maplibreStyle: StyleSpecification = {
 	version: 8,

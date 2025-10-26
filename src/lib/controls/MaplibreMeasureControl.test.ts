@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MaplibreMeasureControl } from './MaplibreMeasureControl';
 import type { StyleSpecification } from 'maplibre-gl';
+import { Map } from 'maplibre-gl';
 import { TERRADRAW_MEASURE_SOURCE_IDS } from '../helpers/cleanMaplibreStyle';
 import { defaultMeasureUnitSymbols } from '$lib/constants/defaultMeasureUnitSymbols';
 
@@ -402,5 +403,176 @@ describe('custom font glyphs', () => {
 
 	it('should return undefined if user do not set font glyphs', () => {
 		expect(control.fontGlyphs).toEqual(undefined);
+	});
+});
+
+describe('onAdd method tests', () => {
+	let control: MaplibreMeasureControl;
+
+	beforeEach(() => {
+		control = new MaplibreMeasureControl({
+			modes: ['point', 'linestring', 'polygon']
+		});
+	});
+
+	it('should call parent onAdd method and return control container', () => {
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		const result = control.onAdd(mockMap);
+
+		expect(result).toBeInstanceOf(HTMLElement);
+		expect(result.classList.contains('maplibregl-ctrl')).toBe(true);
+		expect(result.classList.contains('maplibregl-ctrl-group')).toBe(true);
+	});
+
+	it('should return HTML element when onAdd is called', () => {
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		const result = control.onAdd(mockMap);
+
+		expect(result).toBeInstanceOf(HTMLElement);
+	});
+});
+
+describe('onRemove method tests', () => {
+	let control: MaplibreMeasureControl;
+
+	beforeEach(() => {
+		control = new MaplibreMeasureControl({
+			modes: ['point', 'linestring', 'polygon']
+		});
+	});
+
+	it('should call unregisterMesureControl and parent onRemove', () => {
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		// Mock map methods that are used during cleanup
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).getLayer = vi.fn(() => true);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).removeLayer = vi.fn();
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).getSource = vi.fn(() => true);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).removeSource = vi.fn();
+
+		// First add the control to set up internal state
+		control.onAdd(mockMap);
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const unregisterSpy = vi.spyOn(control as any, 'unregisterMesureControl');
+
+		control.onRemove();
+
+		expect(unregisterSpy).toHaveBeenCalled();
+	});
+
+	it('should clean up resources when onRemove is called', () => {
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		// Mock map methods that are used during cleanup
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).getLayer = vi.fn(() => true);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).removeLayer = vi.fn();
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).getSource = vi.fn(() => true);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).removeSource = vi.fn();
+
+		// First add the control
+		control.onAdd(mockMap);
+
+		// Mock the unregisterMesureControl to verify it's called
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const unregisterSpy = vi.spyOn(control as any, 'unregisterMesureControl');
+
+		control.onRemove();
+
+		expect(unregisterSpy).toHaveBeenCalled();
+	});
+});
+describe('activate method tests', () => {
+	let control: MaplibreMeasureControl;
+
+	beforeEach(() => {
+		control = new MaplibreMeasureControl({
+			modes: ['point', 'linestring', 'polygon']
+		});
+	});
+
+	it('should call parent activate method and registerMesureControl', () => {
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		// Mock map methods that are used during activation
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).getLayer = vi.fn(() => undefined);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).addLayer = vi.fn();
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).getSource = vi.fn(() => undefined);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).addSource = vi.fn();
+
+		// First add the control to set up internal state
+		control.onAdd(mockMap);
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const registerSpy = vi.spyOn(control as any, 'registerMesureControl');
+
+		control.activate();
+
+		expect(registerSpy).toHaveBeenCalled();
+	});
+
+	it('should initialize measurement controls when activate is called', () => {
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		// Mock map methods that are used during activation
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).getLayer = vi.fn(() => undefined);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).addLayer = vi.fn();
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).getSource = vi.fn(() => undefined);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).addSource = vi.fn();
+
+		// First add the control
+		control.onAdd(mockMap);
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const registerSpy = vi.spyOn(control as any, 'registerMesureControl');
+
+		control.activate();
+
+		expect(registerSpy).toHaveBeenCalled();
+	});
+
+	it('should work without errors when called multiple times', () => {
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+
+		// Mock map methods that are used during activation
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).getLayer = vi.fn(() => undefined);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).addLayer = vi.fn();
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).getSource = vi.fn(() => undefined);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(mockMap as any).addSource = vi.fn();
+
+		// First add the control
+		control.onAdd(mockMap);
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const registerSpy = vi.spyOn(control as any, 'registerMesureControl');
+
+		// Call activate multiple times
+		control.activate();
+		control.activate();
+		control.activate();
+
+		expect(registerSpy).toHaveBeenCalledTimes(3);
 	});
 });

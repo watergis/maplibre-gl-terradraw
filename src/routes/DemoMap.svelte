@@ -58,7 +58,7 @@
 		ScaleControl
 	} from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
-	import { untrack } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import type { GeoJSONStoreFeatures } from 'terra-draw';
 	import '../scss/maplibre-gl-terradraw.scss';
 	import CodeBlock from './CodeBlock.svelte';
@@ -294,58 +294,56 @@
 		}
 	};
 
-	$effect(() =>
-		untrack(() => {
-			if (!mapContainer) return;
+	onMount(() => {
+		if (!mapContainer) return;
 
-			map = new Map({
-				container: mapContainer,
-				style: styles[0].uri,
-				center: [18.28, 6.25],
-				zoom: 2.5,
-				maxPitch: 85,
-				hash: true
-			});
+		map = new Map({
+			container: mapContainer,
+			style: styles[0].uri,
+			center: [18.28, 6.25],
+			zoom: 2.5,
+			maxPitch: 85,
+			hash: true
+		});
 
-			map.addControl(new NavigationControl({ visualizePitch: true }), 'bottom-right');
-			map.addControl(
-				new GeolocateControl({
-					positionOptions: {
-						enableHighAccuracy: true
-					},
-					trackUserLocation: true
-				}),
-				'bottom-right'
-			);
-			map.addControl(new GlobeControl(), 'bottom-right');
-			map.addControl(new ScaleControl(), 'bottom-left');
+		map.addControl(new NavigationControl({ visualizePitch: true }), 'bottom-right');
+		map.addControl(
+			new GeolocateControl({
+				positionOptions: {
+					enableHighAccuracy: true
+				},
+				trackUserLocation: true
+			}),
+			'bottom-right'
+		);
+		map.addControl(new GlobeControl(), 'bottom-right');
+		map.addControl(new ScaleControl(), 'bottom-left');
 
-			const styleSwitcherControl = new MaplibreStyleSwitcherControl(styles);
-			map.addControl(styleSwitcherControl, 'bottom-left');
+		const styleSwitcherControl = new MaplibreStyleSwitcherControl(styles);
+		map.addControl(styleSwitcherControl, 'bottom-left');
 
-			import('@watergis/maplibre-gl-export').then(
-				({ MaplibreExportControl, DPI, Format, PageOrientation, Size }) => {
-					if (!map) return;
-					const exportControl = new MaplibreExportControl({
-						PageSize: Size.A4,
-						PageOrientation: PageOrientation.Landscape,
-						Format: Format.PNG,
-						DPI: DPI[96],
-						Crosshair: true,
-						PrintableArea: true,
-						Local: 'en'
-					});
-					map.addControl(exportControl, 'bottom-right');
-				}
-			);
+		import('@watergis/maplibre-gl-export').then(
+			({ MaplibreExportControl, DPI, Format, PageOrientation, Size }) => {
+				if (!map) return;
+				const exportControl = new MaplibreExportControl({
+					PageSize: Size.A4,
+					PageOrientation: PageOrientation.Landscape,
+					Format: Format.PNG,
+					DPI: DPI[96],
+					Crosshair: true,
+					PrintableArea: true,
+					Local: 'en'
+				});
+				map.addControl(exportControl, 'bottom-right');
+			}
+		);
 
-			map.once('load', () => {
-				styleSwitcherControl.initialise();
+		map.once('load', () => {
+			styleSwitcherControl.initialise();
 
-				addControl();
-			});
-		})
-	);
+			addControl();
+		});
+	});
 </script>
 
 <div class="demo-container grid grid-cols-[auto_1fr] snap-start">

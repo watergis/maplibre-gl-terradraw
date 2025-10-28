@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.9.5
+
+### Patch Changes
+
+- 9db1a46: chore: re-rerelease the version due to issue #471
+
 ## 1.9.4
 
 ### Patch Changes

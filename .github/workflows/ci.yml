@@ -79,7 +79,7 @@ jobs:
         run: pnpm test:vitest:coverage
       - name: Report Coverage
         uses: davelosert/vitest-coverage-report-action@v2
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: ${{ !cancelled() }}
         with:
           name: vitest-report
@@ -106,7 +106,7 @@ jobs:
         run: pnpm exec playwright install --with-deps
       - name: Run Playwright tests
         run: pnpm exec playwright test
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: ${{ !cancelled() }}
         with:
           name: playwright-report

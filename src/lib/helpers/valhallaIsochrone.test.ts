@@ -1,10 +1,31 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, type MockedFunction } from 'vitest';
 import { ValhallaIsochrone, contourTypeOptions, type Contour } from './valhallaIsochrone';
+
+// Helper function to create mock Response
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const createMockResponse = (jsonData: any): Response =>
+	({
+		json: vi.fn().mockResolvedValue(jsonData),
+		ok: true,
+		status: 200,
+		statusText: 'OK',
+		headers: new Headers(),
+		redirected: false,
+		type: 'basic',
+		url: '',
+		clone: vi.fn(),
+		body: null,
+		bodyUsed: false,
+		arrayBuffer: vi.fn(),
+		blob: vi.fn(),
+		formData: vi.fn(),
+		text: vi.fn()
+	}) as unknown as Response;
 
 describe('ValhallaIsochrone', () => {
 	let isochrone: ValhallaIsochrone;
 	const mockUrl = 'https://valhalla.water-gis.com';
-	let mockFetch: ReturnType<typeof vi.fn>;
+	let mockFetch: MockedFunction<typeof fetch>;
 
 	// Real coordinates from API example (East Africa)
 	const eastAfricaLon = 35.870823432;
@@ -87,7 +108,7 @@ describe('ValhallaIsochrone', () => {
 
 	beforeEach(() => {
 		isochrone = new ValhallaIsochrone(mockUrl);
-		mockFetch = vi.fn();
+		mockFetch = vi.fn() as MockedFunction<typeof fetch>;
 		global.fetch = mockFetch;
 		vi.clearAllMocks();
 	});
@@ -123,8 +144,22 @@ describe('ValhallaIsochrone', () => {
 		describe('API call construction', () => {
 			beforeEach(() => {
 				mockFetch.mockResolvedValue({
-					json: vi.fn().mockResolvedValue(realDistanceIsochroneResponse)
-				});
+					json: vi.fn().mockResolvedValue(realDistanceIsochroneResponse),
+					ok: true,
+					status: 200,
+					statusText: 'OK',
+					headers: new Headers(),
+					redirected: false,
+					type: 'basic',
+					url: '',
+					clone: vi.fn(),
+					body: null,
+					bodyUsed: false,
+					arrayBuffer: vi.fn(),
+					blob: vi.fn(),
+					formData: vi.fn(),
+					text: vi.fn()
+				} as unknown as Response);
 			});
 
 			it('should construct correct API URL for distance isochrone', async () => {
@@ -220,9 +255,7 @@ describe('ValhallaIsochrone', () => {
 
 		describe('Response processing', () => {
 			it('should process real API response correctly', async () => {
-				mockFetch.mockResolvedValue({
-					json: vi.fn().mockResolvedValue(realDistanceIsochroneResponse)
-				});
+				mockFetch.mockResolvedValue(createMockResponse(realDistanceIsochroneResponse));
 
 				const contours: Contour[] = [{ distance: 1, color: 'ff0000' }];
 				const result = await isochrone.calcIsochrone(
@@ -264,9 +297,7 @@ describe('ValhallaIsochrone', () => {
 			});
 
 			it('should preserve all API response properties', async () => {
-				mockFetch.mockResolvedValue({
-					json: vi.fn().mockResolvedValue(realDistanceIsochroneResponse)
-				});
+				mockFetch.mockResolvedValue(createMockResponse(realDistanceIsochroneResponse));
 
 				const contours: Contour[] = [{ distance: 1, color: 'ff0000' }];
 				const result = await isochrone.calcIsochrone(
@@ -292,9 +323,7 @@ describe('ValhallaIsochrone', () => {
 			});
 
 			it('should handle coordinate precision correctly', async () => {
-				mockFetch.mockResolvedValue({
-					json: vi.fn().mockResolvedValue(realDistanceIsochroneResponse)
-				});
+				mockFetch.mockResolvedValue(createMockResponse(realDistanceIsochroneResponse));
 
 				const contours: Contour[] = [{ distance: 1, color: 'ff0000' }];
 				const result = await isochrone.calcIsochrone(
@@ -331,9 +360,24 @@ describe('ValhallaIsochrone', () => {
 			});
 
 			it('should handle JSON parsing errors', async () => {
-				mockFetch.mockResolvedValue({
-					json: vi.fn().mockRejectedValue(new Error('Invalid JSON'))
-				});
+				const mockResponse = {
+					json: vi.fn().mockRejectedValue(new Error('Invalid JSON')),
+					ok: true,
+					status: 200,
+					statusText: 'OK',
+					headers: new Headers(),
+					redirected: false,
+					type: 'basic',
+					url: '',
+					clone: vi.fn(),
+					body: null,
+					bodyUsed: false,
+					arrayBuffer: vi.fn(),
+					blob: vi.fn(),
+					formData: vi.fn(),
+					text: vi.fn()
+				} as unknown as Response;
+				mockFetch.mockResolvedValue(mockResponse);
 
 				const contours: Contour[] = [{ distance: 1, color: 'ff0000' }];
 
@@ -350,9 +394,7 @@ describe('ValhallaIsochrone', () => {
 					status_code: 400
 				};
 
-				mockFetch.mockResolvedValue({
-					json: vi.fn().mockResolvedValue(errorResponse)
-				});
+				mockFetch.mockResolvedValue(createMockResponse(errorResponse));
 
 				const contours: Contour[] = [{ distance: 1, color: 'ff0000' }];
 
@@ -372,9 +414,7 @@ describe('ValhallaIsochrone', () => {
 
 		describe('Integration scenarios', () => {
 			it('should work with real API format - distance isochrone', async () => {
-				mockFetch.mockResolvedValue({
-					json: vi.fn().mockResolvedValue(realDistanceIsochroneResponse)
-				});
+				mockFetch.mockResolvedValue(createMockResponse(realDistanceIsochroneResponse));
 
 				// Exact URL that works with real API
 				const result = await isochrone.calcIsochrone(
@@ -400,9 +440,7 @@ describe('ValhallaIsochrone', () => {
 			});
 
 			it('should handle different coordinate systems', async () => {
-				mockFetch.mockResolvedValue({
-					json: vi.fn().mockResolvedValue(realDistanceIsochroneResponse)
-				});
+				mockFetch.mockResolvedValue(createMockResponse(realDistanceIsochroneResponse));
 
 				// Test with different global coordinates
 				const coordinates = [
@@ -453,9 +491,7 @@ describe('ValhallaIsochrone', () => {
 					]
 				};
 
-				mockFetch.mockResolvedValue({
-					json: vi.fn().mockResolvedValue(multiContourResponse)
-				});
+				mockFetch.mockResolvedValue(createMockResponse(multiContourResponse));
 
 				const contours: Contour[] = [
 					{ distance: 1, color: 'green' },
@@ -494,9 +530,7 @@ describe('ValhallaIsochrone', () => {
 			});
 
 			it('should handle extreme coordinates', async () => {
-				mockFetch.mockResolvedValue({
-					json: vi.fn().mockResolvedValue(realDistanceIsochroneResponse)
-				});
+				mockFetch.mockResolvedValue(createMockResponse(realDistanceIsochroneResponse));
 
 				const extremeCoords = [
 					{ lon: 180, lat: 85 }, // Near North Pole
@@ -519,9 +553,7 @@ describe('ValhallaIsochrone', () => {
 			});
 
 			it('should handle large contour values', async () => {
-				mockFetch.mockResolvedValue({
-					json: vi.fn().mockResolvedValue(realDistanceIsochroneResponse)
-				});
+				mockFetch.mockResolvedValue(createMockResponse(realDistanceIsochroneResponse));
 
 				const contours: Contour[] = [
 					{ distance: 100, color: 'red' }, // 100km

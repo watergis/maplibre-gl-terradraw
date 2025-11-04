@@ -1,11 +1,32 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, type MockedFunction } from 'vitest';
 import { LngLat } from 'maplibre-gl';
 import { ValhallaRouting, type ValhallaTripResult, type ValhallaError } from './valhallaRouting';
+
+// Helper function to create mock Response
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const createMockResponse = (jsonData: any): Response =>
+	({
+		json: vi.fn().mockResolvedValue(jsonData),
+		ok: true,
+		status: 200,
+		statusText: 'OK',
+		headers: new Headers(),
+		redirected: false,
+		type: 'basic',
+		url: '',
+		clone: vi.fn(),
+		body: null,
+		bodyUsed: false,
+		arrayBuffer: vi.fn(),
+		blob: vi.fn(),
+		formData: vi.fn(),
+		text: vi.fn()
+	}) as unknown as Response;
 
 describe('ValhallaRouting', () => {
 	let routing: ValhallaRouting;
 	const mockUrl = 'https://valhalla.example.com';
-	let mockFetch: ReturnType<typeof vi.fn>;
+	let mockFetch: MockedFunction<typeof fetch>;
 
 	// Real coordinates from API example (East Africa)
 	const eastAfricaStart = { lng: 35.871587813, lat: -1.092339561 } as LngLat;
@@ -110,7 +131,7 @@ describe('ValhallaRouting', () => {
 
 	beforeEach(() => {
 		routing = new ValhallaRouting(mockUrl);
-		mockFetch = vi.fn();
+		mockFetch = vi.fn() as MockedFunction<typeof fetch>;
 		global.fetch = mockFetch;
 		vi.clearAllMocks();
 	});
@@ -129,9 +150,7 @@ describe('ValhallaRouting', () => {
 		});
 
 		it('should return trip data after calculation', async () => {
-			mockFetch.mockResolvedValue({
-				json: vi.fn().mockResolvedValue(realApiResponse)
-			});
+			mockFetch.mockResolvedValue(createMockResponse(realApiResponse));
 
 			await routing.calcRoute(mockTripData, 'pedestrian', 'kilometers');
 			expect(routing.getTripData()).toEqual(mockTripData);
@@ -144,9 +163,7 @@ describe('ValhallaRouting', () => {
 		});
 
 		it('should return trip summary after successful routing', async () => {
-			mockFetch.mockResolvedValue({
-				json: vi.fn().mockResolvedValue(realApiResponse)
-			});
+			mockFetch.mockResolvedValue(createMockResponse(realApiResponse));
 
 			await routing.calcRoute(mockTripData, 'pedestrian', 'kilometers');
 			const summary = routing.getTripSummary();
@@ -164,9 +181,7 @@ describe('ValhallaRouting', () => {
 
 	describe('clearFeatures', () => {
 		it('should clear trip data and summary', async () => {
-			mockFetch.mockResolvedValue({
-				json: vi.fn().mockResolvedValue(realApiResponse)
-			});
+			mockFetch.mockResolvedValue(createMockResponse(realApiResponse));
 
 			await routing.calcRoute(mockTripData, 'pedestrian', 'kilometers');
 			expect(routing.getTripData()).toHaveLength(2);
@@ -195,9 +210,7 @@ describe('ValhallaRouting', () => {
 
 			it('should clear trip summary when trip data is invalid', async () => {
 				// First set some data
-				mockFetch.mockResolvedValue({
-					json: vi.fn().mockResolvedValue(realApiResponse)
-				});
+				mockFetch.mockResolvedValue(createMockResponse(realApiResponse));
 				await routing.calcRoute(mockTripData, 'pedestrian', 'kilometers');
 				expect(routing.getTripSummary()).toBeDefined();
 
@@ -209,9 +222,7 @@ describe('ValhallaRouting', () => {
 
 		describe('API call construction', () => {
 			beforeEach(() => {
-				mockFetch.mockResolvedValue({
-					json: vi.fn().mockResolvedValue(realApiResponse)
-				});
+				mockFetch.mockResolvedValue(createMockResponse(realApiResponse));
 			});
 
 			it('should construct correct API URL with pedestrian costing', async () => {
@@ -286,9 +297,7 @@ describe('ValhallaRouting', () => {
 
 		describe('Successful routing response', () => {
 			beforeEach(() => {
-				mockFetch.mockResolvedValue({
-					json: vi.fn().mockResolvedValue(realApiResponse)
-				});
+				mockFetch.mockResolvedValue(createMockResponse(realApiResponse));
 			});
 
 			it('should return valid GeoJSON features', async () => {
@@ -392,9 +401,7 @@ describe('ValhallaRouting', () => {
 					status_code: 400
 				};
 
-				mockFetch.mockResolvedValue({
-					json: vi.fn().mockResolvedValue(errorResponse)
-				});
+				mockFetch.mockResolvedValue(createMockResponse(errorResponse));
 
 				const initialTripData = [...mockTripData];
 				await expect(routing.calcRoute(mockTripData, 'pedestrian', 'kilometers')).rejects.toThrow(
@@ -411,9 +418,7 @@ describe('ValhallaRouting', () => {
 
 		describe('Integration scenarios', () => {
 			it('should work with real API call format and response structure', async () => {
-				mockFetch.mockResolvedValue({
-					json: vi.fn().mockResolvedValue(realApiResponse)
-				});
+				mockFetch.mockResolvedValue(createMockResponse(realApiResponse));
 
 				// Use fresh data to avoid mutation from other tests
 				const freshTripData: LngLat[] = [
@@ -461,9 +466,7 @@ describe('ValhallaRouting', () => {
 					}
 				};
 
-				mockFetch.mockResolvedValue({
-					json: vi.fn().mockResolvedValue(multiLegResponse)
-				});
+				mockFetch.mockResolvedValue(createMockResponse(multiLegResponse));
 
 				const threePoints: LngLat[] = [
 					eastAfricaStart,
@@ -482,9 +485,7 @@ describe('ValhallaRouting', () => {
 			});
 
 			it('should maintain coordinate precision from real API', async () => {
-				mockFetch.mockResolvedValue({
-					json: vi.fn().mockResolvedValue(realApiResponse)
-				});
+				mockFetch.mockResolvedValue(createMockResponse(realApiResponse));
 
 				const result = await routing.calcRoute(mockTripData, 'pedestrian', 'kilometers');
 
@@ -516,9 +517,7 @@ describe('ValhallaRouting', () => {
 				status_code: 400
 			};
 
-			mockFetch.mockResolvedValue({
-				json: vi.fn().mockResolvedValue(errorResponse)
-			});
+			mockFetch.mockResolvedValue(createMockResponse(errorResponse));
 
 			await expect(routing.calcRoute(samePoint, 'pedestrian', 'kilometers')).rejects.toThrow(
 				'Invalid request (400): Identical start and end points (154)'
@@ -535,9 +534,7 @@ describe('ValhallaRouting', () => {
 					}) as LngLat
 			);
 
-			mockFetch.mockResolvedValue({
-				json: vi.fn().mockResolvedValue(realApiResponse)
-			});
+			mockFetch.mockResolvedValue(createMockResponse(realApiResponse));
 
 			const result = await routing.calcRoute(longRoute, 'auto', 'kilometers');
 			expect(result).toBeDefined();

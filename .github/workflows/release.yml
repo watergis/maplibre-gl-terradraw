@@ -10,7 +10,7 @@ on:
 env:
   CI: true
   PNPM_CACHE_FOLDER: .pnpm-store
-  NODE_VERSION: 22
+  NODE_VERSION: 24
 
 jobs:
   release:

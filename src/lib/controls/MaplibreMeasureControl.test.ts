@@ -647,24 +647,21 @@ describe('recalc method tests', () => {
 			control as MaplibreMeasureControl & { registerMesureControl: () => void },
 			'registerMesureControl'
 		);
-		const measureLineSpy = vi
-			.spyOn(
-				control as MaplibreMeasureControl & { measureLine: (id: string, show: boolean) => void },
-				'measureLine'
-			)
-			.mockImplementation(() => {});
-		const measurePointSpy = vi
-			.spyOn(
-				control as MaplibreMeasureControl & { measurePoint: (id: string, show: boolean) => void },
-				'measurePoint'
-			)
-			.mockImplementation(() => {});
-		const measurePolygonSpy = vi
-			.spyOn(
-				control as MaplibreMeasureControl & { measurePolygon: (id: string, show: boolean) => void },
-				'measurePolygon'
-			)
-			.mockImplementation(() => {});
+		const measureLineSpy = vi.spyOn(
+			control as MaplibreMeasureControl & { measureLine: (id: string, show: boolean) => void },
+			'measureLine'
+		) as ReturnType<typeof vi.spyOn>;
+		measureLineSpy.mockImplementation(() => {});
+		const measurePointSpy = vi.spyOn(
+			control as MaplibreMeasureControl & { measurePoint: (id: string, show: boolean) => void },
+			'measurePoint'
+		) as ReturnType<typeof vi.spyOn>;
+		measurePointSpy.mockImplementation(() => {});
+		const measurePolygonSpy = vi.spyOn(
+			control as MaplibreMeasureControl & { measurePolygon: (id: string, show: boolean) => void },
+			'measurePolygon'
+		) as ReturnType<typeof vi.spyOn>;
+		measurePolygonSpy.mockImplementation(() => {});
 
 		control.recalc();
 
@@ -783,24 +780,21 @@ describe('recalc method tests', () => {
 		];
 		vi.spyOn(terradraw, 'getSnapshot').mockReturnValue(testFeatures);
 
-		const measureLineSpy = vi
-			.spyOn(
-				control as MaplibreMeasureControl & { measureLine: (id: string, show: boolean) => void },
-				'measureLine'
-			)
-			.mockImplementation(() => {});
-		const measurePointSpy = vi
-			.spyOn(
-				control as MaplibreMeasureControl & { measurePoint: (id: string, show: boolean) => void },
-				'measurePoint'
-			)
-			.mockImplementation(() => {});
-		const measurePolygonSpy = vi
-			.spyOn(
-				control as MaplibreMeasureControl & { measurePolygon: (id: string, show: boolean) => void },
-				'measurePolygon'
-			)
-			.mockImplementation(() => {});
+		const measureLineSpy = vi.spyOn(
+			control as MaplibreMeasureControl & { measureLine: (id: string, show: boolean) => void },
+			'measureLine'
+		) as ReturnType<typeof vi.spyOn>;
+		measureLineSpy.mockImplementation(() => {});
+		const measurePointSpy = vi.spyOn(
+			control as MaplibreMeasureControl & { measurePoint: (id: string, show: boolean) => void },
+			'measurePoint'
+		) as ReturnType<typeof vi.spyOn>;
+		measurePointSpy.mockImplementation(() => {});
+		const measurePolygonSpy = vi.spyOn(
+			control as MaplibreMeasureControl & { measurePolygon: (id: string, show: boolean) => void },
+			'measurePolygon'
+		) as ReturnType<typeof vi.spyOn>;
+		measurePolygonSpy.mockImplementation(() => {});
 
 		control.recalc();
 

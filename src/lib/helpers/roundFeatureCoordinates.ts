@@ -32,7 +32,7 @@ import type { Position } from 'geojson';
 export const roundFeatureCoordinates = (
 	features: GeoJSONStoreFeatures[],
 	decimalPlaces: number = 9
-) => {
+): GeoJSONStoreFeatures[] => {
 	// Helper function to round a single coordinate
 	function roundCoord(coord: Position) {
 		return [Number(coord[0].toFixed(decimalPlaces)), Number(coord[1].toFixed(decimalPlaces))];

@@ -1,0 +1,14 @@
+{
+	"entryPointStrategy": "expand",
+	"entryPoints": ["src/lib"],
+	"out": "docs",
+	"tsconfig": "tsconfig.lib.json",
+	"exclude": ["**/*.test.ts", "**/*.spec.ts", "**/index.ts"],
+	"excludeReferences": true,
+	"excludeExternals": true,
+	"excludePrivate": true,
+	"excludeProtected": false,
+	"excludeInternal": false,
+	"gitRevision": "main",
+	"readme": "README.md"
+}

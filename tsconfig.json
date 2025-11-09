@@ -9,5 +9,6 @@
 		"skipLibCheck": true,
 		"sourceMap": true,
 		"strict": true
-	}
+	},
+	"exclude": ["**/*.test.ts", "**/*.spec.ts"]
 }

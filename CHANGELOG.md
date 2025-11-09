@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.9.6
+
+### Patch Changes
+
+- 669c248: chore: upgrade package dependencies, and added node v24 LTS to CI.
+
 ## 1.9.5
 
 ### Patch Changes

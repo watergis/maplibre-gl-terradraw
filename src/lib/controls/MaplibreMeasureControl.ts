@@ -837,7 +837,10 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					) as GeoJSONSource
 				)?.setData(geojsonSource.data);
 
-				this.map.moveLayer((this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).id);
+				this.map.moveLayer(
+					(this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).id,
+					this.options.adapterOptions?.renderBelowLayerId
+				);
 
 				if (
 					this.map.getLayer((this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).id)
@@ -852,7 +855,8 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					)
 				) {
 					this.map.moveLayer(
-						(this.measureOptions.routingLineLayerNodeSpec as CircleLayerSpecification).id
+						(this.measureOptions.routingLineLayerNodeSpec as CircleLayerSpecification).id,
+						this.options.adapterOptions?.renderBelowLayerId
 					);
 				}
 
@@ -862,7 +866,8 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					)
 				) {
 					this.map.moveLayer(
-						(this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).id
+						(this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).id,
+						this.options.adapterOptions?.renderBelowLayerId
 					);
 				}
 			}
@@ -979,12 +984,19 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				if (
 					this.map.getLayer((this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).id)
 				) {
-					this.map.moveLayer((this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).id);
+					this.map.moveLayer(
+						(this.measureOptions.polygonLayerSpec as SymbolLayerSpecification).id,
+						this.options.adapterOptions?.renderBelowLayerId
+					);
 				}
 
-				this.map.moveLayer((this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).id);
 				this.map.moveLayer(
-					(this.measureOptions.routingLineLayerNodeSpec as CircleLayerSpecification).id
+					(this.measureOptions.lineLayerLabelSpec as SymbolLayerSpecification).id,
+					this.options.adapterOptions?.renderBelowLayerId
+				);
+				this.map.moveLayer(
+					(this.measureOptions.routingLineLayerNodeSpec as CircleLayerSpecification).id,
+					this.options.adapterOptions?.renderBelowLayerId
 				);
 
 				if (
@@ -993,7 +1005,8 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					)
 				) {
 					this.map.moveLayer(
-						(this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).id
+						(this.measureOptions.pointLayerLabelSpec as SymbolLayerSpecification).id,
+						this.options.adapterOptions?.renderBelowLayerId
 					);
 				}
 			}

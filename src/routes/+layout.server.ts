@@ -1,6 +1,7 @@
 import { exampleIds, getDescription, getPackageInfo, getTitle, getTags } from './helpers';
 import type { LayoutServerLoad } from './$types';
 import { env } from '$env/dynamic/private';
+import { error } from '@sveltejs/kit';
 
 export const load: LayoutServerLoad = async ({ fetch }) => {
 	const packageInfo = await getPackageInfo();
@@ -28,30 +29,35 @@ export const load: LayoutServerLoad = async ({ fetch }) => {
 		return a.title.localeCompare(b.title);
 	});
 
+	const PROTOMAP_KEY = env.PROTOMAP_KEY;
+	if (!PROTOMAP_KEY) {
+		error(500, 'PROTOMAP_KEY is not defined in environment variables');
+	}
+
 	const styles = [
 		{
 			title: 'Light',
-			uri: `https://api.protomaps.com/styles/v5/light/en.json?key=${env.PROTOMAP_KEY}`,
+			uri: `https://api.protomaps.com/styles/v5/light/en.json?key=${PROTOMAP_KEY}`,
 			image: '/assets/style-switcher/light.webp'
 		},
 		{
 			title: 'Dark',
-			uri: `https://api.protomaps.com/styles/v5/dark/en.json?key=${env.PROTOMAP_KEY}`,
+			uri: `https://api.protomaps.com/styles/v5/dark/en.json?key=${PROTOMAP_KEY}`,
 			image: '/assets/style-switcher/dark.webp'
 		},
 		{
 			title: 'White',
-			uri: `https://api.protomaps.com/styles/v5/white/en.json?key=${env.PROTOMAP_KEY}`,
+			uri: `https://api.protomaps.com/styles/v5/white/en.json?key=${PROTOMAP_KEY}`,
 			image: '/assets/style-switcher/white.webp'
 		},
 		{
 			title: 'Grayscale',
-			uri: `https://api.protomaps.com/styles/v5/grayscale/en.json?key=${env.PROTOMAP_KEY}`,
+			uri: `https://api.protomaps.com/styles/v5/grayscale/en.json?key=${PROTOMAP_KEY}`,
 			image: '/assets/style-switcher/grayscale.webp'
 		},
 		{
 			title: 'Black',
-			uri: `https://api.protomaps.com/styles/v5/black/en.json?key=${env.PROTOMAP_KEY}`,
+			uri: `https://api.protomaps.com/styles/v5/black/en.json?key=${PROTOMAP_KEY}`,
 			image: '/assets/style-switcher/black.webp'
 		}
 	];

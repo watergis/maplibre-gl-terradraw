@@ -87,7 +87,7 @@
 	let packageManager = $state(defaultPackageManager);
 
 	let searchQuery = $state('');
-	let examples = $state(JSON.parse(JSON.stringify(data.examples)));
+	let examples = $derived(JSON.parse(JSON.stringify(data.examples)));
 
 	const handleSearchExamples = debounce(() => {
 		if (searchQuery.length === 0) {

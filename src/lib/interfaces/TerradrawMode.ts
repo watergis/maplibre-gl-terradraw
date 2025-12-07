@@ -5,7 +5,7 @@ import { AvailableModes, AvailableValhallaModes } from '../constants/AvailableMo
  *
  * Note.
  * 'default' is a special mode when 'render' mode is not added to the control.
- * 'default' mode itself does not have any asscoiated button.
+ * 'default' mode itself does not have any associated button.
  */
 export type TerradrawMode = (typeof AvailableModes)[number] | 'default';
 
@@ -14,6 +14,6 @@ export type TerradrawMode = (typeof AvailableModes)[number] | 'default';
  *
  * Note.
  * 'default' is a special mode when 'render' mode is not added to the control.
- * 'default' mode itself does not have any asscoiated button.
+ * 'default' mode itself does not have any associated button.
  */
 export type TerradrawValhallaMode = (typeof AvailableValhallaModes)[number] | 'default';

@@ -197,7 +197,7 @@
 			map.addControl(drawControl, 'top-left');
 		} else if (options.controlType === 'valhalla') {
 			const modes = options.modes.filter((mode) =>
-				AvailableValhallaModes.includes(mode as TerradrawValhallaMode)
+				AvailableValhallaModes.includes(mode as (typeof AvailableValhallaModes)[number])
 			) as TerradrawValhallaMode[];
 			options.modes = modes as unknown as TerradrawMode[];
 			drawControl = new MaplibreValhallaControl({

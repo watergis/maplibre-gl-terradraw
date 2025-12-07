@@ -1,5 +1,13 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.9.7
+
+### Patch Changes
+
+- cc92566: fix: add renderBelowLayerId to MaplibreGLAdapter options
+- 72041f4: chore: upgrade terradraw from 1.18.1 to 1.20.0, and bumped the version of terra-draw-maplibre-gl-adapter from 1.2.2 to 1.2.3
+- 0986366: fix: add `default` mode to TerraDrawMode and TerraDrawValhallaMode type definitions.
+
 ## 1.9.6
 
 ### Patch Changes

@@ -18,6 +18,14 @@ When you download the repository first time, please also install `lefthook` by t
 pnpm lefthook install
 ```
 
+### Set Protomaps API key
+
+This documentation uses Protomaps as a basemap, please get your API key from https://protomaps.com/api, and set it to `PROTOMAP_KEY` on `.env`.
+
+```shell
+cp .env.example .env
+```
+
 ### Run locally
 
 ```shell

@@ -1000,11 +1000,16 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 				) as GeoJSONSource
 			)?.setData(geojsonSource.data);
 			this.map.moveLayer(
-				(this.controlOptions.isochronePolygonLayerSpec as FillLayerSpecification).id
+				(this.controlOptions.isochronePolygonLayerSpec as FillLayerSpecification).id,
+				this.options.adapterOptions?.renderBelowLayerId
 			);
-			this.map.moveLayer((this.controlOptions.isochroneLineLayerSpec as LineLayerSpecification).id);
 			this.map.moveLayer(
-				(this.controlOptions.isochroneLabelLayerSpec as SymbolLayerSpecification).id
+				(this.controlOptions.isochroneLineLayerSpec as LineLayerSpecification).id,
+				this.options.adapterOptions?.renderBelowLayerId
+			);
+			this.map.moveLayer(
+				(this.controlOptions.isochroneLabelLayerSpec as SymbolLayerSpecification).id,
+				this.options.adapterOptions?.renderBelowLayerId
 			);
 		}
 	};
@@ -1077,10 +1082,12 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 				) as GeoJSONSource
 			)?.setData(geojsonSource.data);
 			this.map.moveLayer(
-				(this.controlOptions.routingLineLayerNodeSpec as CircleLayerSpecification).id
+				(this.controlOptions.routingLineLayerNodeSpec as CircleLayerSpecification).id,
+				this.options.adapterOptions?.renderBelowLayerId
 			);
 			this.map.moveLayer(
-				(this.controlOptions.routingLineLayerNodeLabelSpec as SymbolLayerSpecification).id
+				(this.controlOptions.routingLineLayerNodeLabelSpec as SymbolLayerSpecification).id,
+				this.options.adapterOptions?.renderBelowLayerId
 			);
 		}
 	};

@@ -2,7 +2,18 @@ import { AvailableModes, AvailableValhallaModes } from '../constants/AvailableMo
 
 /**
  * Terra Draw drawing mode
+ *
+ * Note.
+ * 'default' is a special mode when 'render' mode is not added to the control.
+ * 'default' mode itself does not have any asscoiated button.
  */
-export type TerradrawMode = (typeof AvailableModes)[number];
+export type TerradrawMode = (typeof AvailableModes)[number] | 'default';
 
-export type TerradrawValhallaMode = (typeof AvailableValhallaModes)[number];
+/**
+ * Terra Draw drawing mode for MaplibreValhallaControl
+ *
+ * Note.
+ * 'default' is a special mode when 'render' mode is not added to the control.
+ * 'default' mode itself does not have any asscoiated button.
+ */
+export type TerradrawValhallaMode = (typeof AvailableValhallaModes)[number] | 'default';

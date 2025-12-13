@@ -36,6 +36,7 @@
 		type TerradrawValhallaMode,
 		type ValhallaOptions
 	} from '$lib';
+	import Info from '@lucide/svelte/icons/info';
 	import IconPlus from '@lucide/svelte/icons/plus';
 	import IconX from '@lucide/svelte/icons/x';
 	import {
@@ -352,74 +353,71 @@
 <div class="demo-container grid grid-cols-[auto_1fr] snap-start">
 	<aside class="sidebar col-span-1 h-screen p-4 w-sm overflow-y-auto hidden md:block">
 		<Accordion value={accordionValue} onValueChange={(e) => (accordionValue = e.value)} multiple>
-			<Accordion.Item value="control-type">
-				<Accordion.ItemTrigger>
-					<Tooltip positioning={{ placement: 'bottom' }}>
-						<Tooltip.Trigger>
-							<p class="font-bold uppercase">Control type</p>
-						</Tooltip.Trigger>
-						<Portal>
-							<Tooltip.Positioner class="z-20!">
-								<Tooltip.Content class="card p-4 preset-filled-surface-950-50 max-w-xs">
-									<span>
-										Default control is MaplibreTerradrawControl. If you want to use more advanced
-										control, enable to choose MaplibreMeasureControl or MaplibreValhallaControl.
-									</span>
-									<Tooltip.Arrow
-										class="[--arrow-size:--spacing(2)] [--arrow-background:var(--color-surface-950-50)]"
-									>
-										<Tooltip.ArrowTip />
-									</Tooltip.Arrow>
-								</Tooltip.Content>
-							</Tooltip.Positioner>
-						</Portal>
-					</Tooltip>
-				</Accordion.ItemTrigger>
-				<Accordion.ItemContent>
-					<Tabs
-						value={options.controlType}
-						orientation="horizontal"
-						onValueChange={(details) => {
-							options.controlType = details.value as 'default' | 'measure' | 'valhalla';
-							addControl();
-							onchange(options);
+			<Tooltip positioning={{ placement: 'bottom' }}>
+				<Tooltip.Trigger>
+					<div class="flex items-center gap-2">
+						<p class="font-bold uppercase">Control type</p>
+						<Info size={16} />
+					</div>
+				</Tooltip.Trigger>
+				<Portal>
+					<Tooltip.Positioner class="z-20!">
+						<Tooltip.Content class="card p-4 preset-filled-surface-950-50 max-w-xs">
+							<span>
+								Default control is MaplibreTerradrawControl. If you want to use more advanced
+								control, enable to choose MaplibreMeasureControl or MaplibreValhallaControl.
+							</span>
+							<Tooltip.Arrow
+								class="[--arrow-size:--spacing(2)] [--arrow-background:var(--color-surface-950-50)]"
+							>
+								<Tooltip.ArrowTip />
+							</Tooltip.Arrow>
+						</Tooltip.Content>
+					</Tooltip.Positioner>
+				</Portal>
+			</Tooltip>
 
-							if (options.controlType === 'default') {
-								accordionValue = accordionValue.filter(
-									(v) => v !== 'measure-option' && v !== 'valhalla-option'
-								);
-							} else if (options.controlType === 'measure') {
-								accordionValue = [
-									...accordionValue.filter(
-										(v) => v !== 'measure-option' && v !== 'valhalla-option'
-									),
-									'measure-option'
-								];
-							} else if (options.controlType === 'valhalla') {
-								accordionValue = [
-									...accordionValue.filter(
-										(v) => v !== 'measure-option' && v !== 'valhalla-option'
-									),
-									'valhalla-option'
-								];
-							}
-						}}
-					>
-						<Tabs.List>
-							<Tabs.Trigger value="default">Default</Tabs.Trigger>
-							<Tabs.Trigger value="measure">Measure</Tabs.Trigger>
-							<Tabs.Trigger value="valhalla">Valhalla</Tabs.Trigger>
-							<Tabs.Indicator />
-						</Tabs.List>
-					</Tabs>
-				</Accordion.ItemContent>
-			</Accordion.Item>
+			<Tabs
+				value={options.controlType}
+				orientation="horizontal"
+				onValueChange={(details) => {
+					options.controlType = details.value as 'default' | 'measure' | 'valhalla';
+					addControl();
+					onchange(options);
+
+					if (options.controlType === 'default') {
+						accordionValue = accordionValue.filter(
+							(v) => v !== 'measure-option' && v !== 'valhalla-option'
+						);
+					} else if (options.controlType === 'measure') {
+						accordionValue = [
+							...accordionValue.filter((v) => v !== 'measure-option' && v !== 'valhalla-option'),
+							'measure-option'
+						];
+					} else if (options.controlType === 'valhalla') {
+						accordionValue = [
+							...accordionValue.filter((v) => v !== 'measure-option' && v !== 'valhalla-option'),
+							'valhalla-option'
+						];
+					}
+				}}
+			>
+				<Tabs.List>
+					<Tabs.Trigger value="default">Default</Tabs.Trigger>
+					<Tabs.Trigger value="measure">Measure</Tabs.Trigger>
+					<Tabs.Trigger value="valhalla">Valhalla</Tabs.Trigger>
+					<Tabs.Indicator />
+				</Tabs.List>
+			</Tabs>
 
 			<Accordion.Item value="mode-selection">
 				<Accordion.ItemTrigger>
 					<Tooltip positioning={{ placement: 'bottom' }}>
 						<Tooltip.Trigger>
-							<p class="font-bold uppercase">Mode selection</p>
+							<div class="flex items-center gap-2">
+								<p class="font-bold uppercase">Mode selection</p>
+								<Info size={16} />
+							</div>
 						</Tooltip.Trigger>
 						<Portal>
 							<Tooltip.Positioner class="z-20!">
@@ -547,7 +545,10 @@
 				<Accordion.ItemTrigger>
 					<Tooltip positioning={{ placement: 'bottom' }}>
 						<Tooltip.Trigger>
-							<p class="font-bold uppercase">Open as default</p>
+							<div class="flex items-center gap-2">
+								<p class="font-bold uppercase">Open as default</p>
+								<Info size={16} />
+							</div>
 						</Tooltip.Trigger>
 						<Portal>
 							<Tooltip.Positioner class="z-20!">
@@ -831,7 +832,10 @@
 								<Accordion.ItemTrigger>
 									<Tooltip positioning={{ placement: 'bottom' }}>
 										<Tooltip.Trigger>
-											<p class="font-bold uppercase">Valhalla API URL</p>
+											<div class="flex items-center gap-2">
+												<p class="font-bold uppercase">Valhalla API URL</p>
+												<Info size={16} />
+											</div>
 										</Tooltip.Trigger>
 										<Portal>
 											<Tooltip.Positioner class="z-20!">

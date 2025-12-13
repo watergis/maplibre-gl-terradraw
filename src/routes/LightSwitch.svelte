@@ -19,14 +19,6 @@
 	};
 </script>
 
-<svelte:head>
-	<script>
-		const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-		const mode = prefersDark ? 'dark' : 'light';
-		document.documentElement.setAttribute('data-mode', mode);
-	</script>
-</svelte:head>
-
 <button
 	type="button"
 	class="btn hover:preset-tonal px-1 md:px-2"

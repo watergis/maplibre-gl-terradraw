@@ -36,15 +36,17 @@
 		type TerradrawValhallaMode,
 		type ValhallaOptions
 	} from '$lib';
+	import Info from '@lucide/svelte/icons/info';
 	import IconPlus from '@lucide/svelte/icons/plus';
 	import IconX from '@lucide/svelte/icons/x';
 	import {
 		Accordion,
 		Combobox,
 		Portal,
-		SegmentedControl,
 		Slider,
+		Switch,
 		Tabs,
+		Tooltip,
 		useListCollection
 	} from '@skeletonlabs/skeleton-svelte';
 	import MaplibreStyleSwitcherControl, { type StyleDefinition } from '@undp-data/style-switcher';
@@ -194,6 +196,7 @@
 					prefixId: 'td-measure'
 				}
 			});
+			(drawControl as MaplibreMeasureControl).fontGlyphs = ['Noto Sans Medium'];
 			map.addControl(drawControl, 'top-left');
 		} else if (options.controlType === 'valhalla') {
 			const modes = options.modes.filter((mode) =>
@@ -208,6 +211,7 @@
 				},
 				valhallaOptions: options.valhallaOptions
 			});
+			(drawControl as MaplibreValhallaControl).fontGlyphs = ['Noto Sans Medium'];
 			map.addControl(drawControl, 'top-left');
 		} else {
 			drawControl = new MaplibreTerradrawControl({
@@ -349,63 +353,92 @@
 <div class="demo-container grid grid-cols-[auto_1fr] snap-start">
 	<aside class="sidebar col-span-1 h-screen p-4 w-sm overflow-y-auto hidden md:block">
 		<Accordion value={accordionValue} onValueChange={(e) => (accordionValue = e.value)} multiple>
-			<Accordion.Item value="control-type">
-				<Accordion.ItemTrigger>
-					<p class="font-bold uppercase">Control type</p>
-				</Accordion.ItemTrigger>
-				<Accordion.ItemContent>
-					<p class="pb-4">
-						Default control is MaplibreTerradrawControl. If you want to use more advanced control,
-						enable to choose MaplibreMeasureControl or MaplibreValhallaControl.
-					</p>
+			<Tooltip positioning={{ placement: 'bottom' }}>
+				<Tooltip.Trigger>
+					<div class="flex items-center gap-2">
+						<p class="font-bold uppercase">Control type</p>
+						<Info size={16} />
+					</div>
+				</Tooltip.Trigger>
+				<Portal>
+					<Tooltip.Positioner class="z-20!">
+						<Tooltip.Content class="card p-4 preset-filled-surface-950-50 max-w-xs">
+							<span>
+								Default control is MaplibreTerradrawControl. If you want to use more advanced
+								control, enable to choose MaplibreMeasureControl or MaplibreValhallaControl.
+							</span>
+							<Tooltip.Arrow
+								class="[--arrow-size:--spacing(2)] [--arrow-background:var(--color-surface-950-50)]"
+							>
+								<Tooltip.ArrowTip />
+							</Tooltip.Arrow>
+						</Tooltip.Content>
+					</Tooltip.Positioner>
+				</Portal>
+			</Tooltip>
 
-					<SegmentedControl
-						name="control-type"
-						defaultValue={options.controlType}
-						orientation="horizontal"
-						onValueChange={(e) => {
-							options.controlType = e.value as 'default' | 'measure';
-							addControl();
-							onchange(options);
+			<Tabs
+				value={options.controlType}
+				orientation="horizontal"
+				onValueChange={(details) => {
+					options.controlType = details.value as 'default' | 'measure' | 'valhalla';
+					addControl();
+					onchange(options);
 
-							if (options.controlType === 'default') {
-								accordionValue = accordionValue.filter((v) => v !== 'measure-option');
-							}
-							if (options.controlType === 'measure') {
-								accordionValue = [
-									...accordionValue.filter((v) => v !== 'measure-option'),
-									'measure-option'
-								];
-							} else {
-								accordionValue = [
-									...accordionValue.filter((v) => v !== 'valhalla-option'),
-									'valhalla-option'
-								];
-							}
-						}}
-					>
-						<SegmentedControl.Control>
-							<SegmentedControl.Indicator />
-							<SegmentedControl.Item value="default">
-								<SegmentedControl.ItemText>Default</SegmentedControl.ItemText>
-								<SegmentedControl.ItemHiddenInput />
-							</SegmentedControl.Item>
-							<SegmentedControl.Item value="measure">
-								<SegmentedControl.ItemText>Measure</SegmentedControl.ItemText>
-								<SegmentedControl.ItemHiddenInput />
-							</SegmentedControl.Item>
-							<SegmentedControl.Item value="valhalla">
-								<SegmentedControl.ItemText>Valhalla</SegmentedControl.ItemText>
-								<SegmentedControl.ItemHiddenInput />
-							</SegmentedControl.Item>
-						</SegmentedControl.Control>
-					</SegmentedControl>
-				</Accordion.ItemContent>
-			</Accordion.Item>
+					if (options.controlType === 'default') {
+						accordionValue = accordionValue.filter(
+							(v) => v !== 'measure-option' && v !== 'valhalla-option'
+						);
+					} else if (options.controlType === 'measure') {
+						accordionValue = [
+							...accordionValue.filter((v) => v !== 'measure-option' && v !== 'valhalla-option'),
+							'measure-option'
+						];
+					} else if (options.controlType === 'valhalla') {
+						accordionValue = [
+							...accordionValue.filter((v) => v !== 'measure-option' && v !== 'valhalla-option'),
+							'valhalla-option'
+						];
+					}
+				}}
+			>
+				<Tabs.List>
+					<Tabs.Trigger class="flex-1" value="default">Default</Tabs.Trigger>
+					<Tabs.Trigger class="flex-1" value="measure">Measure</Tabs.Trigger>
+					<Tabs.Trigger class="flex-1" value="valhalla">Valhalla</Tabs.Trigger>
+					<Tabs.Indicator />
+				</Tabs.List>
+			</Tabs>
 
 			<Accordion.Item value="mode-selection">
 				<Accordion.ItemTrigger>
-					<p class="font-bold uppercase">Mode selection</p>
+					<Tooltip positioning={{ placement: 'bottom' }}>
+						<Tooltip.Trigger>
+							<div class="flex items-center gap-2">
+								<p class="font-bold uppercase">Mode selection</p>
+								<Info size={16} />
+							</div>
+						</Tooltip.Trigger>
+						<Portal>
+							<Tooltip.Positioner class="z-20!">
+								<Tooltip.Content class="card p-4 preset-filled-surface-950-50 max-w-xs">
+									<p class="pb-4">
+										Your chosen options are automatically applied at the demo and the below usage
+										code.
+									</p>
+									<p>
+										By default, all Terra Draw modes will be added to the control. However, you
+										might want to remove some drawing modes from your app.
+									</p>
+									<Tooltip.Arrow
+										class="[--arrow-size:--spacing(2)] [--arrow-background:var(--color-surface-950-50)]"
+									>
+										<Tooltip.ArrowTip />
+									</Tooltip.Arrow>
+								</Tooltip.Content>
+							</Tooltip.Positioner>
+						</Portal>
+					</Tooltip>
 				</Accordion.ItemTrigger>
 				<Accordion.ItemContent>
 					{@const availableModes =
@@ -423,13 +456,6 @@
 						itemToString: (item) => item.label,
 						itemToValue: (item) => item.value
 					})}
-					<p class="pb-4">
-						Your chosen options are automatically applied at the demo and the below usage code.
-					</p>
-					<p class="pb-4">
-						By default, all Terra Draw modes will be added to the control. However, you might want
-						to remove some drawing modes from your app.
-					</p>
 
 					<div class="grid gap-2 w-full">
 						<Combobox
@@ -517,36 +543,49 @@
 
 			<Accordion.Item value="open-as-default">
 				<Accordion.ItemTrigger>
-					<p class="font-bold uppercase">Open as default</p>
+					<Tooltip positioning={{ placement: 'bottom' }}>
+						<Tooltip.Trigger>
+							<div class="flex items-center gap-2">
+								<p class="font-bold uppercase">Open as default</p>
+								<Info size={16} />
+							</div>
+						</Tooltip.Trigger>
+						<Portal>
+							<Tooltip.Positioner class="z-20!">
+								<Tooltip.Content class="card p-4 preset-filled-surface-950-50 max-w-xs">
+									<p>
+										if you want the drawing tool to be always expanded, simply remove `render` mode
+										from constuctor options, then set `true` to `open` property.
+									</p>
+									<Tooltip.Arrow
+										class="[--arrow-size:--spacing(2)] [--arrow-background:var(--color-surface-950-50)]"
+									>
+										<Tooltip.ArrowTip />
+									</Tooltip.Arrow>
+								</Tooltip.Content>
+							</Tooltip.Positioner>
+						</Portal>
+					</Tooltip>
 				</Accordion.ItemTrigger>
 				<Accordion.ItemContent>
-					<p class="pb-4">
-						if you want the drawing tool to be always expanded, simplely remove `render` mode from
-						constuctor options, then set `true` to `open` property.
-					</p>
-					<SegmentedControl
-						name="is-open"
-						defaultValue={options.isOpen}
-						onValueChange={(e) => {
-							options.isOpen = e.value as 'open' | 'close';
+					<Switch
+						checked={options.isOpen === 'open'}
+						onCheckedChange={(details: { checked: boolean }) => {
+							options.isOpen = details.checked ? 'open' : 'close';
 							if (drawControl) {
 								drawControl.isExpanded = options.isOpen === 'open';
 							}
 							onchange(options);
 						}}
 					>
-						<SegmentedControl.Control>
-							<SegmentedControl.Indicator />
-							<SegmentedControl.Item value="open">
-								<SegmentedControl.ItemText>Open as default</SegmentedControl.ItemText>
-								<SegmentedControl.ItemHiddenInput />
-							</SegmentedControl.Item>
-							<SegmentedControl.Item value="close">
-								<SegmentedControl.ItemText>Close as default</SegmentedControl.ItemText>
-								<SegmentedControl.ItemHiddenInput />
-							</SegmentedControl.Item>
-						</SegmentedControl.Control>
-					</SegmentedControl>
+						<Switch.Control>
+							<Switch.Thumb />
+						</Switch.Control>
+						<Switch.Label>
+							{options.isOpen === 'open' ? 'Open' : 'Close'} as default
+						</Switch.Label>
+						<Switch.HiddenInput />
+					</Switch>
 				</Accordion.ItemContent>
 			</Accordion.Item>
 
@@ -586,28 +625,25 @@
 									<p class="font-bold uppercase italic">Measure unit</p>
 								</Accordion.ItemTrigger>
 								<Accordion.ItemContent>
-									<SegmentedControl
-										defaultValue={options.measureUnitType}
-										onValueChange={(e) => {
-											options.measureUnitType = e.value as MeasureUnitType;
+									<select
+										class="select"
+										value={options.measureUnitType}
+										onchange={(e) => {
+											options.measureUnitType = (e.target as HTMLSelectElement)
+												.value as MeasureUnitType;
 											if (drawControl && options.controlType === 'measure') {
 												(drawControl as MaplibreMeasureControl).measureUnitType =
 													options.measureUnitType;
 											}
 											onchange(options);
 										}}
-										class="w-fit"
 									>
-										<SegmentedControl.Control>
-											<SegmentedControl.Indicator />
-											{#each ['metric', 'imperial'] as unit (unit)}
-												<SegmentedControl.Item value={unit}>
-													<SegmentedControl.ItemText>{unit}</SegmentedControl.ItemText>
-													<SegmentedControl.ItemHiddenInput />
-												</SegmentedControl.Item>
-											{/each}
-										</SegmentedControl.Control>
-									</SegmentedControl>
+										{#each ['metric', 'imperial'] as unit (unit)}
+											<option value={unit}>
+												{unit}
+											</option>
+										{/each}
+									</select>
 								</Accordion.ItemContent>
 							</Accordion.Item>
 
@@ -755,28 +791,25 @@
 									<p class="font-bold uppercase italic">Compute elevation</p>
 								</Accordion.ItemTrigger>
 								<Accordion.ItemContent>
-									<SegmentedControl
-										defaultValue={options.computeElevation}
-										onValueChange={(e) => {
-											options.computeElevation = e.value as 'enabled' | 'disabled';
+									<Switch
+										checked={options.computeElevation === 'enabled'}
+										onCheckedChange={(details: { checked: boolean }) => {
+											options.computeElevation = details.checked ? 'enabled' : 'disabled';
 											if (drawControl && options.controlType === 'measure') {
 												(drawControl as MaplibreMeasureControl).computeElevation =
 													options.computeElevation === 'enabled';
 											}
 											onchange(options);
 										}}
-										class="w-fit"
 									>
-										<SegmentedControl.Control>
-											<SegmentedControl.Indicator />
-											{#each ['enabled', 'disabled'] as option (option)}
-												<SegmentedControl.Item value={option}>
-													<SegmentedControl.ItemText>{option}</SegmentedControl.ItemText>
-													<SegmentedControl.ItemHiddenInput />
-												</SegmentedControl.Item>
-											{/each}
-										</SegmentedControl.Control>
-									</SegmentedControl>
+										<Switch.Control>
+											<Switch.Thumb />
+										</Switch.Control>
+										<Switch.Label>
+											{options.computeElevation === 'enabled' ? 'Enabled' : 'Disabled'}
+										</Switch.Label>
+										<Switch.HiddenInput />
+									</Switch>
 								</Accordion.ItemContent>
 							</Accordion.Item>
 						</Accordion>
@@ -797,7 +830,30 @@
 						>
 							<Accordion.Item value="valhalla-url">
 								<Accordion.ItemTrigger>
-									<p class="font-bold uppercase italic">Valhalla API URL</p>
+									<Tooltip positioning={{ placement: 'bottom' }}>
+										<Tooltip.Trigger>
+											<div class="flex items-center gap-2">
+												<p class="font-bold uppercase">Valhalla API URL</p>
+												<Info size={16} />
+											</div>
+										</Tooltip.Trigger>
+										<Portal>
+											<Tooltip.Positioner class="z-20!">
+												<Tooltip.Content class="card p-4 preset-filled-surface-950-50 max-w-xs">
+													<p>
+														The example api URL of Valhalla control only supports the country of
+														Kenya, Uganda and Rwanda in this demo. You need to deploy your own
+														Valhalla API server for your application.
+													</p>
+													<Tooltip.Arrow
+														class="[--arrow-size:--spacing(2)] [--arrow-background:var(--color-surface-950-50)]"
+													>
+														<Tooltip.ArrowTip />
+													</Tooltip.Arrow>
+												</Tooltip.Content>
+											</Tooltip.Positioner>
+										</Portal>
+									</Tooltip>
 								</Accordion.ItemTrigger>
 								<Accordion.ItemContent>
 									<input
@@ -811,11 +867,6 @@
 											}
 										}}
 									/>
-									<p class="pb-4">
-										Note. the example api URL of Valhalla control only supports the country of
-										Kenya, Uganda and Rwanda in this demo. You need to deploy your own Valhalla API
-										server for your application.
-									</p>
 								</Accordion.ItemContent>
 							</Accordion.Item>
 
@@ -834,14 +885,16 @@
 											<p class="font-bold uppercase italic">Means of transport</p>
 										</Accordion.ItemTrigger>
 										<Accordion.ItemContent>
-											<SegmentedControl
-												defaultValue={options.valhallaOptions.routingOptions?.costingModel}
-												onValueChange={(e) => {
+											<select
+												class="select"
+												value={options.valhallaOptions.routingOptions?.costingModel}
+												onchange={(e) => {
 													if (!options.valhallaOptions.routingOptions) {
 														options.valhallaOptions.routingOptions = {};
 													} else {
-														options.valhallaOptions.routingOptions.costingModel =
-															e.value as costingModelType;
+														options.valhallaOptions.routingOptions.costingModel = (
+															e.target as HTMLSelectElement
+														).value as costingModelType;
 													}
 													if (drawControl && options.controlType === 'valhalla') {
 														(drawControl as MaplibreValhallaControl).routingCostingModel =
@@ -849,18 +902,13 @@
 													}
 													onchange(options);
 												}}
-												class="w-fit"
 											>
-												<SegmentedControl.Control>
-													<SegmentedControl.Indicator />
-													{#each costingModelOptions as item (item.value)}
-														<SegmentedControl.Item value={item.value}>
-															<SegmentedControl.ItemText>{item.label}</SegmentedControl.ItemText>
-															<SegmentedControl.ItemHiddenInput />
-														</SegmentedControl.Item>
-													{/each}
-												</SegmentedControl.Control>
-											</SegmentedControl>
+												{#each costingModelOptions as item (item.value)}
+													<option value={item.value}>
+														{item.label}
+													</option>
+												{/each}
+											</select>
 										</Accordion.ItemContent>
 									</Accordion.Item>
 
@@ -869,14 +917,16 @@
 											<p class="font-bold uppercase italic">Distance unit</p>
 										</Accordion.ItemTrigger>
 										<Accordion.ItemContent>
-											<SegmentedControl
-												defaultValue={options.valhallaOptions.routingOptions?.distanceUnit}
-												onValueChange={(e) => {
+											<select
+												class="select"
+												value={options.valhallaOptions.routingOptions?.distanceUnit}
+												onchange={(e) => {
 													if (!options.valhallaOptions.routingOptions) {
 														options.valhallaOptions.routingOptions = {};
 													} else {
-														options.valhallaOptions.routingOptions.distanceUnit =
-															e.value as routingDistanceUnitType;
+														options.valhallaOptions.routingOptions.distanceUnit = (
+															e.target as HTMLSelectElement
+														).value as routingDistanceUnitType;
 													}
 													if (drawControl && options.controlType === 'valhalla') {
 														(drawControl as MaplibreValhallaControl).routingDistanceUnit =
@@ -884,18 +934,13 @@
 													}
 													onchange(options);
 												}}
-												class="w-fit"
 											>
-												<SegmentedControl.Control>
-													<SegmentedControl.Indicator />
-													{#each routingDistanceUnitOptions as item (item.value)}
-														<SegmentedControl.Item value={item.value}>
-															<SegmentedControl.ItemText>{item.label}</SegmentedControl.ItemText>
-															<SegmentedControl.ItemHiddenInput />
-														</SegmentedControl.Item>
-													{/each}
-												</SegmentedControl.Control>
-											</SegmentedControl>
+												{#each routingDistanceUnitOptions as item (item.value)}
+													<option value={item.value}>
+														{item.label}
+													</option>
+												{/each}
+											</select>
 										</Accordion.ItemContent>
 									</Accordion.Item>
 								</Tabs.Content>
@@ -905,14 +950,16 @@
 											<p class="font-bold uppercase italic">Type of contour</p>
 										</Accordion.ItemTrigger>
 										<Accordion.ItemContent>
-											<SegmentedControl
-												defaultValue={options.valhallaOptions.isochroneOptions?.contourType}
-												onValueChange={(e) => {
+											<select
+												class="select"
+												value={options.valhallaOptions.isochroneOptions?.contourType}
+												onchange={(e) => {
 													if (!options.valhallaOptions.isochroneOptions) {
 														options.valhallaOptions.isochroneOptions = {};
 													} else {
-														options.valhallaOptions.isochroneOptions.contourType =
-															e.value as ContourType;
+														options.valhallaOptions.isochroneOptions.contourType = (
+															e.target as HTMLSelectElement
+														).value as ContourType;
 													}
 													if (drawControl && options.controlType === 'valhalla') {
 														(drawControl as MaplibreValhallaControl).isochroneContourType =
@@ -920,20 +967,10 @@
 													}
 													onchange(options);
 												}}
-												class="w-fit"
 											>
-												<SegmentedControl.Control>
-													<SegmentedControl.Indicator />
-													<SegmentedControl.Item value="time">
-														<SegmentedControl.ItemText>Time</SegmentedControl.ItemText>
-														<SegmentedControl.ItemHiddenInput />
-													</SegmentedControl.Item>
-													<SegmentedControl.Item value="distance">
-														<SegmentedControl.ItemText>Distance</SegmentedControl.ItemText>
-														<SegmentedControl.ItemHiddenInput />
-													</SegmentedControl.Item>
-												</SegmentedControl.Control>
-											</SegmentedControl>
+												<option value="time">Time</option>
+												<option value="distance">Distance</option>
+											</select>
 										</Accordion.ItemContent>
 									</Accordion.Item>
 									<Accordion.Item value="isochrone-means-of-transport">
@@ -941,14 +978,16 @@
 											<p class="font-bold uppercase italic">Means of transport</p>
 										</Accordion.ItemTrigger>
 										<Accordion.ItemContent>
-											<SegmentedControl
-												defaultValue={options.valhallaOptions.isochroneOptions?.costingModel}
-												onValueChange={(e) => {
+											<select
+												class="select"
+												value={options.valhallaOptions.isochroneOptions?.costingModel}
+												onchange={(e) => {
 													if (!options.valhallaOptions.isochroneOptions) {
 														options.valhallaOptions.isochroneOptions = {};
 													} else {
-														options.valhallaOptions.isochroneOptions.costingModel =
-															e.value as costingModelType;
+														options.valhallaOptions.isochroneOptions.costingModel = (
+															e.target as HTMLSelectElement
+														).value as costingModelType;
 													}
 													if (drawControl && options.controlType === 'valhalla') {
 														(drawControl as MaplibreValhallaControl).isochroneCostingModel =
@@ -956,18 +995,13 @@
 													}
 													onchange(options);
 												}}
-												class="w-fit"
 											>
-												<SegmentedControl.Control>
-													<SegmentedControl.Indicator />
-													{#each costingModelOptions as item (item.value)}
-														<SegmentedControl.Item value={item.value}>
-															<SegmentedControl.ItemText>{item.label}</SegmentedControl.ItemText>
-															<SegmentedControl.ItemHiddenInput />
-														</SegmentedControl.Item>
-													{/each}
-												</SegmentedControl.Control>
-											</SegmentedControl>
+												{#each costingModelOptions as item (item.value)}
+													<option value={item.value}>
+														{item.label}
+													</option>
+												{/each}
+											</select>
 										</Accordion.ItemContent>
 									</Accordion.Item>
 									<Accordion.Item value="isochrone-contours">

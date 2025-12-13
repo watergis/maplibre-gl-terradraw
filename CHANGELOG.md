@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.9.8
+
+### Patch Changes
+
+- e6ee28e: chore: updated dependencies.
+
 ## 1.9.7
 
 ### Patch Changes

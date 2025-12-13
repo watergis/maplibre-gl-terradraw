@@ -403,9 +403,9 @@
 				}}
 			>
 				<Tabs.List>
-					<Tabs.Trigger value="default">Default</Tabs.Trigger>
-					<Tabs.Trigger value="measure">Measure</Tabs.Trigger>
-					<Tabs.Trigger value="valhalla">Valhalla</Tabs.Trigger>
+					<Tabs.Trigger class="flex-1" value="default">Default</Tabs.Trigger>
+					<Tabs.Trigger class="flex-1" value="measure">Measure</Tabs.Trigger>
+					<Tabs.Trigger class="flex-1" value="valhalla">Valhalla</Tabs.Trigger>
 					<Tabs.Indicator />
 				</Tabs.List>
 			</Tabs>

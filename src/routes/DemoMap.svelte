@@ -554,7 +554,7 @@
 							<Tooltip.Positioner class="z-20!">
 								<Tooltip.Content class="card p-4 preset-filled-surface-950-50 max-w-xs">
 									<p>
-										if you want the drawing tool to be always expanded, simplely remove `render`
+										if you want the drawing tool to be always expanded, simply remove `render`
 										mode from constuctor options, then set `true` to `open` property.
 									</p>
 									<Tooltip.Arrow

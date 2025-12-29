@@ -1,5 +1,12 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.9.9
+
+### Patch Changes
+
+- cf0231b: chore: upgrade terra-draw to 1.21.0
+- 21564d2: fix: get TerraDrawMapLibreGLAdapter constructor options directly from terra-draw-maplibre-gl-adapter package using ConstructorParameters
+
 ## 1.9.8
 
 ### Patch Changes

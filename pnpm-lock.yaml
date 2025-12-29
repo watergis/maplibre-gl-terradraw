@@ -138,11 +138,11 @@ importers:
         specifier: ^4.1.18
         version: 4.1.18
       terra-draw:
-        specifier: ^1.20.0
-        version: 1.20.0
+        specifier: ^1.21.0
+        version: 1.21.0
       terra-draw-maplibre-gl-adapter:
         specifier: ^1.2.3
-        version: 1.2.3(maplibre-gl@5.15.0)(terra-draw@1.20.0)
+        version: 1.2.3(maplibre-gl@5.15.0)(terra-draw@1.21.0)
       typedoc:
         specifier: ^0.28.15
         version: 0.28.15(typescript@5.9.3)
@@ -3392,8 +3392,8 @@ packages:
       maplibre-gl: '>=4'
       terra-draw: ^1.0.0
 
-  terra-draw@1.20.0:
-    resolution: {integrity: sha512-aWJswr+U4Sr47m371wH1nWx/ij4Ymud3YsycWoYPmGecQ/nlQnm26eDm8r5UX6vPm0gYLGwNmYJCZNrr8RL4tA==}
+  terra-draw@1.21.0:
+    resolution: {integrity: sha512-mfUQoHKYdx/BiqREPEAtJXW5yxQYbQm6RFTDDGMIx5YrQxHdlwi09cp4xGQP75S72go+8ERxPgU9KvJrWoDJ8w==}
 
   text-segmentation@1.0.3:
     resolution: {integrity: sha512-iOiPUo/BGnZ6+54OsWxZidGCsdU8YbE4PSpdPinp7DeMtUJNJBoJ/ouUSTJjHkh1KntHaltHl/gDs2FC4i5+Nw==}
@@ -7196,12 +7196,12 @@ snapshots:
 
   term-size@2.2.1: {}
 
-  terra-draw-maplibre-gl-adapter@1.2.3(maplibre-gl@5.15.0)(terra-draw@1.20.0):
+  terra-draw-maplibre-gl-adapter@1.2.3(maplibre-gl@5.15.0)(terra-draw@1.21.0):
     dependencies:
       maplibre-gl: 5.15.0
-      terra-draw: 1.20.0
+      terra-draw: 1.21.0
 
-  terra-draw@1.20.0: {}
+  terra-draw@1.21.0: {}
 
   text-segmentation@1.0.3:
     dependencies:

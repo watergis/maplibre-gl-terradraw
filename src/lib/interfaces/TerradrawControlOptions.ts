@@ -1,9 +1,16 @@
 import type { ModeOptions } from './ModeOptions';
-import type { TerraDrawMapLibreGLAdapterConfig } from './TerraDrawMapLibreGLAdapterConfig';
 import type { TerradrawMode } from './TerradrawMode';
-import { TerraDrawExtend } from 'terra-draw';
+import type { TerraDrawMapLibreGLAdapter } from 'terra-draw-maplibre-gl-adapter';
 
-type BaseAdapterConfig = TerraDrawExtend.BaseAdapterConfig;
+/**
+ * TerraDrawMapLibreGLAdapter configuration options defined in:
+ * https://github.com/JamesLMilner/terra-draw/blob/971d307727911d14dc111934f9eb5b6096117398/packages/terra-draw-maplibre-gl-adapter/src/terra-draw-maplibre-gl-adapter.ts#L21-L30
+ * (Excludes the 'map' property)
+ */
+export type TerraDrawMapLibreGLAdapterConfig = Omit<
+	ConstructorParameters<typeof TerraDrawMapLibreGLAdapter>[0],
+	'map'
+>;
 
 /**
  * Terradraw Control Plugin control constructor options
@@ -33,5 +40,5 @@ export interface TerradrawControlOptions {
 	 * https://github.com/JamesLMilner/terra-draw/blob/806e319d5680a3f69edeff7dd629da3f1b4ff9bf/src/adapters/common/base.adapter.ts#L28-L48
 	 *
 	 */
-	adapterOptions?: BaseAdapterConfig & TerraDrawMapLibreGLAdapterConfig;
+	adapterOptions?: TerraDrawMapLibreGLAdapterConfig;
 }

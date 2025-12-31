@@ -1,5 +1,42 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.10.0
+
+### Minor Changes
+
+- dee9b01: feat: added `showDeleteConfirmation` property in the constructor options to allow users to set whether confirmation dialog is shown when clicking delete all button.
+
+  The example usage is shown as below code.
+
+  ```ts
+  import { MaplibreTerradrawControl } from '@watergis/maplibre-gl-terradraw';
+
+  const terradrawControl = new MaplibreTerradrawControl({
+  	modes: ['point', 'linestring', 'polygon', 'delete'],
+  	showDeleteConfirmation: true // Show confirmation dialog before deleting all features
+  });
+
+  map.addControl(terradrawControl, 'top-right');
+  ```
+
+  When `showDeleteConfirmation` is set to `true`, a modal confirmation dialog will appear before deleting all features, preventing accidental data loss. Default value is `false`.
+
+  This property is also available for `MaplibreMeasureControl` and `MaplibreValhallaControl` as well.
+
+- f37ed18: feat: added `AWS_ELEVATION_TILES` and `MAPTERHORN_TILES` constant variables for easily setting terrain source for MaplibreMeasureControl.
+
+  The constant variables can be used like the below code.
+
+  ```ts
+  import { MAPTERHORN_TILES, MaplibreMeasureControl } from 'maplibre-gl-terradraw';
+
+  const control = new MaplibreMeasureControl({
+  	terrainSource: MAPTERHORN_TILES
+  });
+  ```
+
+  Furthermore, default terrainSource of MaplibreMeasureControl is now changed to Mapterhorn tiles instead of AWS elevation tiles.
+
 ## 1.9.9
 
 ### Patch Changes

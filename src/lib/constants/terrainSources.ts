@@ -34,16 +34,16 @@ export const AWS_ELEVATION_TILES: TerrainSource = {
  * You can import this and set to `terrainSource` property of MeasureControlOptions like below.
  *
  * ```ts
- * import { MAPTERHORM_TILES, MaplibreMeasureControl } from 'maplibre-gl-terradraw';
+ * import { MAPTERHORN_TILES, MaplibreMeasureControl } from 'maplibre-gl-terradraw';
  *
  * const control = new MaplibreMeasureControl({
- *     terrainSource: MAPTERHORM_TILES
+ *     terrainSource: MAPTERHORN_TILES
  * });
  * ```
  *
  * Please see: https://mapterhorn.com/data-access/
  */
-export const MAPTERHORM_TILES: TerrainSource = {
+export const MAPTERHORN_TILES: TerrainSource = {
 	url: 'https://tiles.mapterhorn.com/{z}/{x}/{y}.webp',
 	encoding: 'terrarium',
 	tileSize: 512,

@@ -15,7 +15,7 @@ import {
 import type { MeasureControlOptions } from '../interfaces/MeasureControlOptions';
 import { defaultMeasureUnitSymbols } from './defaultMeasureUnitSymbols';
 import markerSvgUrl from '../../scss/icons/marker-grey.svg';
-import { MAPTERHORM_TILES } from './terrainSources';
+import { MAPTERHORN_TILES } from './terrainSources';
 
 /**
  * Default MeasureControl options
@@ -420,7 +420,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 		}
 	},
 	computeElevation: false,
-	terrainSource: MAPTERHORM_TILES,
+	terrainSource: MAPTERHORN_TILES,
 	measureUnitType: 'metric',
 	distancePrecision: 2,
 	forceDistanceUnit: 'auto',

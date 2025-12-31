@@ -1795,3 +1795,52 @@ describe('button event handlers tests', () => {
 		expect(() => modeTestHandler()).not.toThrow();
 	});
 });
+
+describe('showDeleteConfirmation tests', () => {
+	beforeEach(() => {
+		// Mock dialog showModal and close methods for JSDOM
+		HTMLDialogElement.prototype.showModal = vi.fn();
+		HTMLDialogElement.prototype.close = vi.fn();
+	});
+
+	it('should show delete confirmation dialog when showDeleteConfirmation is true', () => {
+		const control = new MaplibreTerradrawControl({
+			modes: ['point', 'delete'],
+			showDeleteConfirmation: true
+		});
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+		control.onAdd(mockMap);
+		control.activate();
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const showDialogSpy = vi.spyOn(control as any, 'showDeleteConfirmationDialog');
+
+		// Trigger handleDeleteAllFeatures
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(control as any).handleDeleteAllFeatures();
+
+		expect(showDialogSpy).toHaveBeenCalled();
+	});
+
+	it('should not show delete confirmation dialog when showDeleteConfirmation is false', () => {
+		const control = new MaplibreTerradrawControl({
+			modes: ['point', 'delete'],
+			showDeleteConfirmation: false
+		});
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+		control.onAdd(mockMap);
+		control.activate();
+
+		const terradraw = control.getTerraDrawInstance()!;
+		const clearSpy = vi.spyOn(terradraw, 'clear');
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const showDialogSpy = vi.spyOn(control as any, 'showDeleteConfirmationDialog');
+
+		// Trigger handleDeleteAllFeatures
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(control as any).handleDeleteAllFeatures();
+
+		expect(showDialogSpy).not.toHaveBeenCalled();
+		expect(clearSpy).toHaveBeenCalled();
+	});
+});

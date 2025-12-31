@@ -15,6 +15,7 @@ import {
 import type { MeasureControlOptions } from '../interfaces/MeasureControlOptions';
 import { defaultMeasureUnitSymbols } from './defaultMeasureUnitSymbols';
 import markerSvgUrl from '../../scss/icons/marker-grey.svg';
+import { MAPTERHORM_TILES } from './terrainSources';
 
 /**
  * Default MeasureControl options
@@ -419,14 +420,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 		}
 	},
 	computeElevation: false,
-	terrainSource: {
-		url: 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png',
-		encoding: 'terrarium',
-		tileSize: 256,
-		minzoom: 5,
-		maxzoom: 15,
-		tms: false
-	},
+	terrainSource: MAPTERHORM_TILES,
 	measureUnitType: 'metric',
 	distancePrecision: 2,
 	forceDistanceUnit: 'auto',

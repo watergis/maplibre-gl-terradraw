@@ -34,6 +34,7 @@
 			const draw = new MaplibreTerradrawControl.MaplibreTerradrawControl({
 				modes: [{modes}],
 				open: {open},
+				showDeleteConfirmation: {showDeleteConfirmation},
 				{control_options}
 			});
 			map.addControl(draw, 'top-left');

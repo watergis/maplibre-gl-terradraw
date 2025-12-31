@@ -2,6 +2,7 @@
 	export interface DemoOptions {
 		controlType: 'default' | 'measure' | 'valhalla';
 		isOpen: 'open' | 'close' | undefined;
+		showDeleteConfirmation: boolean | undefined;
 		modes: TerradrawMode[];
 		measureUnitType: MeasureUnitType;
 		distancePrecision: number;
@@ -79,6 +80,7 @@
 		options = $bindable({
 			controlType: 'default',
 			isOpen: 'open',
+			showDeleteConfirmation: false,
 			modes: JSON.parse(JSON.stringify(AvailableModes)),
 			measureUnitType: 'metric',
 			distancePrecision: 2,
@@ -187,6 +189,7 @@
 			drawControl = new MaplibreMeasureControl({
 				modes: options.modes,
 				open: options.isOpen === 'open',
+				showDeleteConfirmation: options.showDeleteConfirmation,
 				measureUnitType: options.measureUnitType,
 				distancePrecision: options.distancePrecision,
 				areaPrecision: options.areaPrecision,
@@ -206,6 +209,7 @@
 			drawControl = new MaplibreValhallaControl({
 				modes: modes,
 				open: options.isOpen === 'open',
+				showDeleteConfirmation: options.showDeleteConfirmation,
 				adapterOptions: {
 					prefixId: 'td-valhalla'
 				},
@@ -217,6 +221,7 @@
 			drawControl = new MaplibreTerradrawControl({
 				modes: options.modes,
 				open: options.isOpen === 'open',
+				showDeleteConfirmation: options.showDeleteConfirmation,
 				modeOptions: getDefaultModeOptions(),
 				adapterOptions: {
 					prefixId: 'td-default'
@@ -583,6 +588,54 @@
 						</Switch.Control>
 						<Switch.Label>
 							{options.isOpen === 'open' ? 'Open' : 'Close'} as default
+						</Switch.Label>
+						<Switch.HiddenInput />
+					</Switch>
+				</Accordion.ItemContent>
+			</Accordion.Item>
+
+			<Accordion.Item value="show-delete-confirmation">
+				<Accordion.ItemTrigger>
+					<Tooltip positioning={{ placement: 'bottom' }}>
+						<Tooltip.Trigger>
+							<div class="flex items-center gap-2">
+								<p class="font-bold uppercase">Show delete confirmation</p>
+								<Info size={16} />
+							</div>
+						</Tooltip.Trigger>
+						<Portal>
+							<Tooltip.Positioner class="z-20!">
+								<Tooltip.Content class="card p-4 preset-filled-surface-950-50 max-w-xs">
+									<p>
+										If you want to show a confirmation dialog before deleting features, enable this
+										option. Default is false.
+									</p>
+									<Tooltip.Arrow
+										class="[--arrow-size:--spacing(2)] [--arrow-background:var(--color-surface-950-50)]"
+									>
+										<Tooltip.ArrowTip />
+									</Tooltip.Arrow>
+								</Tooltip.Content>
+							</Tooltip.Positioner>
+						</Portal>
+					</Tooltip>
+				</Accordion.ItemTrigger>
+				<Accordion.ItemContent>
+					<Switch
+						checked={options.showDeleteConfirmation}
+						onCheckedChange={(details: { checked: boolean }) => {
+							options.showDeleteConfirmation = details.checked;
+							if (drawControl) {
+								drawControl.showDeleteConfirmation = options.showDeleteConfirmation;
+							}
+							onchange(options);
+						}}
+					>
+						<Switch.Control>
+							<Switch.Thumb />
+						</Switch.Control>
+						<Switch.Label>
+							{options.showDeleteConfirmation ? 'Show' : 'Hide'} delete confirmation
 						</Switch.Label>
 						<Switch.HiddenInput />
 					</Switch>

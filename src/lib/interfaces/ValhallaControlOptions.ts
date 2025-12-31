@@ -43,6 +43,11 @@ export interface ValhallaControlOptions {
 	adapterOptions?: TerraDrawMapLibreGLAdapterConfig;
 
 	/**
+	 * Show delete confirmation popup when deleting features if true. Default is false
+	 */
+	showDeleteConfirmation?: boolean;
+
+	/**
 	 * Maplibre symbol layer specification (on line nodes) for line distance layer
 	 */
 	routingLineLayerNodeLabelSpec?: SymbolLayerSpecification;

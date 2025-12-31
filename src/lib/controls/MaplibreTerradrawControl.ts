@@ -514,8 +514,11 @@ export class MaplibreTerradrawControl implements IControl {
 	}
 
 	/**
-	 * Show delete confirmation dialog
-	 * @param onConfirm Callback function to execute when delete is confirmed
+	 * Show delete confirmation dialog.
+	 *
+	 * @param onConfirm Callback function that will be invoked when the user confirms deletion
+	 * by clicking the "Delete" button in the dialog; typically used to delete all features
+	 * before the dialog is closed.
 	 */
 	protected showDeleteConfirmationDialog(onConfirm: () => void): void {
 		const dialog = new ModalDialog(

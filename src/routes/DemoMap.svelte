@@ -607,7 +607,7 @@
 							<Tooltip.Positioner class="z-20!">
 								<Tooltip.Content class="card p-4 preset-filled-surface-950-50 max-w-xs">
 									<p>
-										if you want to show a confirmation dialog before deleting features, enable this
+										If you want to show a confirmation dialog before deleting features, enable this
 										option. Default is false.
 									</p>
 									<Tooltip.Arrow

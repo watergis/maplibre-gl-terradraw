@@ -144,7 +144,7 @@ jobs:
       - name: Check for changes
         id: check_changes
         run: |
-          if git diff --quiet .dependency-cruiser-graph.svg; then
+          if git diff --quiet dependency-graph.svg; then
             echo "changed=false" >> $GITHUB_OUTPUT
           else
             echo "changed=true" >> $GITHUB_OUTPUT

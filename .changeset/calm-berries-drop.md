@@ -19,4 +19,4 @@ map.addControl(terradrawControl, 'top-right');
 
 When `showDeleteConfirmation` is set to `true`, a modal confirmation dialog will appear before deleting all features, preventing accidental data loss. Default value is `false`.
 
-This property is also available for `MaplibreMeasureControl` and `MalibreValhallaControl` as well.
+This property is also available for `MaplibreMeasureControl` and `MaplibreValhallaControl` as well.

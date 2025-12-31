@@ -4,3 +4,4 @@ export * from './defaultMeasureControlOptions';
 export * from './defaultMeasureUnitSymbols';
 export * from './defaultValhallaControlOptions';
 export * from './getDefaultModeOptions';
+export * from './terrainSources';

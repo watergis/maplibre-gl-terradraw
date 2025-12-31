@@ -58,7 +58,8 @@
 		GlobeControl,
 		Map,
 		NavigationControl,
-		ScaleControl
+		ScaleControl,
+		TerrainControl
 	} from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { onMount, untrack } from 'svelte';
@@ -331,6 +332,40 @@
 		const styleSwitcherControl = new MaplibreStyleSwitcherControl(styles);
 		map.addControl(styleSwitcherControl, 'bottom-left');
 
+		/**
+		 * Function to add terrain source
+		 */
+		const addTerrainSource = () => {
+			if (!map) return;
+			if (!map.getSource('mapterhorn')) {
+				map.addSource('mapterhorn', {
+					type: 'raster-dem',
+					url: 'https://tiles.mapterhorn.com/tilejson.json'
+				});
+				map.addSource('hillshadeSource', {
+					type: 'raster-dem',
+					url: 'https://tiles.mapterhorn.com/tilejson.json'
+				});
+				map.addLayer({
+					id: 'hillshade',
+					type: 'hillshade',
+					source: 'hillshadeSource'
+				});
+			}
+			if (!map.getTerrain()) {
+				map.setTerrain({ source: 'mapterhorn', exaggeration: 1 });
+			}
+		};
+
+		/**
+		 * Add terrain source when style is loaded/changed
+		 */
+		map.on('styledata', () => {
+			if (map?.isStyleLoaded()) {
+				addTerrainSource();
+			}
+		});
+
 		import('@watergis/maplibre-gl-export').then(
 			({ MaplibreExportControl, DPI, Format, PageOrientation, Size }) => {
 				if (!map) return;
@@ -349,6 +384,10 @@
 
 		map.once('load', () => {
 			styleSwitcherControl.initialise();
+
+			if (!map) return;
+			addTerrainSource();
+			map.addControl(new TerrainControl({ source: 'mapterhorn' }), 'bottom-right');
 
 			addControl();
 		});

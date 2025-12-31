@@ -43,6 +43,11 @@ export interface MeasureControlOptions {
 	adapterOptions?: TerraDrawMapLibreGLAdapterConfig;
 
 	/**
+	 * Show delete confirmation popup when deleting features if true. Default is false
+	 */
+	showDeleteConfirmation?: boolean;
+
+	/**
 	 * Maplibre symbol layer specification (on points) for point layer
 	 */
 	pointLayerLabelSpec?: SymbolLayerSpecification;

@@ -32,6 +32,9 @@
 		controlType:
 			(page.url.searchParams.get('controlType') as 'default' | 'measure' | 'valhalla') ?? 'default',
 		isOpen: (page.url.searchParams.get('isOpen') as 'open' | 'close') ?? 'open',
+		showDeleteConfirmation: page.url.searchParams.get('showDeleteConfirmation')
+			? page.url.searchParams.get('showDeleteConfirmation') === 'true'
+			: false,
 		modes:
 			((page.url.searchParams.get('modes') as string)?.split(',') as TerradrawMode[]) ??
 			JSON.parse(JSON.stringify(AvailableModes)),
@@ -113,6 +116,10 @@
 		pageUrl.searchParams.set('exampleType', importTypeTabSet);
 		pageUrl.searchParams.set('controlType', demoOptions.controlType);
 		pageUrl.searchParams.set('isOpen', demoOptions.isOpen ?? 'open');
+		pageUrl.searchParams.set(
+			'showDeleteConfirmation',
+			demoOptions.showDeleteConfirmation ? 'true' : 'false'
+		);
 		pageUrl.searchParams.set('modes', demoOptions.modes.join(','));
 		if (demoOptions.controlType == 'measure') {
 			pageUrl.searchParams.set('measureUnitType', demoOptions.measureUnitType);
@@ -290,6 +297,10 @@
 								.replace('{modes}', demoOptions.modes.map((m) => `'${m}'`).join(','))
 								.replace('{open}', demoOptions.isOpen === 'open' ? 'true' : 'false')
 								.replace(
+									'{showDeleteConfirmation}',
+									demoOptions.showDeleteConfirmation ? 'true' : 'false'
+								)
+								.replace(
 									'{control_options}',
 									demoOptions.controlType === 'default'
 										? ''
@@ -317,6 +328,10 @@
 								)
 								.replace('{modes}', demoOptions.modes.map((m) => `'${m}'`).join(','))
 								.replace('{open}', demoOptions.isOpen === 'open' ? 'true' : 'false')
+								.replace(
+									'{showDeleteConfirmation}',
+									demoOptions.showDeleteConfirmation ? 'true' : 'false'
+								)
 								.replace(
 									'{control_options}',
 									demoOptions.controlType === 'default'

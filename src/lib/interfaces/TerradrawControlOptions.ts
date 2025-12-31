@@ -41,4 +41,9 @@ export interface TerradrawControlOptions {
 	 *
 	 */
 	adapterOptions?: TerraDrawMapLibreGLAdapterConfig;
+
+	/**
+	 * Show delete confirmation popup when deleting features if true. Default is false
+	 */
+	showDeleteConfirmation?: boolean;
 }

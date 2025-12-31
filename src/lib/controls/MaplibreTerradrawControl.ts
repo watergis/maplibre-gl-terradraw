@@ -16,7 +16,7 @@ import type {
 	EventArgs
 } from '../interfaces';
 import { defaultControlOptions, getDefaultModeOptions } from '../constants';
-import { capitalize, cleanMaplibreStyle, TERRADRAW_SOURCE_IDS } from '../helpers';
+import { capitalize, cleanMaplibreStyle, TERRADRAW_SOURCE_IDS, ModalDialog } from '../helpers';
 
 /**
  * Maplibre GL Terra Draw Control
@@ -80,6 +80,20 @@ export class MaplibreTerradrawControl implements IControl {
 		} else {
 			this.dispatchEvent('collapsed');
 		}
+	}
+
+	/**
+	 * Show delete confirmation popup when deleting features if true. Default is false
+	 */
+	public get showDeleteConfirmation() {
+		return this.options.showDeleteConfirmation === true;
+	}
+
+	/**
+	 * Set show delete confirmation popup when deleting features if true. Default is false
+	 */
+	public set showDeleteConfirmation(value: boolean) {
+		this.options.showDeleteConfirmation = value;
 	}
 
 	protected terradraw?: TerraDraw;
@@ -421,40 +435,11 @@ export class MaplibreTerradrawControl implements IControl {
 
 			if (mode === 'delete') {
 				btn.classList.add(`maplibregl-terradraw-${this.cssPrefix}${mode}-button`);
-
-				btn.addEventListener('click', () => {
-					if (!this.terradraw) return;
-					if (!this.terradraw.enabled) return;
-
-					this.terradraw.clear();
-					this.resetActiveMode();
-					this.toggleDeleteSelectionButton();
-					this.toggleButtonsWhenNoFeature();
-					this.dispatchEvent('feature-deleted');
-				});
+				btn.addEventListener('click', this.handleDeleteAllFeatures.bind(this));
 			} else if (mode === 'delete-selection') {
 				btn.classList.add(`maplibregl-terradraw-${this.cssPrefix}${mode}-button`);
 				btn.classList.add(`hidden-delete-selection`);
-				btn.addEventListener('click', () => {
-					if (!this.terradraw) return;
-					if (!this.terradraw.enabled) return;
-
-					const snapshot = this.terradraw?.getSnapshot();
-					const selected = snapshot.filter((f) => f.properties.selected === true);
-
-					if (selected.length > 0) {
-						// if feature is selected, delete only selected feature
-						const ids = selected.map((f) => f.id) as TerraDrawExtend.FeatureId[];
-
-						this.terradraw.removeFeatures(ids);
-						for (const id of ids) {
-							this.terradraw.deselectFeature(id);
-						}
-						this.dispatchEvent('feature-deleted', { deletedIds: ids });
-					}
-					this.toggleDeleteSelectionButton();
-					this.toggleButtonsWhenNoFeature();
-				});
+				btn.addEventListener('click', this.handleDeleteSelectedFeatures.bind(this));
 			} else if (mode === 'download') {
 				btn.classList.add(`maplibregl-terradraw-${this.cssPrefix}${mode}-button`);
 				btn.addEventListener('click', this.handleDownload.bind(this));
@@ -526,6 +511,97 @@ export class MaplibreTerradrawControl implements IControl {
 			TERRADRAW_SOURCE_IDS,
 			this.options.adapterOptions?.prefixId
 		);
+	}
+
+	/**
+	 * Show delete confirmation dialog
+	 * @param onConfirm Callback function to execute when delete is confirmed
+	 */
+	protected showDeleteConfirmationDialog(onConfirm: () => void): void {
+		const dialog = new ModalDialog(
+			'maplibre-terradraw-delete-confirmation-dialog',
+			'Delete All Features'
+		);
+
+		dialog.create(document.body, (content) => {
+			const message = document.createElement('p');
+			message.textContent = 'Are you sure you want to delete all features?';
+			content.appendChild(message);
+
+			const buttonContainer = document.createElement('div');
+			buttonContainer.classList.add('dialog-buttons');
+
+			const cancelButton = document.createElement('button');
+			cancelButton.type = 'button';
+			cancelButton.textContent = 'Cancel';
+			cancelButton.classList.add('dialog-button-cancel');
+			cancelButton.addEventListener('click', () => {
+				dialog.close();
+			});
+
+			const deleteButton = document.createElement('button');
+			deleteButton.type = 'button';
+			deleteButton.textContent = 'Delete';
+			deleteButton.classList.add('dialog-button-delete');
+			deleteButton.addEventListener('click', () => {
+				onConfirm();
+				dialog.close();
+			});
+
+			buttonContainer.appendChild(cancelButton);
+			buttonContainer.appendChild(deleteButton);
+			content.appendChild(buttonContainer);
+
+			return content;
+		});
+
+		dialog.open();
+	}
+
+	/**
+	 * Delete all features from the store
+	 */
+	protected handleDeleteAllFeatures(): void {
+		if (!this.terradraw) return;
+		if (!this.terradraw.enabled) return;
+
+		const deleteFeatures = () => {
+			this.terradraw?.clear();
+			this.resetActiveMode();
+			this.toggleDeleteSelectionButton();
+			this.toggleButtonsWhenNoFeature();
+			this.dispatchEvent('feature-deleted');
+		};
+
+		if (this.options.showDeleteConfirmation === true) {
+			this.showDeleteConfirmationDialog(deleteFeatures);
+		} else {
+			deleteFeatures();
+		}
+	}
+
+	/**
+	 * Delete selected features from the store
+	 */
+	protected handleDeleteSelectedFeatures(): void {
+		if (!this.terradraw) return;
+		if (!this.terradraw.enabled) return;
+
+		const snapshot = this.terradraw?.getSnapshot();
+		const selected = snapshot.filter((f) => f.properties.selected === true);
+
+		if (selected.length > 0) {
+			// if feature is selected, delete only selected feature
+			const ids = selected.map((f) => f.id) as TerraDrawExtend.FeatureId[];
+
+			this.terradraw.removeFeatures(ids);
+			for (const id of ids) {
+				this.terradraw.deselectFeature(id);
+			}
+			this.dispatchEvent('feature-deleted', { deletedIds: ids });
+		}
+		this.toggleDeleteSelectionButton();
+		this.toggleButtonsWhenNoFeature();
 	}
 
 	/**

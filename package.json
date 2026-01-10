@@ -74,7 +74,7 @@
 		"eslint": "^9.39.2",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.13.1",
-		"globals": "^16.5.0",
+		"globals": "^17.0.0",
 		"jsdom": "^27.3.0",
 		"lefthook": "^2.0.11",
 		"maplibre-gl": "^5.14.0",

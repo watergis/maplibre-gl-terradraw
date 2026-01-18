@@ -320,31 +320,31 @@ describe('distanceUnit', () => {
 	});
 });
 
-describe('forceAreaUnit', () => {
-	it('should return forceAreaUnit value user set', () => {
+describe('areaUnit', () => {
+	it('should return areaUnit value user set', () => {
 		const control = new MaplibreMeasureControl({
-			forceAreaUnit: 'hectares',
+			areaUnit: 'hectares',
 			measureUnitType: 'imperial'
 		});
-		expect(control.forceAreaUnit).toEqual('hectares');
+		expect(control.areaUnit).toEqual('hectares');
 	});
 
-	it('should return default forceAreaUnit value if user does not specify', () => {
+	it('should return default areaUnit value if user does not specify', () => {
 		const control = new MaplibreMeasureControl();
-		expect(control.forceAreaUnit).toBeUndefined();
+		expect(control.areaUnit).toBeUndefined();
 	});
 
-	it('should return forceAreaUnit value if user set through property', () => {
+	it('should return areaUnit value if user set through property', () => {
 		const control = new MaplibreMeasureControl({
-			forceAreaUnit: 'hectares',
+			areaUnit: 'hectares',
 			measureUnitType: 'imperial'
 		});
 
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore;
 		const spy = vi.spyOn(control, 'recalc');
-		control.forceAreaUnit = 'acres';
-		expect(control.forceAreaUnit).toEqual('acres');
+		control.areaUnit = 'acres';
+		expect(control.areaUnit).toEqual('acres');
 		expect(spy).toHaveBeenCalled();
 	});
 });

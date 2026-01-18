@@ -46,11 +46,7 @@ export type AreaUnitCallBackType = (valueInSquareMeters: number) => { area: numb
  *
  * If a specific unit is set, the value is converted to that unit.
  */
-export type forceAreaUnitType =
-	| AreaUnitCallBackType
-	| MetricAreaUnit
-	| ImperialAreaUnit
-	| undefined;
+export type areaUnitType = AreaUnitCallBackType | MetricAreaUnit | ImperialAreaUnit | undefined;
 
 /**
  * Short names for distance units in metric

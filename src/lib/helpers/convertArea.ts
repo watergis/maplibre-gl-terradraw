@@ -1,7 +1,7 @@
 import { defaultMeasureUnitSymbols } from '../constants';
 import type {
 	MeasureUnitType,
-	forceAreaUnitType,
+	areaUnitType,
 	ImperialAreaUnit,
 	MetricAreaUnit,
 	MeasureUnitSymbolType
@@ -18,28 +18,28 @@ import type {
 export const convertArea = (
 	value: number,
 	unit: MeasureUnitType,
-	forceUnit: forceAreaUnitType = undefined,
+	areaUnit: areaUnitType = undefined,
 	measureUnitSymbols = defaultMeasureUnitSymbols
 ): { area: number; unit: string } => {
 	// Define metric and imperial units
 	const metricUnits = ['square meters', 'square kilometers', 'ares', 'hectares'];
 	const imperialUnits = ['square feet', 'square yards', 'acres', 'square miles'];
 
-	if (forceUnit && typeof forceUnit !== 'function') {
-		// if forceUnit is a specific unit, use it for conversion
-		const isMetricForceUnit = metricUnits.includes(forceUnit);
-		const isImperialForceUnit = imperialUnits.includes(forceUnit);
+	if (areaUnit && typeof areaUnit !== 'function') {
+		// if areaUnit is a specific unit, use it for conversion
+		const isMetricAreaUnit = metricUnits.includes(areaUnit);
+		const isImperialAreaUnit = imperialUnits.includes(areaUnit);
 
-		if (isMetricForceUnit) {
-			return convertMetricUnit(value, forceUnit as MetricAreaUnit, measureUnitSymbols);
-		} else if (isImperialForceUnit) {
-			return convertImperialUnit(value, forceUnit as ImperialAreaUnit, measureUnitSymbols);
+		if (isMetricAreaUnit) {
+			return convertMetricUnit(value, areaUnit as MetricAreaUnit, measureUnitSymbols);
+		} else if (isImperialAreaUnit) {
+			return convertImperialUnit(value, areaUnit as ImperialAreaUnit, measureUnitSymbols);
 		}
 	}
 
-	if (forceUnit && typeof forceUnit === 'function') {
-		// If forceUnit is a callback function, use it for conversion
-		return forceUnit(value);
+	if (areaUnit && typeof areaUnit === 'function') {
+		// If areaUnit is a callback function, use it for conversion
+		return areaUnit(value);
 	} else {
 		// Auto mode: convert based on measureUnitType and value
 		return defaultAutoUnitConversion(value, unit, measureUnitSymbols);

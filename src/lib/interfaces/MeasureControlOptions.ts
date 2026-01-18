@@ -7,7 +7,7 @@ import type {
 	MetricAreaUnit,
 	MetricDistanceUnit
 } from './MeasureUnit';
-import type { MeasureUnitType, forceAreaUnitType } from './MeasureUnit';
+import type { MeasureUnitType, areaUnitType } from './MeasureUnit';
 import type { TerradrawMode } from './TerradrawMode';
 import type { TerrainSource } from './TerrainSource';
 import type { ElevationCacheConfig } from './ElevationCacheConfig';
@@ -96,7 +96,7 @@ export interface MeasureControlOptions {
 	 * If `distanceUnit` is set to other values (e.g., 'degrees', 'radians'), it will be ignored, and `auto` will be applied.
 	 * If you need to force other unit type, please use DistanceUnit property.
 	 */
-	forceAreaUnit?: forceAreaUnitType;
+	areaUnit?: areaUnitType;
 
 	/**
 	 * Measure unit symbols. If you want to change the default symbol, please overwrite the symbol by this option.

@@ -11,7 +11,7 @@ import { centroid } from '@turf/centroid';
 import { defaultMeasureControlOptions, defaultMeasureUnitSymbols } from '../constants';
 import type {
 	MeasureUnitType,
-	forceAreaUnitType,
+	areaUnitType,
 	distanceUnitType,
 	MeasureControlOptions,
 	TerradrawMode,
@@ -151,12 +151,12 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * control.areaUnit = customConversion;
 	 * ```
 	 */
-	get forceAreaUnit() {
-		return this.measureOptions.forceAreaUnit;
+	get areaUnit() {
+		return this.measureOptions.areaUnit;
 	}
-	set forceAreaUnit(value: forceAreaUnitType) {
-		const isSame = this.measureOptions.forceAreaUnit === value;
-		this.measureOptions.forceAreaUnit = value;
+	set areaUnit(value: areaUnitType) {
+		const isSame = this.measureOptions.areaUnit === value;
+		this.measureOptions.areaUnit = value;
 		if (!isSame) this.recalc();
 	}
 
@@ -863,7 +863,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					feature,
 					this.measureUnitType,
 					this.areaPrecision,
-					this.forceAreaUnit,
+					this.areaUnit,
 					this.measureUnitSymbols
 				);
 				point.properties.area = feature.properties.area;

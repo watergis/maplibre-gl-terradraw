@@ -8,7 +8,7 @@
 		distancePrecision: number;
 		distanceUnit: MetricDistanceUnit | ImperialDistanceUnit | 'auto';
 		areaPrecision: number;
-		forceAreaUnit: MetricAreaUnit | ImperialAreaUnit | 'auto';
+		areaUnit: MetricAreaUnit | ImperialAreaUnit | 'auto';
 		computeElevation: 'enabled' | 'disabled';
 		valhallaOptions: ValhallaOptions;
 	}
@@ -89,9 +89,8 @@
 			measureUnitType: 'metric',
 			distancePrecision: 2,
 			distanceUnit: 'auto',
-			areaUnit: 'metric',
 			areaPrecision: 2,
-			forceAreaUnit: 'auto',
+			areaUnit: 'auto',
 			computeElevation: 'enabled',
 			valhallaOptions: {
 				url: '',
@@ -198,7 +197,7 @@
 				distanceUnit: options.distanceUnit === 'auto' ? undefined : options.distanceUnit,
 				distancePrecision: options.distancePrecision,
 				areaPrecision: options.areaPrecision,
-				forceAreaUnit: options.forceAreaUnit === 'auto' ? undefined : options.forceAreaUnit,
+				areaUnit: options.areaUnit === 'auto' ? undefined : options.areaUnit,
 				computeElevation: options.computeElevation === 'enabled',
 				adapterOptions: {
 					prefixId: 'td-measure'
@@ -780,19 +779,19 @@
 
 							<Accordion.Item value="force-area-unit">
 								<Accordion.ItemTrigger>
-									<p class="font-bold uppercase italic">Force Area unit</p>
+									<p class="font-bold uppercase italic">Area unit</p>
 								</Accordion.ItemTrigger>
 								<Accordion.ItemContent>
 									<select
 										class="select"
-										value={options.forceAreaUnit}
+										value={options.areaUnit}
 										onchange={(e) => {
 											const value = (e.target as HTMLSelectElement).value as
 												| MetricAreaUnit
 												| ImperialAreaUnit
 												| 'auto';
 											if (drawControl && options.controlType === 'measure') {
-												(drawControl as MaplibreMeasureControl).forceAreaUnit =
+												(drawControl as MaplibreMeasureControl).areaUnit =
 													value === 'auto' ? undefined : value;
 											}
 											onchange(options);

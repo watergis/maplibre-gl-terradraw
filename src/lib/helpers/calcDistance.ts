@@ -3,7 +3,7 @@ import type { GeoJSONStoreFeatures } from 'terra-draw';
 import type { LngLatLike, Map } from 'maplibre-gl';
 import type {
 	MeasureUnitType,
-	forceDistanceUnitType,
+	distanceUnitType,
 	TerrainSource,
 	MeasureUnitSymbolType
 } from '../interfaces';
@@ -25,7 +25,7 @@ export const calcDistance = (
 	feature: GeoJSONStoreFeatures,
 	unitType: MeasureUnitType,
 	distancePrecision: number,
-	forceUnit?: forceDistanceUnitType,
+	forceUnit?: distanceUnitType,
 	measureUnitSymbols?: MeasureUnitSymbolType,
 	map?: Map,
 	computeElevation?: boolean,

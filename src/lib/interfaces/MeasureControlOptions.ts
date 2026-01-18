@@ -1,7 +1,7 @@
 import type { CircleLayerSpecification, SymbolLayerSpecification } from 'maplibre-gl';
 import type { ModeOptions } from './ModeOptions';
 import type {
-	forceDistanceUnitType,
+	distanceUnitType,
 	ImperialAreaUnit,
 	ImperialDistanceUnit,
 	MetricAreaUnit,
@@ -82,7 +82,7 @@ export interface MeasureControlOptions {
 	 * This property is only effective when distanceUnit is set to 'kilometers'. If distanceUnit is set to other than 'kilometers', it will be ignored, and `auto` will be applied.
 	 * If you need to force other unit type, please use DistanceUnit property.
 	 */
-	forceDistanceUnit?: forceDistanceUnitType;
+	distanceUnit?: distanceUnitType;
 
 	/**
 	 * The precision of area value. Using setter to override the value if you want.

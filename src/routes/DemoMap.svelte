@@ -6,7 +6,7 @@
 		modes: TerradrawMode[];
 		measureUnitType: MeasureUnitType;
 		distancePrecision: number;
-		forceDistanceUnit: MetricDistanceUnit | ImperialDistanceUnit | 'auto';
+		distanceUnit: MetricDistanceUnit | ImperialDistanceUnit | 'auto';
 		areaPrecision: number;
 		forceAreaUnit: forceAreaUnitType;
 		computeElevation: 'enabled' | 'disabled';
@@ -29,8 +29,8 @@
 		type Contour,
 		type ContourType,
 		type costingModelType,
+		type distanceUnitType,
 		type forceAreaUnitType,
-		type forceDistanceUnitType,
 		type ImperialDistanceUnit,
 		type MeasureUnitType,
 		type MetricDistanceUnit,
@@ -87,7 +87,7 @@
 			modes: JSON.parse(JSON.stringify(AvailableModes)),
 			measureUnitType: 'metric',
 			distancePrecision: 2,
-			forceDistanceUnit: 'auto',
+			distanceUnit: 'auto',
 			areaUnit: 'metric',
 			areaPrecision: 2,
 			forceAreaUnit: 'auto',
@@ -194,8 +194,7 @@
 				open: options.isOpen === 'open',
 				showDeleteConfirmation: options.showDeleteConfirmation,
 				measureUnitType: options.measureUnitType,
-				forceDistanceUnit:
-					options.forceDistanceUnit === 'auto' ? undefined : options.forceDistanceUnit,
+				distanceUnit: options.distanceUnit === 'auto' ? undefined : options.distanceUnit,
 				distancePrecision: options.distancePrecision,
 				areaPrecision: options.areaPrecision,
 				forceAreaUnit: options.forceAreaUnit,
@@ -745,21 +744,21 @@
 
 							<Accordion.Item value="force-distance-unit">
 								<Accordion.ItemTrigger>
-									<p class="font-bold uppercase italic">Force Distance unit</p>
+									<p class="font-bold uppercase italic">Distance unit</p>
 								</Accordion.ItemTrigger>
 								<Accordion.ItemContent>
 									<select
 										class="select"
-										value={options.forceDistanceUnit}
+										value={options.distanceUnit}
 										onchange={(e) => {
 											const value = (e.target as HTMLSelectElement).value as
 												| MetricDistanceUnit
 												| ImperialDistanceUnit
 												| 'auto';
-											options.forceDistanceUnit = value;
+											options.distanceUnit = value;
 											if (drawControl && options.controlType === 'measure') {
-												(drawControl as MaplibreMeasureControl).forceDistanceUnit =
-													value === 'auto' ? undefined : (value as forceDistanceUnitType);
+												(drawControl as MaplibreMeasureControl).distanceUnit =
+													value === 'auto' ? undefined : (value as distanceUnitType);
 											}
 											onchange(options);
 										}}

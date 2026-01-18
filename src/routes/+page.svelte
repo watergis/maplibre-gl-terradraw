@@ -41,10 +41,9 @@
 			JSON.parse(JSON.stringify(AvailableModes)),
 		measureUnitType: (page.url.searchParams.get('measureUnitType') as MeasureUnitType) ?? 'metric',
 		distancePrecision: parseInt(page.url.searchParams.get('distancePrecision') ?? '2'),
-		forceDistanceUnit:
-			(page.url.searchParams.get('forceDistanceUnit') as
-				| MetricDistanceUnit
-				| ImperialDistanceUnit) ?? 'auto',
+		distanceUnit:
+			(page.url.searchParams.get('distanceUnit') as MetricDistanceUnit | ImperialDistanceUnit) ??
+			'auto',
 		areaPrecision: parseInt(page.url.searchParams.get('areaPrecision') ?? '2'),
 		forceAreaUnit: (page.url.searchParams.get('forceAreaUnit') as forceAreaUnitType) ?? 'auto',
 		computeElevation:
@@ -127,10 +126,10 @@
 		if (demoOptions.controlType == 'measure') {
 			pageUrl.searchParams.set('measureUnitType', demoOptions.measureUnitType);
 			pageUrl.searchParams.set('distancePrecision', demoOptions.distancePrecision.toString());
-			if (demoOptions.forceDistanceUnit === 'auto') {
-				pageUrl.searchParams.delete('forceDistanceUnit');
+			if (demoOptions.distanceUnit === 'auto') {
+				pageUrl.searchParams.delete('distanceUnit');
 			} else {
-				pageUrl.searchParams.set('forceDistanceUnit', demoOptions.forceDistanceUnit);
+				pageUrl.searchParams.set('distanceUnit', demoOptions.distanceUnit);
 			}
 			pageUrl.searchParams.set('areaPrecision', demoOptions.areaPrecision.toString());
 			pageUrl.searchParams.set('forceAreaUnit', demoOptions.forceAreaUnit);
@@ -138,7 +137,7 @@
 		} else {
 			pageUrl.searchParams.delete('measureUnitType');
 			pageUrl.searchParams.delete('distancePrecision');
-			pageUrl.searchParams.delete('forceDistanceUnit');
+			pageUrl.searchParams.delete('distanceUnit');
 			pageUrl.searchParams.delete('areaPrecision');
 			pageUrl.searchParams.delete('forceAreaUnit');
 			pageUrl.searchParams.delete('computeElevation');
@@ -160,8 +159,8 @@
 		const options = [];
 		options.push(`measureUnitType: '${demoOptions.measureUnitType}'`);
 		options.push(`distancePrecision: ${demoOptions.distancePrecision}`);
-		if (demoOptions.forceDistanceUnit !== 'auto') {
-			options.push(`forceDistanceUnit: '${demoOptions.forceDistanceUnit}'`);
+		if (demoOptions.distanceUnit !== 'auto') {
+			options.push(`distanceUnit: '${demoOptions.distanceUnit}'`);
 		}
 		options.push(`areaPrecision: ${demoOptions.areaPrecision}`);
 		options.push(`forceAreaUnit: '${demoOptions.forceAreaUnit}'`);

@@ -12,7 +12,7 @@ import { defaultMeasureControlOptions, defaultMeasureUnitSymbols } from '../cons
 import type {
 	MeasureUnitType,
 	forceAreaUnitType,
-	forceDistanceUnitType,
+	distanceUnitType,
 	MeasureControlOptions,
 	TerradrawMode,
 	MeasureUnitSymbolType
@@ -96,15 +96,15 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * 	return { distance: valueInMeter, unit: 'm' };
 	 *  };
 	 * };
-	 * control.forceDistanceUnit = customConversion;
+	 * control.distanceUnit = customConversion;
 	 * ```
 	 */
-	get forceDistanceUnit() {
-		return this.measureOptions.forceDistanceUnit;
+	get distanceUnit() {
+		return this.measureOptions.distanceUnit;
 	}
-	set forceDistanceUnit(value: forceDistanceUnitType) {
-		const isSame = this.measureOptions.forceDistanceUnit === value;
-		this.measureOptions.forceDistanceUnit = value;
+	set distanceUnit(value: distanceUnitType) {
+		const isSame = this.measureOptions.distanceUnit === value;
+		this.measureOptions.distanceUnit = value;
 		if (!isSame) this.recalc();
 	}
 
@@ -927,7 +927,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 					feature,
 					this.measureUnitType,
 					this.distancePrecision,
-					this.forceDistanceUnit,
+					this.distanceUnit,
 					this.measureUnitSymbols,
 					this.map,
 					this.computeElevation,

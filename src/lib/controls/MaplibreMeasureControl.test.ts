@@ -294,28 +294,28 @@ describe('areaPrecision', () => {
 	});
 });
 
-describe('forceDistanceUnit', () => {
-	it('should return forceDistanceUnit value user set', () => {
-		const control = new MaplibreMeasureControl({ forceDistanceUnit: 'meter' });
-		expect(control.forceDistanceUnit).toEqual('meter');
+describe('distanceUnit', () => {
+	it('should return distanceUnit value user set', () => {
+		const control = new MaplibreMeasureControl({ distanceUnit: 'meter' });
+		expect(control.distanceUnit).toEqual('meter');
 	});
 
-	it('should return default forceDistanceUnit value if user does not specify', () => {
+	it('should return default distanceUnit value if user does not specify', () => {
 		const control = new MaplibreMeasureControl();
-		expect(control.forceDistanceUnit).toBeUndefined();
+		expect(control.distanceUnit).toBeUndefined();
 	});
 
-	it('should return forceDistanceUnit value if user set through property', () => {
+	it('should return distanceUnit value if user set through property', () => {
 		const control = new MaplibreMeasureControl({
-			forceDistanceUnit: 'meter',
+			distanceUnit: 'meter',
 			measureUnitType: 'metric'
 		});
 
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore;
 		const spy = vi.spyOn(control, 'recalc');
-		control.forceDistanceUnit = 'centimeter';
-		expect(control.forceDistanceUnit).toEqual('centimeter');
+		control.distanceUnit = 'centimeter';
+		expect(control.distanceUnit).toEqual('centimeter');
 		expect(spy).toHaveBeenCalled();
 	});
 });

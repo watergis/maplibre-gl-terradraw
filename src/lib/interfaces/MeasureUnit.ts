@@ -44,7 +44,7 @@ export type ImperialDistanceUnit = 'mile' | 'foot' | 'inch';
 export type DistanceUnitCallBackType = (valueInMeter: number) => { distance: number; unit: string };
 
 /**
- * The type definition of forceDistanceUnitType
+ * The type definition of distanceUnitType
  *
  * If undefined is set, it will be treated as 'auto' conversion of distance unit accoding the following rules.
  * - For metric:
@@ -58,7 +58,7 @@ export type DistanceUnitCallBackType = (valueInMeter: number) => { distance: num
  *
  * If a specific unit is set, the value is converted to that unit.
  */
-export type forceDistanceUnitType =
+export type distanceUnitType =
 	| DistanceUnitCallBackType
 	| MetricDistanceUnit
 	| ImperialDistanceUnit

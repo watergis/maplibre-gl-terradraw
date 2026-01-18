@@ -1,5 +1,5 @@
 import { defaultMeasureUnitSymbols } from '../constants';
-import type { forceDistanceUnitType, MeasureUnitSymbolType, MeasureUnitType } from '../interfaces';
+import type { distanceUnitType, MeasureUnitSymbolType, MeasureUnitType } from '../interfaces';
 
 /**
  * Convert distance according to the distance unit given.
@@ -17,7 +17,7 @@ import type { forceDistanceUnitType, MeasureUnitSymbolType, MeasureUnitType } fr
 export const convertDistance = (
 	value: number,
 	unit: MeasureUnitType = 'metric',
-	forceUnit: forceDistanceUnitType = undefined,
+	forceUnit: distanceUnitType = undefined,
 	measureUnitSymbols = defaultMeasureUnitSymbols
 ): { distance: number; unit: string } => {
 	// Define metric and imperial units
@@ -108,7 +108,7 @@ const defaultAutoUnitConversion = (
 
 const convertMetricUnit = (
 	value: number,
-	unit: forceDistanceUnitType,
+	unit: distanceUnitType,
 	measureUnitSymbols: MeasureUnitSymbolType
 ) => {
 	const result: { distance: number; unit: string } = {
@@ -141,7 +141,7 @@ const convertMetricUnit = (
 
 const convertImperialUnit = (
 	value: number,
-	unit: forceDistanceUnitType,
+	unit: distanceUnitType,
 	measureUnitSymbols: MeasureUnitSymbolType
 ) => {
 	// Convert meters to feet first (1 meter = 3.28084 feet)

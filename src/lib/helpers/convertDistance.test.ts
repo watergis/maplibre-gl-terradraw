@@ -28,33 +28,33 @@ describe('convertDistance with metric unit', () => {
 		expect(result.distance).toBeCloseTo(0.9, 5);
 	});
 
-	it('should return kilometers when forceDistanceUnit is kilometers', () => {
+	it('should return kilometers when distanceUnit is kilometers', () => {
 		expect(convertDistance(1000, 'metric', 'kilometer')).toEqual({ distance: 1, unit: 'km' });
 		expect(convertDistance(2500, 'metric', 'kilometer')).toEqual({ distance: 2.5, unit: 'km' });
 	});
 
-	it('should return meters when forceDistanceUnit is meters', () => {
+	it('should return meters when distanceUnit is meters', () => {
 		expect(convertDistance(1000, 'metric', 'meter')).toEqual({ distance: 1000, unit: 'm' });
 		expect(convertDistance(2500, 'metric', 'meter')).toEqual({ distance: 2500, unit: 'm' });
 	});
 
-	it('should return centimeters when forceDistanceUnit is centimeters', () => {
+	it('should return centimeters when distanceUnit is centimeters', () => {
 		expect(convertDistance(1000, 'metric', 'centimeter')).toEqual({ distance: 100000, unit: 'cm' });
 		expect(convertDistance(2500, 'metric', 'centimeter')).toEqual({ distance: 250000, unit: 'cm' });
 	});
 
-	it('should return forceDistanceUnit value even if distance unit is different', () => {
-		// When forceDistanceUnit is 'mile' and unit is 'metric', it should return miles
+	it('should return distanceUnit value even if distance unit is different', () => {
+		// When distanceUnit is 'mile' and unit is 'metric', it should return miles
 		const result1 = convertDistance(500, 'metric', 'mile');
 		expect(result1.distance).toBeCloseTo(0.31, 2);
 		expect(result1.unit).toBe('mi');
-		// When forceDistanceUnit is 'foot' and unit is 'metric', it should return feet
+		// When distanceUnit is 'foot' and unit is 'metric', it should return feet
 		const result2 = convertDistance(1, 'metric', 'foot');
 		expect(result2.distance).toBeCloseTo(3.3, 1);
 		expect(result2.unit).toBe('ft');
 	});
 
-	it('should return corresponding value when forceDistanceUnit is custom callback', () => {
+	it('should return corresponding value when distanceUnit is custom callback', () => {
 		expect(
 			convertDistance(1000, 'metric', (distance) => ({ distance: distance / 1000, unit: 'KM' }))
 		).toEqual({ distance: 1, unit: 'KM' });
@@ -62,7 +62,7 @@ describe('convertDistance with metric unit', () => {
 });
 
 describe('convertDistance with imperial unit', () => {
-	it('should return miles when forceDistanceUnit is miles', () => {
+	it('should return miles when distanceUnit is miles', () => {
 		// 1609.34 meters ≈ 1 mile
 		const result1 = convertDistance(1609.34, 'imperial', 'mile');
 		expect(result1.distance).toBeCloseTo(1, 5);
@@ -73,7 +73,7 @@ describe('convertDistance with imperial unit', () => {
 		expect(result2.unit).toBe('mi');
 	});
 
-	it('should return feet when forceDistanceUnit is feet', () => {
+	it('should return feet when distanceUnit is feet', () => {
 		// 1609.34 meters = 1 mile = 5280 feet
 		const result1 = convertDistance(1609.34, 'imperial', 'foot');
 		expect(result1.distance).toBeCloseTo(5280, 0);
@@ -84,7 +84,7 @@ describe('convertDistance with imperial unit', () => {
 		expect(result2.unit).toBe('ft');
 	});
 
-	it('should return inches when forceDistanceUnit is inches', () => {
+	it('should return inches when distanceUnit is inches', () => {
 		// 1609.34 meters = 1 mile = 63360 inches
 		const result1 = convertDistance(1609.34, 'imperial', 'inch');
 		expect(result1.distance).toBeCloseTo(63360, 0);
@@ -95,7 +95,7 @@ describe('convertDistance with imperial unit', () => {
 		expect(result2.unit).toBe('in');
 	});
 
-	it('should auto-scale to the appropriate unit when forceDistanceUnit is auto', () => {
+	it('should auto-scale to the appropriate unit when distanceUnit is auto', () => {
 		// 1609.34 meters ≈ 1 mile
 		const result1 = convertDistance(1609.34, 'imperial', undefined);
 		expect(result1.distance).toBeCloseTo(1, 5);
@@ -110,12 +110,12 @@ describe('convertDistance with imperial unit', () => {
 		expect(result3.unit).toBe('in');
 	});
 
-	it('should return forceDistanceUnit value even if distance unit is different', () => {
-		// When forceDistanceUnit is 'meter' and unit is 'imperial', it should return meters
+	it('should return distanceUnit value even if distance unit is different', () => {
+		// When distanceUnit is 'meter' and unit is 'imperial', it should return meters
 		const result1 = convertDistance(1609.34, 'imperial', 'meter');
 		expect(result1.distance).toBe(1609.34);
 		expect(result1.unit).toBe('m');
-		// When forceDistanceUnit is 'kilometer' and unit is 'imperial', it should return kilometers
+		// When distanceUnit is 'kilometer' and unit is 'imperial', it should return kilometers
 		const result2 = convertDistance(5000, 'imperial', 'kilometer');
 		expect(result2.distance).toBe(5);
 		expect(result2.unit).toBe('km');

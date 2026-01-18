@@ -115,7 +115,7 @@ export interface MeasureControlOptions {
 	areaPrecision?: number;
 
 	/**
-	 * Default is undefined. If undefined is set,the unit is converted automatically based on the value.
+	 * Default is undefined. If undefined is set, the unit is converted automatically based on the value.
 	 *
 	 * For metric system:
 	 * - Values >= 1,000,000m² are converted to square kilometers

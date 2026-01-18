@@ -42,14 +42,14 @@ importers:
         specifier: ^6.9.1
         version: 6.9.1
       '@turf/area':
-        specifier: ^7.3.1
-        version: 7.3.1
+        specifier: ^7.3.2
+        version: 7.3.2
       '@turf/centroid':
-        specifier: ^7.3.1
-        version: 7.3.1
+        specifier: ^7.3.2
+        version: 7.3.2
       '@turf/distance':
-        specifier: ^7.3.1
-        version: 7.3.1
+        specifier: ^7.3.2
+        version: 7.3.2
       '@types/eslint':
         specifier: ^9.6.1
         version: 9.6.1
@@ -96,8 +96,8 @@ importers:
         specifier: ^2.0.11
         version: 2.0.13
       maplibre-gl:
-        specifier: ^5.14.0
-        version: 5.15.0
+        specifier: ^5.16.0
+        version: 5.16.0
       postcss:
         specifier: ^8.5.6
         version: 8.5.6
@@ -138,11 +138,11 @@ importers:
         specifier: ^4.1.18
         version: 4.1.18
       terra-draw:
-        specifier: ^1.21.0
-        version: 1.22.0
+        specifier: ^1.23.1
+        version: 1.23.1
       terra-draw-maplibre-gl-adapter:
         specifier: ^1.2.3
-        version: 1.2.3(maplibre-gl@5.15.0)(terra-draw@1.22.0)
+        version: 1.2.3(maplibre-gl@5.16.0)(terra-draw@1.23.1)
       typedoc:
         specifier: ^0.28.15
         version: 0.28.16(typescript@5.9.3)
@@ -1004,23 +1004,23 @@ packages:
     resolution: {integrity: sha512-zIcONa+hVtVSSep9UT3jZ5rizo2BsxgyDYU7WFD5eICBE7no3881HGeb/QkGfsJs6JTkY1aQhT7rIPC7e+0nnA==}
     engines: {node: '>=14', npm: '>=6', yarn: '>=1'}
 
-  '@turf/area@7.3.1':
-    resolution: {integrity: sha512-9nSiwt4zB5QDMcSoTxF28WpK1f741MNKcpUJDiHVRX08CZ4qfGWGV9ZIPQ8TVEn5RE4LyYkFuQ47Z9pdEUZE9Q==}
+  '@turf/area@7.3.2':
+    resolution: {integrity: sha512-d7IuEjAO3TSX5aVeL5WXrtCZCwxUAUOD4+LZ+VjoEe2THmYKdUknCPbH6rdhMBzLyZNuSVRmpRD/QfpCnLqoZg==}
 
-  '@turf/centroid@7.3.1':
-    resolution: {integrity: sha512-hRnsDdVBH4pX9mAjYympb2q5W8TCMUMNEjcRrAF7HTCyjIuRmjJf8vUtlzf7TTn9RXbsvPc1vtm3kLw20Jm8DQ==}
+  '@turf/centroid@7.3.2':
+    resolution: {integrity: sha512-zWlX/t7goUx+FqCYzyscO7muXPSADb5nTGXWAbRR51P3Zsdx24P5tJshJhrHwIb3OR9a+YE4ig568Clex6tc2g==}
 
-  '@turf/distance@7.3.1':
-    resolution: {integrity: sha512-DK//doTGgYYjBkcWUywAe7wbZYcdP97hdEJ6rXYVYRoULwGGR3lhY96GNjozg6gaW9q2eSNYnZLpcL5iFVHqgw==}
+  '@turf/distance@7.3.2':
+    resolution: {integrity: sha512-aY2HQDZpu/doKRUTEcBKdV2olNOD1x0wKR6ujzC+D1EZLKWOEmTJRR+6OjzB+xuv5zZbhFPe9f0MXEuNDxzwfQ==}
 
-  '@turf/helpers@7.3.1':
-    resolution: {integrity: sha512-zkL34JVhi5XhsuMEO0MUTIIFEJ8yiW1InMu4hu/oRqamlY4mMoZql0viEmH6Dafh/p+zOl8OYvMJ3Vm3rFshgg==}
+  '@turf/helpers@7.3.2':
+    resolution: {integrity: sha512-5HFN42rgWjSobdTMxbuq+ZdXPcqp1IbMgFYULTLCplEQM3dXhsyRFe7DCss4Eiw12iW3q6Z5UeTNVfITsE5lgA==}
 
-  '@turf/invariant@7.3.1':
-    resolution: {integrity: sha512-IdZJfDjIDCLH+Gu2yLFoSM7H23sdetIo5t4ET1/25X8gi3GE2XSqbZwaGjuZgNh02nisBewLqNiJs2bo+hrqZA==}
+  '@turf/invariant@7.3.2':
+    resolution: {integrity: sha512-brGmL1EFhZH/YNXhq6S+8sPWBEnmvEyxMWJO8bUNOFZyWHYiRTwxQHZM+An1blkbQ77PiEzsdNAspZqE1j7YKA==}
 
-  '@turf/meta@7.3.1':
-    resolution: {integrity: sha512-NWsfOE5RVtWpLQNkfOF/RrYvLRPwwruxhZUV0UFIzHqfiRJ50aO9Y6uLY4bwCUe2TumLJQSR4yaoA72Rmr2mnQ==}
+  '@turf/meta@7.3.2':
+    resolution: {integrity: sha512-FIcIY+ZsAe9QV4fHciTXeuRz2TKIVaEjivkl4vMFCibdj7FUkWDofqOncbIre1xPrgktQeh20ZrmD+p0kf3n4Q==}
 
   '@types/chai@5.2.3':
     resolution: {integrity: sha512-Mw558oeA9fFbv65/y4mHtXDs9bPnFMZAL/jxdPFUpOHHIXX91mcgEHbS5Lahr+pwZFR8A7GQleRWeI6cGFC2UA==}
@@ -2427,8 +2427,8 @@ packages:
     resolution: {integrity: sha512-hXdUTZYIVOt1Ex//jAQi+wTZZpUpwBj/0QsOzqegb3rGMMeJiSEu5xLHnYfBrRV4RH2+OCSOO95Is/7x1WJ4bw==}
     engines: {node: '>=10'}
 
-  maplibre-gl@5.15.0:
-    resolution: {integrity: sha512-pPeu/t4yPDX/+Uf9ibLUdmaKbNMlGxMAX+tBednYukol2qNk2TZXAlhdohWxjVvTO3is8crrUYv3Ok02oAaKzA==}
+  maplibre-gl@5.16.0:
+    resolution: {integrity: sha512-/VDY89nr4jgLJyzmhy325cG6VUI02WkZ/UfVuDbG/piXzo6ODnM+omDFIwWY8tsEsBG26DNDmNMn3Y2ikHsBiA==}
     engines: {node: '>=16.14.0', npm: '>=8.1.0'}
 
   markdown-it@14.1.0:
@@ -3413,8 +3413,8 @@ packages:
       maplibre-gl: '>=4'
       terra-draw: ^1.0.0
 
-  terra-draw@1.22.0:
-    resolution: {integrity: sha512-Awp0670ZU0x8sZUDhkQs91uwRV/ZGj5uOJqlw0uNYXapdKllU6ykQJWTDHJ4gIa1dqm32NiLetPRHFHLbzxVFw==}
+  terra-draw@1.23.1:
+    resolution: {integrity: sha512-Cq6uWtgz+V6sM4BfKKo7YA9Duk58ZlAEHJWMow5Sx33QCwdnrhQiSs2QbUL7rEtMj9xkJCQ8pyk3o+Au8VEF2w==}
 
   text-segmentation@1.0.3:
     resolution: {integrity: sha512-iOiPUo/BGnZ6+54OsWxZidGCsdU8YbE4PSpdPinp7DeMtUJNJBoJ/ouUSTJjHkh1KntHaltHl/gDs2FC4i5+Nw==}
@@ -4574,42 +4574,43 @@ snapshots:
       picocolors: 1.1.1
       redent: 3.0.0
 
-  '@turf/area@7.3.1':
+  '@turf/area@7.3.2':
     dependencies:
-      '@turf/helpers': 7.3.1
-      '@turf/meta': 7.3.1
+      '@turf/helpers': 7.3.2
+      '@turf/meta': 7.3.2
       '@types/geojson': 7946.0.16
       tslib: 2.8.1
 
-  '@turf/centroid@7.3.1':
+  '@turf/centroid@7.3.2':
     dependencies:
-      '@turf/helpers': 7.3.1
-      '@turf/meta': 7.3.1
+      '@turf/helpers': 7.3.2
+      '@turf/meta': 7.3.2
       '@types/geojson': 7946.0.16
       tslib: 2.8.1
 
-  '@turf/distance@7.3.1':
+  '@turf/distance@7.3.2':
     dependencies:
-      '@turf/helpers': 7.3.1
-      '@turf/invariant': 7.3.1
+      '@turf/helpers': 7.3.2
+      '@turf/invariant': 7.3.2
       '@types/geojson': 7946.0.16
       tslib: 2.8.1
 
-  '@turf/helpers@7.3.1':
+  '@turf/helpers@7.3.2':
     dependencies:
       '@types/geojson': 7946.0.16
       tslib: 2.8.1
 
-  '@turf/invariant@7.3.1':
+  '@turf/invariant@7.3.2':
     dependencies:
-      '@turf/helpers': 7.3.1
+      '@turf/helpers': 7.3.2
       '@types/geojson': 7946.0.16
       tslib: 2.8.1
 
-  '@turf/meta@7.3.1':
+  '@turf/meta@7.3.2':
     dependencies:
-      '@turf/helpers': 7.3.1
+      '@turf/helpers': 7.3.2
       '@types/geojson': 7946.0.16
+      tslib: 2.8.1
 
   '@types/chai@5.2.3':
     dependencies:
@@ -4757,7 +4758,7 @@ snapshots:
   '@undp-data/style-switcher@2.0.15':
     dependencies:
       lodash-es: 4.17.22
-      maplibre-gl: 5.15.0
+      maplibre-gl: 5.16.0
       tippy.js: 6.3.7
 
   '@ungap/structured-clone@1.3.0': {}
@@ -4821,7 +4822,7 @@ snapshots:
   '@watergis/maplibre-gl-export@4.1.0':
     dependencies:
       jspdf: 3.0.4
-      maplibre-gl: 5.15.0
+      maplibre-gl: 5.16.0
 
   '@watergis/terrain-rgb@2.1.1': {}
 
@@ -6275,7 +6276,7 @@ snapshots:
     dependencies:
       semver: 7.7.3
 
-  maplibre-gl@5.15.0:
+  maplibre-gl@5.16.0:
     dependencies:
       '@mapbox/geojson-rewind': 0.5.2
       '@mapbox/jsonlint-lines-primitives': 2.0.2
@@ -7231,12 +7232,12 @@ snapshots:
 
   term-size@2.2.1: {}
 
-  terra-draw-maplibre-gl-adapter@1.2.3(maplibre-gl@5.15.0)(terra-draw@1.22.0):
+  terra-draw-maplibre-gl-adapter@1.2.3(maplibre-gl@5.16.0)(terra-draw@1.23.1):
     dependencies:
-      maplibre-gl: 5.15.0
-      terra-draw: 1.22.0
+      maplibre-gl: 5.16.0
+      terra-draw: 1.23.1
 
-  terra-draw@1.22.0: {}
+  terra-draw@1.23.1: {}
 
   text-segmentation@1.0.3:
     dependencies:

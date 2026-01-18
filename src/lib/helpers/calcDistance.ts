@@ -41,7 +41,7 @@ export const calcDistance = (
 	for (let i = 0; i < coordinates.length - 1; i++) {
 		const start = coordinates[i];
 		const end = coordinates[i + 1];
-		const result = distance(start, end, { units: unitType === 'metric' ? 'kilometers' : 'miles' });
+		const result = distance(start, end, { units: 'meters' });
 		totalDistance += result;
 
 		// segment

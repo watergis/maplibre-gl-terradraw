@@ -38,25 +38,54 @@ export const convertArea = (
 	}
 
 	// Auto mode: convert based on measureUnitType and value
-	if (unit === 'metric') {
-		if (value >= 1000000) {
-			return convertMetricUnit(value, 'square kilometers', measureUnitSymbols);
-		} else if (value >= 10000) {
-			return convertMetricUnit(value, 'hectares', measureUnitSymbols);
-		} else if (value >= 100) {
-			return convertMetricUnit(value, 'ares', measureUnitSymbols);
+	return defaultAutoUnitConversion(value, unit, measureUnitSymbols);
+};
+
+/**
+ * Automatically converts an area value from square meters to the most appropriate unit
+ * based on the specified measurement system and the value's magnitude.
+ *
+ * For metric system:
+ * - Values >= 1,000,000m² are converted to square kilometers
+ * - Values >= 10,000m² are converted to hectares
+ * - Values >= 100m² are converted to ares
+ * - Values < 100m² are kept as square meters
+ *
+ * For imperial system:
+ * - Values >= 2,589,988.11m² (1 square mile) are converted to square miles
+ * - Values >= 4,046.856m² (1 acre) are converted to acres
+ * - Values >= 0.83612736m² (1 square yard) are converted to square yards
+ * - Values < 0.83612736m² are converted to square feet
+ *
+ * @param valueInSquareMeters - The area value in square meters to be converted
+ * @param measureUnitType - The measurement system to use ('metric' or 'imperial')
+ * @param measureUnitSymbols - An object containing the symbol representations for each unit
+ * @returns An object containing the converted area value and its corresponding unit symbol
+ */
+const defaultAutoUnitConversion = (
+	valueInSquareMeters: number,
+	measureUnitType: MeasureUnitType,
+	measureUnitSymbols: MeasureUnitSymbolType
+) => {
+	if (measureUnitType === 'metric') {
+		if (valueInSquareMeters >= 1000000) {
+			return convertMetricUnit(valueInSquareMeters, 'square kilometers', measureUnitSymbols);
+		} else if (valueInSquareMeters >= 10000) {
+			return convertMetricUnit(valueInSquareMeters, 'hectares', measureUnitSymbols);
+		} else if (valueInSquareMeters >= 100) {
+			return convertMetricUnit(valueInSquareMeters, 'ares', measureUnitSymbols);
 		} else {
-			return convertMetricUnit(value, 'square meters', measureUnitSymbols);
+			return convertMetricUnit(valueInSquareMeters, 'square meters', measureUnitSymbols);
 		}
 	} else {
-		if (value >= 2589988.11) {
-			return convertImperialUnit(value, 'square miles', measureUnitSymbols);
-		} else if (value >= 4046.856) {
-			return convertImperialUnit(value, 'acres', measureUnitSymbols);
-		} else if (value >= 0.83612736) {
-			return convertImperialUnit(value, 'square yards', measureUnitSymbols);
+		if (valueInSquareMeters >= 2589988.11) {
+			return convertImperialUnit(valueInSquareMeters, 'square miles', measureUnitSymbols);
+		} else if (valueInSquareMeters >= 4046.856) {
+			return convertImperialUnit(valueInSquareMeters, 'acres', measureUnitSymbols);
+		} else if (valueInSquareMeters >= 0.83612736) {
+			return convertImperialUnit(valueInSquareMeters, 'square yards', measureUnitSymbols);
 		} else {
-			return convertImperialUnit(value, 'square feet', measureUnitSymbols);
+			return convertImperialUnit(valueInSquareMeters, 'square feet', measureUnitSymbols);
 		}
 	}
 };

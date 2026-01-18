@@ -145,7 +145,7 @@
 			pageUrl.searchParams.delete('distancePrecision');
 			pageUrl.searchParams.delete('distanceUnit');
 			pageUrl.searchParams.delete('areaPrecision');
-			pageUrl.searchParams.delete('forceAreaUnit');
+			pageUrl.searchParams.delete('areaUnit');
 			pageUrl.searchParams.delete('computeElevation');
 		}
 		if (demoOptions.controlType == 'valhalla') {

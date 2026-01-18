@@ -1,7 +1,7 @@
 import { defaultMeasureUnitSymbols } from '../constants';
 import type {
 	MeasureUnitType,
-	forceAreaUnitType,
+	areaUnitType,
 	ImperialAreaUnit,
 	MetricAreaUnit,
 	MeasureUnitSymbolType
@@ -11,61 +11,86 @@ import type {
  * convert area unit to metric or imperial
  * @param value area value in m2
  * @param unit area unit either metric or imperial
- * @param forceUnit Default is `auto`. If `auto` is set, unit is converted depending on the value and selection of area unit. If a specific unit is specified, it returns the value always the same. If a selected unit is not the same type of unit either metric of imperial, it will be ignored, and `auto` will be applied.
+ * @param forceUnit Default is `auto`. If `auto` is set, unit is converted depending on the value and selection of area unit. If a specific unit is specified, it returns the value always in that unit regardless of measureUnitType.
  * @param measureUnitSymbols Optional parameter to provide custom unit symbols
  * @returns result object with area and unit properties after unit conversion
  */
 export const convertArea = (
 	value: number,
 	unit: MeasureUnitType,
-	forceUnit: forceAreaUnitType = 'auto',
+	areaUnit: areaUnitType = undefined,
 	measureUnitSymbols = defaultMeasureUnitSymbols
-) => {
+): { area: number; unit: string } => {
 	// Define metric and imperial units
 	const metricUnits = ['square meters', 'square kilometers', 'ares', 'hectares'];
 	const imperialUnits = ['square feet', 'square yards', 'acres', 'square miles'];
 
-	// Check if forceUnit matches the selected unit type, otherwise treat as 'auto'
-	let effectiveForceUnit = forceUnit;
-	if (forceUnit !== 'auto') {
-		const isMetricForceUnit = metricUnits.includes(forceUnit);
-		const isImperialForceUnit = imperialUnits.includes(forceUnit);
+	if (areaUnit && typeof areaUnit !== 'function') {
+		// if areaUnit is a specific unit, use it for conversion
+		const isMetricAreaUnit = metricUnits.includes(areaUnit);
+		const isImperialAreaUnit = imperialUnits.includes(areaUnit);
 
-		if (
-			(unit === 'metric' && !isMetricForceUnit) ||
-			(unit === 'imperial' && !isImperialForceUnit)
-		) {
-			effectiveForceUnit = 'auto';
+		if (isMetricAreaUnit) {
+			return convertMetricUnit(value, areaUnit as MetricAreaUnit, measureUnitSymbols);
+		} else if (isImperialAreaUnit) {
+			return convertImperialUnit(value, areaUnit as ImperialAreaUnit, measureUnitSymbols);
 		}
 	}
 
-	if (unit === 'metric') {
-		if (effectiveForceUnit !== 'auto') {
-			return convertMetricUnit(value, effectiveForceUnit as MetricAreaUnit, measureUnitSymbols);
+	if (areaUnit && typeof areaUnit === 'function') {
+		// If areaUnit is a callback function, use it for conversion
+		return areaUnit(value);
+	} else {
+		// Auto mode: convert based on measureUnitType and value
+		return defaultAutoUnitConversion(value, unit, measureUnitSymbols);
+	}
+};
+
+/**
+ * Automatically converts an area value from square meters to the most appropriate unit
+ * based on the specified measurement system and the value's magnitude.
+ *
+ * For metric system:
+ * - Values >= 1,000,000m² are converted to square kilometers
+ * - Values >= 10,000m² are converted to hectares
+ * - Values >= 100m² are converted to ares
+ * - Values < 100m² are kept as square meters
+ *
+ * For imperial system:
+ * - Values >= 2,589,988.11m² (1 square mile) are converted to square miles
+ * - Values >= 4,046.856m² (1 acre) are converted to acres
+ * - Values >= 0.83612736m² (1 square yard) are converted to square yards
+ * - Values < 0.83612736m² are converted to square feet
+ *
+ * @param valueInSquareMeters - The area value in square meters to be converted
+ * @param measureUnitType - The measurement system to use ('metric' or 'imperial')
+ * @param measureUnitSymbols - An object containing the symbol representations for each unit
+ * @returns An object containing the converted area value and its corresponding unit symbol
+ */
+const defaultAutoUnitConversion = (
+	valueInSquareMeters: number,
+	measureUnitType: MeasureUnitType,
+	measureUnitSymbols: MeasureUnitSymbolType
+) => {
+	if (measureUnitType === 'metric') {
+		if (valueInSquareMeters >= 1000000) {
+			return convertMetricUnit(valueInSquareMeters, 'square kilometers', measureUnitSymbols);
+		} else if (valueInSquareMeters >= 10000) {
+			return convertMetricUnit(valueInSquareMeters, 'hectares', measureUnitSymbols);
+		} else if (valueInSquareMeters >= 100) {
+			return convertMetricUnit(valueInSquareMeters, 'ares', measureUnitSymbols);
 		} else {
-			if (value >= 1000000) {
-				return convertMetricUnit(value, 'square kilometers', measureUnitSymbols);
-			} else if (value >= 10000) {
-				return convertMetricUnit(value, 'hectares', measureUnitSymbols);
-			} else if (value >= 100) {
-				return convertMetricUnit(value, 'ares', measureUnitSymbols);
-			} else {
-				return convertMetricUnit(value, 'square meters', measureUnitSymbols);
-			}
+			return convertMetricUnit(valueInSquareMeters, 'square meters', measureUnitSymbols);
 		}
 	} else {
-		if (effectiveForceUnit !== 'auto') {
-			return convertImperialUnit(value, effectiveForceUnit as ImperialAreaUnit, measureUnitSymbols);
+		if (valueInSquareMeters >= 2589988.11) {
+			return convertImperialUnit(valueInSquareMeters, 'square miles', measureUnitSymbols);
+		} else if (valueInSquareMeters >= 4046.856) {
+			return convertImperialUnit(valueInSquareMeters, 'acres', measureUnitSymbols);
+		} else if (valueInSquareMeters >= 0.83612736) {
+			return convertImperialUnit(valueInSquareMeters, 'square yards', measureUnitSymbols);
 		} else {
-			if (value >= 2589988.11) {
-				return convertImperialUnit(value, 'square miles', measureUnitSymbols);
-			} else if (value >= 4046.856) {
-				return convertImperialUnit(value, 'acres', measureUnitSymbols);
-			} else if (value >= 0.83612736) {
-				return convertImperialUnit(value, 'square yards', measureUnitSymbols);
-			} else {
-				return convertImperialUnit(value, 'square feet', measureUnitSymbols);
-			}
+			return convertImperialUnit(valueInSquareMeters, 'square feet', measureUnitSymbols);
 		}
 	}
 };

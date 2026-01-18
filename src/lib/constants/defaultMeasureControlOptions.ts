@@ -423,9 +423,9 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 	terrainSource: MAPTERHORN_TILES,
 	measureUnitType: 'metric',
 	distancePrecision: 2,
-	forceDistanceUnit: 'auto',
+	distanceUnit: undefined,
 	areaPrecision: 2,
-	forceAreaUnit: 'auto',
+	areaUnit: undefined,
 	measureUnitSymbols: JSON.parse(JSON.stringify(defaultMeasureUnitSymbols)),
 	elevationCacheConfig: {
 		enabled: true,

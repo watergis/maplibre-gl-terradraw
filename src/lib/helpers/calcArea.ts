@@ -1,7 +1,7 @@
 import type {
 	MeasureUnitSymbolType,
 	MeasureUnitType,
-	forceAreaUnitType
+	areaUnitType
 } from '../interfaces/MeasureUnit';
 import area from '@turf/area';
 import type { GeoJSONStoreFeatures } from 'terra-draw';
@@ -20,14 +20,14 @@ export const calcArea = (
 	feature: GeoJSONStoreFeatures,
 	unitType: MeasureUnitType,
 	areaPrecision: number,
-	forceUnit?: forceAreaUnitType,
+	areaUnit?: areaUnitType,
 	measureUnitSymbols?: MeasureUnitSymbolType
 ) => {
 	if (feature.geometry.type !== 'Polygon') return feature;
-	// caculate area in m2 by using turf/area
+	// calculate area in m2 by using turf/area
 	const result = area(feature.geometry);
 
-	const converted = convertArea(result, unitType, forceUnit, measureUnitSymbols);
+	const converted = convertArea(result, unitType, areaUnit, measureUnitSymbols);
 	converted.area = parseFloat(converted.area.toFixed(areaPrecision));
 
 	feature.properties.area = converted.area;

@@ -294,57 +294,57 @@ describe('areaPrecision', () => {
 	});
 });
 
-describe('forceDistanceUnit', () => {
-	it('should return forceDistanceUnit value user set', () => {
-		const control = new MaplibreMeasureControl({ forceDistanceUnit: 'meter' });
-		expect(control.forceDistanceUnit).toEqual('meter');
+describe('distanceUnit', () => {
+	it('should return distanceUnit value user set', () => {
+		const control = new MaplibreMeasureControl({ distanceUnit: 'meter' });
+		expect(control.distanceUnit).toEqual('meter');
 	});
 
-	it('should return default forceDistanceUnit value if user does not specify', () => {
+	it('should return default distanceUnit value if user does not specify', () => {
 		const control = new MaplibreMeasureControl();
-		expect(control.forceDistanceUnit).toEqual('auto');
+		expect(control.distanceUnit).toBeUndefined();
 	});
 
-	it('should return forceDistanceUnit value if user set through property', () => {
+	it('should return distanceUnit value if user set through property', () => {
 		const control = new MaplibreMeasureControl({
-			forceDistanceUnit: 'meter',
+			distanceUnit: 'meter',
 			measureUnitType: 'metric'
 		});
 
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore;
 		const spy = vi.spyOn(control, 'recalc');
-		control.forceDistanceUnit = 'centimeter';
-		expect(control.forceDistanceUnit).toEqual('centimeter');
+		control.distanceUnit = 'centimeter';
+		expect(control.distanceUnit).toEqual('centimeter');
 		expect(spy).toHaveBeenCalled();
 	});
 });
 
-describe('forceAreaUnit', () => {
-	it('should return forceAreaUnit value user set', () => {
+describe('areaUnit', () => {
+	it('should return areaUnit value user set', () => {
 		const control = new MaplibreMeasureControl({
-			forceAreaUnit: 'hectares',
+			areaUnit: 'hectares',
 			measureUnitType: 'imperial'
 		});
-		expect(control.forceAreaUnit).toEqual('hectares');
+		expect(control.areaUnit).toEqual('hectares');
 	});
 
-	it('should return default forceAreaUnit value if user does not specify', () => {
+	it('should return default areaUnit value if user does not specify', () => {
 		const control = new MaplibreMeasureControl();
-		expect(control.forceAreaUnit).toEqual('auto');
+		expect(control.areaUnit).toBeUndefined();
 	});
 
-	it('should return forceAreaUnit value if user set through property', () => {
+	it('should return areaUnit value if user set through property', () => {
 		const control = new MaplibreMeasureControl({
-			forceAreaUnit: 'hectares',
+			areaUnit: 'hectares',
 			measureUnitType: 'imperial'
 		});
 
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore;
 		const spy = vi.spyOn(control, 'recalc');
-		control.forceAreaUnit = 'acres';
-		expect(control.forceAreaUnit).toEqual('acres');
+		control.areaUnit = 'acres';
+		expect(control.areaUnit).toEqual('acres');
 		expect(spy).toHaveBeenCalled();
 	});
 });

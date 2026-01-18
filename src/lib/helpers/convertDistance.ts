@@ -1,16 +1,15 @@
 import { defaultMeasureUnitSymbols } from '../constants';
-import type { forceDistanceUnitType, MeasureUnitSymbolType, MeasureUnitType } from '../interfaces';
+import type { distanceUnitType, MeasureUnitSymbolType, MeasureUnitType } from '../interfaces';
 
 /**
  * Convert distance according to the distance unit given.
  *
- * Converts a distance in kilometers or miles to the appropriate unit based on the `unit` and `forceUnit` parameters.
- * - For `kilometers`, it converts to km, m, or cm depending on the value and `forceUnit`.
- * - For `miles`, it converts to mi, ft, or in depending on the value and `forceUnit`.
- * - For `degrees` or `radians`, it returns the value unchanged with the corresponding unit symbol.
+ * Converts a distance in meters to the appropriate unit based on the `unit` and `forceUnit` parameters.
+ * - For `metric`, it converts to km, m, or cm depending on the value and `forceUnit`.
+ * - For `imperial`, it converts to mi, ft, or in depending on the value and `forceUnit`.
  *
- * @param value - The distance in the unit specified by the `unit` parameter.
- * @param unit - The unit of the input distance type: "metric", or "imperial" (default is 'metric').
+ * @param value - The distance in meters.
+ * @param unit - The unit system for output: "metric" or "imperial" (default is 'metric').
  * @param forceUnit - Default is `auto`. If `auto` is set, the unit is converted automatically based on the value. If a specific unit is set, the value is converted to that unit.
  * @param measureUnitSymbols Optional parameter to provide custom unit symbols
  * @returns The converted value and unit.
@@ -18,75 +17,123 @@ import type { forceDistanceUnitType, MeasureUnitSymbolType, MeasureUnitType } fr
 export const convertDistance = (
 	value: number,
 	unit: MeasureUnitType = 'metric',
-	forceUnit: forceDistanceUnitType = 'auto',
+	forceUnit: distanceUnitType = undefined,
 	measureUnitSymbols = defaultMeasureUnitSymbols
 ): { distance: number; unit: string } => {
 	// Define metric and imperial units
 	const metricUnits = ['centimeter', 'meter', 'kilometer'];
 	const imperialUnits = ['inch', 'foot', 'mile'];
 
-	// Check if forceUnit matches the selected unit type, otherwise treat as 'auto'
-	let effectiveForceUnit = forceUnit;
-	if (forceUnit !== 'auto') {
+	let result: { distance: number; unit: string } = {
+		distance: value,
+		unit: measureUnitSymbols['meter']
+	};
+
+	if (forceUnit && typeof forceUnit !== 'function') {
+		// if forceUnit is a specific unit, use it for conversion
 		const isMetricForceUnit = metricUnits.includes(forceUnit);
 		const isImperialForceUnit = imperialUnits.includes(forceUnit);
 
-		if (
-			(unit === 'metric' && !isMetricForceUnit) ||
-			(unit === 'imperial' && !isImperialForceUnit)
-		) {
-			effectiveForceUnit = 'auto';
+		if (isMetricForceUnit) {
+			result = convertMetricUnit(value, forceUnit, measureUnitSymbols);
+		} else if (isImperialForceUnit) {
+			result = convertImperialUnit(value, forceUnit, measureUnitSymbols);
+		}
+	} else {
+		if (forceUnit && typeof forceUnit === 'function') {
+			// If forceUnit is a callback function, use it for conversion
+			result = forceUnit(value);
+		} else {
+			// If custom function is not set, use the unit parameter to determine the unit system
+			result = defaultAutoUnitConversion(value, unit, measureUnitSymbols);
 		}
 	}
+	// Default case: return meters if unit is not recognized
+	return result;
+};
 
+/**
+ * Automatically converts a distance value from meters to the most appropriate unit
+ * based on the specified measurement system and the value's magnitude.
+ *
+ * For metric system:
+ * - Values >= 1000m are converted to kilometers
+ * - Values >= 1m are kept as meters
+ * - Values < 1m are converted to centimeters
+ *
+ * For imperial system:
+ * - Values >= 5280ft (1 mile) are converted to miles
+ * - Values >= 1ft are kept as feet
+ * - Values < 1ft are converted to inches
+ *
+ * @param valueInMeter - The distance value in meters to be converted
+ * @param measureUnitType - The measurement system to use ('metric' or 'imperial')
+ * @param measureUnitSymbols - An object containing the symbol representations for each unit
+ * @returns An object containing the converted distance value and its corresponding unit symbol
+ */
+const defaultAutoUnitConversion = (
+	valueInMeter: number,
+	measureUnitType: MeasureUnitType,
+	measureUnitSymbols: MeasureUnitSymbolType
+) => {
 	let result: { distance: number; unit: string } = {
-		distance: value,
-		unit: measureUnitSymbols['kilometer']
+		distance: valueInMeter,
+		unit: measureUnitSymbols['meter']
 	};
 
-	if (unit === 'metric') {
-		result = convertMetricUnit(value, effectiveForceUnit, measureUnitSymbols);
-	} else if (unit === 'imperial') {
-		result = convertImperialUnit(value, effectiveForceUnit, measureUnitSymbols);
+	if (measureUnitType === 'metric') {
+		// if auto, determine the best unit based on the value
+		if (valueInMeter >= 1000) {
+			result = convertMetricUnit(valueInMeter, 'kilometer', measureUnitSymbols);
+		} else if (valueInMeter >= 1) {
+			result = convertMetricUnit(valueInMeter, 'meter', measureUnitSymbols);
+		} else {
+			result = convertMetricUnit(valueInMeter, 'centimeter', measureUnitSymbols);
+		}
+	} else if (measureUnitType === 'imperial') {
+		// Convert meters to feet first (1 meter = 3.28084 feet)
+		// Round to 1 decimal place to avoid floating point precision issues
+		const valueInFeet = Math.round(valueInMeter * 3.28084 * 10) / 10;
+		// if auto, determine the best unit based on the value in feet
+		if (valueInFeet >= 5280) {
+			result = convertImperialUnit(valueInMeter, 'mile', measureUnitSymbols);
+		} else if (valueInFeet >= 1) {
+			result = convertImperialUnit(valueInMeter, 'foot', measureUnitSymbols);
+		} else {
+			result = convertImperialUnit(valueInMeter, 'inch', measureUnitSymbols);
+		}
 	}
-	// Default case: return kilometers if unit is not recognized
 	return result;
 };
 
 const convertMetricUnit = (
 	value: number,
-	unit: forceDistanceUnitType,
+	unit: distanceUnitType,
 	measureUnitSymbols: MeasureUnitSymbolType
 ) => {
-	let result: { distance: number; unit: string } = {
+	const result: { distance: number; unit: string } = {
 		distance: value,
-		unit: measureUnitSymbols['kilometer']
+		unit: measureUnitSymbols['meter']
 	};
 	// Convert based on the specified or auto-detected unit
+	// Input value is in meters
 	switch (unit) {
 		case 'meter':
-			result.distance = value * 1000;
+			result.distance = value;
 			result.unit = measureUnitSymbols[unit];
 			break;
 		case 'centimeter':
-			result.distance = value * 100000;
+			result.distance = value * 100;
 			result.unit = measureUnitSymbols[unit];
 			break;
-		case 'auto':
-			// if auto, determine the best unit based on the value
-			if (value >= 1) {
-				result = convertMetricUnit(value, 'kilometer', measureUnitSymbols);
-			} else if (value * 1000 >= 1) {
-				result = convertMetricUnit(value, 'meter', measureUnitSymbols);
-			} else {
-				result = convertMetricUnit(value, 'centimeter', measureUnitSymbols);
-			}
-			break;
 		case 'kilometer':
+			result.distance = value / 1000;
+			result.unit = measureUnitSymbols[unit];
+			break;
 		default:
-			// km as a fallback
+			// meter as a fallback
 			result.distance = value;
-			result.unit = measureUnitSymbols['kilometer'];
+			result.unit = measureUnitSymbols['meter'];
 			break;
 	}
 	return result;
@@ -94,37 +141,31 @@ const convertMetricUnit = (
 
 const convertImperialUnit = (
 	value: number,
-	unit: forceDistanceUnitType,
+	unit: distanceUnitType,
 	measureUnitSymbols: MeasureUnitSymbolType
 ) => {
-	let result: { distance: number; unit: string } = {
-		distance: value,
+	// Convert meters to feet first (1 meter = 3.28084 feet)
+	// Round to 1 decimal place to avoid floating point precision issues
+	const valueInFeet = Math.round(value * 3.28084 * 10) / 10;
+
+	const result: { distance: number; unit: string } = {
+		distance: valueInFeet / 5280,
 		unit: measureUnitSymbols['mile']
 	};
 	// Convert based on the specified or auto-detected unit
 	switch (unit) {
 		case 'foot':
-			result.distance = value * 5280;
+			result.distance = valueInFeet;
 			result.unit = measureUnitSymbols[unit];
 			break;
 		case 'inch':
-			result.distance = value * 63360;
+			result.distance = valueInFeet * 12;
 			result.unit = measureUnitSymbols[unit];
-			break;
-		case 'auto':
-			// if auto, determine the best unit based on the value
-			if (value >= 1) {
-				result = convertImperialUnit(value, 'mile', measureUnitSymbols);
-			} else if (value * 5280 >= 1) {
-				result = convertImperialUnit(value, 'foot', measureUnitSymbols);
-			} else {
-				result = convertImperialUnit(value, 'inch', measureUnitSymbols);
-			}
 			break;
 		case 'mile':
 		default:
 			// mile as a fallback
-			result.distance = value;
+			result.distance = valueInFeet / 5280;
 			result.unit = measureUnitSymbols['mile'];
 			break;
 	}

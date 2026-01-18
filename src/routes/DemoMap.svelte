@@ -6,9 +6,9 @@
 		modes: TerradrawMode[];
 		measureUnitType: MeasureUnitType;
 		distancePrecision: number;
-		forceDistanceUnit: forceDistanceUnitType;
+		distanceUnit: MetricDistanceUnit | ImperialDistanceUnit | 'auto';
 		areaPrecision: number;
-		forceAreaUnit: forceAreaUnitType;
+		areaUnit: MetricAreaUnit | ImperialAreaUnit | 'auto';
 		computeElevation: 'enabled' | 'disabled';
 		valhallaOptions: ValhallaOptions;
 	}
@@ -29,9 +29,12 @@
 		type Contour,
 		type ContourType,
 		type costingModelType,
-		type forceAreaUnitType,
-		type forceDistanceUnitType,
+		type distanceUnitType,
+		type ImperialAreaUnit,
+		type ImperialDistanceUnit,
 		type MeasureUnitType,
+		type MetricAreaUnit,
+		type MetricDistanceUnit,
 		type routingDistanceUnitType,
 		type TerradrawMode,
 		type TerradrawValhallaMode,
@@ -85,10 +88,9 @@
 			modes: JSON.parse(JSON.stringify(AvailableModes)),
 			measureUnitType: 'metric',
 			distancePrecision: 2,
-			forceDistanceUnit: 'auto',
-			areaUnit: 'metric',
+			distanceUnit: 'auto',
 			areaPrecision: 2,
-			forceAreaUnit: 'auto',
+			areaUnit: 'auto',
 			computeElevation: 'enabled',
 			valhallaOptions: {
 				url: '',
@@ -192,9 +194,10 @@
 				open: options.isOpen === 'open',
 				showDeleteConfirmation: options.showDeleteConfirmation,
 				measureUnitType: options.measureUnitType,
+				distanceUnit: options.distanceUnit === 'auto' ? undefined : options.distanceUnit,
 				distancePrecision: options.distancePrecision,
 				areaPrecision: options.areaPrecision,
-				forceAreaUnit: options.forceAreaUnit,
+				areaUnit: options.areaUnit === 'auto' ? undefined : options.areaUnit,
 				computeElevation: options.computeElevation === 'enabled',
 				adapterOptions: {
 					prefixId: 'td-measure'
@@ -741,18 +744,21 @@
 
 							<Accordion.Item value="force-distance-unit">
 								<Accordion.ItemTrigger>
-									<p class="font-bold uppercase italic">Force Distance unit</p>
+									<p class="font-bold uppercase italic">Distance unit</p>
 								</Accordion.ItemTrigger>
 								<Accordion.ItemContent>
 									<select
 										class="select"
-										value={options.forceDistanceUnit}
+										value={options.distanceUnit}
 										onchange={(e) => {
-											options.forceDistanceUnit = (e.target as HTMLSelectElement)
-												.value as forceDistanceUnitType;
+											const value = (e.target as HTMLSelectElement).value as
+												| MetricDistanceUnit
+												| ImperialDistanceUnit
+												| 'auto';
+											options.distanceUnit = value;
 											if (drawControl && options.controlType === 'measure') {
-												(drawControl as MaplibreMeasureControl).forceDistanceUnit =
-													options.forceDistanceUnit;
+												(drawControl as MaplibreMeasureControl).distanceUnit =
+													value === 'auto' ? undefined : (value as distanceUnitType);
 											}
 											onchange(options);
 										}}
@@ -773,18 +779,21 @@
 
 							<Accordion.Item value="force-area-unit">
 								<Accordion.ItemTrigger>
-									<p class="font-bold uppercase italic">Force Area unit</p>
+									<p class="font-bold uppercase italic">Area unit</p>
 								</Accordion.ItemTrigger>
 								<Accordion.ItemContent>
 									<select
 										class="select"
-										value={options.forceAreaUnit}
+										value={options.areaUnit}
 										onchange={(e) => {
-											options.forceAreaUnit = (e.target as HTMLSelectElement)
-												.value as forceAreaUnitType;
+											const value = (e.target as HTMLSelectElement).value as
+												| MetricAreaUnit
+												| ImperialAreaUnit
+												| 'auto';
+											options.areaUnit = value;
 											if (drawControl && options.controlType === 'measure') {
-												(drawControl as MaplibreMeasureControl).forceAreaUnit =
-													options.forceAreaUnit;
+												(drawControl as MaplibreMeasureControl).areaUnit =
+													value === 'auto' ? undefined : value;
 											}
 											onchange(options);
 										}}

@@ -3,7 +3,7 @@ import type { GeoJSONStoreFeatures } from 'terra-draw';
 import type { LngLatLike, Map } from 'maplibre-gl';
 import type {
 	MeasureUnitType,
-	forceDistanceUnitType,
+	distanceUnitType,
 	TerrainSource,
 	MeasureUnitSymbolType
 } from '../interfaces';
@@ -25,7 +25,7 @@ export const calcDistance = (
 	feature: GeoJSONStoreFeatures,
 	unitType: MeasureUnitType,
 	distancePrecision: number,
-	forceUnit?: forceDistanceUnitType,
+	forceUnit?: distanceUnitType,
 	measureUnitSymbols?: MeasureUnitSymbolType,
 	map?: Map,
 	computeElevation?: boolean,
@@ -41,7 +41,7 @@ export const calcDistance = (
 	for (let i = 0; i < coordinates.length - 1; i++) {
 		const start = coordinates[i];
 		const end = coordinates[i + 1];
-		const result = distance(start, end, { units: unitType === 'metric' ? 'kilometers' : 'miles' });
+		const result = distance(start, end, { units: 'meters' });
 		totalDistance += result;
 
 		// segment
@@ -68,7 +68,9 @@ export const calcDistance = (
 	}
 
 	feature.properties.distance = segments[segments.length - 1].properties.total;
-	feature.properties.segments = JSON.parse(JSON.stringify(segments));
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-ignore
+	feature.properties.segments = segments;
 
 	// convert distance unit
 	const convertedDistance = convertDistance(

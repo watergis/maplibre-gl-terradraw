@@ -18,15 +18,15 @@ import type {
 export const convertArea = (
 	value: number,
 	unit: MeasureUnitType,
-	forceUnit: forceAreaUnitType = 'auto',
+	forceUnit: forceAreaUnitType = undefined,
 	measureUnitSymbols = defaultMeasureUnitSymbols
-) => {
+): { area: number; unit: string } => {
 	// Define metric and imperial units
 	const metricUnits = ['square meters', 'square kilometers', 'ares', 'hectares'];
 	const imperialUnits = ['square feet', 'square yards', 'acres', 'square miles'];
 
-	// If forceUnit is specified (not 'auto'), use it regardless of measureUnitType
-	if (forceUnit !== 'auto') {
+	if (forceUnit && typeof forceUnit !== 'function') {
+		// if forceUnit is a specific unit, use it for conversion
 		const isMetricForceUnit = metricUnits.includes(forceUnit);
 		const isImperialForceUnit = imperialUnits.includes(forceUnit);
 
@@ -37,8 +37,13 @@ export const convertArea = (
 		}
 	}
 
-	// Auto mode: convert based on measureUnitType and value
-	return defaultAutoUnitConversion(value, unit, measureUnitSymbols);
+	if (forceUnit && typeof forceUnit === 'function') {
+		// If forceUnit is a callback function, use it for conversion
+		return forceUnit(value);
+	} else {
+		// Auto mode: convert based on measureUnitType and value
+		return defaultAutoUnitConversion(value, unit, measureUnitSymbols);
+	}
 };
 
 /**

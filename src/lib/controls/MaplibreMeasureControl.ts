@@ -81,9 +81,8 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * - Values >= 1ft are kept as feet
 	 * - Values < 1ft are converted to inches
 	 *
-	 * If a specific unit is specified (e.g., 'km', 'm', 'cm', 'mi', 'ft', 'in'), the value is always returned in that unit.
-	 * This property is only effective when `distanceUnit` is set to 'kilometers' or 'miles'.
-	 * If you need to force other unit type, please use DistanceUnit property.
+	 * If a specific unit is specified (e.g., 'km', 'm', 'cm', 'mi', 'ft', 'in'),
+	 * the value is always returned in that unit.
 	 *
 	 * Custom conversion function can be also set to this property.
 	 * The function receives the distance value in meters and should return an object with `distance` and `unit` properties.
@@ -121,10 +120,39 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	}
 
 	/**
-	 * Default is `auto`. If `auto` is set, unit is converted depending on the value and selection of area unit. If a specific unit is specified, it returns the value always the same. If a selected unit is not the same type of unit either metric of imperial, it will be ignored, and `auto` will be applied.
+	 * Default is undefined. If undefined is set,the unit is converted automatically based on the value.
+	 *
+	 * For metric system:
+	 * - Values >= 1,000,000m² are converted to square kilometers
+	 * - Values >= 10,000m² are converted to hectares
+	 * - Values >= 100m² are converted to ares
+	 * - Values < 100m² are kept as square meters
+	 *
+	 * For imperial system:
+	 * - Values >= 2,589,988.11m² (1 square mile) are converted to square miles
+	 * - Values >= 4,046.856m² (1 acre) are converted to acres
+	 * - Values >= 0.83612736m² (1 square yard) are converted to square yards
+	 * - Values < 0.83612736m² are converted to square feet
+	 *
+	 * If a specific unit is specified (e.g., 'square meters', 'square kilometers', 'ares', 'hectares',
+	 * 'square feet', 'square yards', 'acres', 'square miles'), the value is always returned in that unit.
+	 *
+	 * Custom conversion function can be also set to this property.
+	 * The function receives the area value in square meters and should return an object with `area` and `unit` properties.
+	 *
+	 * An example of custom conversion function:
+	 * 	```ts
+	 * const customConversion: AreaUnitCallBackType = (valueInSquareMeters) => {
+	 *    if (valueInSquareMeters >= 1000) {
+	 * 	  return { area: valueInSquareMeters / 1000, unit: 'km²' };
+	 *  } else {
+	 * 	return { area: valueInSquareMeters, unit: 'm²' };
+	 * };
+	 * control.areaUnit = customConversion;
+	 * ```
 	 */
 	get forceAreaUnit() {
-		return this.measureOptions.forceAreaUnit ?? 'auto';
+		return this.measureOptions.forceAreaUnit;
 	}
 	set forceAreaUnit(value: forceAreaUnitType) {
 		const isSame = this.measureOptions.forceAreaUnit === value;

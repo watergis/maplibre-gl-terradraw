@@ -8,7 +8,7 @@
 		distancePrecision: number;
 		distanceUnit: MetricDistanceUnit | ImperialDistanceUnit | 'auto';
 		areaPrecision: number;
-		forceAreaUnit: forceAreaUnitType;
+		forceAreaUnit: MetricAreaUnit | ImperialAreaUnit | 'auto';
 		computeElevation: 'enabled' | 'disabled';
 		valhallaOptions: ValhallaOptions;
 	}
@@ -30,9 +30,10 @@
 		type ContourType,
 		type costingModelType,
 		type distanceUnitType,
-		type forceAreaUnitType,
+		type ImperialAreaUnit,
 		type ImperialDistanceUnit,
 		type MeasureUnitType,
+		type MetricAreaUnit,
 		type MetricDistanceUnit,
 		type routingDistanceUnitType,
 		type TerradrawMode,
@@ -197,7 +198,7 @@
 				distanceUnit: options.distanceUnit === 'auto' ? undefined : options.distanceUnit,
 				distancePrecision: options.distancePrecision,
 				areaPrecision: options.areaPrecision,
-				forceAreaUnit: options.forceAreaUnit,
+				forceAreaUnit: options.forceAreaUnit === 'auto' ? undefined : options.forceAreaUnit,
 				computeElevation: options.computeElevation === 'enabled',
 				adapterOptions: {
 					prefixId: 'td-measure'
@@ -786,11 +787,13 @@
 										class="select"
 										value={options.forceAreaUnit}
 										onchange={(e) => {
-											options.forceAreaUnit = (e.target as HTMLSelectElement)
-												.value as forceAreaUnitType;
+											const value = (e.target as HTMLSelectElement).value as
+												| MetricAreaUnit
+												| ImperialAreaUnit
+												| 'auto';
 											if (drawControl && options.controlType === 'measure') {
 												(drawControl as MaplibreMeasureControl).forceAreaUnit =
-													options.forceAreaUnit;
+													value === 'auto' ? undefined : value;
 											}
 											onchange(options);
 										}}

@@ -425,7 +425,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 	distancePrecision: 2,
 	distanceUnit: undefined,
 	areaPrecision: 2,
-	forceAreaUnit: 'auto',
+	forceAreaUnit: undefined,
 	measureUnitSymbols: JSON.parse(JSON.stringify(defaultMeasureUnitSymbols)),
 	elevationCacheConfig: {
 		enabled: true,

@@ -4,9 +4,10 @@
 	import {
 		AvailableModes,
 		debounce,
-		type forceAreaUnitType,
+		type ImperialAreaUnit,
 		type ImperialDistanceUnit,
 		type MeasureUnitType,
+		type MetricAreaUnit,
 		type MetricDistanceUnit,
 		type TerradrawMode,
 		type ValhallaOptions
@@ -45,7 +46,8 @@
 			(page.url.searchParams.get('distanceUnit') as MetricDistanceUnit | ImperialDistanceUnit) ??
 			'auto',
 		areaPrecision: parseInt(page.url.searchParams.get('areaPrecision') ?? '2'),
-		forceAreaUnit: (page.url.searchParams.get('forceAreaUnit') as forceAreaUnitType) ?? 'auto',
+		forceAreaUnit:
+			(page.url.searchParams.get('forceAreaUnit') as MetricAreaUnit | ImperialAreaUnit) ?? 'auto',
 		computeElevation:
 			(page.url.searchParams.get('computeElevation') as 'enabled' | 'disabled') ?? 'enabled',
 		valhallaOptions: (page.url.searchParams.get('valhallaOptions')
@@ -132,7 +134,11 @@
 				pageUrl.searchParams.set('distanceUnit', demoOptions.distanceUnit);
 			}
 			pageUrl.searchParams.set('areaPrecision', demoOptions.areaPrecision.toString());
-			pageUrl.searchParams.set('forceAreaUnit', demoOptions.forceAreaUnit);
+			if (demoOptions.forceAreaUnit === 'auto') {
+				pageUrl.searchParams.delete('forceAreaUnit');
+			} else {
+				pageUrl.searchParams.set('forceAreaUnit', demoOptions.forceAreaUnit);
+			}
 			pageUrl.searchParams.set('computeElevation', demoOptions.computeElevation);
 		} else {
 			pageUrl.searchParams.delete('measureUnitType');
@@ -163,7 +169,9 @@
 			options.push(`distanceUnit: '${demoOptions.distanceUnit}'`);
 		}
 		options.push(`areaPrecision: ${demoOptions.areaPrecision}`);
-		options.push(`forceAreaUnit: '${demoOptions.forceAreaUnit}'`);
+		if (demoOptions.forceAreaUnit !== 'auto') {
+			options.push(`forceAreaUnit: '${demoOptions.forceAreaUnit}'`);
+		}
 		options.push(
 			`computeElevation: ${demoOptions.computeElevation === 'enabled' ? 'true' : 'false'}`
 		);

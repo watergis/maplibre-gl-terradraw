@@ -331,7 +331,7 @@ describe('forceAreaUnit', () => {
 
 	it('should return default forceAreaUnit value if user does not specify', () => {
 		const control = new MaplibreMeasureControl();
-		expect(control.forceAreaUnit).toEqual('auto');
+		expect(control.forceAreaUnit).toBeUndefined();
 	});
 
 	it('should return forceAreaUnit value if user set through property', () => {

@@ -134,8 +134,19 @@ describe('convertArea', () => {
 
 	describe('ForceUnit - Explicit auto parameter', () => {
 		it('should behave normally when forceUnit is explicitly set to auto', () => {
-			expect(convertArea(20000, 'metric', 'auto')).toEqual({ area: 2, unit: 'ha' });
-			expect(convertArea(8093.712, 'imperial', 'auto')).toEqual({ area: 2, unit: 'acres' });
+			expect(convertArea(20000, 'metric', undefined)).toEqual({ area: 2, unit: 'ha' });
+			expect(convertArea(8093.712, 'imperial', undefined)).toEqual({ area: 2, unit: 'acres' });
+		});
+	});
+
+	describe('Custom conversion function', () => {
+		it('should return corresponding value when forceAreaUnit is custom callback', () => {
+			expect(
+				convertArea(1000, 'metric', (areaInSquareMeters) => ({
+					area: areaInSquareMeters / 1000,
+					unit: 'KM2'
+				}))
+			).toEqual({ area: 1, unit: 'KM2' });
 		});
 	});
 
@@ -158,38 +169,38 @@ describe('convertArea', () => {
 		};
 
 		it('should use custom symbols for metric units in auto mode', () => {
-			expect(convertArea(50, 'metric', 'auto', customSymbols)).toEqual({
+			expect(convertArea(50, 'metric', undefined, customSymbols)).toEqual({
 				area: 50,
 				unit: 'sqm'
 			});
-			expect(convertArea(5000, 'metric', 'auto', customSymbols)).toEqual({
+			expect(convertArea(5000, 'metric', undefined, customSymbols)).toEqual({
 				area: 50,
 				unit: 'are'
 			});
-			expect(convertArea(20000, 'metric', 'auto', customSymbols)).toEqual({
+			expect(convertArea(20000, 'metric', undefined, customSymbols)).toEqual({
 				area: 2,
 				unit: 'hect'
 			});
-			expect(convertArea(5000000, 'metric', 'auto', customSymbols)).toEqual({
+			expect(convertArea(5000000, 'metric', undefined, customSymbols)).toEqual({
 				area: 5,
 				unit: 'sqkm'
 			});
 		});
 
 		it('should use custom symbols for imperial units in auto mode', () => {
-			expect(convertArea(0.5, 'imperial', 'auto', customSymbols)).toEqual({
+			expect(convertArea(0.5, 'imperial', undefined, customSymbols)).toEqual({
 				area: 5.381955208354861,
 				unit: 'sqft'
 			});
-			expect(convertArea(1, 'imperial', 'auto', customSymbols)).toEqual({
+			expect(convertArea(1, 'imperial', undefined, customSymbols)).toEqual({
 				area: 1.1959900463010802,
 				unit: 'sqyd'
 			});
-			expect(convertArea(8093.712, 'imperial', 'auto', customSymbols)).toEqual({
+			expect(convertArea(8093.712, 'imperial', undefined, customSymbols)).toEqual({
 				area: 2,
 				unit: 'ac'
 			});
-			expect(convertArea(5179976.22, 'imperial', 'auto', customSymbols)).toEqual({
+			expect(convertArea(5179976.22, 'imperial', undefined, customSymbols)).toEqual({
 				area: 2,
 				unit: 'sqmi'
 			});

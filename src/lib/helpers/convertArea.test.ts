@@ -140,7 +140,7 @@ describe('convertArea', () => {
 	});
 
 	describe('Custom conversion function', () => {
-		it('should return corresponding value when forceAreaUnit is custom callback', () => {
+		it('should return corresponding value when areaUnit is custom callback', () => {
 			expect(
 				convertArea(1000, 'metric', (areaInSquareMeters) => ({
 					area: areaInSquareMeters / 1000,

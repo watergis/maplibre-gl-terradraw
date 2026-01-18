@@ -31,7 +31,7 @@ export type AreaUnitCallBackType = (valueInSquareMeters: number) => { area: numb
 /**
  * The type definition of areaUnitType
  *
- * If undefined is set, it will be treated as 'auto' conversion of area unit accoding the following rules.
+ * If undefined is set, it will be treated as 'auto' conversion of area unit according the following rules.
  * - For metric:
  *  - Values >= 1,000,000 m² are converted to km²
  * - Values >= 10,000 m² are converted to hectares
@@ -76,7 +76,7 @@ export type DistanceUnitCallBackType = (valueInMeter: number) => { distance: num
 /**
  * The type definition of distanceUnitType
  *
- * If undefined is set, it will be treated as 'auto' conversion of distance unit accoding the following rules.
+ * If undefined is set, it will be treated as 'auto' conversion of distance unit according the following rules.
  * - For metric:
  *   - Values >= 1000m are converted to kilometers
  *   - Values >= 1m are kept as meters

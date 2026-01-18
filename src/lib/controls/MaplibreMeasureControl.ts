@@ -87,6 +87,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * Custom conversion function can be also set to this property.
 	 * The function receives the distance value in meters and should return an object with `distance` and `unit` properties.
 	 * An example of custom conversion function:
+	 *
 	 * ```ts
 	 * const customConversion: DistanceUnitCallBackType = (valueInMeter) => {
 	 *    if (valueInMeter >= 1000) {
@@ -141,7 +142,8 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * The function receives the area value in square meters and should return an object with `area` and `unit` properties.
 	 *
 	 * An example of custom conversion function:
-	 * 	```ts
+	 *
+	 * ```ts
 	 * const customConversion: AreaUnitCallBackType = (valueInSquareMeters) => {
 	 *    if (valueInSquareMeters >= 1000) {
 	 * 	  return { area: valueInSquareMeters / 1000, unit: 'km²' };

@@ -68,7 +68,9 @@ export const calcDistance = (
 	}
 
 	feature.properties.distance = segments[segments.length - 1].properties.total;
-	feature.properties.segments = JSON.parse(JSON.stringify(segments));
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-ignore
+	feature.properties.segments = segments;
 
 	// convert distance unit
 	const convertedDistance = convertDistance(

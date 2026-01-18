@@ -69,14 +69,38 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	}
 
 	/**
-	 * Default is `auto`. If `auto` is set, the unit is converted automatically based on the value.
+	 * Default is undefined. If undefined is set, the unit is converted automatically based on the value.
+	 *
+	 * For metric system:
+	 * - Values >= 1000m are converted to kilometers
+	 * - Values >= 1m are kept as meters
+	 * - Values < 1m are converted to centimeters
+	 *
+	 * For imperial system:
+	 * - Values >= 5280ft (1 mile) are converted to miles
+	 * - Values >= 1ft are kept as feet
+	 * - Values < 1ft are converted to inches
+	 *
 	 * If a specific unit is specified (e.g., 'km', 'm', 'cm', 'mi', 'ft', 'in'), the value is always returned in that unit.
 	 * This property is only effective when `distanceUnit` is set to 'kilometers' or 'miles'.
-	 * If `distanceUnit` is set to other values (e.g., 'degrees', 'radians'), it will be ignored, and `auto` will be applied.
 	 * If you need to force other unit type, please use DistanceUnit property.
+	 *
+	 * Custom conversion function can be also set to this property.
+	 * The function receives the distance value in meters and should return an object with `distance` and `unit` properties.
+	 * An example of custom conversion function:
+	 * ```ts
+	 * const customConversion: DistanceUnitCallBackType = (valueInMeter) => {
+	 *    if (valueInMeter >= 1000) {
+	 * 	  return { distance: valueInMeter / 1000, unit: 'km' };
+	 *   } else {
+	 * 	return { distance: valueInMeter, unit: 'm' };
+	 *  };
+	 * };
+	 * control.forceDistanceUnit = customConversion;
+	 * ```
 	 */
 	get forceDistanceUnit() {
-		return this.measureOptions.forceDistanceUnit ?? 'auto';
+		return this.measureOptions.forceDistanceUnit;
 	}
 	set forceDistanceUnit(value: forceDistanceUnitType) {
 		const isSame = this.measureOptions.forceDistanceUnit === value;

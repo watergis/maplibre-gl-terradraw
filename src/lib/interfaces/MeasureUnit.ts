@@ -29,10 +29,40 @@ export type MetricDistanceUnit = 'kilometer' | 'meter' | 'centimeter';
 export type ImperialDistanceUnit = 'mile' | 'foot' | 'inch';
 
 /**
- * The type definition of forceDistanceUnitType
- * Currently only metric and imperial unit short names are supported. If you need other unit type, please use DistanceUnit property.
+ * The callback type for custom distance unit conversion
+ * @param valueInMeter The distance value in meters
+ * @returns The converted value and unit.
+ * @example
+ * const customConversion: DistanceUnitCallBackType = (valueInMeter) => {
+ *     if (valueInMeter >= 1000) {
+ *         return { distance: valueInMeter / 1000, unit: 'km' };
+ *     } else {
+ *         return { distance: valueInMeter, unit: 'm' };
+ *     }
+ * };
  */
-export type forceDistanceUnitType = 'auto' | MetricDistanceUnit | ImperialDistanceUnit;
+export type DistanceUnitCallBackType = (valueInMeter: number) => { distance: number; unit: string };
+
+/**
+ * The type definition of forceDistanceUnitType
+ *
+ * If undefined is set, it will be treated as 'auto' conversion of distance unit accoding the following rules.
+ * - For metric:
+ *   - Values >= 1000m are converted to kilometers
+ *   - Values >= 1m are kept as meters
+ *   - Values < 1m are converted to centimeters
+ * - For imperial:
+ *   - Values >= 5280ft (1 mile) are converted to miles
+ *   - Values >= 1ft are kept as feet
+ *   - Values < 1ft are converted to inches
+ *
+ * If a specific unit is set, the value is converted to that unit.
+ */
+export type forceDistanceUnitType =
+	| DistanceUnitCallBackType
+	| MetricDistanceUnit
+	| ImperialDistanceUnit
+	| undefined;
 
 /**
  * Elevation unit types for metric

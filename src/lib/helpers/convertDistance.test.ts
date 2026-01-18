@@ -3,27 +3,27 @@ import { convertDistance } from './convertDistance';
 
 describe('convertDistance with metric unit', () => {
 	it('should return kilometers when distance is 1000m or more', () => {
-		expect(convertDistance(1000, 'metric', 'auto')).toEqual({ distance: 1, unit: 'km' });
-		expect(convertDistance(2500, 'metric', 'auto')).toEqual({ distance: 2.5, unit: 'km' });
+		expect(convertDistance(1000, 'metric', undefined)).toEqual({ distance: 1, unit: 'km' });
+		expect(convertDistance(2500, 'metric', undefined)).toEqual({ distance: 2.5, unit: 'km' });
 	});
 
 	it('should return meters when distance is 1m or more but less than 1000m', () => {
-		expect(convertDistance(500, 'metric', 'auto')).toEqual({ distance: 500, unit: 'm' });
-		expect(convertDistance(1, 'metric', 'auto')).toEqual({ distance: 1, unit: 'm' });
+		expect(convertDistance(500, 'metric', undefined)).toEqual({ distance: 500, unit: 'm' });
+		expect(convertDistance(1, 'metric', undefined)).toEqual({ distance: 1, unit: 'm' });
 	});
 
 	it('should return centimeters when distance is less than 1 meter', () => {
-		expect(convertDistance(0.5, 'metric', 'auto')).toEqual({ distance: 50, unit: 'cm' });
-		expect(convertDistance(0.01, 'metric', 'auto')).toEqual({ distance: 1, unit: 'cm' });
+		expect(convertDistance(0.5, 'metric', undefined)).toEqual({ distance: 50, unit: 'cm' });
+		expect(convertDistance(0.01, 'metric', undefined)).toEqual({ distance: 1, unit: 'cm' });
 	});
 
 	it('should handle edge case of 0 m', () => {
-		expect(convertDistance(0, 'metric', 'auto')).toEqual({ distance: 0, unit: 'cm' });
+		expect(convertDistance(0, 'metric', undefined)).toEqual({ distance: 0, unit: 'cm' });
 	});
 
 	it('should handle floating point edge values accurately', () => {
-		expect(convertDistance(999, 'metric', 'auto')).toEqual({ distance: 999, unit: 'm' });
-		const result = convertDistance(0.009, 'metric', 'auto');
+		expect(convertDistance(999, 'metric', undefined)).toEqual({ distance: 999, unit: 'm' });
+		const result = convertDistance(0.009, 'metric', undefined);
 		expect(result.unit).toBe('cm');
 		expect(result.distance).toBeCloseTo(0.9, 5);
 	});
@@ -52,6 +52,12 @@ describe('convertDistance with metric unit', () => {
 		const result2 = convertDistance(1, 'metric', 'foot');
 		expect(result2.distance).toBeCloseTo(3.3, 1);
 		expect(result2.unit).toBe('ft');
+	});
+
+	it('should return corresponding value when forceDistanceUnit is custom callback', () => {
+		expect(
+			convertDistance(1000, 'metric', (distance) => ({ distance: distance / 1000, unit: 'KM' }))
+		).toEqual({ distance: 1, unit: 'KM' });
 	});
 });
 
@@ -91,15 +97,15 @@ describe('convertDistance with imperial unit', () => {
 
 	it('should auto-scale to the appropriate unit when forceDistanceUnit is auto', () => {
 		// 1609.34 meters ≈ 1 mile
-		const result1 = convertDistance(1609.34, 'imperial', 'auto');
+		const result1 = convertDistance(1609.34, 'imperial', undefined);
 		expect(result1.distance).toBeCloseTo(1, 5);
 		expect(result1.unit).toBe('mi');
 		// 804.67 meters ≈ 0.5 mile = 2640 feet
-		const result2 = convertDistance(804.67, 'imperial', 'auto');
+		const result2 = convertDistance(804.67, 'imperial', undefined);
 		expect(result2.distance).toBeCloseTo(2640, 0);
 		expect(result2.unit).toBe('ft');
 		// 0.16 meters ≈ 0.0001 mile ≈ 6.336 inches
-		const result3 = convertDistance(0.16, 'imperial', 'auto');
+		const result3 = convertDistance(0.16, 'imperial', undefined);
 		expect(result3.distance).toBeCloseTo(6.3, 0);
 		expect(result3.unit).toBe('in');
 	});
@@ -136,15 +142,15 @@ describe('convertDistance with custom unit symbols (measureUnitSymbols)', () => 
 
 	describe('Metric units with custom symbols', () => {
 		it('should use custom symbols in auto mode', () => {
-			expect(convertDistance(1000, 'metric', 'auto', customSymbols)).toEqual({
+			expect(convertDistance(1000, 'metric', undefined, customSymbols)).toEqual({
 				distance: 1,
 				unit: 'kilometre'
 			});
-			expect(convertDistance(500, 'metric', 'auto', customSymbols)).toEqual({
+			expect(convertDistance(500, 'metric', undefined, customSymbols)).toEqual({
 				distance: 500,
 				unit: 'metre'
 			});
-			expect(convertDistance(0.5, 'metric', 'auto', customSymbols)).toEqual({
+			expect(convertDistance(0.5, 'metric', undefined, customSymbols)).toEqual({
 				distance: 50,
 				unit: 'centimetre'
 			});
@@ -169,15 +175,15 @@ describe('convertDistance with custom unit symbols (measureUnitSymbols)', () => 
 	describe('Imperial units with custom symbols', () => {
 		it('should use custom symbols in auto mode', () => {
 			// 1609.34 meters ≈ 1 mile
-			const result1 = convertDistance(1609.34, 'imperial', 'auto', customSymbols);
+			const result1 = convertDistance(1609.34, 'imperial', undefined, customSymbols);
 			expect(result1.distance).toBeCloseTo(1, 5);
 			expect(result1.unit).toBe('miles');
 			// 804.67 meters ≈ 0.5 mile = 2640 feet
-			const result2 = convertDistance(804.67, 'imperial', 'auto', customSymbols);
+			const result2 = convertDistance(804.67, 'imperial', undefined, customSymbols);
 			expect(result2.distance).toBeCloseTo(2640, 0);
 			expect(result2.unit).toBe('feet');
 			// 0.16 meters ≈ 6.3 inches
-			const result3 = convertDistance(0.16, 'imperial', 'auto', customSymbols);
+			const result3 = convertDistance(0.16, 'imperial', undefined, customSymbols);
 			expect(result3.distance).toBeCloseTo(6.3, 0);
 			expect(result3.unit).toBe('inches');
 		});

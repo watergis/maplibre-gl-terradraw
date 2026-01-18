@@ -45,12 +45,12 @@ describe('calcDistance', () => {
 			properties: {}
 		};
 
-		const result = calcDistance(nonLineFeature, 'metric', 2, 'auto');
+		const result = calcDistance(nonLineFeature, 'metric', 2, undefined);
 		expect(result).toEqual(nonLineFeature);
 	});
 
 	it('should add distance, unit, and segments properties', () => {
-		const result = calcDistance(mockFeature, 'metric', 2, 'auto');
+		const result = calcDistance(mockFeature, 'metric', 2, undefined);
 		expect(result.properties).toHaveProperty('distance');
 		expect(result.properties).toHaveProperty('unit');
 		expect(result.properties).toHaveProperty('segments');
@@ -73,7 +73,7 @@ describe('calcDistance', () => {
 			mockFeature,
 			'metric',
 			2,
-			'auto',
+			undefined,
 			defaultMeasureUnitSymbols,
 			mockMap,
 			true

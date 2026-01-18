@@ -302,7 +302,7 @@ describe('forceDistanceUnit', () => {
 
 	it('should return default forceDistanceUnit value if user does not specify', () => {
 		const control = new MaplibreMeasureControl();
-		expect(control.forceDistanceUnit).toEqual('auto');
+		expect(control.forceDistanceUnit).toBeUndefined();
 	});
 
 	it('should return forceDistanceUnit value if user set through property', () => {

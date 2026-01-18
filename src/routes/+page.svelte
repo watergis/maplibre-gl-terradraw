@@ -5,8 +5,9 @@
 		AvailableModes,
 		debounce,
 		type forceAreaUnitType,
-		type forceDistanceUnitType,
+		type ImperialDistanceUnit,
 		type MeasureUnitType,
+		type MetricDistanceUnit,
 		type TerradrawMode,
 		type ValhallaOptions
 	} from '$lib';
@@ -41,7 +42,9 @@
 		measureUnitType: (page.url.searchParams.get('measureUnitType') as MeasureUnitType) ?? 'metric',
 		distancePrecision: parseInt(page.url.searchParams.get('distancePrecision') ?? '2'),
 		forceDistanceUnit:
-			(page.url.searchParams.get('forceDistanceUnit') as forceDistanceUnitType) ?? 'auto',
+			(page.url.searchParams.get('forceDistanceUnit') as
+				| MetricDistanceUnit
+				| ImperialDistanceUnit) ?? 'auto',
 		areaPrecision: parseInt(page.url.searchParams.get('areaPrecision') ?? '2'),
 		forceAreaUnit: (page.url.searchParams.get('forceAreaUnit') as forceAreaUnitType) ?? 'auto',
 		computeElevation:
@@ -124,7 +127,11 @@
 		if (demoOptions.controlType == 'measure') {
 			pageUrl.searchParams.set('measureUnitType', demoOptions.measureUnitType);
 			pageUrl.searchParams.set('distancePrecision', demoOptions.distancePrecision.toString());
-			pageUrl.searchParams.set('forceDistanceUnit', demoOptions.forceDistanceUnit);
+			if (demoOptions.forceDistanceUnit === 'auto') {
+				pageUrl.searchParams.delete('forceDistanceUnit');
+			} else {
+				pageUrl.searchParams.set('forceDistanceUnit', demoOptions.forceDistanceUnit);
+			}
 			pageUrl.searchParams.set('areaPrecision', demoOptions.areaPrecision.toString());
 			pageUrl.searchParams.set('forceAreaUnit', demoOptions.forceAreaUnit);
 			pageUrl.searchParams.set('computeElevation', demoOptions.computeElevation);
@@ -153,7 +160,9 @@
 		const options = [];
 		options.push(`measureUnitType: '${demoOptions.measureUnitType}'`);
 		options.push(`distancePrecision: ${demoOptions.distancePrecision}`);
-		options.push(`forceDistanceUnit: '${demoOptions.forceDistanceUnit}'`);
+		if (demoOptions.forceDistanceUnit !== 'auto') {
+			options.push(`forceDistanceUnit: '${demoOptions.forceDistanceUnit}'`);
+		}
 		options.push(`areaPrecision: ${demoOptions.areaPrecision}`);
 		options.push(`forceAreaUnit: '${demoOptions.forceAreaUnit}'`);
 		options.push(

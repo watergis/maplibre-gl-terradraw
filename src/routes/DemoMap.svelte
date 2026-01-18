@@ -6,7 +6,7 @@
 		modes: TerradrawMode[];
 		measureUnitType: MeasureUnitType;
 		distancePrecision: number;
-		forceDistanceUnit: forceDistanceUnitType;
+		forceDistanceUnit: MetricDistanceUnit | ImperialDistanceUnit | 'auto';
 		areaPrecision: number;
 		forceAreaUnit: forceAreaUnitType;
 		computeElevation: 'enabled' | 'disabled';
@@ -31,7 +31,9 @@
 		type costingModelType,
 		type forceAreaUnitType,
 		type forceDistanceUnitType,
+		type ImperialDistanceUnit,
 		type MeasureUnitType,
+		type MetricDistanceUnit,
 		type routingDistanceUnitType,
 		type TerradrawMode,
 		type TerradrawValhallaMode,
@@ -192,6 +194,8 @@
 				open: options.isOpen === 'open',
 				showDeleteConfirmation: options.showDeleteConfirmation,
 				measureUnitType: options.measureUnitType,
+				forceDistanceUnit:
+					options.forceDistanceUnit === 'auto' ? undefined : options.forceDistanceUnit,
 				distancePrecision: options.distancePrecision,
 				areaPrecision: options.areaPrecision,
 				forceAreaUnit: options.forceAreaUnit,
@@ -748,11 +752,14 @@
 										class="select"
 										value={options.forceDistanceUnit}
 										onchange={(e) => {
-											options.forceDistanceUnit = (e.target as HTMLSelectElement)
-												.value as forceDistanceUnitType;
+											const value = (e.target as HTMLSelectElement).value as
+												| MetricDistanceUnit
+												| ImperialDistanceUnit
+												| 'auto';
+											options.forceDistanceUnit = value;
 											if (drawControl && options.controlType === 'measure') {
 												(drawControl as MaplibreMeasureControl).forceDistanceUnit =
-													options.forceDistanceUnit;
+													value === 'auto' ? undefined : (value as forceDistanceUnitType);
 											}
 											onchange(options);
 										}}

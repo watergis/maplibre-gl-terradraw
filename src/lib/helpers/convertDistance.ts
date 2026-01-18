@@ -17,7 +17,7 @@ import type { forceDistanceUnitType, MeasureUnitSymbolType, MeasureUnitType } fr
 export const convertDistance = (
 	value: number,
 	unit: MeasureUnitType = 'metric',
-	forceUnit: forceDistanceUnitType = 'auto',
+	forceUnit: forceDistanceUnitType = undefined,
 	measureUnitSymbols = defaultMeasureUnitSymbols
 ): { distance: number; unit: string } => {
 	// Define metric and imperial units
@@ -29,8 +29,8 @@ export const convertDistance = (
 		unit: measureUnitSymbols['meter']
 	};
 
-	// If forceUnit is specified (not 'auto'), use it regardless of unit parameter
-	if (forceUnit !== 'auto') {
+	if (forceUnit && typeof forceUnit !== 'function') {
+		// if forceUnit is a specific unit, use it for conversion
 		const isMetricForceUnit = metricUnits.includes(forceUnit);
 		const isImperialForceUnit = imperialUnits.includes(forceUnit);
 
@@ -40,8 +40,13 @@ export const convertDistance = (
 			result = convertImperialUnit(value, forceUnit, measureUnitSymbols);
 		}
 	} else {
-		// If forceUnit is 'auto', use the unit parameter to determine the unit system
-		result = defaultAutoUnitConversion(value, unit, measureUnitSymbols);
+		if (forceUnit && typeof forceUnit === 'function') {
+			// If forceUnit is a callback function, use it for conversion
+			result = forceUnit(value);
+		} else {
+			// If custom function is not set, use the unit parameter to determine the unit system
+			result = defaultAutoUnitConversion(value, unit, measureUnitSymbols);
+		}
 	}
 	// Default case: return meters if unit is not recognized
 	return result;

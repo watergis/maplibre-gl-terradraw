@@ -90,23 +90,45 @@ describe('convertArea', () => {
 		});
 	});
 
-	describe('ForceUnit - Invalid unit type fallback to auto', () => {
-		it('should fallback to auto when metric is selected but imperial unit is forced', () => {
-			// Should auto-select 'ha' instead of forcing 'acre'
-			expect(convertArea(20000, 'metric', 'acres')).toEqual({ area: 2, unit: 'ha' });
-		});
-
-		it('should fallback to auto when imperial is selected but metric unit is forced', () => {
-			// Should auto-select 'yd²' instead of forcing 'hectares'
-			expect(convertArea(1, 'imperial', 'hectares')).toEqual({
-				area: 1.1959900463010802,
-				unit: 'yd²'
+	describe('ForceUnit - Cross-unit type conversion', () => {
+		it('should force conversion to acres even when metric is selected', () => {
+			// Should force 'acres' regardless of measureUnitType being 'metric'
+			expect(convertArea(20000, 'metric', 'acres')).toEqual({
+				area: 4.942108145187276,
+				unit: 'acres'
 			});
 		});
 
-		it('should fallback to auto when metric is selected but another invalid imperial unit is forced', () => {
-			// Should auto-select 'km²' instead of forcing 'mi2'
-			expect(convertArea(5000000, 'metric', 'square miles')).toEqual({ area: 5, unit: 'km²' });
+		it('should force conversion to hectares even when imperial is selected', () => {
+			// Should force 'hectares' regardless of measureUnitType being 'imperial'
+			expect(convertArea(1, 'imperial', 'hectares')).toEqual({
+				area: 0.0001,
+				unit: 'ha'
+			});
+		});
+
+		it('should force conversion to square miles even when metric is selected', () => {
+			// Should force 'mi²' regardless of measureUnitType being 'metric'
+			expect(convertArea(5000000, 'metric', 'square miles')).toEqual({
+				area: 1.930510792962675,
+				unit: 'mi²'
+			});
+		});
+
+		it('should force conversion to square meters even when imperial is selected', () => {
+			// Should force 'm²' regardless of measureUnitType being 'imperial'
+			expect(convertArea(8093.712, 'imperial', 'square meters')).toEqual({
+				area: 8093.712,
+				unit: 'm²'
+			});
+		});
+
+		it('should force conversion to square feet even when metric is selected', () => {
+			// Should force 'ft²' regardless of measureUnitType being 'metric'
+			expect(convertArea(100, 'metric', 'square feet')).toEqual({
+				area: 1076.3910416709721,
+				unit: 'ft²'
+			});
 		});
 	});
 

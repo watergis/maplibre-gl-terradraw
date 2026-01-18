@@ -24,7 +24,7 @@ export const calcArea = (
 	measureUnitSymbols?: MeasureUnitSymbolType
 ) => {
 	if (feature.geometry.type !== 'Polygon') return feature;
-	// caculate area in m2 by using turf/area
+	// calculate area in m2 by using turf/area
 	const result = area(feature.geometry);
 
 	const converted = convertArea(result, unitType, areaUnit, measureUnitSymbols);

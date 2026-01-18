@@ -790,6 +790,7 @@
 												| MetricAreaUnit
 												| ImperialAreaUnit
 												| 'auto';
+											options.areaUnit = value;
 											if (drawControl && options.controlType === 'measure') {
 												(drawControl as MaplibreMeasureControl).areaUnit =
 													value === 'auto' ? undefined : value;

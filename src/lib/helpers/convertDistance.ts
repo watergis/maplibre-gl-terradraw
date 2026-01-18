@@ -24,29 +24,28 @@ export const convertDistance = (
 	const metricUnits = ['centimeter', 'meter', 'kilometer'];
 	const imperialUnits = ['inch', 'foot', 'mile'];
 
-	// Check if forceUnit matches the selected unit type, otherwise treat as 'auto'
-	let effectiveForceUnit = forceUnit;
-	if (forceUnit !== 'auto') {
-		const isMetricForceUnit = metricUnits.includes(forceUnit);
-		const isImperialForceUnit = imperialUnits.includes(forceUnit);
-
-		if (
-			(unit === 'metric' && !isMetricForceUnit) ||
-			(unit === 'imperial' && !isImperialForceUnit)
-		) {
-			effectiveForceUnit = 'auto';
-		}
-	}
-
 	let result: { distance: number; unit: string } = {
 		distance: value,
 		unit: measureUnitSymbols['meter']
 	};
 
-	if (unit === 'metric') {
-		result = convertMetricUnit(value, effectiveForceUnit, measureUnitSymbols);
-	} else if (unit === 'imperial') {
-		result = convertImperialUnit(value, effectiveForceUnit, measureUnitSymbols);
+	// If forceUnit is specified (not 'auto'), use it regardless of unit parameter
+	if (forceUnit !== 'auto') {
+		const isMetricForceUnit = metricUnits.includes(forceUnit);
+		const isImperialForceUnit = imperialUnits.includes(forceUnit);
+
+		if (isMetricForceUnit) {
+			result = convertMetricUnit(value, forceUnit, measureUnitSymbols);
+		} else if (isImperialForceUnit) {
+			result = convertImperialUnit(value, forceUnit, measureUnitSymbols);
+		}
+	} else {
+		// If forceUnit is 'auto', use the unit parameter to determine the unit system
+		if (unit === 'metric') {
+			result = convertMetricUnit(value, 'auto', measureUnitSymbols);
+		} else if (unit === 'imperial') {
+			result = convertImperialUnit(value, 'auto', measureUnitSymbols);
+		}
 	}
 	// Default case: return meters if unit is not recognized
 	return result;

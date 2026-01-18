@@ -43,9 +43,15 @@ describe('convertDistance with metric unit', () => {
 		expect(convertDistance(2500, 'metric', 'centimeter')).toEqual({ distance: 250000, unit: 'cm' });
 	});
 
-	it('should return metric distance with auto if distance unit is metric, but forceDistanceUnit is imperial', () => {
-		expect(convertDistance(500, 'metric', 'mile')).toEqual({ distance: 500, unit: 'm' });
-		expect(convertDistance(1, 'metric', 'mile')).toEqual({ distance: 1, unit: 'm' });
+	it('should return forceDistanceUnit value even if distance unit is different', () => {
+		// When forceDistanceUnit is 'mile' and unit is 'metric', it should return miles
+		const result1 = convertDistance(500, 'metric', 'mile');
+		expect(result1.distance).toBeCloseTo(0.31, 2);
+		expect(result1.unit).toBe('mi');
+		// When forceDistanceUnit is 'foot' and unit is 'metric', it should return feet
+		const result2 = convertDistance(1, 'metric', 'foot');
+		expect(result2.distance).toBeCloseTo(3.3, 1);
+		expect(result2.unit).toBe('ft');
 	});
 });
 
@@ -98,15 +104,15 @@ describe('convertDistance with imperial unit', () => {
 		expect(result3.unit).toBe('in');
 	});
 
-	it('should return imperial distance with auto if distance unit is imperial, but forceDistanceUnit is metric', () => {
-		// 1609.34 meters ≈ 1 mile
+	it('should return forceDistanceUnit value even if distance unit is different', () => {
+		// When forceDistanceUnit is 'meter' and unit is 'imperial', it should return meters
 		const result1 = convertDistance(1609.34, 'imperial', 'meter');
-		expect(result1.distance).toBeCloseTo(1, 5);
-		expect(result1.unit).toBe('mi');
-		// 804.67 meters ≈ 0.5 mile = 2640 feet
-		const result2 = convertDistance(804.67, 'imperial', 'meter');
-		expect(result2.distance).toBeCloseTo(2640, 0);
-		expect(result2.unit).toBe('ft');
+		expect(result1.distance).toBe(1609.34);
+		expect(result1.unit).toBe('m');
+		// When forceDistanceUnit is 'kilometer' and unit is 'imperial', it should return kilometers
+		const result2 = convertDistance(5000, 'imperial', 'kilometer');
+		expect(result2.distance).toBe(5);
+		expect(result2.unit).toBe('km');
 	});
 });
 

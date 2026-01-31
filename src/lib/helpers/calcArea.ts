@@ -12,7 +12,7 @@ import { convertArea } from './convertArea';
  * @param feature Polygon GeoJSON feature
  * @param unitType measure unit type either metric or imperial
  * @param areaPrecision Precision of area value
- * @param forceUnit Default is `auto`. If `auto` is set, unit is converted depending on the value and selection of area unit. If a specific unit is specified, it returns the value always the same. If a selected unit is not the same type of unit either metric of imperial, it will be ignored, and `auto` will be applied.
+ * @param areaUnit If undefined, it will be treated as 'auto' conversion of area unit according the default conversion rules. If a specific unit is set, the value is converted to that unit. If a callback function is set, it will be used for custom conversion.
  * @param measureUnitSymbols Optional parameter to provide custom unit symbols
  * @returns  The returning feature will contain `area`,`unit` properties.
  */

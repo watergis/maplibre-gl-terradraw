@@ -1,5 +1,13 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.11.1
+
+### Patch Changes
+
+- 8d8cbd4: fix: set coordinates.midpoints to false for default settings of TerraDrawRectangleMode and TerraDrawAngledRectangleMode to solve the bug that midpoints are remained in the previous locations when the polygon is resized.
+- 603a040: chore: upgrade TerraDraw to v1.23.2.
+- 603a040: docs: updated documentation for calcArea and convertArea function.
+
 ## 1.11.0
 
 ### Minor Changes

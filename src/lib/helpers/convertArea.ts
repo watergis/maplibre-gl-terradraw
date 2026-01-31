@@ -11,7 +11,7 @@ import type {
  * convert area unit to metric or imperial
  * @param value area value in m2
  * @param unit area unit either metric or imperial
- * @param areaUnit If undefined is set, it will be treated as 'auto' conversion of area unit according the default conversion rules. If a specific unit is set, the value is converted to that unit. If a callback function is set, it will be used for custom conversion.
+ * @param areaUnit If undefined, it will be treated as 'auto' conversion of area unit according the default conversion rules. If a specific unit is set, the value is converted to that unit. If a callback function is set, it will be used for custom conversion.
  * @param measureUnitSymbols Optional parameter to provide custom unit symbols
  * @returns result object with area and unit properties after unit conversion
  */

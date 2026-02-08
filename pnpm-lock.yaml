@@ -138,10 +138,10 @@ importers:
         specifier: ^4.1.18
         version: 4.1.18
       terra-draw:
-        specifier: ^1.23.2
+        specifier: ^1.24.0
         version: 1.24.0
       terra-draw-maplibre-gl-adapter:
-        specifier: ^1.2.3
+        specifier: ^1.3.0
         version: 1.3.0(maplibre-gl@5.17.0)(terra-draw@1.24.0)
       typedoc:
         specifier: ^0.28.16

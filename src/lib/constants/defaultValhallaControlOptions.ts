@@ -12,7 +12,7 @@ import type { ValhallaControlOptions } from '../interfaces/ValhallaControlOption
 export const defaultValhallaControlOptions: ValhallaControlOptions = {
 	modes: [
 		'render',
-		'linestring',
+		'routing',
 		'time-isochrone',
 		'distance-isochrone',
 		'select',
@@ -44,7 +44,8 @@ export const defaultValhallaControlOptions: ValhallaControlOptions = {
 				pointOutlineWidth: 1
 			}
 		}),
-		linestring: new TerraDrawLineStringMode({
+		routing: new TerraDrawLineStringMode({
+			modeName: 'routing',
 			editable: false,
 			styles: {
 				lineStringColor: '#FF0000',
@@ -67,7 +68,7 @@ export const defaultValhallaControlOptions: ValhallaControlOptions = {
 						draggable: false
 					}
 				},
-				linestring: {
+				routing: {
 					feature: {
 						draggable: false,
 						rotateable: false,
@@ -229,19 +230,7 @@ export const defaultValhallaControlOptions: ValhallaControlOptions = {
 		layout: {
 			'symbol-placement': 'line',
 			'text-pitch-alignment': 'viewport',
-			'text-field': [
-				'concat',
-				['get', 'contour'],
-				' ',
-				[
-					'case',
-					['==', ['get', 'metric'], 'time'],
-					'min',
-					['==', ['get', 'metric'], 'distance'],
-					'km',
-					''
-				]
-			],
+			'text-field': ['concat', ['get', 'contour'], ' ', 'min'],
 			'text-size': 12,
 			'symbol-spacing': 100,
 			'text-max-angle': 45
@@ -282,19 +271,7 @@ export const defaultValhallaControlOptions: ValhallaControlOptions = {
 		layout: {
 			'symbol-placement': 'line',
 			'text-pitch-alignment': 'viewport',
-			'text-field': [
-				'concat',
-				['get', 'contour'],
-				' ',
-				[
-					'case',
-					['==', ['get', 'metric'], 'time'],
-					'min',
-					['==', ['get', 'metric'], 'distance'],
-					'km',
-					''
-				]
-			],
+			'text-field': ['concat', ['get', 'contour'], ' ', 'km'],
 			'text-size': 12,
 			'symbol-spacing': 100,
 			'text-max-angle': 45

@@ -785,7 +785,7 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 	private registerValhallaControl() {
 		if (!this.map) return;
 
-		const lineModes = this.options.modes?.filter((m) => ['linestring'].includes(m));
+		const lineModes = this.options.modes?.filter((m) => ['routing'].includes(m));
 
 		if (lineModes && lineModes.length > 0) {
 			// add GeoJSON source for line node

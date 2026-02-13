@@ -10,8 +10,10 @@ feat: split valhalla isochrone button into two buttons for time isochrone and di
 
 - Mode names have changed:
   - `point` → `time-isochrone`, `distance-isochrone`
+  - `linestring` -> `routing`
 - The `contourType` property has been removed.
 - `costingModel` has been split into `timeCostingModel` and `distanceCostingModel`.
+- css for icons of valhalla control is also changed
 
 New default valhallaOptions parameters will be as following example.
 

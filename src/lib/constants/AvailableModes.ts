@@ -42,7 +42,7 @@ export const AvailableModes = [
  */
 export const AvailableValhallaModes = [
 	'render',
-	'linestring',
+	'routing',
 	'time-isochrone',
 	'distance-isochrone',
 	'select',

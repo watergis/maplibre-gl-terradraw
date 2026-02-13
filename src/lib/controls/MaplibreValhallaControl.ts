@@ -30,8 +30,7 @@ import {
 	cleanMaplibreStyle,
 	ValhallaIsochrone,
 	type Contour,
-	type ContourType,
-	contourTypeOptions
+	type ContourType
 } from '../helpers';
 
 /**
@@ -100,44 +99,44 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 	}
 
 	/**
-	 * Get the contour type for Valhalla isochrone api
-	 * @returns ContourType
-	 * @example 'time', 'distance'
+	 * Get the means of transport for Valhalla time isochrone api
+	 * @returns isochroneCostingModelType
+	 * @example 'pedestrian', 'bicycle', 'auto'
 	 */
-	get isochroneContourType() {
-		return this.valhallaOptions.isochroneOptions?.contourType as ContourType;
+	get timeIsochroneCostingModel() {
+		return this.valhallaOptions.isochroneOptions?.timeCostingModel as costingModelType;
 	}
 	/**
-	 * Set the contour type for Valhalla isochrone api
-	 * @param value ContourType
-	 * @example 'time', 'distance'
+	 * Set the means of transport for Valhalla time isochrone api
+	 * @param value isochroneCostingModelType
+	 * @example 'pedestrian', 'bicycle', 'auto'
 	 */
-	set isochroneContourType(value: ContourType) {
+	set timeIsochroneCostingModel(value: costingModelType) {
 		if (!this.valhallaOptions.isochroneOptions) {
 			this.valhallaOptions.isochroneOptions = {};
 		}
-		this.valhallaOptions.isochroneOptions.contourType = value;
+		this.valhallaOptions.isochroneOptions.timeCostingModel = value;
 		this.createSettingsDialog();
 	}
 
 	/**
-	 * Get the means of transport for Valhalla isochrone api
+	 * Get the means of transport for Valhalla distance isochrone api
 	 * @returns isochroneCostingModelType
 	 * @example 'pedestrian', 'bicycle', 'auto'
 	 */
-	get isochroneCostingModel() {
-		return this.valhallaOptions.isochroneOptions?.costingModel as costingModelType;
+	get distanceIsochroneCostingModel() {
+		return this.valhallaOptions.isochroneOptions?.distanceCostingModel as costingModelType;
 	}
 	/**
-	 * Set the means of transport for Valhalla isochrone api
+	 * Set the means of transport for Valhalla distance isochrone api
 	 * @param value isochroneCostingModelType
 	 * @example 'pedestrian', 'bicycle', 'auto'
 	 */
-	set isochroneCostingModel(value: costingModelType) {
+	set distanceIsochroneCostingModel(value: costingModelType) {
 		if (!this.valhallaOptions.isochroneOptions) {
 			this.valhallaOptions.isochroneOptions = {};
 		}
-		this.valhallaOptions.isochroneOptions.costingModel = value;
+		this.valhallaOptions.isochroneOptions.distanceCostingModel = value;
 		this.createSettingsDialog();
 	}
 
@@ -248,20 +247,35 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 		(_options.routingLineLayerNodeSpec as CircleLayerSpecification).source =
 			_options.routingLineLayerNodeSpec?.source.replace('{prefix}', prefixId) as string;
 
-		(_options.isochronePolygonLayerSpec as FillLayerSpecification).id =
-			_options.isochronePolygonLayerSpec?.id.replace('{prefix}', prefixId) as string;
-		(_options.isochronePolygonLayerSpec as FillLayerSpecification).source =
-			_options.isochronePolygonLayerSpec?.source.replace('{prefix}', prefixId) as string;
+		(_options.timeIsochronePolygonLayerSpec as FillLayerSpecification).id =
+			_options.timeIsochronePolygonLayerSpec?.id.replace('{prefix}', prefixId) as string;
+		(_options.timeIsochronePolygonLayerSpec as FillLayerSpecification).source =
+			_options.timeIsochronePolygonLayerSpec?.source.replace('{prefix}', prefixId) as string;
 
-		(_options.isochroneLineLayerSpec as LineLayerSpecification).id =
-			_options.isochroneLineLayerSpec?.id.replace('{prefix}', prefixId) as string;
-		(_options.isochroneLineLayerSpec as LineLayerSpecification).source =
-			_options.isochroneLineLayerSpec?.source.replace('{prefix}', prefixId) as string;
+		(_options.timeIsochroneLineLayerSpec as LineLayerSpecification).id =
+			_options.timeIsochroneLineLayerSpec?.id.replace('{prefix}', prefixId) as string;
+		(_options.timeIsochroneLineLayerSpec as LineLayerSpecification).source =
+			_options.timeIsochroneLineLayerSpec?.source.replace('{prefix}', prefixId) as string;
 
-		(_options.isochroneLabelLayerSpec as SymbolLayerSpecification).id =
-			_options.isochroneLabelLayerSpec?.id.replace('{prefix}', prefixId) as string;
-		(_options.isochroneLabelLayerSpec as SymbolLayerSpecification).source =
-			_options.isochroneLabelLayerSpec?.source.replace('{prefix}', prefixId) as string;
+		(_options.timeIsochroneLabelLayerSpec as SymbolLayerSpecification).id =
+			_options.timeIsochroneLabelLayerSpec?.id.replace('{prefix}', prefixId) as string;
+		(_options.timeIsochroneLabelLayerSpec as SymbolLayerSpecification).source =
+			_options.timeIsochroneLabelLayerSpec?.source.replace('{prefix}', prefixId) as string;
+
+		(_options.distanceIsochronePolygonLayerSpec as FillLayerSpecification).id =
+			_options.distanceIsochronePolygonLayerSpec?.id.replace('{prefix}', prefixId) as string;
+		(_options.distanceIsochronePolygonLayerSpec as FillLayerSpecification).source =
+			_options.distanceIsochronePolygonLayerSpec?.source.replace('{prefix}', prefixId) as string;
+
+		(_options.distanceIsochroneLineLayerSpec as LineLayerSpecification).id =
+			_options.distanceIsochroneLineLayerSpec?.id.replace('{prefix}', prefixId) as string;
+		(_options.distanceIsochroneLineLayerSpec as LineLayerSpecification).source =
+			_options.distanceIsochroneLineLayerSpec?.source.replace('{prefix}', prefixId) as string;
+
+		(_options.distanceIsochroneLabelLayerSpec as SymbolLayerSpecification).id =
+			_options.distanceIsochroneLabelLayerSpec?.id.replace('{prefix}', prefixId) as string;
+		(_options.distanceIsochroneLabelLayerSpec as SymbolLayerSpecification).source =
+			_options.distanceIsochroneLabelLayerSpec?.source.replace('{prefix}', prefixId) as string;
 
 		super({
 			modes: _options.modes as unknown as TerradrawMode[],
@@ -332,8 +346,12 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 		const pointSource = this.controlOptions.routingLineLayerNodeSpec?.source;
 		if (pointSource) sourceIds.push(pointSource);
 
-		const polygonSource = this.controlOptions.isochronePolygonLayerSpec?.source;
-		if (polygonSource) sourceIds.push(polygonSource);
+		const timeIsochronePolygonSource = this.controlOptions.timeIsochronePolygonLayerSpec?.source;
+		if (timeIsochronePolygonSource) sourceIds.push(timeIsochronePolygonSource);
+
+		const distanceIsochronePolygonSource =
+			this.controlOptions.distanceIsochronePolygonLayerSpec?.source;
+		if (distanceIsochronePolygonSource) sourceIds.push(distanceIsochronePolygonSource);
 
 		return cleanMaplibreStyle(style, options, sourceIds, this.options.adapterOptions?.prefixId);
 	}
@@ -492,44 +510,53 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 		contourTypeLabel.classList.add('setting-label');
 		contourTypeSection.appendChild(contourTypeLabel);
 
-		contourTypeSection.appendChild(
-			this.settingDialog.createSegmentButtons(
-				contourTypeOptions as unknown as { value: string; label: string }[],
-				this.controlOptions.valhallaOptions?.isochroneOptions?.contourType || 'time',
-				(value: string) => {
-					if (!this.valhallaOptions.isochroneOptions) {
-						this.valhallaOptions.isochroneOptions = {};
-					}
-					this.valhallaOptions.isochroneOptions.contourType = value as ContourType;
-					this.dispatchEvent('setting-changed');
-				}
-			)
-		);
-		container.appendChild(contourTypeSection);
+		// Means of Transport (time) section
+		const timeTransportSection = document.createElement('div');
+		timeTransportSection.classList.add('setting-section');
 
-		// Means of Transport section
-		const transportSection = document.createElement('div');
-		transportSection.classList.add('setting-section');
+		const timeTransportLabel = document.createElement('label');
+		timeTransportLabel.textContent = 'Means of Transport (Time)';
+		timeTransportLabel.classList.add('setting-label');
+		timeTransportSection.appendChild(timeTransportLabel);
 
-		const transportLabel = document.createElement('label');
-		transportLabel.textContent = 'Means of Transport';
-		transportLabel.classList.add('setting-label');
-		transportSection.appendChild(transportLabel);
-
-		transportSection.appendChild(
+		timeTransportSection.appendChild(
 			this.settingDialog.createSegmentButtons(
 				costingModelOptions as unknown as { value: string; label: string }[],
-				this.controlOptions.valhallaOptions?.isochroneOptions?.costingModel || 'auto',
+				this.controlOptions.valhallaOptions?.isochroneOptions?.timeCostingModel || 'auto',
 				(value: string) => {
 					if (!this.valhallaOptions.isochroneOptions) {
 						this.valhallaOptions.isochroneOptions = {};
 					}
-					this.valhallaOptions.isochroneOptions.costingModel = value as costingModelType;
+					this.valhallaOptions.isochroneOptions.timeCostingModel = value as costingModelType;
 					this.dispatchEvent('setting-changed');
 				}
 			)
 		);
-		container.appendChild(transportSection);
+		container.appendChild(timeTransportSection);
+
+		// Means of Transport (distance) section
+		const distanceTransportSection = document.createElement('div');
+		distanceTransportSection.classList.add('setting-section');
+
+		const distanceTransportLabel = document.createElement('label');
+		distanceTransportLabel.textContent = 'Means of Transport (Distance)';
+		distanceTransportLabel.classList.add('setting-label');
+		distanceTransportSection.appendChild(distanceTransportLabel);
+
+		distanceTransportSection.appendChild(
+			this.settingDialog.createSegmentButtons(
+				costingModelOptions as unknown as { value: string; label: string }[],
+				this.controlOptions.valhallaOptions?.isochroneOptions?.distanceCostingModel || 'auto',
+				(value: string) => {
+					if (!this.valhallaOptions.isochroneOptions) {
+						this.valhallaOptions.isochroneOptions = {};
+					}
+					this.valhallaOptions.isochroneOptions.distanceCostingModel = value as costingModelType;
+					this.dispatchEvent('setting-changed');
+				}
+			)
+		);
+		container.appendChild(distanceTransportSection);
 
 		// Contours section
 		const contoursSection = document.createElement('div');
@@ -758,7 +785,7 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 	private registerValhallaControl() {
 		if (!this.map) return;
 
-		const lineModes = this.options.modes?.filter((m) => ['linestring'].includes(m));
+		const lineModes = this.options.modes?.filter((m) => ['routing'].includes(m));
 
 		if (lineModes && lineModes.length > 0) {
 			// add GeoJSON source for line node
@@ -795,17 +822,19 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 			}
 		}
 
-		const pointModes = this.options.modes?.filter((m) => ['point'].includes(m));
+		const pointModes = this.options.modes?.filter((m) =>
+			['time-isochrone', 'distance-isochrone'].includes(m)
+		);
 
 		if (pointModes && pointModes.length > 0) {
-			// add GeoJSON source for polygon features
+			// add GeoJSON source for time isochrone features
 			if (
 				!this.map.getSource(
-					(this.controlOptions.isochronePolygonLayerSpec as FillLayerSpecification).source
+					(this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification).source
 				)
 			) {
 				this.map.addSource(
-					(this.controlOptions.isochronePolygonLayerSpec as FillLayerSpecification).source,
+					(this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification).source,
 					{
 						type: 'geojson',
 						data: { type: 'FeatureCollection', features: [] }
@@ -813,27 +842,75 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 				);
 			}
 
-			// add GeoJSON layer for isochrone appearance
+			// add GeoJSON layer for time isochrone appearance
 			if (
 				!this.map.getLayer(
-					(this.controlOptions.isochronePolygonLayerSpec as FillLayerSpecification).id
+					(this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification).id
 				)
 			) {
-				this.map.addLayer(this.controlOptions.isochronePolygonLayerSpec as FillLayerSpecification);
+				this.map.addLayer(
+					this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification
+				);
 			}
 			if (
 				!this.map.getLayer(
-					(this.controlOptions.isochroneLineLayerSpec as LineLayerSpecification).id
+					(this.controlOptions.timeIsochroneLineLayerSpec as LineLayerSpecification).id
 				)
 			) {
-				this.map.addLayer(this.controlOptions.isochroneLineLayerSpec as LineLayerSpecification);
+				this.map.addLayer(this.controlOptions.timeIsochroneLineLayerSpec as LineLayerSpecification);
 			}
 			if (
 				!this.map.getLayer(
-					(this.controlOptions.isochroneLabelLayerSpec as SymbolLayerSpecification).id
+					(this.controlOptions.timeIsochroneLabelLayerSpec as SymbolLayerSpecification).id
 				)
 			) {
-				this.map.addLayer(this.controlOptions.isochroneLabelLayerSpec as SymbolLayerSpecification);
+				this.map.addLayer(
+					this.controlOptions.timeIsochroneLabelLayerSpec as SymbolLayerSpecification
+				);
+			}
+
+			// add GeoJSON source for distance isochrone features
+			if (
+				!this.map.getSource(
+					(this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification).source
+				)
+			) {
+				this.map.addSource(
+					(this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification).source,
+					{
+						type: 'geojson',
+						data: { type: 'FeatureCollection', features: [] }
+					}
+				);
+			}
+
+			// add GeoJSON layer for distance isochrone appearance
+			if (
+				!this.map.getLayer(
+					(this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification).id
+				)
+			) {
+				this.map.addLayer(
+					this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification
+				);
+			}
+			if (
+				!this.map.getLayer(
+					(this.controlOptions.distanceIsochroneLineLayerSpec as LineLayerSpecification).id
+				)
+			) {
+				this.map.addLayer(
+					this.controlOptions.distanceIsochroneLineLayerSpec as LineLayerSpecification
+				);
+			}
+			if (
+				!this.map.getLayer(
+					(this.controlOptions.distanceIsochroneLabelLayerSpec as SymbolLayerSpecification).id
+				)
+			) {
+				this.map.addLayer(
+					this.controlOptions.distanceIsochroneLabelLayerSpec as SymbolLayerSpecification
+				);
 			}
 		}
 
@@ -888,37 +965,77 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 
 		if (
 			this.map.getLayer(
-				(this.controlOptions.isochronePolygonLayerSpec as FillLayerSpecification).id
+				(this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification).id
 			)
 		) {
 			this.map.removeLayer(
-				(this.controlOptions.isochronePolygonLayerSpec as FillLayerSpecification).id
-			);
-		}
-		if (
-			this.map.getLayer((this.controlOptions.isochroneLineLayerSpec as LineLayerSpecification).id)
-		) {
-			this.map.removeLayer(
-				(this.controlOptions.isochroneLineLayerSpec as LineLayerSpecification).id
+				(this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification).id
 			);
 		}
 		if (
 			this.map.getLayer(
-				(this.controlOptions.isochroneLabelLayerSpec as SymbolLayerSpecification).id
+				(this.controlOptions.timeIsochroneLineLayerSpec as LineLayerSpecification).id
 			)
 		) {
 			this.map.removeLayer(
-				(this.controlOptions.isochroneLabelLayerSpec as SymbolLayerSpecification).id
+				(this.controlOptions.timeIsochroneLineLayerSpec as LineLayerSpecification).id
+			);
+		}
+		if (
+			this.map.getLayer(
+				(this.controlOptions.timeIsochroneLabelLayerSpec as SymbolLayerSpecification).id
+			)
+		) {
+			this.map.removeLayer(
+				(this.controlOptions.timeIsochroneLabelLayerSpec as SymbolLayerSpecification).id
 			);
 		}
 
 		if (
 			this.map.getSource(
-				(this.controlOptions.isochronePolygonLayerSpec as FillLayerSpecification).source
+				(this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification).source
 			)
 		) {
 			this.map.removeSource(
-				(this.controlOptions.isochronePolygonLayerSpec as FillLayerSpecification).source
+				(this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification).source
+			);
+		}
+
+		if (
+			this.map.getLayer(
+				(this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification).id
+			)
+		) {
+			this.map.removeLayer(
+				(this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification).id
+			);
+		}
+		if (
+			this.map.getLayer(
+				(this.controlOptions.distanceIsochroneLineLayerSpec as LineLayerSpecification).id
+			)
+		) {
+			this.map.removeLayer(
+				(this.controlOptions.distanceIsochroneLineLayerSpec as LineLayerSpecification).id
+			);
+		}
+		if (
+			this.map.getLayer(
+				(this.controlOptions.distanceIsochroneLabelLayerSpec as SymbolLayerSpecification).id
+			)
+		) {
+			this.map.removeLayer(
+				(this.controlOptions.distanceIsochroneLabelLayerSpec as SymbolLayerSpecification).id
+			);
+		}
+
+		if (
+			this.map.getSource(
+				(this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification).source
+			)
+		) {
+			this.map.removeSource(
+				(this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification).source
 			);
 		}
 
@@ -948,23 +1065,31 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 
 		const coord = feature.geometry.coordinates as [number, number];
 
+		const contourType: ContourType =
+			feature.properties.mode === 'time-isochrone' ? 'time' : 'distance';
+		const costingModel =
+			contourType === 'time'
+				? this.valhallaOptions.isochroneOptions?.timeCostingModel || 'auto'
+				: this.valhallaOptions.isochroneOptions?.distanceCostingModel || 'auto';
+
 		const valhallaIsochrone = new ValhallaIsochrone(this.valhallaUrl);
 		const fc = await valhallaIsochrone.calcIsochrone(
 			coord[0],
 			coord[1],
-			this.isochroneContourType,
-			this.isochroneCostingModel,
+			contourType,
+			costingModel,
 			this.isochroneContours
 		);
 		const updatedFeatures = fc.features.map((f) => {
 			f.id = `${id}-${f.properties.contour}`;
 			f.properties.originalId = id;
+			f.properties.mode = feature.properties.mode;
 			return f;
 		}) as unknown as GeoJSONStoreFeatures[];
 
 		const updateProperties = {
-			contourType: this.isochroneContourType,
-			costingModel: this.isochroneCostingModel,
+			contourType: contourType,
+			costingModel: costingModel,
 			result: updatedFeatures as unknown as string
 		};
 
@@ -975,40 +1100,82 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 
 		this.terradraw?.updateFeatureProperties(id, updateProperties);
 
-		const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
-			(this.controlOptions.isochronePolygonLayerSpec as FillLayerSpecification).source
-		] as GeoJSONSourceSpecification;
-		if (geojsonSource) {
-			if (
-				typeof geojsonSource.data !== 'string' &&
-				geojsonSource.data.type === 'FeatureCollection'
-			) {
-				geojsonSource.data.features = geojsonSource.data.features.filter(
-					(f) => f.properties?.originalId !== id
-				);
-			}
-			if (
-				typeof geojsonSource.data !== 'string' &&
-				geojsonSource.data.type === 'FeatureCollection'
-			) {
-				geojsonSource.data.features.push(...updatedFeatures);
-			}
+		if (contourType === 'time') {
+			const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
+				(this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification).source
+			] as GeoJSONSourceSpecification;
+			if (geojsonSource) {
+				if (
+					typeof geojsonSource.data !== 'string' &&
+					geojsonSource.data.type === 'FeatureCollection'
+				) {
+					geojsonSource.data.features = geojsonSource.data.features.filter(
+						(f) => f.properties?.originalId !== id
+					);
+				}
+				if (
+					typeof geojsonSource.data !== 'string' &&
+					geojsonSource.data.type === 'FeatureCollection'
+				) {
+					geojsonSource.data.features.push(...updatedFeatures);
+				}
 
-			(
-				this.map.getSource(
-					(this.controlOptions.isochronePolygonLayerSpec as FillLayerSpecification).source
-				) as GeoJSONSource
-			)?.setData(geojsonSource.data);
+				(
+					this.map.getSource(
+						(this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification).source
+					) as GeoJSONSource
+				)?.setData(geojsonSource.data);
+			}
+		} else {
+			const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
+				(this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification).source
+			] as GeoJSONSourceSpecification;
+			if (geojsonSource) {
+				if (
+					typeof geojsonSource.data !== 'string' &&
+					geojsonSource.data.type === 'FeatureCollection'
+				) {
+					geojsonSource.data.features = geojsonSource.data.features.filter(
+						(f) => f.properties?.originalId !== id
+					);
+				}
+				if (
+					typeof geojsonSource.data !== 'string' &&
+					geojsonSource.data.type === 'FeatureCollection'
+				) {
+					geojsonSource.data.features.push(...updatedFeatures);
+				}
+
+				(
+					this.map.getSource(
+						(this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification).source
+					) as GeoJSONSource
+				)?.setData(geojsonSource.data);
+			}
 			this.map.moveLayer(
-				(this.controlOptions.isochronePolygonLayerSpec as FillLayerSpecification).id,
+				(this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification).id,
 				this.options.adapterOptions?.renderBelowLayerId
 			);
 			this.map.moveLayer(
-				(this.controlOptions.isochroneLineLayerSpec as LineLayerSpecification).id,
+				(this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification).id,
+				this.options.adapterOptions?.renderBelowLayerId
+			);
+
+			this.map.moveLayer(
+				(this.controlOptions.timeIsochroneLineLayerSpec as LineLayerSpecification).id,
 				this.options.adapterOptions?.renderBelowLayerId
 			);
 			this.map.moveLayer(
-				(this.controlOptions.isochroneLabelLayerSpec as SymbolLayerSpecification).id,
+				(this.controlOptions.distanceIsochroneLineLayerSpec as LineLayerSpecification).id,
+				this.options.adapterOptions?.renderBelowLayerId
+			);
+
+			this.map.moveLayer(
+				(this.controlOptions.timeIsochroneLabelLayerSpec as SymbolLayerSpecification).id,
+				this.options.adapterOptions?.renderBelowLayerId
+			);
+			this.map.moveLayer(
+				(this.controlOptions.distanceIsochroneLabelLayerSpec as SymbolLayerSpecification).id,
 				this.options.adapterOptions?.renderBelowLayerId
 			);
 		}
@@ -1106,7 +1273,8 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 
 			const sources = [
 				this.controlOptions.routingLineLayerNodeSpec as CircleLayerSpecification,
-				this.controlOptions.isochronePolygonLayerSpec as FillLayerSpecification
+				this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification,
+				this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification
 			];
 			const sourceIds = sources.map((src) => src.source);
 			if (deletedIds && deletedIds.length > 0) {
@@ -1134,12 +1302,21 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 		const style = this.map.getStyle();
 		if (!style || !style.sources) return fc;
 
-		const sourceId = (this.controlOptions.isochronePolygonLayerSpec as FillLayerSpecification)
-			.source;
-		if (!sourceId || !style.sources[sourceId]) return fc;
+		const timeSourceId = (
+			this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification
+		).source;
+		if (!timeSourceId || !style.sources[timeSourceId]) return fc;
+		const distanceSourceId = (
+			this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification
+		).source;
+		if (!distanceSourceId || !style.sources[distanceSourceId]) return fc;
 
-		const geojsonSource: GeoJSONSourceSpecification = style.sources[
-			sourceId
+		const geojsonTimeSource: GeoJSONSourceSpecification = style.sources[
+			timeSourceId
+		] as GeoJSONSourceSpecification;
+
+		const geojsonDistanceSource: GeoJSONSourceSpecification = style.sources[
+			distanceSourceId
 		] as GeoJSONSourceSpecification;
 
 		const features: GeoJSONStoreFeatures[] = [];
@@ -1150,12 +1327,27 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 			if (geomType === 'Point') {
 				const fid = feature.id;
 
-				if (geojsonSource) {
+				if (geojsonTimeSource) {
 					if (
-						typeof geojsonSource.data !== 'string' &&
-						geojsonSource.data.type === 'FeatureCollection'
+						typeof geojsonTimeSource.data !== 'string' &&
+						geojsonTimeSource.data.type === 'FeatureCollection'
 					) {
-						const filtered = geojsonSource.data.features.filter(
+						const filtered = geojsonTimeSource.data.features.filter(
+							(f) => f.properties?.originalId === fid
+						) as unknown as GeoJSONStoreFeatures[];
+						features.push(feature);
+						if (filtered.length > 0) {
+							features.push(...filtered);
+						}
+					}
+				}
+
+				if (geojsonDistanceSource) {
+					if (
+						typeof geojsonDistanceSource.data !== 'string' &&
+						geojsonDistanceSource.data.type === 'FeatureCollection'
+					) {
+						const filtered = geojsonDistanceSource.data.features.filter(
 							(f) => f.properties?.originalId === fid
 						) as unknown as GeoJSONStoreFeatures[];
 						features.push(feature);

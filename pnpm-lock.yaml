@@ -42,13 +42,13 @@ importers:
         specifier: ^6.9.1
         version: 6.9.1
       '@turf/area':
-        specifier: ^7.3.3
+        specifier: ^7.3.4
         version: 7.3.4
       '@turf/centroid':
-        specifier: ^7.3.3
+        specifier: ^7.3.4
         version: 7.3.4
       '@turf/distance':
-        specifier: ^7.3.3
+        specifier: ^7.3.4
         version: 7.3.4
       '@types/eslint':
         specifier: ^9.6.1
@@ -96,8 +96,8 @@ importers:
         specifier: ^2.0.16
         version: 2.1.0
       maplibre-gl:
-        specifier: ^5.17.0
-        version: 5.17.0
+        specifier: ^5.18.0
+        version: 5.18.0
       postcss:
         specifier: ^8.5.6
         version: 8.5.6
@@ -138,11 +138,11 @@ importers:
         specifier: ^4.1.18
         version: 4.1.18
       terra-draw:
-        specifier: ^1.24.0
-        version: 1.24.0
+        specifier: ^1.24.2
+        version: 1.24.2
       terra-draw-maplibre-gl-adapter:
         specifier: ^1.3.0
-        version: 1.3.0(maplibre-gl@5.17.0)(terra-draw@1.24.0)
+        version: 1.3.0(maplibre-gl@5.18.0)(terra-draw@1.24.2)
       typedoc:
         specifier: ^0.28.16
         version: 0.28.16(typescript@5.9.3)
@@ -2443,8 +2443,8 @@ packages:
     resolution: {integrity: sha512-hXdUTZYIVOt1Ex//jAQi+wTZZpUpwBj/0QsOzqegb3rGMMeJiSEu5xLHnYfBrRV4RH2+OCSOO95Is/7x1WJ4bw==}
     engines: {node: '>=10'}
 
-  maplibre-gl@5.17.0:
-    resolution: {integrity: sha512-gwS6NpXBfWD406dtT5YfEpl2hmpMm+wcPqf04UAez/TxY1OBjiMdK2ZoMGcNIlGHelKc4+Uet6zhDdDEnlJVHA==}
+  maplibre-gl@5.18.0:
+    resolution: {integrity: sha512-UtWxPBpHuFvEkM+5FVfcFG9ZKEWZQI6+PZkvLErr8Zs5ux+O7/KQ3JjSUvAfOlMeMgd/77qlHpOw0yHL7JU5cw==}
     engines: {node: '>=16.14.0', npm: '>=8.1.0'}
 
   markdown-it@14.1.0:
@@ -3437,8 +3437,8 @@ packages:
       maplibre-gl: '>=4'
       terra-draw: ^1.0.0
 
-  terra-draw@1.24.0:
-    resolution: {integrity: sha512-K10GBz3jdzMpW6vQlQUs6HCkxqLfUjnXFiou2xOH9UjEsSTHonet0ATy0in3764l9uH83uD7Tw5Hjc2UG1gcTg==}
+  terra-draw@1.24.2:
+    resolution: {integrity: sha512-Kr46eZrBG3PQ/xQAYkXn00I4Ma+hjZapyJdkqKD3sBt6uRXBzRvcU3KoNoVwh1S8NPbJRGwGKpoD4pPcxR701Q==}
 
   text-segmentation@1.0.3:
     resolution: {integrity: sha512-iOiPUo/BGnZ6+54OsWxZidGCsdU8YbE4PSpdPinp7DeMtUJNJBoJ/ouUSTJjHkh1KntHaltHl/gDs2FC4i5+Nw==}
@@ -4772,7 +4772,7 @@ snapshots:
   '@undp-data/style-switcher@2.0.15':
     dependencies:
       lodash-es: 4.17.23
-      maplibre-gl: 5.17.0
+      maplibre-gl: 5.18.0
       tippy.js: 6.3.7
 
   '@ungap/structured-clone@1.3.0': {}
@@ -4833,7 +4833,7 @@ snapshots:
   '@watergis/maplibre-gl-export@4.1.1':
     dependencies:
       jspdf: 4.1.0
-      maplibre-gl: 5.17.0
+      maplibre-gl: 5.18.0
 
   '@watergis/terrain-rgb@2.1.1': {}
 
@@ -6275,7 +6275,7 @@ snapshots:
     dependencies:
       semver: 7.7.4
 
-  maplibre-gl@5.17.0:
+  maplibre-gl@5.18.0:
     dependencies:
       '@mapbox/geojson-rewind': 0.5.2
       '@mapbox/jsonlint-lines-primitives': 2.0.2
@@ -7229,12 +7229,12 @@ snapshots:
 
   term-size@2.2.1: {}
 
-  terra-draw-maplibre-gl-adapter@1.3.0(maplibre-gl@5.17.0)(terra-draw@1.24.0):
+  terra-draw-maplibre-gl-adapter@1.3.0(maplibre-gl@5.18.0)(terra-draw@1.24.2):
     dependencies:
-      maplibre-gl: 5.17.0
-      terra-draw: 1.24.0
+      maplibre-gl: 5.18.0
+      terra-draw: 1.24.2
 
-  terra-draw@1.24.0: {}
+  terra-draw@1.24.2: {}
 
   text-segmentation@1.0.3:
     dependencies:

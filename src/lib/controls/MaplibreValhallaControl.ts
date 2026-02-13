@@ -501,15 +501,6 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 	private createIsochroneContent(): HTMLDivElement {
 		const container = document.createElement('div');
 
-		// Contour Type section
-		const contourTypeSection = document.createElement('div');
-		contourTypeSection.classList.add('setting-section');
-
-		const contourTypeLabel = document.createElement('label');
-		contourTypeLabel.textContent = 'Contour Type';
-		contourTypeLabel.classList.add('setting-label');
-		contourTypeSection.appendChild(contourTypeLabel);
-
 		// Means of Transport (time) section
 		const timeTransportSection = document.createElement('div');
 		timeTransportSection.classList.add('setting-section');

@@ -43,7 +43,8 @@ export const AvailableModes = [
 export const AvailableValhallaModes = [
 	'render',
 	'linestring',
-	'point',
+	'time-isochrone',
+	'distance-isochrone',
 	'select',
 	'delete-selection',
 	'delete',

@@ -13,7 +13,8 @@ export const defaultValhallaControlOptions: ValhallaControlOptions = {
 	modes: [
 		'render',
 		'linestring',
-		'point',
+		'time-isochrone',
+		'distance-isochrone',
 		'select',
 		'delete-selection',
 		'delete',
@@ -23,7 +24,18 @@ export const defaultValhallaControlOptions: ValhallaControlOptions = {
 	open: false,
 	// see styling parameters of Terra Draw at https://github.com/JamesLMilner/terra-draw/blob/main/guides/5.STYLING.md
 	modeOptions: {
-		point: new TerraDrawPointMode({
+		'time-isochrone': new TerraDrawPointMode({
+			modeName: 'time-isochrone',
+			editable: false,
+			styles: {
+				pointColor: '#FFFFFF',
+				pointWidth: 5,
+				pointOutlineColor: '#666666',
+				pointOutlineWidth: 1
+			}
+		}),
+		'distance-isochrone': new TerraDrawPointMode({
+			modeName: 'distance-isochrone',
 			editable: false,
 			styles: {
 				pointColor: '#FFFFFF',
@@ -45,7 +57,12 @@ export const defaultValhallaControlOptions: ValhallaControlOptions = {
 		}),
 		select: new TerraDrawSelectMode({
 			flags: {
-				point: {
+				'time-isochrone': {
+					feature: {
+						draggable: false
+					}
+				},
+				'distance-isochrone': {
 					feature: {
 						draggable: false
 					}
@@ -76,8 +93,8 @@ export const defaultValhallaControlOptions: ValhallaControlOptions = {
 			distanceUnit: 'kilometers'
 		},
 		isochroneOptions: {
-			contourType: 'time',
-			costingModel: 'auto',
+			timeCostingModel: 'auto',
+			distanceCostingModel: 'auto',
 			contours: [
 				{
 					time: 3,
@@ -182,20 +199,20 @@ export const defaultValhallaControlOptions: ValhallaControlOptions = {
 			'circle-stroke-width': 1
 		}
 	},
-	isochronePolygonLayerSpec: {
-		id: '{prefix}-isochrone-polygon',
+	timeIsochronePolygonLayerSpec: {
+		id: '{prefix}-time-isochrone-polygon',
 		type: 'fill',
-		source: '{prefix}-isochrone-source',
+		source: '{prefix}-time-isochrone-source',
 		layout: {},
 		paint: {
 			'fill-color': ['get', 'fillColor'],
 			'fill-opacity': ['get', 'fillOpacity']
 		}
 	},
-	isochroneLineLayerSpec: {
-		id: '{prefix}-isochrone-line',
+	timeIsochroneLineLayerSpec: {
+		id: '{prefix}-time-isochrone-line',
 		type: 'line',
-		source: '{prefix}-isochrone-source',
+		source: '{prefix}-time-isochrone-source',
 		layout: {
 			'line-join': 'round',
 			'line-cap': 'round'
@@ -205,10 +222,63 @@ export const defaultValhallaControlOptions: ValhallaControlOptions = {
 			'line-width': 3
 		}
 	},
-	isochroneLabelLayerSpec: {
-		id: '{prefix}-isochrone-label',
+	timeIsochroneLabelLayerSpec: {
+		id: '{prefix}-time-isochrone-label',
 		type: 'symbol',
-		source: '{prefix}-isochrone-source',
+		source: '{prefix}-time-isochrone-source',
+		layout: {
+			'symbol-placement': 'line',
+			'text-pitch-alignment': 'viewport',
+			'text-field': [
+				'concat',
+				['get', 'contour'],
+				' ',
+				[
+					'case',
+					['==', ['get', 'metric'], 'time'],
+					'min',
+					['==', ['get', 'metric'], 'distance'],
+					'km',
+					''
+				]
+			],
+			'text-size': 12,
+			'symbol-spacing': 100,
+			'text-max-angle': 45
+		},
+		paint: {
+			'text-color': 'rgb(0, 0, 0)',
+			'text-halo-width': 1,
+			'text-halo-color': 'rgb(255, 255, 255)'
+		}
+	},
+	distanceIsochronePolygonLayerSpec: {
+		id: '{prefix}-distance-isochrone-polygon',
+		type: 'fill',
+		source: '{prefix}-distance-isochrone-source',
+		layout: {},
+		paint: {
+			'fill-color': ['get', 'fillColor'],
+			'fill-opacity': ['get', 'fillOpacity']
+		}
+	},
+	distanceIsochroneLineLayerSpec: {
+		id: '{prefix}-distance-isochrone-line',
+		type: 'line',
+		source: '{prefix}-distance-isochrone-source',
+		layout: {
+			'line-join': 'round',
+			'line-cap': 'round'
+		},
+		paint: {
+			'line-color': ['get', 'fillColor'],
+			'line-width': 3
+		}
+	},
+	distanceIsochroneLabelLayerSpec: {
+		id: '{prefix}-distance-isochrone-label',
+		type: 'symbol',
+		source: '{prefix}-distance-isochrone-source',
 		layout: {
 			'symbol-placement': 'line',
 			'text-pitch-alignment': 'viewport',

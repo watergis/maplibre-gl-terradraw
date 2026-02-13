@@ -42,8 +42,15 @@
 	background-size: 150%;
 }
 
-.maplibregl-terradraw-valhalla-add-point-button {
-	background: url('./icons/valhalla_isochrone.svg');
+.maplibregl-terradraw-valhalla-add-time-isochrone-button {
+	background: url('./icons/valhalla_time_isochrone.svg');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 80%;
+}
+
+.maplibregl-terradraw-valhalla-add-distance-isochrone-button {
+	background: url('./icons/valhalla_distance_isochrone.svg');
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: 80%;

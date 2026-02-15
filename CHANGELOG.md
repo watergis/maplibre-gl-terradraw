@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.12.1
+
+### Patch Changes
+
+- 9575a2a: chore: fixed lint error due to upgrade of eslint. Update other devDependencies.
+
 ## 1.12.0
 
 ### Minor Changes

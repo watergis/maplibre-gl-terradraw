@@ -304,9 +304,6 @@ export class ValhallaRouting {
 			lng = 0,
 			// eslint-disable-next-line prefer-const
 			coordinates: number[][] = [],
-			shift = 0,
-			result = 0,
-			byte = null,
 			latitude_change,
 			longitude_change,
 			// eslint-disable-next-line prefer-const
@@ -317,9 +314,9 @@ export class ValhallaRouting {
 		// loop iteration, a single coordinate is decoded.
 		while (index < value.length) {
 			// Reset shift, result, and byte
-			byte = null;
-			shift = 0;
-			result = 0;
+			let byte;
+			let shift = 0;
+			let result = 0;
 
 			do {
 				byte = value.charCodeAt(index++) - 63;

@@ -15,8 +15,8 @@ importers:
         specifier: ^10.0.1
         version: 10.0.1(eslint@10.0.0(jiti@2.6.1))
       '@lucide/svelte':
-        specifier: ^0.570.0
-        version: 0.570.0(svelte@5.51.2)
+        specifier: ^0.572.0
+        version: 0.572.0(svelte@5.51.2)
       '@playwright/test':
         specifier: ^1.58.2
         version: 1.58.2
@@ -558,8 +558,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@lucide/svelte@0.570.0':
-    resolution: {integrity: sha512-V+qQXixAVfSysTpOxikcASIgNlm8A8A9+C1DR7G2IyqEjlBUop785wNyFztbm+579e847X9dF236X6FmiApmiQ==}
+  '@lucide/svelte@0.572.0':
+    resolution: {integrity: sha512-RJhuwjafmNHKWjAOK5kRfYHquxem/HY0bHWQkKVYzgAGyH5DcWVxf/iZPLDNnRiAl6R7RmyZqs5YDe+wBa0h7A==}
     peerDependencies:
       svelte: ^5
 
@@ -4181,7 +4181,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@lucide/svelte@0.570.0(svelte@5.51.2)':
+  '@lucide/svelte@0.572.0(svelte@5.51.2)':
     dependencies:
       svelte: 5.51.2
 

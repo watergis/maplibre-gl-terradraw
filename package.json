@@ -50,7 +50,7 @@
 	"devDependencies": {
 		"@changesets/cli": "^2.29.8",
 		"@eslint/js": "^10.0.1",
-		"@lucide/svelte": "^0.574.0",
+		"@lucide/svelte": "^0.575.0",
 		"@playwright/test": "^1.58.2",
 		"@skeletonlabs/skeleton": "^4.12.0",
 		"@skeletonlabs/skeleton-svelte": "^4.12.0",

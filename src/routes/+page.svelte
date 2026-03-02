@@ -59,8 +59,8 @@
 						distanceUnit: 'kilometers'
 					},
 					isochroneOptions: {
-						contourType: 'time',
-						costingModel: 'auto',
+						timeCostingModel: 'auto',
+						distanceCostingModel: 'auto',
 						contours: [
 							{
 								time: 3,

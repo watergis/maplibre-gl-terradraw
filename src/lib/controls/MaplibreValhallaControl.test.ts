@@ -189,40 +189,40 @@ describe('routingDistanceUnit property', () => {
 	});
 });
 
-describe('isochroneContourType property', () => {
-	it('should return default isochrone contour type', () => {
-		expect(control.isochroneContourType).toBeDefined();
-	});
-
-	it('should update isochrone contour type using setter', () => {
-		control.isochroneContourType = 'time';
-		expect(control.isochroneContourType).toBe('time');
-	});
-
-	it('should set isochrone contour type to distance', () => {
-		control.isochroneContourType = 'distance';
-		expect(control.isochroneContourType).toBe('distance');
-	});
-});
-
 describe('isochroneCostingModel property', () => {
 	it('should return default isochrone costing model', () => {
-		expect(control.isochroneCostingModel).toBeDefined();
+		expect(control.timeIsochroneCostingModel).toBeDefined();
+		expect(control.distanceIsochroneCostingModel).toBeDefined();
 	});
 
-	it('should update isochrone costing model using setter', () => {
-		control.isochroneCostingModel = 'bicycle';
-		expect(control.isochroneCostingModel).toBe('bicycle');
+	it('should update timeisochrone costing model using setter', () => {
+		control.timeIsochroneCostingModel = 'bicycle';
+		expect(control.timeIsochroneCostingModel).toBe('bicycle');
 	});
 
-	it('should set isochrone costing model to auto', () => {
-		control.isochroneCostingModel = 'auto';
-		expect(control.isochroneCostingModel).toBe('auto');
+	it('should update distance isochrone costing model using setter', () => {
+		control.distanceIsochroneCostingModel = 'bicycle';
+		expect(control.distanceIsochroneCostingModel).toBe('bicycle');
 	});
 
-	it('should set isochrone costing model to pedestrian', () => {
-		control.isochroneCostingModel = 'pedestrian';
-		expect(control.isochroneCostingModel).toBe('pedestrian');
+	it('should set time isochrone costing model to auto', () => {
+		control.timeIsochroneCostingModel = 'auto';
+		expect(control.timeIsochroneCostingModel).toBe('auto');
+	});
+
+	it('should set distance isochrone costing model to auto', () => {
+		control.distanceIsochroneCostingModel = 'auto';
+		expect(control.distanceIsochroneCostingModel).toBe('auto');
+	});
+
+	it('should set time isochrone costing model to pedestrian', () => {
+		control.timeIsochroneCostingModel = 'pedestrian';
+		expect(control.timeIsochroneCostingModel).toBe('pedestrian');
+	});
+
+	it('should set distance isochrone costing model to pedestrian', () => {
+		control.distanceIsochroneCostingModel = 'pedestrian';
+		expect(control.distanceIsochroneCostingModel).toBe('pedestrian');
 	});
 });
 

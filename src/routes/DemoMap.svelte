@@ -27,7 +27,6 @@
 		roundFeatureCoordinates,
 		routingDistanceUnitOptions,
 		type Contour,
-		type ContourType,
 		type costingModelType,
 		type distanceUnitType,
 		type ImperialAreaUnit,
@@ -99,8 +98,8 @@
 					distanceUnit: 'kilometers'
 				},
 				isochroneOptions: {
-					contourType: 'time',
-					costingModel: 'auto',
+					timeCostingModel: 'auto',
+					distanceCostingModel: 'auto',
 					contours: [
 						{
 							time: 3,
@@ -151,8 +150,8 @@
 		'valhalla-url',
 		'routing-means-of-transport',
 		'routing-distance-unit',
-		'isochrone-means-of-transport',
-		'isochrone-contour-type',
+		'time-isochrone-means-of-transport',
+		'distance-isochrone-means-of-transport',
 		'isochrone-contours'
 	]);
 
@@ -1046,53 +1045,58 @@
 									</Accordion.Item>
 								</Tabs.Content>
 								<Tabs.Content value="isochrone">
-									<Accordion.Item value="isochrone-contour-type">
+									<Accordion.Item value="time-isochrone-means-of-transport">
 										<Accordion.ItemTrigger>
-											<p class="font-bold uppercase italic">Type of contour</p>
+											<p class="font-bold uppercase italic">Means of transport (Time)</p>
 										</Accordion.ItemTrigger>
 										<Accordion.ItemContent>
 											<select
 												class="select"
-												value={options.valhallaOptions.isochroneOptions?.contourType}
+												value={options.valhallaOptions.isochroneOptions?.timeCostingModel}
 												onchange={(e) => {
 													if (!options.valhallaOptions.isochroneOptions) {
 														options.valhallaOptions.isochroneOptions = {};
 													} else {
-														options.valhallaOptions.isochroneOptions.contourType = (
-															e.target as HTMLSelectElement
-														).value as ContourType;
-													}
-													if (drawControl && options.controlType === 'valhalla') {
-														(drawControl as MaplibreValhallaControl).isochroneContourType =
-															options.valhallaOptions.isochroneOptions.contourType ?? 'time';
-													}
-													onchange(options);
-												}}
-											>
-												<option value="time">Time</option>
-												<option value="distance">Distance</option>
-											</select>
-										</Accordion.ItemContent>
-									</Accordion.Item>
-									<Accordion.Item value="isochrone-means-of-transport">
-										<Accordion.ItemTrigger>
-											<p class="font-bold uppercase italic">Means of transport</p>
-										</Accordion.ItemTrigger>
-										<Accordion.ItemContent>
-											<select
-												class="select"
-												value={options.valhallaOptions.isochroneOptions?.costingModel}
-												onchange={(e) => {
-													if (!options.valhallaOptions.isochroneOptions) {
-														options.valhallaOptions.isochroneOptions = {};
-													} else {
-														options.valhallaOptions.isochroneOptions.costingModel = (
+														options.valhallaOptions.isochroneOptions.timeCostingModel = (
 															e.target as HTMLSelectElement
 														).value as costingModelType;
 													}
 													if (drawControl && options.controlType === 'valhalla') {
-														(drawControl as MaplibreValhallaControl).isochroneCostingModel =
-															options.valhallaOptions.isochroneOptions.costingModel ?? 'pedestrian';
+														(drawControl as MaplibreValhallaControl).timeIsochroneCostingModel =
+															options.valhallaOptions.isochroneOptions.timeCostingModel ??
+															'pedestrian';
+													}
+													onchange(options);
+												}}
+											>
+												{#each costingModelOptions as item (item.value)}
+													<option value={item.value}>
+														{item.label}
+													</option>
+												{/each}
+											</select>
+										</Accordion.ItemContent>
+									</Accordion.Item>
+									<Accordion.Item value="distance-isochrone-means-of-transport">
+										<Accordion.ItemTrigger>
+											<p class="font-bold uppercase italic">Means of transport (Distance)</p>
+										</Accordion.ItemTrigger>
+										<Accordion.ItemContent>
+											<select
+												class="select"
+												value={options.valhallaOptions.isochroneOptions?.distanceCostingModel}
+												onchange={(e) => {
+													if (!options.valhallaOptions.isochroneOptions) {
+														options.valhallaOptions.isochroneOptions = {};
+													} else {
+														options.valhallaOptions.isochroneOptions.distanceCostingModel = (
+															e.target as HTMLSelectElement
+														).value as costingModelType;
+													}
+													if (drawControl && options.controlType === 'valhalla') {
+														(drawControl as MaplibreValhallaControl).distanceIsochroneCostingModel =
+															options.valhallaOptions.isochroneOptions.distanceCostingModel ??
+															'pedestrian';
 													}
 													onchange(options);
 												}}

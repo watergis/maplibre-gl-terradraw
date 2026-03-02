@@ -1,5 +1,83 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.12.1
+
+### Patch Changes
+
+- 9575a2a: chore: fixed lint error due to upgrade of eslint. Update other devDependencies.
+
+## 1.12.0
+
+### Minor Changes
+
+- 59c671c: feat: split valhalla isochrone button into two buttons for time isochrone and distance isochrone.
+
+  **IMPORTANT!** This release contains breaking changes for Valhalla isochrone control.
+
+  #### Breaking Changes
+  - Mode names have changed:
+    - `point` → `time-isochrone`, `distance-isochrone`
+    - `linestring` -> `routing`
+  - The `contourType` property has been removed.
+  - `costingModel` has been split into `timeCostingModel` and `distanceCostingModel`.
+  - css for icons of valhalla control is also changed
+
+  New default valhallaOptions parameters will be as following example.
+
+  ```ts
+  	valhallaOptions: {
+  		url: '',
+  		routingOptions: {
+  			costingModel: 'auto',
+  			distanceUnit: 'kilometers'
+  		},
+  		isochroneOptions: {
+  			timeCostingModel: 'auto',
+  			distanceCostingModel: 'auto',
+  			contours: [
+  				{
+  					time: 3,
+  					distance: 1,
+  					color: '#ff0000'
+  				},
+  				{
+  					time: 5,
+  					distance: 2,
+  					color: '#ffff00'
+  				},
+  				{
+  					time: 10,
+  					distance: 3,
+  					color: '#0000ff'
+  				},
+  				{
+  					time: 15,
+  					distance: 4,
+  					color: '#ff00ff'
+  				}
+  			]
+  		}
+  	},
+  ```
+
+### Patch Changes
+
+- 2c55078: chore: upgrade TerraDraw to v1.24.2
+
+## 1.11.2
+
+### Patch Changes
+
+- 8e61b66: chore: upgrade terra-draw to v1.24.0 and terra-draw-maplibre-gl-adapter to v1.3.0
+
+## 1.11.1
+
+### Patch Changes
+
+- 8d8cbd4: fix: set coordinates.midpoints to false for default settings of TerraDrawRectangleMode and TerraDrawAngledRectangleMode to solve the bug that midpoints are remained in the previous locations when the polygon is resized.
+- 603a040: chore: upgrade TerraDraw to v1.23.2.
+- 603a040: docs: updated documentation for calcArea and convertArea function.
+
 ## 1.11.0
 
 ### Minor Changes

@@ -142,7 +142,7 @@ export const getDefaultModeOptions = () => {
 						coordinates: {
 							resizable: 'opposite',
 							deletable: false,
-							midpoints: true
+							midpoints: false
 						}
 					}
 				},
@@ -153,7 +153,7 @@ export const getDefaultModeOptions = () => {
 						coordinates: {
 							resizable: 'opposite',
 							deletable: false,
-							midpoints: true
+							midpoints: false
 						}
 					}
 				},

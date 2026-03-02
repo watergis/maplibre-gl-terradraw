@@ -17,9 +17,12 @@ export const TERRADRAW_VALHALLA_SOURCE_IDS = [
 	...TERRADRAW_SOURCE_IDS,
 	defaultValhallaControlOptions.routingLineLayerNodeLabelSpec?.source as string,
 	defaultValhallaControlOptions.routingLineLayerNodeSpec?.source as string,
-	defaultValhallaControlOptions.isochronePolygonLayerSpec?.source as string,
-	defaultValhallaControlOptions.isochroneLineLayerSpec?.source as string,
-	defaultValhallaControlOptions.isochroneLabelLayerSpec?.source as string
+	defaultValhallaControlOptions.timeIsochronePolygonLayerSpec?.source as string,
+	defaultValhallaControlOptions.timeIsochroneLineLayerSpec?.source as string,
+	defaultValhallaControlOptions.timeIsochroneLabelLayerSpec?.source as string,
+	defaultValhallaControlOptions.distanceIsochronePolygonLayerSpec?.source as string,
+	defaultValhallaControlOptions.distanceIsochroneLineLayerSpec?.source as string,
+	defaultValhallaControlOptions.distanceIsochroneLabelLayerSpec?.source as string
 ];
 
 /**

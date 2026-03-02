@@ -1,6 +1,6 @@
 import type { ModeOptions } from './ModeOptions';
 import type { TerradrawValhallaMode } from './TerradrawMode';
-import type { Contour, ContourType, routingDistanceUnitType, costingModelType } from '../helpers';
+import type { Contour, routingDistanceUnitType, costingModelType } from '../helpers';
 import type {
 	CircleLayerSpecification,
 	FillLayerSpecification,
@@ -58,19 +58,34 @@ export interface ValhallaControlOptions {
 	routingLineLayerNodeSpec?: CircleLayerSpecification;
 
 	/**
-	 * Maplibre fill layer specification for isochrone polygon layer
+	 * Maplibre fill layer specification for time isochrone polygon layer
 	 */
-	isochronePolygonLayerSpec?: FillLayerSpecification;
+	timeIsochronePolygonLayerSpec?: FillLayerSpecification;
 
 	/**
-	 * Maplibre line layer specification for isochrone line layer
+	 * Maplibre line layer specification for time isochrone line layer
 	 */
-	isochroneLineLayerSpec?: LineLayerSpecification;
+	timeIsochroneLineLayerSpec?: LineLayerSpecification;
 
 	/**
-	 * Maplibre symbol layer specification for isochrone label layer
+	 * Maplibre symbol layer specification for time isochrone label layer
 	 */
-	isochroneLabelLayerSpec?: SymbolLayerSpecification;
+	timeIsochroneLabelLayerSpec?: SymbolLayerSpecification;
+
+	/**
+	 * Maplibre fill layer specification for distance isochrone polygon layer
+	 */
+	distanceIsochronePolygonLayerSpec?: FillLayerSpecification;
+
+	/**
+	 * Maplibre line layer specification for distance isochrone line layer
+	 */
+	distanceIsochroneLineLayerSpec?: LineLayerSpecification;
+
+	/**
+	 * Maplibre symbol layer specification for distance isochrone label layer
+	 */
+	distanceIsochroneLabelLayerSpec?: SymbolLayerSpecification;
 }
 
 export interface ValhallaOptions {
@@ -102,15 +117,18 @@ export interface ValhallaOptions {
 
 	isochroneOptions?: {
 		/**
-		 * The type of contour to compute isochrone either 'time' or 'distance'
-		 */
-		contourType?: ContourType;
-		/**
-		 * Means of transport for Valhalla isochrone API.
+		 * Means of transport for Valhalla time isochrone API.
 		 * 'auto', 'bicycle', 'pedestrian' models are available in the plugin.
 		 * https://valhalla.github.io/valhalla/api/isochrone/api-reference/#costing-parameters
 		 */
-		costingModel?: costingModelType;
+		timeCostingModel?: costingModelType;
+
+		/**
+		 * Means of transport for Valhalla distance isochrone API.
+		 * 'auto', 'bicycle', 'pedestrian' models are available in the plugin.
+		 * https://valhalla.github.io/valhalla/api/isochrone/api-reference/#costing-parameters
+		 */
+		distanceCostingModel?: costingModelType;
 
 		/**
 		 * List of contours for isochrone API.

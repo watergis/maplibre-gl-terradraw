@@ -224,7 +224,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 						coordinates: {
 							resizable: 'opposite',
 							deletable: false,
-							midpoints: true
+							midpoints: false
 						}
 					}
 				},
@@ -235,7 +235,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 						coordinates: {
 							resizable: 'opposite',
 							deletable: false,
-							midpoints: true
+							midpoints: false
 						}
 					}
 				},

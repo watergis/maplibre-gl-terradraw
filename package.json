@@ -87,7 +87,7 @@
 		"sass": "^1.97.3",
 		"sass-embedded": "^1.97.3",
 		"serve": "^14.2.5",
-		"shiki": "^3.22.0",
+		"shiki": "^4.0.0",
 		"svelte": "^5.51.1",
 		"svelte-check": "^4.4.0",
 		"tailwindcss": "^4.1.18",

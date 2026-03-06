@@ -11,7 +11,8 @@ export const exampleIds = [
 	'query-elevation-terrainrgb',
 	'change-style',
 	'use-both-control',
-	'programmatic-mode-control'
+	'programmatic-mode-control',
+	'selected-feature-per-mode-style'
 ];
 
 export const getTitle = (body: string) => {

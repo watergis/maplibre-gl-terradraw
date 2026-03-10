@@ -2,20 +2,20 @@
 	import IconMoon from '@lucide/svelte/icons/moon';
 	import IconSun from '@lucide/svelte/icons/sun';
 
-	let checked = $state(false);
+	let isDark = $state(false);
 
 	const localStorageKey = 'light-dark-mode';
 
 	$effect(() => {
-		const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-		checked = prefersDark === true;
+		const prefersDark = localStorage.getItem(localStorageKey) === 'dark';
+		isDark = prefersDark === true;
 	});
 
-	const onCheckedChange = (event: { checked: boolean }) => {
-		const mode = event.checked ? 'dark' : 'light';
+	const onCheckedChange = (event: { isDark: boolean }) => {
+		const mode = event.isDark ? 'dark' : 'light';
 		document.documentElement.setAttribute('data-mode', mode);
 		localStorage.setItem(localStorageKey, mode);
-		checked = event.checked;
+		isDark = event.isDark;
 	};
 </script>
 
@@ -23,12 +23,12 @@
 	type="button"
 	class="btn hover:preset-tonal px-1 md:px-2"
 	onclick={() => {
-		checked = !checked;
-		onCheckedChange({ checked });
+		isDark = !isDark;
+		onCheckedChange({ isDark });
 	}}
 >
 	<span>
-		{#if checked}
+		{#if isDark}
 			<IconMoon />
 		{:else}
 			<IconSun />

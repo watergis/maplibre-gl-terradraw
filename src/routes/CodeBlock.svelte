@@ -77,8 +77,12 @@
 				langs: [console, html, css, js]
 			});
 		}
+	});
 
-		generatedHtml = shiki.codeToHtml(code, { lang, theme });
+	$effect(() => {
+		if (shiki && code) {
+			generatedHtml = shiki.codeToHtml(code, { lang, theme });
+		}
 	});
 </script>
 

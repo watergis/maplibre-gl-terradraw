@@ -6,8 +6,7 @@
 		<meta
 			property="og:description"
 			content="This example shows how to override styling for individual features in select mode.
-            Styling is applied to per-feature per-mode meaning features with the same geometry type but different modes can have differing stylings.
-            This will come in handy when multiselection of features is adopted in Terra Draw."
+            Styling is applied to per-feature per-mode meaning features with the same geometry type but different modes can have differing stylings."
 		/>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -27,7 +26,7 @@
 	</head>
 	<body>
 		<script src="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.umd.js"></script>
-		<script src="https://unpkg.com/terra-draw@1.24.0/dist/terra-draw.umd.js"></script>
+		<script src="https://unpkg.com/terra-draw@1.25.0/dist/terra-draw.umd.js"></script>
 
 		<link
 			rel="stylesheet"
@@ -93,11 +92,6 @@
 
 							selectedPointWidth: ({ properties }) => {
 								if (properties.mode === 'point') return 6;
-							},
-
-							selectedMarkerHeight: (feature) => {
-								console.log(feature.properties);
-								return 10;
 							}
 						}
 					})

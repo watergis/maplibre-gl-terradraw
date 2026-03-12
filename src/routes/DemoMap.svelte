@@ -690,7 +690,7 @@
 					</Accordion.ItemTrigger>
 					<Accordion.ItemContent>
 						<div class="p-2">
-							<p class="text-black">
+							<p>
 								For Polygon, use <b>ctrl+s</b> to resize the feature, and use <b>ctrl+r</b> to rotate
 								the feature.
 							</p>

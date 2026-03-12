@@ -1,0 +1,484 @@
+/*
+ * MapLibre Glass Theme
+ * Version: 1.0
+ * A modern, frosted-glass UI theme for MapLibre GL JS.
+ * https://github.com/corb555/maplibre-glass-css
+ */
+
+.maplibre-glass-theme {
+	/* ======================================================================
+       THEME CONFIGURATION
+       You can override these with settings in your own CSS
+       ====================================================================== */
+
+	/* --- 1. CORE SETTINGS (Applied to Buttons & Controls) --- */
+	--glass-rgb: 0, 9, 14; /* Base RGB - blue/green tint to the glass */
+	--glass-opacity: 0.2; /* glass opacity */
+	--glass-blur-px: 2px; /* background blur */
+
+	--glass-border-color: rgba(255, 255, 255, 0.3);
+	--glass-text-color: #f4f1f1;
+	--glass-text-muted: rgba(255, 255, 255, 0.7);
+	--glass-accent-color: #4c4770;
+
+	/* Popup style  */
+	--glass-popup-rgb: var(--glass-rgb);
+	--glass-popup-opacity: 0.3; /* increase opacity to improve readability */
+	--glass-popup-blur-px: 12px; /* increase blur to improve readability */
+	--glass-popup-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+
+	/* --- 2. SHAPE & PHYSICS --- */
+	--glass-radius-large: 2rem;
+	--glass-radius-small: 50%;
+	--glass-shadow: 0 9px 25px rgba(0, 0, 0, 0.6);
+	--glass-inner-glow: inset 0 0 10px rgba(255, 255, 255, 0.5);
+
+	/* --- 3. Updates white/black in MapLibre icons --- */
+	--glass-icon-filter: brightness(0) invert(1);
+
+	/* --- 4. Popups img desaturation --- */
+	--glass-img-filter: saturate(0.8) brightness(0.9);
+}
+
+/* ==========================================================================
+   1. Base Glass Mixin
+   ========================================================================== */
+.maplibre-glass-theme .glass-panel,
+.maplibre-glass-theme .maplibregl-ctrl-group button,
+.maplibre-glass-theme .maplibregl-ctrl-geocoder,
+.maplibre-glass-theme .maplibregl-popup-content,
+.maplibre-glass-theme .maplibregl-ctrl-tour,
+.maplibre-glass-theme .tour-btn,
+.maplibre-glass-theme .maplibregl-ctrl-attrib.maplibregl-compact {
+	position: relative;
+
+	/* Calculate color  */
+	background-color: rgba(var(--glass-rgb), var(--glass-opacity));
+
+	/* Calculate blur  */
+	backdrop-filter: blur(var(--glass-blur-px)) saturate(120%);
+	-webkit-backdrop-filter: blur(var(--glass-blur-px)) saturate(120%);
+
+	border: 1px solid var(--glass-border-color);
+	box-shadow: var(--glass-shadow), var(--glass-inner-glow);
+	color: var(--glass-text-color);
+	/*transition: all 0.2s ease-in-out;*/
+}
+
+/* Interactive Hover Effect */
+.maplibre-glass-theme .maplibregl-ctrl-group button:hover:not(:disabled),
+.maplibre-glass-theme .maplibregl-ctrl-geocoder:hover,
+.maplibre-glass-theme .maplibregl-ctrl-tour button:hover:not(:disabled),
+.maplibre-glass-theme .tour-btn:hover:not(:disabled),
+.maplibre-glass-theme .maplibregl-ctrl-attrib.maplibregl-compact:hover {
+	background-color: rgba(120, 120, 120, 0.5);
+	box-shadow: 0 0 15px rgba(255, 255, 255, 0.15);
+	border-color: var(--glass-text-muted);
+}
+
+/* ==========================================================================
+   2. Standard MapLibre Controls
+   ========================================================================== */
+.maplibre-glass-theme .maplibregl-ctrl-group {
+	background: transparent !important;
+	box-shadow: none !important;
+	border: none !important;
+}
+
+.maplibre-glass-theme .maplibregl-ctrl-group button {
+	width: 32px;
+	height: 32px;
+	border-radius: var(--glass-radius-small);
+	margin-bottom: 10px;
+	border: 1px solid var(--glass-border-color);
+}
+
+.maplibre-glass-theme .maplibregl-ctrl-group > button + button {
+	border-top: 1px solid var(--glass-border-color);
+}
+
+.maplibre-glass-theme .maplibregl-ctrl-icon {
+	filter: var(--glass-icon-filter);
+}
+
+/* ==========================================================================
+   3. Attribution Control
+   ========================================================================== */
+.maplibre-glass-theme .maplibregl-ctrl-attrib {
+	background: rgba(var(--glass-rgb), var(--glass-opacity));
+	backdrop-filter: blur(var(--glass-blur-px));
+	border-radius: 1rem;
+	padding: 2px 8px;
+	color: var(--glass-text-muted);
+	border: 1px solid var(--glass-border-color);
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.maplibre-glass-theme .maplibregl-ctrl-attrib a {
+	color: var(--glass-text-color);
+	text-decoration: none;
+}
+
+.maplibre-glass-theme .maplibregl-ctrl-attrib.maplibregl-compact {
+	padding: 0;
+	margin: 10px 10px 30px 10px;
+	width: 32px;
+	height: 32px;
+	border-radius: var(--glass-radius-small);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+}
+
+.maplibre-glass-theme .maplibregl-ctrl-attrib-button {
+	background-image: none !important;
+	width: 100%;
+	height: 100%;
+	border: none;
+	cursor: pointer;
+	background-color: var(--glass-text-color);
+	-webkit-mask-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='9' y='5' width='2' height='2' /%3E%3Crect x='9' y='9' width='2' height='6' /%3E%3C/svg%3E");
+	mask-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='9' y='5' width='2' height='2' /%3E%3Crect x='9' y='9' width='2' height='6' /%3E%3C/svg%3E");
+	-webkit-mask-position: center;
+	mask-position: center;
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+}
+
+/* ==========================================================================
+   4. Geocoder Plugin
+   ========================================================================== */
+.maplibre-glass-theme .maplibregl-ctrl-geocoder {
+	border-radius: var(--glass-radius-large);
+	min-width: 200px;
+}
+
+.maplibre-glass-theme .maplibregl-ctrl-geocoder input[type='text'] {
+	color: var(--glass-text-color);
+	background-color: transparent;
+}
+
+.maplibre-glass-theme .maplibregl-ctrl-geocoder input::placeholder {
+	color: var(--glass-text-muted);
+}
+
+.maplibre-glass-theme .maplibregl-ctrl-geocoder--icon {
+	filter: var(--glass-icon-filter);
+}
+
+.maplibre-glass-theme .suggestions-wrapper .suggestions {
+	background-color: rgba(var(--glass-rgb), 0.9); /* Opaque for dropdown */
+	backdrop-filter: blur(10px);
+	border: 1px solid var(--glass-border-color);
+	border-radius: 10px;
+	margin-top: 5px;
+}
+
+.maplibre-glass-theme .suggestions .suggestion {
+	color: var(--glass-text-muted);
+}
+.maplibre-glass-theme .suggestions .suggestion:hover,
+.maplibre-glass-theme .suggestions .suggestion.active {
+	background-color: rgba(255, 255, 255, 0.1);
+	color: var(--glass-text-color);
+}
+/* ==========================================================================
+   5. Tour Control
+   ========================================================================== */
+
+.maplibre-glass-theme .maplibregl-ctrl-tour {
+	display: flex;
+	flex-direction: column;
+
+	/* IDLE STATE: Circular button by default */
+	/* Matches .maplibregl-ctrl-group button dimensions exactly */
+	min-width: 32px;
+	width: 32px;
+	height: 32px;
+	margin: 10px;
+	overflow: hidden;
+
+	/* LAYOUT & SHAPE */
+	border-radius: var(--glass-radius-small); /* 50% = Circle */
+
+	/* GLASS PROPERTIES (Ensuring we keep the mixin's glow) */
+	/* Note: Background and Blur are inherited from Base Glass Mixin */
+	box-shadow: var(--glass-shadow), var(--glass-inner-glow);
+
+	/* transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);*/
+}
+
+/* IDLE STATE: With Optional Label (Pill Shape) */
+.maplibre-glass-theme .maplibregl-ctrl-tour.has-label {
+	width: auto;
+	height: auto;
+	border-radius: 16px; /* Half of 32px height for pill shape */
+	padding: 0 12px;
+}
+
+/* ACTIVE STATE: Expand to Panel */
+.maplibre-glass-theme .maplibregl-ctrl-tour.active {
+	width: auto;
+	height: auto;
+	min-width: 320px;
+	max-width: 350px;
+	border-radius: var(--glass-radius-large);
+
+	/* Increase opacity for readability when expanded */
+	background-color: rgba(var(--glass-rgb), var(--glass-popup-opacity));
+	backdrop-filter: blur(var(--glass-popup-blur-px));
+	-webkit-backdrop-filter: blur(var(--glass-popup-blur-px));
+}
+
+/* Show close button only when active */
+.maplibre-glass-theme .maplibregl-ctrl-tour.active .tour-close-btn {
+	display: block !important;
+}
+
+/* ==========================================================================
+   1b. The Init Button (Only visible when IDLE)
+   ========================================================================== */
+.maplibre-glass-theme .tour-init-btn {
+	background: transparent;
+	border: none;
+	color: var(--glass-text-color);
+	cursor: pointer;
+
+	/* Layout: Center content */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* Fill container */
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	margin: 0;
+
+	/* Text styling (if label is present) */
+	font-family: 'Segoe UI', sans-serif;
+	font-weight: 600;
+	font-size: 14px;
+	white-space: nowrap;
+}
+
+.maplibre-glass-theme .tour-init-btn:hover {
+	color: var(--glass-accent-color);
+}
+
+/* HIDE internal elements based on state */
+
+/* When IDLE: Hide Header, Content, Footer. Show Init Button. */
+.maplibre-glass-theme .maplibregl-ctrl-tour:not(.active) .tour-header,
+.maplibre-glass-theme .maplibregl-ctrl-tour:not(.active) .tour-content,
+.maplibre-glass-theme .maplibregl-ctrl-tour:not(.active) .tour-footer {
+	display: none !important;
+}
+
+/* When ACTIVE: Hide Init Button. */
+.maplibre-glass-theme .maplibregl-ctrl-tour.active .tour-init-btn {
+	display: none;
+}
+
+/* ==========================================================================
+   2. Section A: Header (Title & Close)
+   ========================================================================== */
+.maplibre-glass-theme .tour-header {
+	display: flex;
+	align-items: center;
+	padding: 8px 15px;
+	/* Use a subtle border to separate header from content in Active mode */
+	border-bottom: 1px solid transparent;
+	/* transition: border-color 0.3s;*/
+}
+
+.maplibre-glass-theme .maplibregl-ctrl-tour.active .tour-header {
+	border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.maplibre-glass-theme .tour-title-select {
+	flex-grow: 1;
+	appearance: none;
+	-webkit-appearance: none;
+	background: transparent;
+	border: none;
+	outline: none;
+
+	color: var(--glass-text-color);
+	font-family: 'Segoe UI', sans-serif;
+	font-weight: 600;
+	font-size: 15px;
+	cursor: pointer;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.maplibre-glass-theme .tour-title-select:hover {
+	color: var(--glass-accent-color);
+}
+.maplibre-glass-theme .tour-title-select option {
+	background: rgba(51, 51, 51, 0.42);
+	color: #fff;
+}
+
+.maplibre-glass-theme .tour-close-btn {
+	background: transparent;
+	border: none;
+	color: var(--glass-text-muted);
+	font-size: 18px;
+	cursor: pointer;
+	margin-left: 10px;
+	display: none; /* Hidden in "Start" mode */
+}
+.maplibre-glass-theme .tour-close-btn:hover {
+	color: #fff;
+}
+
+/* ==========================================================================
+   3. Section B: Content Body (Collapsible)
+   ========================================================================== */
+.maplibre-glass-theme .tour-content {
+	display: none; /* Hidden by default */
+	padding: 12px;
+	max-height: 60vh;
+	overflow-y: auto;
+	font-family: 'Segoe UI', sans-serif;
+	font-size: 0.95em;
+	line-height: 1.5;
+}
+
+/* Scrollbars */
+.maplibre-glass-theme .tour-content::-webkit-scrollbar {
+	width: 6px;
+}
+.maplibre-glass-theme .tour-content::-webkit-scrollbar-thumb {
+	background: rgba(255, 255, 255, 0.2);
+	border-radius: 3px;
+}
+
+/* Typography */
+.maplibre-glass-theme .tour-content h3 {
+	text-align: center;
+	margin: 0 0 10px 0;
+	font-size: 1.1em;
+	font-weight: 600;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+	padding-bottom: 5px;
+}
+.maplibre-glass-theme .tour-content a {
+	color: var(--glass-accent-color);
+	text-decoration: none;
+	font-weight: bold;
+}
+.maplibre-glass-theme .tour-content img {
+	display: block;
+	margin: 15px auto;
+	max-width: 100%;
+	border-radius: 6px;
+	filter: var(--glass-img-filter);
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+.maplibre-glass-theme .tour-content table {
+	width: 100%;
+	font-size: 0.9em;
+	border-collapse: collapse;
+	margin-top: 10px;
+}
+.maplibre-glass-theme .tour-content td {
+	padding: 4px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.maplibre-glass-theme .tour-content td:first-child {
+	font-weight: bold;
+	text-align: right;
+	width: 80px;
+	opacity: 0.8;
+}
+/* Topic Label  */
+.maplibre-glass-theme .tour-content .tour-topic-label {
+	text-transform: uppercase;
+	font-size: 0.75em;
+	letter-spacing: 1px;
+	font-weight: 700;
+
+	/* Use the theme variable so it matches links/hovers automatically */
+	color: var(--glass-accent-color);
+
+	margin-bottom: 2px;
+	display: block;
+}
+/* ==========================================================================
+   4. Section C: Footer (Buttons)
+   ========================================================================== */
+.maplibre-glass-theme .tour-footer {
+	display: flex;
+	justify-content: space-between;
+	gap: 6px;
+	padding: 6px 15px;
+}
+
+.maplibre-glass-theme .tour-btn {
+	/* Layout Only */
+	flex: 1;
+	padding: 6px;
+	border-radius: 8px; /* Slightly smaller radius for buttons inside the panel */
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 5px;
+	cursor: pointer;
+	font-weight: 500;
+}
+
+.maplibre-glass-theme .tour-btn:disabled {
+	opacity: 0.3;
+	cursor: default;
+	/* Disable hover effect is handled by the :not(:disabled) selector in Section 1 */
+}
+
+/* Hide 'Prev' button when in "Start Tour" mode (Idle) */
+.maplibre-glass-theme .maplibregl-ctrl-tour:not(.active) .btn-prev {
+	display: none;
+}
+
+/* ==========================================================================
+    Data Table
+   ========================================================================== */
+.maplibre-glass-theme .maplibregl-popup-content table.glass-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.9em;
+	margin-top: 10px;
+	color: var(--glass-text-color);
+}
+
+.maplibre-glass-theme .maplibregl-popup-content table.glass-table td {
+	padding: 8px 5px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	vertical-align: top;
+}
+
+/* First Column: Labels (Right aligned, bold) */
+.maplibre-glass-theme .maplibregl-popup-content table.glass-table td:first-child {
+	white-space: nowrap;
+	font-weight: bold;
+	text-align: right;
+	padding-right: 10px;
+	width: 80px;
+	opacity: 0.8;
+}
+
+/* Images: Centers them, styles them as "cards", and slightly mutes colors */
+.maplibre-glass-theme .maplibregl-popup-content img {
+	display: block;
+	margin: 15px auto;
+	max-width: 100%;
+	height: auto;
+
+	border-radius: 8px;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+
+	/* Mutes color and dims image slightly */
+	filter: var(--glass-img-filter);
+}

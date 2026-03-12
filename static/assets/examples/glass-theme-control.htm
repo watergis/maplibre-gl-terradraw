@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>Custom glass theme control style</title>
+		<meta property="tag" content="custom" />
+		<meta
+			property="og:description"
+			content="This is an example of using glass theme for MapLibre GL JS. The glass theme is a modern, frosted-glass UI theme for MapLibre GL JS. It can be used to create a sleek and stylish map interface. The custom CSS is available at https://github.com/corb555/maplibre-glass-css/"
+		/>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
+		<script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+			}
+			html,
+			body,
+			#map {
+				height: 100%;
+			}
+
+			/*
+            ==========================================================================
+            Glass Theme for TerraDraw Controls
+            ==========================================================================
+            */
+
+			/* TerraDraw buttons inherit base glass styling from .maplibregl-ctrl-group button */
+			.maplibre-glass-theme .maplibregl-ctrl-group > button[class*='maplibregl-terradraw'] {
+				border-radius: var(--glass-radius-small);
+				margin-bottom: 5px;
+				border: 1px solid var(--glass-border-color);
+				position: relative;
+			}
+
+			/* Create a pseudo-element layer for the icon with lighter filter */
+			.maplibre-glass-theme .maplibregl-ctrl-group > button[class*='maplibregl-terradraw']::before {
+				content: '';
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background-image: inherit;
+				background-position: inherit;
+				background-repeat: inherit;
+				background-size: inherit;
+				/* Make icons white */
+				filter: brightness(0) invert(1);
+			}
+
+			/* Active/Enabled state for TerraDraw buttons */
+			.maplibre-glass-theme
+				.maplibregl-ctrl-group
+				> button[class*='maplibregl-terradraw'].enabled::before,
+			.maplibre-glass-theme
+				.maplibregl-ctrl-group
+				> button[class*='maplibregl-terradraw'].active::before {
+				/* White for active state */
+				filter: brightness(0) invert(1);
+			}
+
+			/* Enhanced active state styling */
+			.maplibre-glass-theme .maplibregl-ctrl-group > button[class*='maplibregl-terradraw'].enabled,
+			.maplibre-glass-theme .maplibregl-ctrl-group > button[class*='maplibregl-terradraw'].active {
+				background-color: var(--glass-bg-color);
+				box-shadow:
+					0 0 12px rgba(76, 71, 112, 0.5),
+					var(--glass-inner-glow);
+				filter: brightness(0.7) contrast(1.05);
+			}
+		</style>
+	</head>
+	<body>
+		<script src="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.umd.js"></script>
+		<script src="https://unpkg.com/terra-draw@1.1.0/dist/terra-draw.umd.js"></script>
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.css"
+		/>
+		<link rel="stylesheet" href="/assets/examples/maplibre-glass-theme.css" />
+		<div id="map" class="maplibre-glass-theme"></div>
+
+		<script>
+			const map = new maplibregl.Map({
+				container: 'map',
+				style: 'https://demotiles.maplibre.org/style.json',
+				center: [0, 0],
+				zoom: 1,
+				maxPitch: 85,
+				attributionControl: false
+			});
+
+			const drawControl = new MaplibreTerradrawControl.MaplibreTerradrawControl({
+				open: true
+			});
+			map.addControl(drawControl, 'top-left');
+
+			map.addControl(new maplibregl.AttributionControl(), 'bottom-right');
+			map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
+			map.addControl(new maplibregl.GlobeControl(), 'bottom-right');
+		</script>
+	</body>
+</html>

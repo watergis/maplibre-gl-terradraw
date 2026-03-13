@@ -457,13 +457,13 @@
 			</Tabs>
 
 			<Accordion.Item value="mode-selection">
-				<Accordion.ItemTrigger>
+				<div class="flex items-center gap-2">
+					<Accordion.ItemTrigger class="flex-1">
+						<p class="font-bold uppercase">Mode selection</p>
+					</Accordion.ItemTrigger>
 					<Tooltip positioning={{ placement: 'bottom' }}>
-						<Tooltip.Trigger>
-							<div class="flex items-center gap-2">
-								<p class="font-bold uppercase">Mode selection</p>
-								<Info size={16} />
-							</div>
+						<Tooltip.Trigger class="ml-[-2rem]">
+							<Info size={16} />
 						</Tooltip.Trigger>
 						<Portal>
 							<Tooltip.Positioner class="z-20!">
@@ -485,7 +485,7 @@
 							</Tooltip.Positioner>
 						</Portal>
 					</Tooltip>
-				</Accordion.ItemTrigger>
+				</div>
 				<Accordion.ItemContent>
 					{@const availableModes =
 						options.controlType === 'valhalla'
@@ -588,13 +588,13 @@
 			</Accordion.Item>
 
 			<Accordion.Item value="open-as-default">
-				<Accordion.ItemTrigger>
+				<div class="flex items-center gap-2">
+					<Accordion.ItemTrigger class="flex-1">
+						<p class="font-bold uppercase">Open as default</p>
+					</Accordion.ItemTrigger>
 					<Tooltip positioning={{ placement: 'bottom' }}>
-						<Tooltip.Trigger>
-							<div class="flex items-center gap-2">
-								<p class="font-bold uppercase">Open as default</p>
-								<Info size={16} />
-							</div>
+						<Tooltip.Trigger class="ml-[-2rem]">
+							<Info size={16} />
 						</Tooltip.Trigger>
 						<Portal>
 							<Tooltip.Positioner class="z-20!">
@@ -612,7 +612,7 @@
 							</Tooltip.Positioner>
 						</Portal>
 					</Tooltip>
-				</Accordion.ItemTrigger>
+				</div>
 				<Accordion.ItemContent>
 					<Switch
 						checked={options.isOpen === 'open'}
@@ -636,13 +636,13 @@
 			</Accordion.Item>
 
 			<Accordion.Item value="show-delete-confirmation">
-				<Accordion.ItemTrigger>
+				<div class="flex items-center gap-2">
+					<Accordion.ItemTrigger class="flex-1">
+						<p class="font-bold uppercase">Show delete confirmation</p>
+					</Accordion.ItemTrigger>
 					<Tooltip positioning={{ placement: 'bottom' }}>
-						<Tooltip.Trigger>
-							<div class="flex items-center gap-2">
-								<p class="font-bold uppercase">Show delete confirmation</p>
-								<Info size={16} />
-							</div>
+						<Tooltip.Trigger class="ml-[-2rem]">
+							<Info size={16} />
 						</Tooltip.Trigger>
 						<Portal>
 							<Tooltip.Positioner class="z-20!">
@@ -660,7 +660,7 @@
 							</Tooltip.Positioner>
 						</Portal>
 					</Tooltip>
-				</Accordion.ItemTrigger>
+				</div>
 				<Accordion.ItemContent>
 					<Switch
 						checked={options.showDeleteConfirmation}
@@ -929,13 +929,13 @@
 							multiple
 						>
 							<Accordion.Item value="valhalla-url">
-								<Accordion.ItemTrigger>
+								<div class="flex items-center gap-2">
+									<Accordion.ItemTrigger class="flex-1">
+										<p class="font-bold uppercase">Valhalla API URL</p>
+									</Accordion.ItemTrigger>
 									<Tooltip positioning={{ placement: 'bottom' }}>
-										<Tooltip.Trigger>
-											<div class="flex items-center gap-2">
-												<p class="font-bold uppercase">Valhalla API URL</p>
-												<Info size={16} />
-											</div>
+										<Tooltip.Trigger class="ml-[-2rem]">
+											<Info size={16} />
 										</Tooltip.Trigger>
 										<Portal>
 											<Tooltip.Positioner class="z-20!">
@@ -954,7 +954,7 @@
 											</Tooltip.Positioner>
 										</Portal>
 									</Tooltip>
-								</Accordion.ItemTrigger>
+								</div>
 								<Accordion.ItemContent>
 									<input
 										type="text"

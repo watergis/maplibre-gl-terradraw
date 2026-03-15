@@ -12,6 +12,7 @@ export const exampleIds = [
 	'change-style',
 	'use-both-control',
 	'programmatic-mode-control',
+	'glass-theme-control',
 	'selected-feature-per-mode-style'
 ];
 

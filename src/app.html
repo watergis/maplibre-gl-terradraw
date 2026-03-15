@@ -6,6 +6,27 @@
 
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		%sveltekit.head%
+
+		<script>
+			(function () {
+				try {
+					var stored = localStorage.getItem('light-dark-mode');
+					var prefersDark;
+
+					if (stored) {
+						prefersDark = stored === 'dark';
+					} else {
+						prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+						localStorage.setItem('light-dark-mode', prefersDark ? 'dark' : 'light');
+					}
+
+					document.documentElement.setAttribute('data-mode', prefersDark ? 'dark' : 'light');
+				} catch (e) {
+					var fallback = window.matchMedia('(prefers-color-scheme: dark)').matches;
+					document.documentElement.setAttribute('data-mode', fallback ? 'dark' : 'light');
+				}
+			})();
+		</script>
 	</head>
 	<body data-sveltekit-preload-data="hover">
 		<div style="display: contents">%sveltekit.body%</div>

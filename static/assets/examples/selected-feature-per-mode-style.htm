@@ -46,7 +46,8 @@
 			const drawControl = new MaplibreTerradrawControl.MaplibreTerradrawControl({
 				modes: [
 					'point',
-					'marker',
+					'freehand-linestring',
+					'linestring',
 					'polygon',
 					'freehand',
 					'circle',
@@ -55,43 +56,34 @@
 					'delete'
 				],
 				open: true,
-				// style selected polygons features as follows:
-				// 1. freehand fill orange, red outline
-				// 2. circle green for both fill and outline,
-				// 3. rectangle light purple fill and dark purple outline
+				// style selected features per mode
 				// see this official guide how to customise style using functions
 				// https://github.com/JamesLMilner/terra-draw/blob/main/guides/5.STYLING.md#styling-specific-features
 				modeOptions: {
 					select: new terraDraw.TerraDrawSelectMode({
 						styles: {
+							// Polygons
 							selectedPolygonColor({ properties }) {
 								if (properties.mode === 'freehand') return '#ff6b00';
-								if (properties.mode === 'circle') return '#22c55e';
 								if (properties.mode === 'rectangle') return '#a855f7';
+								return '#3f97e0';
 							},
 							selectedPolygonOutlineColor({ properties }) {
-								if (properties.mode === 'freehand') return '#ea580c';
 								if (properties.mode === 'circle') return '#16a34a';
-								if (properties.mode === 'rectangle') return '#7c3aed';
+								return '#3f97e0';
 							},
 							selectedPolygonFillOpacity: 0.7,
 
-							// Points - point orange fill, black outline
-							selectedPointColor: ({ properties }) => {
-								console.log(`Point: ${properties}`);
-								if (properties.mode === 'point') return '#f59e0b';
-							},
+							// Points
+							selectedPointColor: '#f59e0b',
+							selectedPointOutlineColor: '#000000',
+							selectedPointOutlineWidth: 2,
+							selectedPointWidth: 6,
 
-							selectedPointOutlineColor: ({ properties }) => {
-								if (properties.mode === 'point') return '#000000';
-							},
-
-							selectedPointOutlineWidth: ({ properties }) => {
-								if (properties.mode === 'point') return 2;
-							},
-
-							selectedPointWidth: ({ properties }) => {
-								if (properties.mode === 'point') return 6;
+							// Linestrings
+							selectedLineStringColor: ({ properties }) => {
+								if (properties.mode === 'freehand-linestring') return '#ff51ff';
+								return '#efff53';
 							}
 						}
 					})

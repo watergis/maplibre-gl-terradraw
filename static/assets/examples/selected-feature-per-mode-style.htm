@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>Style Selected Features per Mode</title>
+		<meta property="tag" content="style" />
+		<meta
+			property="og:description"
+			content="This example shows how to override styling for individual features in select mode.
+            Styling is applied to per-feature per-mode meaning features with the same geometry type but different modes can have differing stylings."
+		/>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
+		<script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+			}
+			html,
+			body,
+			#map {
+				height: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<script src="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.umd.js"></script>
+		<script src="https://unpkg.com/terra-draw@1.25.0/dist/terra-draw.umd.js"></script>
+
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.css"
+		/>
+		<div id="map"></div>
+
+		<script>
+			const map = new maplibregl.Map({
+				container: 'map',
+				style: 'https://demotiles.maplibre.org/style.json',
+				center: [0, 0],
+				zoom: 1,
+				maxPitch: 85
+			});
+
+			const drawControl = new MaplibreTerradrawControl.MaplibreTerradrawControl({
+				modes: [
+					'point',
+					'freehand-linestring',
+					'linestring',
+					'polygon',
+					'freehand',
+					'circle',
+					'rectangle',
+					'select',
+					'delete'
+				],
+				open: true,
+				// style selected features per mode
+				// see this official guide how to customise style using functions
+				// https://github.com/JamesLMilner/terra-draw/blob/main/guides/5.STYLING.md#styling-specific-features
+				modeOptions: {
+					select: new terraDraw.TerraDrawSelectMode({
+						styles: {
+							// Polygons
+							selectedPolygonColor({ properties }) {
+								if (properties.mode === 'freehand') return '#ff6b00';
+								if (properties.mode === 'rectangle') return '#a855f7';
+								return '#3f97e0';
+							},
+							selectedPolygonOutlineColor({ properties }) {
+								if (properties.mode === 'circle') return '#16a34a';
+								return '#3f97e0';
+							},
+							selectedPolygonFillOpacity: 0.7,
+
+							// Points
+							selectedPointColor: '#f59e0b',
+							selectedPointOutlineColor: '#000000',
+							selectedPointOutlineWidth: 2,
+							selectedPointWidth: 6,
+
+							// Linestrings
+							selectedLineStringColor: ({ properties }) => {
+								if (properties.mode === 'freehand-linestring') return '#ff51ff';
+								return '#efff53';
+							}
+						}
+					})
+				}
+			});
+
+			map.addControl(drawControl, 'top-left');
+		</script>
+	</body>
+</html>

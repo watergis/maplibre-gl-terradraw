@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>Configure undo/redo functionality provided by Terradraw</title>
+		<meta property="tag" content="custom" />
+		<meta
+			property="og:description"
+			content="This example shows how to configure maximum stack size for session and mode level events and keyboard shortcuts from Terradraw"
+		/>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
+		<script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+			}
+
+			html,
+			body,
+			#map {
+				height: 100%;
+			}
+		</style>
+	</head>
+
+	<body>
+		<script src="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.umd.js"></script>
+		<script src="https://unpkg.com/terra-draw@1.27.0/dist/terra-draw.umd.js"></script>
+
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.css"
+		/>
+		<div id="map"></div>
+
+		<script>
+			const map = new maplibregl.Map({
+				container: 'map',
+				style: 'https://demotiles.maplibre.org/style.json',
+				center: [0, 0],
+				zoom: 1,
+				maxPitch: 85
+			});
+
+			const drawControl = new MaplibreTerradrawControl.MaplibreTerradrawControl({
+				modes: ['point', 'linestring', 'polygon', 'select', 'delete', 'undo', 'redo'],
+				open: true,
+				/** 
+                * • Configure undo/redo support by passing the `undoRedo` option.
+
+                * • Set stack sizes:
+                    - `modeLevel` stack size -> 10 (for in-progress drawing actions)
+                    - `sessionLevel` stack size -> 30 (for committed features)
+
+                * • Be mindful of OS/browser-reserved shortcuts:
+                    - Native shortcuts (e.g. ⌘+Z / Ctrl+Z) cannot be overridden reliably in all environments.
+                    - Avoid assigning conflicting combinations that may not trigger consistently.
+                    - If needed, provide alternative shortcuts or allow user customization.
+
+                * • Refer to the official TerraDraw guide for details on undo/redo events and configuration:
+                https://github.com/JamesLMilner/terra-draw/blob/main/guides/6.EVENTS.md#undoredo
+                
+                */
+				undoRedo: {
+					modeLevel: new terraDraw.TerraDrawModeUndoRedo({ maxStackSize: 40 }),
+					sessionLevel: new terraDraw.TerraDrawSessionUndoRedo({ maxStackSize: 30 }),
+					keyboardShortcuts: new terraDraw.TerraDrawUndoRedoKeyboardShortcuts({
+						undo: [
+							{
+								key: 'z',
+								heldKeys: ['meta', 'control'] // meta = command key in MacOS
+							}
+						],
+						redo: [
+							{
+								key: 'z',
+								heldKeys: ['shift']
+							}
+						]
+					})
+				}
+			});
+
+			map.addControl(drawControl, 'top-left');
+		</script>
+	</body>
+</html>

@@ -20,6 +20,8 @@ export const defaultControlOptions: TerradrawControlOptions = {
 		'select',
 		'delete-selection',
 		'delete',
+		'undo',
+		'redo',
 		'download'
 	],
 	open: false

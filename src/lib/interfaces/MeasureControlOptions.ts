@@ -12,6 +12,11 @@ import type { TerradrawMode } from './TerradrawMode';
 import type { TerrainSource } from './TerrainSource';
 import type { ElevationCacheConfig } from './ElevationCacheConfig';
 import type { TerraDrawMapLibreGLAdapterConfig } from './TerradrawControlOptions';
+import type {
+	TerraDrawModeUndoRedoInterface,
+	TerraDrawSessionUndoRedoInterface,
+	TerraDrawUndoRedoKeyboardShortcutsInterface
+} from 'terra-draw';
 
 /**
  * MeasureControl Plugin control constructor options
@@ -204,4 +209,17 @@ export interface MeasureControlOptions {
 	 * Note: If you disable elevation cache, the plugin will query elevation from DEM tiles every time when you measure linestring even if the same coordinates appear repeatedly. This may make the response slow.
 	 */
 	elevationCacheConfig?: ElevationCacheConfig;
+
+	/**
+	 * Undo/Redo configuration for TerraDraw.
+	 * If not specified, defaults to:
+	 * - modeLevel: TerraDrawModeUndoRedo({ maxStackSize: 100 })
+	 * - sessionLevel: TerraDrawSessionUndoRedo({ maxStackSize: 100 })
+	 * - keyboardShortcuts: TerraDrawUndoRedoKeyboardShortcuts()
+	 */
+	undoRedo?: {
+		modeLevel?: TerraDrawModeUndoRedoInterface;
+		sessionLevel?: TerraDrawSessionUndoRedoInterface;
+		keyboardShortcuts?: TerraDrawUndoRedoKeyboardShortcutsInterface;
+	};
 }

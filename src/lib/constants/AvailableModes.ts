@@ -24,6 +24,8 @@ export const AvailableModes = [
 	'select',
 	'delete-selection',
 	'delete',
+	'undo',
+	'redo',
 	'download'
 ] as const;
 

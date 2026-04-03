@@ -37,6 +37,8 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 		'select',
 		'delete-selection',
 		'delete',
+		'undo',
+		'redo',
 		'download'
 	],
 	open: false,

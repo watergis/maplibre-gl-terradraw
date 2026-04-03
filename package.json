@@ -88,6 +88,7 @@
 		"sass-embedded": "^1.99.0",
 		"serve": "^14.2.6",
 		"shiki": "^4.0.2",
+		"simple-icons": "^16.14.0",
 		"svelte": "^5.55.1",
 		"svelte-check": "^4.4.6",
 		"tailwindcss": "^4.2.2",

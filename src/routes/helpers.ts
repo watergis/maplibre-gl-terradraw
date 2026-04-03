@@ -13,7 +13,8 @@ export const exampleIds = [
 	'use-both-control',
 	'programmatic-mode-control',
 	'glass-theme-control',
-	'selected-feature-per-mode-style'
+	'selected-feature-per-mode-style',
+	'custom-undo-redo-config'
 ];
 
 export const getTitle = (body: string) => {

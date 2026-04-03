@@ -121,6 +121,9 @@ export class MaplibreTerradrawControl implements IControl {
 		if (!this.options.adapterOptions?.prefixId) {
 			this.options.adapterOptions.prefixId = prefixId;
 		}
+		if (!this.options.undoRedo) {
+			this.options.undoRedo = defaultControlOptions.undoRedo;
+		}
 	}
 
 	/**
@@ -198,7 +201,8 @@ export class MaplibreTerradrawControl implements IControl {
 
 		this.terradraw = new TerraDraw({
 			adapter: new TerraDrawMapLibreGLAdapter({ map, ...this.options.adapterOptions }),
-			modes: modes
+			modes: modes,
+			undoRedo: this.options.undoRedo
 		});
 
 		if (this.map?.loaded()) {
@@ -224,6 +228,7 @@ export class MaplibreTerradrawControl implements IControl {
 
 		this.toggleButtonsWhenNoFeature();
 		this.terradraw?.on('finish', this.toggleButtonsWhenNoFeature.bind(this));
+		this.terradraw?.on('history', this.handleHistoryChange.bind(this));
 		this.map.once('idle', () => {
 			this.toggleButtonsWhenNoFeature();
 		});
@@ -388,6 +393,30 @@ export class MaplibreTerradrawControl implements IControl {
 	}
 
 	/**
+	 * Handle the history event from TerraDraw to update undo/redo button states
+	 * @param event HistoryEvent from TerraDraw
+	 */
+	protected handleHistoryChange(event: { undoSize: number; redoSize: number }) {
+		if (!this.controlContainer) return;
+
+		const undoBtns = this.controlContainer.getElementsByClassName(
+			`maplibregl-terradraw-${this.cssPrefix}undo-button`
+		);
+		for (let i = 0; i < undoBtns.length; i++) {
+			const btn = undoBtns.item(i) as HTMLButtonElement;
+			if (btn) btn.disabled = event.undoSize === 0;
+		}
+
+		const redoBtns = this.controlContainer.getElementsByClassName(
+			`maplibregl-terradraw-${this.cssPrefix}redo-button`
+		);
+		for (let i = 0; i < redoBtns.length; i++) {
+			const btn = redoBtns.item(i) as HTMLButtonElement;
+			if (btn) btn.disabled = event.redoSize === 0;
+		}
+	}
+
+	/**
 	 * Toggle editor control
 	 */
 	protected toggleEditor() {
@@ -443,6 +472,18 @@ export class MaplibreTerradrawControl implements IControl {
 			} else if (mode === 'download') {
 				btn.classList.add(`maplibregl-terradraw-${this.cssPrefix}${mode}-button`);
 				btn.addEventListener('click', this.handleDownload.bind(this));
+			} else if (['undo', 'redo'].includes(mode)) {
+				btn.classList.add(`maplibregl-terradraw-${this.cssPrefix}${mode}-button`);
+				btn.disabled = true;
+
+				btn.addEventListener('click', () => {
+					if (!this.terradraw) return;
+					if (mode === 'undo') {
+						this.terradraw.undo();
+					} else {
+						this.terradraw.redo();
+					}
+				});
 			} else {
 				btn.classList.add(`maplibregl-terradraw-${this.cssPrefix}add-${mode}-button`);
 

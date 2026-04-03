@@ -16,7 +16,9 @@ vi.mock('terra-draw', () => ({
 			off: vi.fn(),
 			clear: vi.fn(),
 			removeFeatures: vi.fn(),
-			deselectFeature: vi.fn()
+			deselectFeature: vi.fn(),
+			undo: vi.fn(() => true),
+			redo: vi.fn(() => true)
 		};
 	}),
 	TerraDrawRenderMode: vi.fn().mockImplementation(function (options) {
@@ -60,6 +62,15 @@ vi.mock('terra-draw', () => ({
 	}),
 	ValidateNotSelfIntersecting: vi.fn(),
 	TerraDrawExtend: vi.fn().mockImplementation(function () {
+		return {};
+	}),
+	TerraDrawModeUndoRedo: vi.fn().mockImplementation(function () {
+		return {};
+	}),
+	TerraDrawSessionUndoRedo: vi.fn().mockImplementation(function () {
+		return {};
+	}),
+	TerraDrawUndoRedoKeyboardShortcuts: vi.fn().mockImplementation(function () {
 		return {};
 	})
 }));

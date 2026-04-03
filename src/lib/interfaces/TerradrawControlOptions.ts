@@ -1,6 +1,11 @@
 import type { ModeOptions } from './ModeOptions';
 import type { TerradrawMode } from './TerradrawMode';
 import type { TerraDrawMapLibreGLAdapter } from 'terra-draw-maplibre-gl-adapter';
+import type {
+	TerraDrawModeUndoRedoInterface,
+	TerraDrawSessionUndoRedoInterface,
+	TerraDrawUndoRedoKeyboardShortcutsInterface
+} from 'terra-draw';
 
 /**
  * TerraDrawMapLibreGLAdapter configuration options defined in:
@@ -46,4 +51,17 @@ export interface TerradrawControlOptions {
 	 * Show delete confirmation popup when deleting features if true. Default is false
 	 */
 	showDeleteConfirmation?: boolean;
+
+	/**
+	 * Undo/Redo configuration for TerraDraw.
+	 * If not specified, defaults to:
+	 * - modeLevel: TerraDrawModeUndoRedo({ maxStackSize: 100 })
+	 * - sessionLevel: TerraDrawSessionUndoRedo({ maxStackSize: 100 })
+	 * - keyboardShortcuts: TerraDrawUndoRedoKeyboardShortcuts()
+	 */
+	undoRedo?: {
+		modeLevel?: TerraDrawModeUndoRedoInterface;
+		sessionLevel?: TerraDrawSessionUndoRedoInterface;
+		keyboardShortcuts?: TerraDrawUndoRedoKeyboardShortcutsInterface;
+	};
 }

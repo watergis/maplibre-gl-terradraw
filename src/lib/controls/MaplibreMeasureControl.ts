@@ -242,9 +242,11 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 * @param options Plugin control options
 	 */
 	constructor(options?: MeasureControlOptions) {
+		const { modeOptions, undoRedo, ...serializableDefaults } = defaultMeasureControlOptions;
 		let measureOptions: MeasureControlOptions = {
-			...JSON.parse(JSON.stringify(defaultMeasureControlOptions)),
-			modeOptions: { ...defaultMeasureControlOptions.modeOptions }
+			...JSON.parse(JSON.stringify(serializableDefaults)),
+			modeOptions: { ...modeOptions },
+			undoRedo: undoRedo
 		};
 
 		if (options) {
@@ -281,7 +283,8 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			modes: measureOptions.modes,
 			open: measureOptions.open,
 			modeOptions: measureOptions.modeOptions,
-			adapterOptions: measureOptions.adapterOptions
+			adapterOptions: measureOptions.adapterOptions,
+			undoRedo: measureOptions.undoRedo
 		});
 		this._cssPrefix = 'measure-';
 		this.measureOptions = measureOptions;

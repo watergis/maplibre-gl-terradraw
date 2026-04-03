@@ -211,6 +211,30 @@
 	}
 }
 
+.maplibregl-terradraw-measure-undo-button,
+.maplibregl-terradraw-undo-button {
+	background: url('./icons/undo.svg');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 90%;
+
+	&:disabled {
+		background-color: rgb(235, 235, 228);
+	}
+}
+
+.maplibregl-terradraw-measure-redo-button,
+.maplibregl-terradraw-redo-button {
+	background: url('./icons/redo.svg');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 90%;
+
+	&:disabled {
+		background-color: rgb(235, 235, 228);
+	}
+}
+
 .maplibregl-terradraw-valhalla-settings-button {
 	background: url('./icons/settings.svg');
 	background-position: center;

@@ -1844,3 +1844,147 @@ describe('showDeleteConfirmation tests', () => {
 		expect(clearSpy).toHaveBeenCalled();
 	});
 });
+
+describe('undo/redo button tests', () => {
+	let mockMap: InstanceType<typeof Map>;
+
+	beforeEach(() => {
+		mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+	});
+
+	it('should create undo and redo buttons that are initially disabled', () => {
+		const control = new MaplibreTerradrawControl({
+			modes: ['point', 'undo', 'redo']
+		});
+		const controlElement = control.onAdd(mockMap);
+
+		const undoButton = controlElement.querySelector(
+			'.maplibregl-terradraw-undo-button'
+		) as HTMLButtonElement;
+		const redoButton = controlElement.querySelector(
+			'.maplibregl-terradraw-redo-button'
+		) as HTMLButtonElement;
+
+		expect(undoButton).toBeDefined();
+		expect(redoButton).toBeDefined();
+		expect(undoButton.disabled).toBe(true);
+		expect(redoButton.disabled).toBe(true);
+	});
+
+	it('should call terradraw.undo() when undo button is clicked', () => {
+		const control = new MaplibreTerradrawControl({
+			modes: ['point', 'undo']
+		});
+		control.onAdd(mockMap);
+		control.activate();
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const terradraw = (control as any).terradraw;
+
+		// Enable the undo button by simulating a history change
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(control as any).handleHistoryChange({ undoSize: 1, redoSize: 0 });
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const undoButton = (control as any).modeButtons['undo'] as HTMLButtonElement;
+		undoButton.click();
+
+		expect(terradraw.undo).toHaveBeenCalled();
+	});
+
+	it('should call terradraw.redo() when redo button is clicked', () => {
+		const control = new MaplibreTerradrawControl({
+			modes: ['point', 'redo']
+		});
+		control.onAdd(mockMap);
+		control.activate();
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const terradraw = (control as any).terradraw;
+
+		// Enable the redo button by simulating a history change
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(control as any).handleHistoryChange({ undoSize: 0, redoSize: 1 });
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const redoButton = (control as any).modeButtons['redo'] as HTMLButtonElement;
+		redoButton.click();
+
+		expect(terradraw.redo).toHaveBeenCalled();
+	});
+
+	it('should update undo/redo button disabled state via handleHistoryChange', () => {
+		const control = new MaplibreTerradrawControl({
+			modes: ['point', 'undo', 'redo']
+		});
+		const controlElement = control.onAdd(mockMap);
+
+		const undoButton = controlElement.querySelector(
+			'.maplibregl-terradraw-undo-button'
+		) as HTMLButtonElement;
+		const redoButton = controlElement.querySelector(
+			'.maplibregl-terradraw-redo-button'
+		) as HTMLButtonElement;
+
+		// Initially disabled
+		expect(undoButton.disabled).toBe(true);
+		expect(redoButton.disabled).toBe(true);
+
+		// Simulate history event with undo available
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(control as any).handleHistoryChange({ undoSize: 3, redoSize: 0 });
+		expect(undoButton.disabled).toBe(false);
+		expect(redoButton.disabled).toBe(true);
+
+		// Simulate history event with redo available
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(control as any).handleHistoryChange({ undoSize: 2, redoSize: 1 });
+		expect(undoButton.disabled).toBe(false);
+		expect(redoButton.disabled).toBe(false);
+
+		// Simulate history event with neither available
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(control as any).handleHistoryChange({ undoSize: 0, redoSize: 0 });
+		expect(undoButton.disabled).toBe(true);
+		expect(redoButton.disabled).toBe(true);
+	});
+
+	it('should not throw when handleHistoryChange is called without controlContainer', () => {
+		const control = new MaplibreTerradrawControl({
+			modes: ['point', 'undo', 'redo']
+		});
+
+		// controlContainer is undefined before onAdd
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		expect(() => (control as any).handleHistoryChange({ undoSize: 1, redoSize: 0 })).not.toThrow();
+	});
+
+	it('should register history event listener on terradraw', () => {
+		const control = new MaplibreTerradrawControl({
+			modes: ['point', 'undo', 'redo']
+		});
+		control.onAdd(mockMap);
+
+		const terradraw = control.getTerraDrawInstance()!;
+		expect(terradraw.on).toHaveBeenCalledWith('history', expect.any(Function));
+	});
+
+	it('should not call undo/redo when terradraw is not available', () => {
+		const control = new MaplibreTerradrawControl({
+			modes: ['point', 'undo', 'redo']
+		});
+		control.onAdd(mockMap);
+
+		// Remove terradraw
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(control as any).terradraw = undefined;
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const undoButton = (control as any).modeButtons['undo'] as HTMLButtonElement;
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const redoButton = (control as any).modeButtons['redo'] as HTMLButtonElement;
+
+		expect(() => undoButton.click()).not.toThrow();
+		expect(() => redoButton.click()).not.toThrow();
+	});
+});

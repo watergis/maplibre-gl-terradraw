@@ -194,6 +194,14 @@ export const getDefaultModeOptions = () => {
 		download: new TerraDrawRenderMode({
 			modeName: 'download',
 			styles: {}
+		}),
+		undo: new TerraDrawRenderMode({
+			modeName: 'undo',
+			styles: {}
+		}),
+		redo: new TerraDrawRenderMode({
+			modeName: 'redo',
+			styles: {}
 		})
 	};
 	return modeOptions;

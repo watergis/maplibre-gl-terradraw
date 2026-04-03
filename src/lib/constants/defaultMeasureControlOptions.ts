@@ -5,15 +5,12 @@ import {
 	TerraDrawFreehandMode,
 	TerraDrawLineStringMode,
 	TerraDrawMarkerMode,
-	TerraDrawModeUndoRedo,
 	TerraDrawPointMode,
 	TerraDrawPolygonMode,
 	TerraDrawRectangleMode,
 	TerraDrawSectorMode,
 	TerraDrawSelectMode,
-	TerraDrawSensorMode,
-	TerraDrawSessionUndoRedo,
-	TerraDrawUndoRedoKeyboardShortcuts
+	TerraDrawSensorMode
 } from 'terra-draw';
 import type { MeasureControlOptions } from '../interfaces/MeasureControlOptions';
 import { defaultMeasureUnitSymbols } from './defaultMeasureUnitSymbols';
@@ -440,10 +437,5 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 	},
 	adapterOptions: {
 		prefixId: 'td-measure'
-	},
-	undoRedo: {
-		modeLevel: new TerraDrawModeUndoRedo({ maxStackSize: 100 }),
-		sessionLevel: new TerraDrawSessionUndoRedo({ maxStackSize: 100 }),
-		keyboardShortcuts: new TerraDrawUndoRedoKeyboardShortcuts()
 	}
 };

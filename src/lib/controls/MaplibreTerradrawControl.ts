@@ -6,7 +6,14 @@ import type {
 	Map,
 	StyleSpecification
 } from 'maplibre-gl';
-import { TerraDraw, TerraDrawExtend, TerraDrawRenderMode } from 'terra-draw';
+import {
+	TerraDraw,
+	TerraDrawExtend,
+	TerraDrawModeUndoRedo,
+	TerraDrawRenderMode,
+	TerraDrawSessionUndoRedo,
+	TerraDrawUndoRedoKeyboardShortcuts
+} from 'terra-draw';
 import { TerraDrawMapLibreGLAdapter } from 'terra-draw-maplibre-gl-adapter';
 import type {
 	TerradrawControlOptions,
@@ -97,7 +104,7 @@ export class MaplibreTerradrawControl implements IControl {
 	}
 
 	protected terradraw?: TerraDraw;
-	protected options: TerradrawControlOptions = defaultControlOptions;
+	protected options: TerradrawControlOptions;
 	protected events: {
 		[key: string]: [(event: EventArgs) => void];
 	} = {};
@@ -111,9 +118,11 @@ export class MaplibreTerradrawControl implements IControl {
 	constructor(options?: TerradrawControlOptions) {
 		this.modeButtons = {};
 
-		if (options) {
-			this.options = Object.assign(this.options, options);
-		}
+		this.options = {
+			...defaultControlOptions,
+			modes: [...(defaultControlOptions.modes ?? [])],
+			...options
+		};
 		const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
 		if (!this.options.adapterOptions) {
 			this.options.adapterOptions = {};
@@ -122,7 +131,11 @@ export class MaplibreTerradrawControl implements IControl {
 			this.options.adapterOptions.prefixId = prefixId;
 		}
 		if (!this.options.undoRedo) {
-			this.options.undoRedo = defaultControlOptions.undoRedo;
+			this.options.undoRedo = {
+				modeLevel: new TerraDrawModeUndoRedo({ maxStackSize: 100 }),
+				sessionLevel: new TerraDrawSessionUndoRedo({ maxStackSize: 100 }),
+				keyboardShortcuts: new TerraDrawUndoRedoKeyboardShortcuts()
+			};
 		}
 	}
 

@@ -1,8 +1,3 @@
-import {
-	TerraDrawModeUndoRedo,
-	TerraDrawSessionUndoRedo,
-	TerraDrawUndoRedoKeyboardShortcuts
-} from 'terra-draw';
 import type { TerradrawControlOptions } from '../interfaces/TerradrawControlOptions';
 
 /**
@@ -29,10 +24,5 @@ export const defaultControlOptions: TerradrawControlOptions = {
 		'redo',
 		'download'
 	],
-	open: false,
-	undoRedo: {
-		modeLevel: new TerraDrawModeUndoRedo({ maxStackSize: 100 }),
-		sessionLevel: new TerraDrawSessionUndoRedo({ maxStackSize: 100 }),
-		keyboardShortcuts: new TerraDrawUndoRedoKeyboardShortcuts()
-	}
+	open: false
 };

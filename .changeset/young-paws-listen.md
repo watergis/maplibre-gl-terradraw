@@ -4,17 +4,17 @@
 
 feat: add undo/redo mode to MaplibreTerradrawControl and MaplibreMeasureControl
 
-### How to use Undo/Redo mode
+- How to use Undo/Redo mode
 
 `undo` and `redo` modes are now included in the default mode list. Undo/Redo buttons will appear in the control toolbar, allowing you to undo or redo drawing operations.
 
 Keyboard shortcuts are also supported: `Ctrl+Z` / `Ctrl+Shift+Z`.
 
-#### Default behavior (no configuration needed)
+- Default behavior (no configuration needed)
 
 Undo/Redo is enabled by default. It works out of the box without any additional setup.
 
-#### Custom configuration
+- Custom configuration
 
 Use the `undoRedo` option to customize the stack size or other settings:
 
@@ -36,7 +36,7 @@ const control = new MaplibreTerradrawControl({
 
 Please refer to the official guide at: https://github.com/JamesLMilner/terra-draw/blob/main/guides/6.EVENTS.md#undoredo
 
-#### Hiding the Undo/Redo buttons
+- Hiding the Undo/Redo buttons
 
 Exclude `'undo'` and `'redo'` from the `modes` array:
 

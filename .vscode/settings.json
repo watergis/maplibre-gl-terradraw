@@ -4,5 +4,8 @@
 	"[svelte]": {
 		"editor.defaultFormatter": "svelte.svelte-vscode",
 		"editor.codeActionsOnSave": ["source.organizeImports"]
+	},
+	"chat.tools.terminal.autoApprove": {
+		"pnpm": true
 	}
 }

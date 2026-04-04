@@ -397,7 +397,10 @@
 </script>
 
 <div class="demo-container grid grid-cols-[auto_1fr] snap-start">
-	<aside class="sidebar col-span-1 h-screen p-4 w-sm overflow-y-auto hidden md:block">
+	<aside
+		class="sidebar col-span-1 h-screen p-4 w-sm overflow-y-auto hidden md:block"
+		data-testid="demo-sidebar"
+	>
 		<Accordion value={accordionValue} onValueChange={(e) => (accordionValue = e.value)} multiple>
 			<Tooltip positioning={{ placement: 'bottom' }}>
 				<Tooltip.Trigger>
@@ -458,7 +461,7 @@
 
 			<Accordion.Item value="mode-selection">
 				<div class="flex items-center gap-2">
-					<Accordion.ItemTrigger class="flex-1">
+					<Accordion.ItemTrigger class="flex-1" data-testid="accordion-mode-selection">
 						<p class="font-bold uppercase">Mode selection</p>
 					</Accordion.ItemTrigger>
 					<Tooltip positioning={{ placement: 'bottom' }}>
@@ -535,7 +538,7 @@
 								</Combobox.Positioner>
 							</Portal>
 						</Combobox>
-						<div class="flex flex-wrap gap-2">
+						<div class="flex flex-wrap gap-2" data-testid="mode-badges">
 							{#each options.modes as mode (mode)}
 								<button
 									class="badge preset-filled cursor-pointer hover:opacity-80 transition-opacity"
@@ -557,6 +560,7 @@
 						<button
 							type="button"
 							class="btn preset-filled-primary-500"
+							data-testid="btn-add-all-modes"
 							disabled={options.modes.length === availableModes.length}
 							onclick={() => {
 								options.modes = [
@@ -573,6 +577,7 @@
 						<button
 							type="button"
 							class="btn preset-filled-error-500"
+							data-testid="btn-delete-all-modes"
 							disabled={options.modes.length === 0}
 							onclick={() => {
 								options.modes = [];
@@ -1203,10 +1208,16 @@
 		</Accordion>
 
 		<div class="flex justify-center mt-6">
-			<button class="btn btn-lg preset-filled capitalize" {onclick}> Getting started </button>
+			<button
+				class="btn btn-lg preset-filled capitalize"
+				data-testid="btn-getting-started"
+				{onclick}
+			>
+				Getting started
+			</button>
 		</div>
 	</aside>
-	<main class="map col-span-2 md:col-span-1">
+	<main class="map col-span-2 md:col-span-1" data-testid="demo-map">
 		<div class="map" bind:this={mapContainer}></div>
 
 		<button

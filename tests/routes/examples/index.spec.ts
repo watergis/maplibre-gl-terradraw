@@ -1,4 +1,5 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { test } from '../../setup';
 import { exampleIds } from '../../../src/routes/helpers.js';
 
 test.describe('each examples page test', () => {

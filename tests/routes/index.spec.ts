@@ -6,9 +6,7 @@ test.describe('landing page test', () => {
 		await page.goto('/');
 		await expect(page).toHaveTitle(/Maplibre GL Terra Draw/);
 	});
-});
 
-test.describe('demo page test', () => {
 	test('demo page has expected to have map class', async ({ page }) => {
 		await page.goto('/');
 		await page.waitForSelector('.map', { state: 'visible' });

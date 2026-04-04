@@ -1,5 +1,29 @@
 import { expect } from '@playwright/test';
+import { AvailableModes, AvailableValhallaModes } from '../../src/lib/constants/AvailableModes';
 import { test } from '../setup';
+
+/**
+ * Get the CSS class selector for a mode button on the map.
+ *
+ * Button class naming convention in MaplibreTerradrawControl:
+ * - render: `.maplibregl-terradraw-{prefix}render-button`
+ * - delete, delete-selection, download, undo, redo, settings: `.maplibregl-terradraw-{prefix}{mode}-button`
+ * - drawing modes (point, linestring, etc.): `.maplibregl-terradraw-{prefix}add-{mode}-button`
+ */
+function getModeButtonSelector(
+	controlType: 'default' | 'measure' | 'valhalla',
+	mode: string
+): string {
+	const prefix =
+		controlType === 'measure' ? 'measure-' : controlType === 'valhalla' ? 'valhalla-' : '';
+	const specialModes = ['render', 'delete', 'delete-selection', 'download', 'undo', 'redo'];
+	if (controlType === 'valhalla') specialModes.push('settings');
+
+	if (specialModes.includes(mode)) {
+		return `.maplibregl-terradraw-${prefix}${mode}-button`;
+	}
+	return `.maplibregl-terradraw-${prefix}add-${mode}-button`;
+}
 
 test.describe('landing page test', () => {
 	test('landing page has expected title', async ({ page }) => {
@@ -127,4 +151,42 @@ test.describe('demo page - sidebar UI elements', () => {
 		await expect(page.locator('[data-testid="btn-add-all-modes"]')).toBeVisible();
 		await expect(page.locator('[data-testid="btn-delete-all-modes"]')).toBeVisible();
 	});
+});
+
+test.describe('demo page - default control: mode buttons on map', () => {
+	for (const mode of AvailableModes) {
+		test(`"${mode}" button exists on map`, async ({ page }) => {
+			await page.goto('/?controlType=default&isOpen=open&modes=' + AvailableModes.join(','));
+			await page.waitForSelector('.map', { state: 'visible' });
+
+			const selector = getModeButtonSelector('default', mode);
+			await expect(page.locator(selector)).toBeAttached();
+		});
+	}
+});
+
+test.describe('demo page - measure control: mode buttons on map', () => {
+	for (const mode of AvailableModes) {
+		test(`"${mode}" button exists on map`, async ({ page }) => {
+			await page.goto('/?controlType=measure&isOpen=open&modes=' + AvailableModes.join(','));
+			await page.waitForSelector('.map', { state: 'visible' });
+
+			const selector = getModeButtonSelector('measure', mode);
+			await expect(page.locator(selector)).toBeAttached();
+		});
+	}
+});
+
+test.describe('demo page - valhalla control: mode buttons on map', () => {
+	for (const mode of AvailableValhallaModes) {
+		test(`"${mode}" button exists on map`, async ({ page }) => {
+			await page.goto(
+				'/?controlType=valhalla&isOpen=open&modes=' + AvailableValhallaModes.join(',')
+			);
+			await page.waitForSelector('.map', { state: 'visible' });
+
+			const selector = getModeButtonSelector('valhalla', mode);
+			await expect(page.locator(selector)).toBeAttached();
+		});
+	}
 });

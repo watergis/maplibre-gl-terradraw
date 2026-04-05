@@ -19,6 +19,7 @@ jobs:
     permissions:
       contents: write # to create release (changesets/action)
       pull-requests: write # to create pull request (changesets/action)
+      id-token: write # Required for OIDC
     name: Release
     runs-on: ubuntu-latest
 
@@ -40,6 +41,10 @@ jobs:
       - name: build packages
         run: pnpm build
 
+      # OIDC requires npm v11.5.1 or later, so ensure we have the latest npm installed
+      - name: Install latest npm
+        run: npm install -g npm@latest
+
       - name: Create Release Pull Request or Publish to npm
         id: changesets
         uses: changesets/action@6a0a831ff30acef54f2c6aa1cbbc1096b066edaf # v1.7.0
@@ -48,7 +53,6 @@ jobs:
           publish: pnpm release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.npm_token }}
 
   typedoc:
     runs-on: ubuntu-latest

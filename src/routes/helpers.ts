@@ -55,7 +55,9 @@ export const getPackageInfo = async () => {
 		return {
 			packageName: packageName,
 			version: pkg.version ?? 'latest',
-			author: pkg.author
+			author: pkg.author,
+			displayName: pkg.displayName,
+			description: pkg.description
 		};
 	}
 };

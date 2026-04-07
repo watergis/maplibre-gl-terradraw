@@ -123,7 +123,10 @@
 		"terra-draw",
 		"drawing"
 	],
-	"author": "Jin IGARASHI",
+	"author": {
+		"name": "Jin Igarashi",
+		"url": "https://jin-igarashi.me"
+	},
 	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/watergis/maplibre-gl-terradraw/issues"

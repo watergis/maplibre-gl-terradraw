@@ -202,7 +202,7 @@
 
 	<section id="getting-started" class="px-4 snap-start">
 		<div class="text-center">
-			<h2 class="h1 pt-4 pb-6">Welcome to {data.metadata.title}</h2>
+			<h2 class="h1 pt-10 pb-6">Welcome to {data.metadata.title}</h2>
 
 			<div class="flex justify-center space-x-2 pb-4">
 				{data.metadata.description}
@@ -406,7 +406,7 @@
 							</p>
 						</article>
 						<footer class="flex items-center justify-between gap-4 p-4 mt-auto">
-							<small class="opacity-60">{data.metadata.author}</small>
+							<small class="opacity-60">Example by: {custom.author}</small>
 						</footer>
 					</a>
 				{/each}

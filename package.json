@@ -1,5 +1,6 @@
 {
 	"name": "@watergis/maplibre-gl-terradraw",
+	"displayName": "Maplibre GL Terra Draw",
 	"version": "1.13.0",
 	"description": "This plugin is to add controls to your Maplibre for drawing powered by Terra Draw library.",
 	"type": "module",
@@ -131,5 +132,8 @@
 	"packageManager": "pnpm@10.33.0",
 	"engines": {
 		"pnpm": "^10.0.0"
+	},
+	"dependencies": {
+		"simple-git": "^3.35.2"
 	}
 }

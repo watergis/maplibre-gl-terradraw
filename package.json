@@ -26,6 +26,7 @@
 	],
 	"scripts": {
 		"dev": "vite dev",
+		"prebuild": "node src/scripts/contributors.ts",
 		"build": "npm run build:doc && npm run package",
 		"build:doc": "vite build --config vite.config.ts",
 		"preview": "vite preview",
@@ -46,7 +47,8 @@
 		"test": "npm run test:vitest && npm run test:playwright",
 		"test:vitest": "vitest --run --passWithNoTests",
 		"test:vitest:coverage": "vitest run --coverage",
-		"test:playwright": "playwright test"
+		"test:playwright": "playwright test",
+		"generate:authors": "node src/scripts/contributors.ts"
 	},
 	"devDependencies": {
 		"@changesets/cli": "^2.30.0",
@@ -89,6 +91,7 @@
 		"sass-embedded": "^1.99.0",
 		"serve": "^14.2.6",
 		"shiki": "^4.0.2",
+		"simple-git": "^3.35.2",
 		"simple-icons": "^16.14.0",
 		"svelte": "^5.55.1",
 		"svelte-check": "^4.4.6",
@@ -135,8 +138,5 @@
 	"packageManager": "pnpm@10.33.0",
 	"engines": {
 		"pnpm": "^10.0.0"
-	},
-	"dependencies": {
-		"simple-git": "^3.35.2"
 	}
 }

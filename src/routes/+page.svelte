@@ -406,7 +406,7 @@
 							</p>
 						</article>
 						<footer class="flex items-center justify-between gap-4 p-4 mt-auto">
-							<small class="opacity-60">Example by: {custom.author}</small>
+							<small class="opacity-60">Authored by: {custom.author}</small>
 						</footer>
 					</a>
 				{/each}

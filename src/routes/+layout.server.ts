@@ -1,22 +1,17 @@
-import {
-	exampleIds,
-	getDescription,
-	getPackageInfo,
-	getTitle,
-	getTags,
-	getExampleFilePath
-} from './helpers';
+import { exampleIds, getDescription, getPackageInfo, getTitle, getTags } from './helpers';
 import type { LayoutServerLoad } from './$types';
 import { env } from '$env/dynamic/private';
-import { getExampleFileAuthor } from '../contributors';
+import authorsJson from '$lib/generated/authors.json';
+
+export type AuthorsMap = Record<string, string>;
 
 export const load: LayoutServerLoad = async ({ fetch }) => {
+	const authors = authorsJson as AuthorsMap;
+
 	const packageInfo = await getPackageInfo();
 
 	const examples = [];
 	for (const item of exampleIds) {
-		const filePath = getExampleFilePath(`${item}.htm`);
-
 		const res = await fetch(`/api/examples/${item}`);
 		if (!res.ok) continue;
 		const html = await res.text();
@@ -24,7 +19,7 @@ export const load: LayoutServerLoad = async ({ fetch }) => {
 		const title = getTitle(html);
 		const tags = getTags(html);
 		const description = getDescription(html);
-		const author = await getExampleFileAuthor(filePath);
+		const author = authors[item] ?? packageInfo.author.name;
 
 		examples.push({
 			href: `/examples/${item}`,

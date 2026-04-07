@@ -7,10 +7,6 @@ settings:
 importers:
 
   .:
-    dependencies:
-      simple-git:
-        specifier: ^3.35.2
-        version: 3.35.2
     devDependencies:
       '@changesets/cli':
         specifier: ^2.30.0
@@ -132,6 +128,9 @@ importers:
       shiki:
         specifier: ^4.0.2
         version: 4.0.2
+      simple-git:
+        specifier: ^3.35.2
+        version: 3.35.2
       simple-icons:
         specifier: ^16.14.0
         version: 16.15.0

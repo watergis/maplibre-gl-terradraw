@@ -61,7 +61,3 @@ export const getPackageInfo = async () => {
 		};
 	}
 };
-
-export const getExampleFilePath = (fileName: string) => {
-	return `static/assets/examples/${fileName}`;
-};

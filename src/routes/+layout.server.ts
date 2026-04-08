@@ -65,8 +65,6 @@ export const load: LayoutServerLoad = async ({ fetch }) => {
 		}
 	];
 
-	console.log(packageInfo);
-
 	return {
 		metadata: {
 			packageName: packageInfo.packageName,

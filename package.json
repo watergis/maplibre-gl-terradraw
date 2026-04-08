@@ -48,7 +48,7 @@
 		"test:vitest": "vitest --run --passWithNoTests",
 		"test:vitest:coverage": "vitest run --coverage",
 		"test:playwright": "playwright test",
-		"generate:authors": "tsx src/scripts/contributors.ts"
+		"generate:authors": "tsx src/scripts/generate-authors.ts"
 	},
 	"devDependencies": {
 		"@changesets/cli": "^2.30.0",

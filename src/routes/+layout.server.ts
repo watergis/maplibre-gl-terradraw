@@ -1,7 +1,7 @@
 import { exampleIds, getDescription, getPackageInfo, getTitle, getTags } from './helpers';
 import type { LayoutServerLoad } from './$types';
 import { env } from '$env/dynamic/private';
-import authorsJson from '$lib/generated/authors.json';
+import authorsJson from './authors.json';
 
 export type AuthorsMap = Record<string, string>;
 

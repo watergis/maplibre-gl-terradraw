@@ -48,7 +48,7 @@
 		"test:vitest": "vitest --run --passWithNoTests",
 		"test:vitest:coverage": "vitest run --coverage",
 		"test:playwright": "playwright test",
-		"generate:authors": "tsx src/scripts/generate-authors.ts"
+		"generate:authors": "tsx scripts/generate-example-page-authors.ts && pnpm exec prettier --write src/routes/authors.json"
 	},
 	"devDependencies": {
 		"@changesets/cli": "^2.30.0",

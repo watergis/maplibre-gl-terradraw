@@ -1,11 +1,11 @@
 import simpleGit from 'simple-git';
 import fs from 'fs';
 import path from 'path';
-import { getPackageInfo } from '../routes/helpers.ts';
+import { getPackageInfo } from '../src/routes/helpers.ts';
 
 const git = simpleGit();
 const EXAMPLES_DIR = path.resolve('static/assets/examples');
-const OUTPUT_FILE = path.resolve('src/lib/generated/authors.json');
+const OUTPUT_FILE = path.resolve('src/routes/authors.json');
 const pkg = await getPackageInfo();
 
 async function getAuthor(filePath: string): Promise<string> {
@@ -60,7 +60,7 @@ async function generateAuthors() {
 	}
 
 	fs.mkdirSync(path.dirname(OUTPUT_FILE), { recursive: true });
-	fs.writeFileSync(OUTPUT_FILE, JSON.stringify(authorsMap, null, 2));
+	fs.writeFileSync(OUTPUT_FILE, JSON.stringify(authorsMap, null, 1) + '\n');
 	console.log(`\n Authors generated → ${OUTPUT_FILE}`);
 }
 

@@ -26,7 +26,6 @@
 	],
 	"scripts": {
 		"dev": "vite dev",
-		"prebuild": "npm run generate:authors",
 		"build": "npm run build:doc && npm run package",
 		"build:doc": "vite build --config vite.config.ts",
 		"preview": "vite preview",

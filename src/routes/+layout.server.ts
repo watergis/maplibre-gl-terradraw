@@ -71,8 +71,8 @@ export const load: LayoutServerLoad = async ({ fetch }) => {
 			version: packageInfo.version,
 			title: packageInfo.displayName,
 			description: packageInfo.description,
-			author: packageInfo.author.name,
-			contact: packageInfo.author.url
+			author: 'Jin Igarashi',
+			contact: 'https://jin-igarashi.me'
 		},
 		styles: styles,
 		nav: [

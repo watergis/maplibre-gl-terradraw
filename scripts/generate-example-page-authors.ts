@@ -8,6 +8,19 @@ const EXAMPLES_DIR = path.resolve('static/assets/examples');
 const OUTPUT_FILE = path.resolve('src/routes/authors.json');
 const pkg = await getPackageInfo();
 
+const BOT_PATTERNS = [
+	'bot',
+	'copilot',
+	'ai',
+	'github',
+	'actions'
+];
+
+function isBot(name: string): boolean {
+	const lower = name.toLowerCase();
+	return BOT_PATTERNS.some((pattern) => lower.includes(pattern));
+}
+
 async function getAuthor(filePath: string): Promise<string> {
 	try {
 		const result = await git.raw([
@@ -18,10 +31,29 @@ async function getAuthor(filePath: string): Promise<string> {
 			'--',
 			filePath
 		]);
-		const authors = result.split('\n').filter(Boolean);
-		return authors.at(-1) ?? pkg.author.name;
+
+		const authors = result
+			.split('\n')
+			.map((a) => a.trim())
+			.filter(Boolean);
+
+		const uniqueAuthors = [...new Set(authors)];
+
+		// Filter out bots
+		const humanAuthors = uniqueAuthors.filter((a) => !isBot(a));
+
+		if (humanAuthors.length > 0) {
+			return humanAuthors[0];
+		}
+
+		// fallback: if all are bots, try second author overall
+		if (uniqueAuthors.length > 1) {
+			return `${uniqueAuthors[1]} et al`;
+		}
+
+		return 'Jin Igarashi';
 	} catch {
-		return pkg.author.name;
+		return 'Jin Igarashi';
 	}
 }
 
@@ -37,7 +69,7 @@ async function generateAuthors() {
 			exampleId = entry.name;
 			const exampleDir = path.join(EXAMPLES_DIR, exampleId);
 			const files = fs.readdirSync(exampleDir);
-			htmlFile = files.find((f) => f.endsWith('.htm'));
+			htmlFile = files.find((f: string) => f.endsWith('.htm'));
 
 			if (!htmlFile) {
 				console.warn(`⚠️ No .htm file found in directory "${exampleId}"`);

@@ -8,13 +8,7 @@ const EXAMPLES_DIR = path.resolve('static/assets/examples');
 const OUTPUT_FILE = path.resolve('src/routes/authors.json');
 const pkg = await getPackageInfo();
 
-const BOT_PATTERNS = [
-	'bot',
-	'copilot',
-	'ai',
-	'github',
-	'actions'
-];
+const BOT_PATTERNS = ['bot', 'copilot', 'ai', 'github', 'actions'];
 
 function isBot(name: string): boolean {
 	const lower = name.toLowerCase();
@@ -51,9 +45,9 @@ async function getAuthor(filePath: string): Promise<string> {
 			return `${uniqueAuthors[1]} et al`;
 		}
 
-		return 'Jin Igarashi';
+		return pkg.author.name;
 	} catch {
-		return 'Jin Igarashi';
+		return pkg.author.name;
 	}
 }
 

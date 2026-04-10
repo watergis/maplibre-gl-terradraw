@@ -45,19 +45,15 @@ export const getPackageInfo = async () => {
 		const json = res.ok ? await res.json() : null;
 
 		return {
+			...pkg,
 			packageName: packageName,
-			version: json?.version ?? 'latest',
-			author: json?.author ?? pkg.author,
-			displayName: pkg.displayName,
-			description: pkg.description
+			version: json?.version
 		};
 	} catch {
 		return {
+			...pkg,
 			packageName: packageName,
-			version: pkg.version ?? 'latest',
-			author: pkg.author,
-			displayName: pkg.displayName,
-			description: pkg.description
+			version: 'latest'
 		};
 	}
 };

@@ -46,7 +46,7 @@ export const getPackageInfo = async () => {
 
 		return {
 			packageName: packageName,
-			version: json?.version ?? pkg.version ?? 'latest',
+			version: json?.version ?? 'latest',
 			author: json?.author ?? pkg.author,
 			displayName: pkg.displayName,
 			description: pkg.description

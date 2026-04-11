@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.13.1
+
+### Patch Changes
+
+- 75e54b4: chore: upgrade terra-draw to 1.28.1. Sync undo/redo button state in the plugin if clearUndoRedoHistory is called.
+
 ## 1.13.0
 
 ### Minor Changes

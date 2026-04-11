@@ -400,6 +400,12 @@ export class MaplibreTerradrawControl implements IControl {
 						return this.handleModeChange(mode, target);
 					};
 				}
+				if (prop === 'clearUndoRedoHistory') {
+					return () => {
+						target.clearUndoRedoHistory();
+						this.handleHistoryChange({ undoSize: 0, redoSize: 0 });
+					};
+				}
 				return Reflect.get(target, prop, receiver);
 			}
 		});

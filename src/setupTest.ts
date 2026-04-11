@@ -18,7 +18,8 @@ vi.mock('terra-draw', () => ({
 			removeFeatures: vi.fn(),
 			deselectFeature: vi.fn(),
 			undo: vi.fn(() => true),
-			redo: vi.fn(() => true)
+			redo: vi.fn(() => true),
+			clearUndoRedoHistory: vi.fn()
 		};
 	}),
 	TerraDrawRenderMode: vi.fn().mockImplementation(function (options) {

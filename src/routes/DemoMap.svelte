@@ -297,7 +297,7 @@
 					console.log(invalid);
 				}
 			}
-
+			drawInstance?.clearUndoRedoHistory();
 			if (options.controlType === 'measure') {
 				map?.once('idle', () => {
 					(drawControl as MaplibreMeasureControl).recalc();

@@ -1988,3 +1988,51 @@ describe('undo/redo button tests', () => {
 		expect(() => redoButton.click()).not.toThrow();
 	});
 });
+
+describe('clearUndoRedoHistory', () => {
+	let mockMap: InstanceType<typeof Map>;
+
+	beforeEach(() => {
+		mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+	});
+
+	it('should call terradraw.clearUndoRedoHistory and disable undo/redo buttons via proxy', () => {
+		const control = new MaplibreTerradrawControl({
+			modes: ['point', 'undo', 'redo']
+		});
+		const controlElement = control.onAdd(mockMap);
+
+		const undoButton = controlElement.querySelector(
+			'.maplibregl-terradraw-undo-button'
+		) as HTMLButtonElement;
+		const redoButton = controlElement.querySelector(
+			'.maplibregl-terradraw-redo-button'
+		) as HTMLButtonElement;
+
+		// Simulate history with undo/redo available
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(control as any).handleHistoryChange({ undoSize: 3, redoSize: 2 });
+		expect(undoButton.disabled).toBe(false);
+		expect(redoButton.disabled).toBe(false);
+
+		// Clear history via proxy
+		const instance = control.getTerraDrawInstance()!;
+		instance.clearUndoRedoHistory();
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const terradraw = (control as any).terradraw;
+		expect(terradraw.clearUndoRedoHistory).toHaveBeenCalled();
+		expect(undoButton.disabled).toBe(true);
+		expect(redoButton.disabled).toBe(true);
+	});
+
+	it('should return undefined when terradraw is not available', () => {
+		const control = new MaplibreTerradrawControl({
+			modes: ['point', 'undo', 'redo']
+		});
+
+		// terradraw is undefined before onAdd
+		const instance = control.getTerraDrawInstance();
+		expect(instance).toBeUndefined();
+	});
+});

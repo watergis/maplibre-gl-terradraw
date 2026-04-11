@@ -1,3 +1,5 @@
+import pkg from '../../package.json' with { type: 'json' };
+
 export const exampleIds = [
 	'measure-control',
 	'measure-control-custom-font',
@@ -36,18 +38,22 @@ export const getDescription = (body: string) => {
 };
 
 export const getPackageInfo = async () => {
-	const packageName = '@watergis/maplibre-gl-terradraw';
+	const packageName = pkg.name;
 
-	const res = await fetch(`https://registry.npmjs.org/${packageName}/latest`);
-	if (!res.ok) {
+	try {
+		const res = await fetch(`https://registry.npmjs.org/${packageName}/latest`);
+		const json = res.ok ? await res.json() : null;
+
 		return {
+			...pkg,
+			packageName: packageName,
+			version: json?.version
+		};
+	} catch {
+		return {
+			...pkg,
 			packageName: packageName,
 			version: 'latest'
 		};
 	}
-	const json = await res.json();
-	return {
-		packageName: packageName,
-		version: json.version as string
-	};
 };

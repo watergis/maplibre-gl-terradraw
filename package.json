@@ -1,5 +1,6 @@
 {
 	"name": "@watergis/maplibre-gl-terradraw",
+	"displayName": "Maplibre GL Terra Draw",
 	"version": "1.13.0",
 	"description": "This plugin is to add controls to your Maplibre for drawing powered by Terra Draw library.",
 	"type": "module",
@@ -45,7 +46,8 @@
 		"test": "npm run test:vitest && npm run test:playwright",
 		"test:vitest": "vitest --run --passWithNoTests",
 		"test:vitest:coverage": "vitest run --coverage",
-		"test:playwright": "playwright test"
+		"test:playwright": "playwright test",
+		"generate:authors": "tsx scripts/generate-example-page-authors.ts && pnpm exec prettier --write src/routes/authors.json"
 	},
 	"devDependencies": {
 		"@changesets/cli": "^2.30.0",
@@ -88,6 +90,7 @@
 		"sass-embedded": "^1.99.0",
 		"serve": "^14.2.6",
 		"shiki": "^4.0.2",
+		"simple-git": "^3.35.2",
 		"simple-icons": "^16.14.0",
 		"svelte": "^5.55.1",
 		"svelte-check": "^4.4.6",
@@ -97,6 +100,7 @@
 		"typedoc": "^0.28.18",
 		"typescript": "^6.0.2",
 		"typescript-eslint": "^8.58.0",
+		"tsx": "^4.21.0",
 		"vite": "^8.0.3",
 		"vitest": "^4.1.2"
 	},
@@ -122,7 +126,10 @@
 		"terra-draw",
 		"drawing"
 	],
-	"author": "Jin IGARASHI",
+	"author": {
+		"name": "Jin Igarashi",
+		"url": "https://jin-igarashi.me"
+	},
 	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/watergis/maplibre-gl-terradraw/issues"

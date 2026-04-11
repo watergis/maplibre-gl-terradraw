@@ -1,8 +1,13 @@
 import { exampleIds, getDescription, getPackageInfo, getTitle, getTags } from './helpers';
 import type { LayoutServerLoad } from './$types';
 import { env } from '$env/dynamic/private';
+import authorsJson from './authors.json';
+
+export type AuthorsMap = Record<string, string>;
 
 export const load: LayoutServerLoad = async ({ fetch }) => {
+	const authors = authorsJson as AuthorsMap;
+
 	const packageInfo = await getPackageInfo();
 
 	const examples = [];
@@ -14,13 +19,15 @@ export const load: LayoutServerLoad = async ({ fetch }) => {
 		const title = getTitle(html);
 		const tags = getTags(html);
 		const description = getDescription(html);
+		const author = authors[item] ?? packageInfo.author.name;
 
 		examples.push({
 			href: `/examples/${item}`,
 			title: title,
 			tags: tags,
 			image: `/assets/images/${item}.webp`,
-			description: description
+			description: description,
+			author: author
 		});
 	}
 
@@ -62,11 +69,10 @@ export const load: LayoutServerLoad = async ({ fetch }) => {
 		metadata: {
 			packageName: packageInfo.packageName,
 			version: packageInfo.version,
-			title: 'Maplibre GL Terra Draw',
-			description:
-				'This plugin is to add controls to your Maplibre for drawing powered by Terra Draw library.',
-			author: 'Jin Igarashi',
-			contact: 'https://jin-igarashi.me'
+			title: packageInfo.displayName,
+			description: packageInfo.description,
+			author: packageInfo.author.name,
+			contact: packageInfo.author.url
 		},
 		styles: styles,
 		nav: [

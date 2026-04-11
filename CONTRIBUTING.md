@@ -95,8 +95,12 @@ pnpm changeset
 
 7. Add a changeset file by `pnpm changeset`
 
-8. Commit local changes in git. Run: `git add . && git commit -m "precise commit message"
+8. Commit local changes in git. Run: `git add . && git commit -m "precise commit message"`
 
-9. Push local branch to your forked remote repository.
+9. If you have added a new example page to showcase some functionality of the package, run `pnpm generate:authors` to update the list of authors.
 
-10. Push to your fork and [submit a pull request](https://help.github.com/articles/using-pull-requests). A button should appear on your fork its github page afterwards.
+10. Redo step 8.
+
+11. Push local branch to your forked remote repository.
+
+12. Push to your fork and [submit a pull request](https://help.github.com/articles/using-pull-requests). A button should appear on your fork its github page afterwards.

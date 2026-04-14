@@ -13,3 +13,4 @@ export * from './queryElevationFromRasterDEM';
 export * from './roundFeatureCoordinates';
 export * from './valhallaIsochrone';
 export * from './valhallaRouting';
+export * from './modeKeyboardShortcutController';

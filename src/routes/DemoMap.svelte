@@ -228,6 +228,12 @@
 				modeOptions: getDefaultModeOptions(),
 				adapterOptions: {
 					prefixId: 'td-default'
+				},
+				keyboardShortcuts: {
+					point: 'p',
+					polygon: 'g',
+					linestring: 'l',
+					select: 's'
 				}
 			});
 			map.addControl(drawControl, 'top-left');

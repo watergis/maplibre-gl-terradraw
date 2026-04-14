@@ -26,7 +26,13 @@ import type {
 	EventArgs
 } from '../interfaces';
 import { defaultControlOptions, getDefaultModeOptions } from '../constants';
-import { capitalize, cleanMaplibreStyle, TERRADRAW_SOURCE_IDS, ModalDialog } from '../helpers';
+import {
+	capitalize,
+	cleanMaplibreStyle,
+	TERRADRAW_SOURCE_IDS,
+	ModalDialog,
+	ModeKeyboardShortcutController
+} from '../helpers';
 import type { TextModeStyling } from '../modes/TerraDrawTextMode';
 
 /**
@@ -169,6 +175,7 @@ export class MaplibreTerradrawControl implements IControl {
 
 	protected terradraw?: TerraDraw;
 	protected options: TerradrawControlOptions;
+	protected modeKeyboardShortcutController?: ModeKeyboardShortcutController;
 	protected events: {
 		[key: string]: [(event: EventArgs) => void];
 	} = {};
@@ -305,6 +312,15 @@ export class MaplibreTerradrawControl implements IControl {
 			this.controlContainer?.appendChild(ele);
 		});
 
+		if (this.options.keyboardShortcuts) {
+			this.modeKeyboardShortcutController = new ModeKeyboardShortcutController(
+				this.terradraw,
+				this.options.keyboardShortcuts,
+				this.controlContainer as HTMLElement
+			);
+			this.modeKeyboardShortcutController.mount();
+		}
+
 		this.toggleButtonsWhenNoFeature();
 		this.terradraw?.on('finish', this.toggleButtonsWhenNoFeature.bind(this));
 		this.terradraw?.on('history', this.handleHistoryChange.bind(this));
@@ -328,6 +344,7 @@ export class MaplibreTerradrawControl implements IControl {
 		this.terradraw = undefined;
 		this.map = undefined;
 		this.controlContainer.parentNode.removeChild(this.controlContainer);
+		this.modeKeyboardShortcutController?.destroy();
 	}
 
 	/**

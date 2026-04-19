@@ -496,7 +496,11 @@ export class MaplibreTerradrawControl implements IControl {
 			if (!this.isExpanded) {
 				btn.classList.add('hidden');
 			}
-			btn.title = capitalize(mode.replace(/-/g, ' '));
+
+			const shortcutTitle = this.options.keyboardShortcuts?.[mode]?.toUpperCase();
+			btn.title = shortcutTitle
+				? `${capitalize(mode.replace(/-/g, ' '))} ( ${shortcutTitle} )`
+				: capitalize(mode.replace(/-/g, ' '));
 
 			if (mode === 'delete') {
 				btn.classList.add(`maplibregl-terradraw-${this.cssPrefix}${mode}-button`);

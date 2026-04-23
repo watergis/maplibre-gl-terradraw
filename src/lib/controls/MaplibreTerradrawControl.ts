@@ -12,7 +12,9 @@ import {
 	TerraDrawModeUndoRedo,
 	TerraDrawRenderMode,
 	TerraDrawSessionUndoRedo,
-	TerraDrawUndoRedoKeyboardShortcuts
+	TerraDrawUndoRedoKeyboardShortcuts,
+	type GeoJSONStoreFeatures,
+	type GeoJSONStoreGeometries
 } from 'terra-draw';
 import { TerraDrawMapLibreGLAdapter } from 'terra-draw-maplibre-gl-adapter';
 import type {
@@ -24,6 +26,7 @@ import type {
 } from '../interfaces';
 import { defaultControlOptions, getDefaultModeOptions } from '../constants';
 import { capitalize, cleanMaplibreStyle, TERRADRAW_SOURCE_IDS, ModalDialog } from '../helpers';
+import type { MaplibreTerradrawTextMode } from '../modes/MaplibreTerradrawTextNode';
 
 /**
  * Maplibre GL Terra Draw Control
@@ -225,6 +228,33 @@ export class MaplibreTerradrawControl implements IControl {
 				this.terradraw?.start();
 			});
 		}
+
+		modes.forEach((m: TerradrawModeClass) => {
+			if (m.mode === 'text') {
+				const styles = defaultOptions[m.mode].styles;
+				console.log(styles);
+				this.createTerradrawTextLayer(map, styles as Record<string, string | number>);
+
+				const textMode = m as MaplibreTerradrawTextMode;
+
+				this.createTerradrawTextLayer(map, styles as Record<string, string>);
+
+				if (textMode.options?.onDragSync) {
+					textMode.options.onDragSync = () => {
+						const snapshot = this.terradraw?.getSnapshot() ?? [];
+						const textFeatures = snapshot.filter(
+							(f) => f.properties?.mode === 'text' && f.properties?.text
+						) as GeoJSONStoreFeatures<GeoJSONStoreGeometries>[];
+
+						const source = this.map?.getSource('td-text') as maplibregl.GeoJSONSource | undefined;
+						source?.setData({
+							type: 'FeatureCollection',
+							features: textFeatures
+						});
+					};
+				}
+			}
+		});
 
 		this.controlContainer = document.createElement('div');
 		this.controlContainer.classList.add(`maplibregl-ctrl`);
@@ -630,6 +660,9 @@ export class MaplibreTerradrawControl implements IControl {
 
 		const deleteFeatures = () => {
 			this.terradraw?.clear();
+			// also delete all text-layers
+
+			this.clearTextLayers();
 			this.resetActiveMode();
 			this.toggleDeleteSelectionButton();
 			this.toggleButtonsWhenNoFeature();
@@ -780,5 +813,73 @@ export class MaplibreTerradrawControl implements IControl {
 				}
 			}
 		}
+	}
+
+	protected createTerradrawTextLayer(map: Map, styles?: Record<string, string | number>) {
+		this.terradraw?.on('finish', () => {
+			const snapshot = this.terradraw?.getSnapshot();
+			const textFeatures =
+				snapshot?.filter((f) => f.properties?.mode === 'text' && f.properties?.text) ?? [];
+
+			// match expression breaks with no cases — use empty string fallback only
+			// const matchExpression: ExpressionSpecification = textFeatures.length
+			// 	? [
+			// 		'match',
+			// 		['get', 'id'],
+			// 		...(textFeatures as GeoJSONStoreFeatures<GeoJSONStoreGeometries>[])
+			// 			.flatMap(f => [f.id, f.properties.text as string]),
+			// 		''
+			// 	]
+			// 	: ['literal', ''];
+
+			this.addFeaturesToSource(textFeatures, map, styles);
+		});
+	}
+
+	protected addFeaturesToSource(
+		features: GeoJSONStoreFeatures<GeoJSONStoreGeometries>[],
+		map: Map,
+		styles?: Record<string, string | number>
+	) {
+		const source = map.getSource('td-text') as maplibregl.GeoJSONSource | undefined;
+
+		if (source) {
+			source.setData({
+				type: 'FeatureCollection',
+				features
+			});
+		} else {
+			map.addSource('td-text', {
+				type: 'geojson',
+				data: { type: 'FeatureCollection', features }
+			});
+
+			map.addLayer({
+				id: 'td-text-labels',
+				type: 'symbol',
+				source: 'td-text',
+				layout: {
+					'text-field': ['get', 'text'],
+					'text-size': (styles?.textSize as number) ?? 12,
+					'text-anchor': 'top',
+					'text-offset': [0, 0.8],
+					'text-font': ['Noto Sans Regular'],
+					'text-allow-overlap': true
+				},
+				paint: {
+					'text-color': (styles?.textColor as string) ?? '#000000',
+					'text-halo-color': '#ffffff',
+					'text-halo-width': 1.5
+				}
+			});
+		}
+	}
+
+	protected clearTextLayers() {
+		const source = this.map?.getSource('td-text') as maplibregl.GeoJSONSource | undefined;
+		const layers = this.map?.style.getLayer('td-text-labels');
+
+		this.map?.removeLayer(layers?.id as string);
+		this.map?.removeSource(source?.id as string);
 	}
 }

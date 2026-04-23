@@ -140,6 +140,13 @@
 	}
 }
 
+.maplibregl-terradraw-add-text-button {
+	background: url('./icons/settings.svg');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 80%;
+}
+
 .maplibregl-terradraw-measure-add-sensor-button,
 .maplibregl-terradraw-add-sensor-button {
 	background: url('./icons/sensor.svg');

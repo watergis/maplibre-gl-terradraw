@@ -17,6 +17,7 @@ import {
 	type GeoJSONStoreFeatures
 } from 'terra-draw';
 import markerSvgUrl from '../../scss/icons/marker-blue.svg';
+import { MaplibreTerradrawTextMode } from '../modes/MaplibreTerradrawTextNode';
 
 /**
  * Validation function for polygon features to prevent self-intersecting polygons
@@ -202,6 +203,16 @@ export const getDefaultModeOptions = () => {
 		redo: new TerraDrawRenderMode({
 			modeName: 'redo',
 			styles: {}
+		}),
+		text: new MaplibreTerradrawTextMode({
+			placeholder: 'Enter Label here...',
+			onTextCommit: (featureId: string, text: string) => {
+				console.log(featureId, text);
+			},
+			styles: {
+				textColor: '#FF4732',
+				textSize: 12
+			}
 		})
 	};
 	return modeOptions;

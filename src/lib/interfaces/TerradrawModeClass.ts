@@ -1,3 +1,4 @@
+import type { MaplibreTerradrawTextMode } from '../modes/MaplibreTerradrawTextNode';
 import {
 	TerraDrawAngledRectangleMode,
 	TerraDrawCircleMode,
@@ -30,4 +31,5 @@ export type TerradrawModeClass =
 	| TerraDrawSectorMode
 	| TerraDrawSensorMode
 	| TerraDrawRenderMode
-	| TerraDrawSelectMode;
+	| TerraDrawSelectMode
+	| MaplibreTerradrawTextMode;

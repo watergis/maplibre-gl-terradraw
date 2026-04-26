@@ -16,6 +16,7 @@ export const AvailableModes = [
 	'polygon',
 	'rectangle',
 	'circle',
+	'text',
 	'freehand',
 	'freehand-linestring',
 	'angled-rectangle',
@@ -26,8 +27,7 @@ export const AvailableModes = [
 	'delete',
 	'undo',
 	'redo',
-	'download',
-	'text'
+	'download'
 ] as const;
 
 /**

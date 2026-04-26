@@ -181,6 +181,18 @@ export const getDefaultModeOptions = () => {
 							deletable: true
 						}
 					}
+				},
+				text: {
+					feature: {
+						draggable: true,
+						rotateable: true,
+						scaleable: true,
+						coordinates: {
+							midpoints: true,
+							draggable: true,
+							deletable: true
+						}
+					}
 				}
 			}
 		}),
@@ -205,6 +217,7 @@ export const getDefaultModeOptions = () => {
 			styles: {}
 		}),
 		text: new MaplibreTerradrawTextMode({
+			editable: true,
 			placeholder: 'Enter Label here...',
 			onTextCommit: (featureId: string, text: string) => {
 				console.log(featureId, text);

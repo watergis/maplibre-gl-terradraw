@@ -6,7 +6,6 @@ import {
 	type HexColor,
 	TerraDrawExtend,
 	type GeoJSONStoreFeatures
-	// type GeoJSONStoreGeometries
 } from 'terra-draw';
 
 const { TerraDrawBaseDrawMode } = TerraDrawExtend;
@@ -28,6 +27,8 @@ type TextModeOptions = {
 	onTextCommit?: (featureId: string, text: string) => void;
 	map?: Map;
 	onDragSync?: () => void;
+	pointerEvents?: PointerEvent;
+	editable?: boolean;
 };
 
 export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
@@ -35,6 +36,7 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 
 	private isDragging = false;
 	private draggedFeatureId: string | null = null;
+	private editable: boolean = false;
 
 	private activeTextarea: HTMLTextAreaElement | null = null;
 	private activeFeatureId: string | null = null;
@@ -47,6 +49,7 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 		this.styles = options?.styles ?? {};
 
 		this.onDragSync = options?.onDragSync;
+		this.editable = options?.editable ?? false;
 	}
 
 	/** @internal */
@@ -77,14 +80,21 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 	//     this.container = config.getMapContainer();
 	// }
 
-	// ─── Textarea popup ───────────────────────────────────────────────────────
-
-	private showTextarea(featureId: string, x: number, y: number): void {
-		this.dismissTextarea(false); // clean up any existing one first
-
+	/**
+	 * Create a textarea element
+	 * @param x
+	 * @param y
+	 * @returns
+	 */
+	private createTextAreaElement(x: number, y: number, currentText?: string): HTMLTextAreaElement {
+		console.log('Creating a text area element');
 		const textarea = document.createElement('textarea');
 		textarea.placeholder = this.options?.placeholder ?? 'Enter label...';
 		textarea.rows = 2;
+
+		if (currentText) {
+			textarea.value = currentText;
+		}
 
 		Object.assign(textarea.style, {
 			position: 'absolute',
@@ -105,9 +115,28 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 			boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
 		});
 
-		// commit on Enter (without shift)
+		const mapContainer = document.getElementsByClassName('map');
+
+		mapContainer[0]!.appendChild(textarea);
+
+		textarea.focus();
+
+		return textarea;
+	}
+
+	/**
+	 * Add a textarea element to the DOM
+	 * @param featureId
+	 * @param x
+	 * @param y
+	 */
+	private showTextarea(featureId: string, x: number, y: number): void {
+		this.dismissTextarea(false);
+
+		const textarea = this.createTextAreaElement(x, y);
+
 		textarea.addEventListener('keydown', (e) => {
-			if (e.key === 'Enter' && !e.shiftKey) {
+			if (e.key === 'Enter' && e.shiftKey) {
 				e.preventDefault();
 				this.commitText(featureId, textarea.value.trim());
 			}
@@ -115,11 +144,6 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 				this.dismissTextarea(true);
 			}
 		});
-
-		const mapContainer = document.getElementsByClassName('map');
-
-		mapContainer[0]!.appendChild(textarea);
-		textarea.focus();
 
 		this.activeTextarea = textarea;
 		this.activeFeatureId = featureId;
@@ -142,12 +166,7 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 		this.options?.onTextCommit?.(featureId, text);
 		this.dismissTextarea(false);
 
-		this.onFinish(featureId, { mode: this.mode, action: 'edit' });
-
-		// add a text layer to the map(since I have no adapter here)
-		console.log('Finished drawing now committing');
-
-		// this.
+		this.onFinish(featureId, { mode: this.mode, action: 'draw' });
 	}
 
 	private dismissTextarea(deleteFeature: boolean): void {
@@ -161,7 +180,32 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 		this.activeFeatureId = null;
 	}
 
-	// ─── TerraDraw lifecycle ──────────────────────────────────────────────────
+	private editText(featureId: string, x: number, y: number): void {
+		console.log('Now editing...');
+		this.dismissTextarea(false);
+
+		const feature = this.store.copyAll().find((f) => f.id === featureId);
+		const currentText = (feature?.properties?.text as string) ?? '';
+
+		const textarea = this.createTextAreaElement(x, y, currentText);
+
+		textarea.addEventListener('keydown', (e) => {
+			if (e.key === 'Enter' && e.shiftKey) {
+				e.preventDefault();
+				const newText = textarea.value.trim();
+				if (newText) {
+					this.commitText(featureId, newText);
+				}
+				this.dismissTextarea(false);
+			}
+			if (e.key === 'Escape') {
+				this.dismissTextarea(false);
+			}
+		});
+
+		this.activeTextarea = textarea;
+		this.activeFeatureId = featureId;
+	}
 
 	onClick(event: TerraDrawMouseEvent): void {
 		if (this.activeTextarea && this.activeFeatureId) {
@@ -170,6 +214,17 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 		}
 
 		const { x, y } = this.project(event.lng, event.lat);
+
+		if (
+			event.button === 'right' &&
+			this.allowPointerEvent(this.pointerEvents.rightClick, event) &&
+			this.editable
+		) {
+			this.onRightClick(event);
+			return;
+		}
+
+		this.setCursor('crosshair');
 
 		const [featureId] = this.store.create([
 			{
@@ -186,6 +241,17 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 		]);
 
 		this.showTextarea(featureId as string, x, y);
+	}
+
+	onRightClick(event: TerraDrawMouseEvent): void {
+		this.setCursor('pointer');
+
+		const nearest = this.getNearestPointFeature(event);
+		if (!nearest) return;
+
+		const { x, y } = this.project(event.lng, event.lat);
+		this.editText(nearest.id, x, y);
+		return;
 	}
 
 	onDragStart(event: TerraDrawMouseEvent, setMapDragging: (dragging: boolean) => void): void {
@@ -298,64 +364,4 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 
 		return nearest;
 	}
-
-	// protected createTerradrawTextLayer(map: Map) {
-	// 	this.terradraw?.on('finish', () => {
-	// 		const snapshot = this.terradraw?.getSnapshot();
-	// 		const textFeatures = snapshot?.filter(
-	// 			f => f.properties?.mode === 'text' && f.properties?.text
-	// 		) ?? [];
-
-	// 		// match expression breaks with no cases — use empty string fallback only
-	// 		// const matchExpression: ExpressionSpecification = textFeatures.length
-	// 		// 	? [
-	// 		// 		'match',
-	// 		// 		['get', 'id'],
-	// 		// 		...(textFeatures as GeoJSONStoreFeatures<GeoJSONStoreGeometries>[])
-	// 		// 			.flatMap(f => [f.id, f.properties.text as string]),
-	// 		// 		''
-	// 		// 	]
-	// 		// 	: ['literal', ''];
-
-	// 		this.addFeaturesToSource(textFeatures, map);
-	// 	});
-	// }
-
-	// protected addFeaturesToSource(
-	// 	features: GeoJSONStoreFeatures<GeoJSONStoreGeometries>[],
-	// 	map: Map,
-	// ) {
-	// 	const source = map.getSource('td-text') as maplibregl.GeoJSONSource | undefined;
-
-	// 	if (source) {
-	// 		source.setData({
-	// 			type: 'FeatureCollection',
-	// 			features
-	// 		});
-	// 	} else {
-	// 		map.addSource('td-text', {
-	// 			type: 'geojson',
-	// 			data: { type: 'FeatureCollection', features }
-	// 		});
-
-	// 		map.addLayer({
-	// 			id: 'td-text-labels',
-	// 			type: 'symbol',
-	// 			source: 'td-text',
-	// 			layout: {
-	// 				'text-field': ['get', 'text'],
-	// 				'text-size': 14,
-	// 				'text-anchor': 'top',
-	// 				'text-offset': [0, 0.8],
-	// 				'text-font': ['Noto Sans Regular'],
-	// 				'text-allow-overlap': true
-	// 			},
-	// 			paint: {
-	// 				'text-color': '#111111',
-	// 				'text-halo-color': '#ffffff',
-	// 				'text-halo-width': 1.5
-	// 			}
-	// 		});
-	// 	}
-	// }
 }

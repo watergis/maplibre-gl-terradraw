@@ -1,3 +1,4 @@
+import { MODE_ACTION_SHORTCUTS } from '../constants';
 import {
 	type TerradrawMode,
 	type ModeKeyboardShortcuts,
@@ -31,10 +32,13 @@ export class ModeKeyboardShortcutController {
 			)
 				return;
 
-			if (e.ctrlKey || e.metaKey || e.altKey) return;
 			const key = e.key.toLowerCase();
 
-			// Find which mode this key maps to
+			// Mode Actions with keys + held Keys
+			this.initialiseModeActionKeyboardShortcuts(e, key);
+
+			if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
+
 			const mode = Object.entries(this.shortcuts as ModeKeyboardShortcuts).find(
 				([, shortcut]) => shortcut === key
 			)?.[0] as TerradrawMode | undefined;
@@ -42,12 +46,62 @@ export class ModeKeyboardShortcutController {
 			if (!mode) return;
 
 			e.preventDefault();
-
 			this.terradraw.setMode(mode);
 			this.syncButtonStates(mode);
 		};
 
 		window.addEventListener('keydown', this.handler);
+	}
+
+	private initialiseModeActionKeyboardShortcuts(e: KeyboardEvent, key: string) {
+		for (const [action, shortcut] of Object.entries(MODE_ACTION_SHORTCUTS)) {
+			const keyMatches =
+				shortcut.key === 'Backspace'
+					? e.key === 'Backspace'
+					: (shortcut.key as string).toLowerCase() === key;
+
+			const heldKeysMatch =
+				shortcut.heldKeys.length === 0
+					? !e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey
+					: shortcut.heldKeys.every((hk) => {
+							switch (hk) {
+								case 'shift':
+									return e.shiftKey;
+								default:
+									return false;
+							}
+						});
+
+			if (keyMatches && heldKeysMatch) {
+				e.preventDefault();
+				this.executeAction(action as keyof typeof MODE_ACTION_SHORTCUTS);
+				return;
+			}
+		}
+	}
+
+	private executeAction(action: keyof typeof MODE_ACTION_SHORTCUTS): void {
+		switch (action) {
+			case 'delete': {
+				const snapshot = this.terradraw.getSnapshot();
+				const ids = snapshot.map((f) => f.id);
+				if (ids.length) {
+					this.terradraw.removeFeatures(ids as string[]);
+					this.syncButtonStates(this.terradraw.getMode());
+				}
+				break;
+			}
+			case 'delete-selected': {
+				const snapshot = this.terradraw.getSnapshot();
+				const selected = snapshot.filter((f) => f.properties?.selected);
+				const ids = selected.map((f) => f.id);
+				if (ids.length) {
+					this.terradraw.removeFeatures(ids as string[]);
+					this.syncButtonStates(this.terradraw.getMode());
+				}
+				break;
+			}
+		}
 	}
 
 	private validateShortcuts(): void {

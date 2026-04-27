@@ -249,8 +249,8 @@ export class MaplibreTerradrawControl implements IControl {
 
 		this.modeKeyboardShortcutController = new ModeKeyboardShortcutController(
 			this.terradraw,
-			this.options?.keyboardShortcuts,
-			this.controlContainer as HTMLElement
+			this.controlContainer as HTMLElement,
+			this.options?.keyboardShortcuts
 		);
 
 		this.modeKeyboardShortcutController.mount();

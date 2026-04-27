@@ -11,8 +11,8 @@ export class ModeKeyboardShortcutController {
 
 	constructor(
 		private terradraw: TerraDraw,
-		private shortcuts?: ModeKeyboardShortcuts,
-		private controlContainer?: HTMLElement
+		private controlContainer?: HTMLElement,
+		private shortcuts?: ModeKeyboardShortcuts
 	) {
 		this.shortcuts = shortcuts
 			? { ...defaultModeKeyboardShortcuts, ...shortcuts }
@@ -74,7 +74,10 @@ export class ModeKeyboardShortcutController {
 
 			if (keyMatches && heldKeysMatch) {
 				e.preventDefault();
-				this.executeAction(action as keyof typeof MODE_ACTION_SHORTCUTS);
+				const features = this.terradraw.getSnapshot();
+				if (features.length > 0) {
+					this.executeAction(action as keyof typeof MODE_ACTION_SHORTCUTS);
+				}
 				return;
 			}
 		}

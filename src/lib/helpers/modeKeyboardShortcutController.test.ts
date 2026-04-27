@@ -6,7 +6,10 @@ import { ModeKeyboardShortcutController } from './modeKeyboardShortcutController
 function createMockTerraDraw() {
 	return {
 		setMode: vi.fn(),
-		stop: vi.fn()
+		getMode: vi.fn(),
+		stop: vi.fn(),
+		getSnapshot: vi.fn(),
+		removeFeatures: vi.fn()
 	};
 }
 
@@ -50,7 +53,7 @@ describe('ModeKeyboardShortcutController', () => {
 	// 1. Construction and validation
 	describe('constructor validation', () => {
 		it('mounts without error when shortcuts are valid', () => {
-			const controller = new ModeKeyboardShortcutController(draw as any, {
+			const controller = new ModeKeyboardShortcutController(draw as any, undefined, {
 				point: 'p',
 				polygon: 'g',
 				select: 's'
@@ -60,7 +63,7 @@ describe('ModeKeyboardShortcutController', () => {
 		});
 
 		it('throws when duplicate keys are assigned to different modes', () => {
-			const controller = new ModeKeyboardShortcutController(draw as any, {
+			const controller = new ModeKeyboardShortcutController(draw as any, undefined, {
 				point: 'p',
 				polygon: 'p'
 			});
@@ -68,7 +71,7 @@ describe('ModeKeyboardShortcutController', () => {
 		});
 
 		it('throws listing all duplicate keys when multiple duplicates exist', () => {
-			const controller = new ModeKeyboardShortcutController(draw as any, {
+			const controller = new ModeKeyboardShortcutController(draw as any, undefined, {
 				point: 'p',
 				polygon: 'p',
 				select: 's',
@@ -77,8 +80,14 @@ describe('ModeKeyboardShortcutController', () => {
 			expect(() => controller.mount()).toThrow('duplicate keyboard shortcut(s)');
 		});
 
-		it('mounts with an empty shortcuts config without error', () => {
-			const controller = new ModeKeyboardShortcutController(draw as any, {});
+		it('mounts with no shortcuts passed and loads defaults without error', () => {
+			const controller = new ModeKeyboardShortcutController(draw as any);
+			expect(() => controller.mount()).not.toThrow();
+			controller.destroy();
+		});
+
+		it('mounts with custom shortcuts merged over defaults without error', () => {
+			const controller = new ModeKeyboardShortcutController(draw as any, undefined, { point: 'q' });
 			expect(() => controller.mount()).not.toThrow();
 			controller.destroy();
 		});
@@ -89,11 +98,11 @@ describe('ModeKeyboardShortcutController', () => {
 		let controller: ModeKeyboardShortcutController;
 
 		beforeEach(() => {
-			controller = new ModeKeyboardShortcutController(draw as any, {
+			controller = new ModeKeyboardShortcutController(draw as any, undefined, {
 				point: 'p',
 				polygon: 'g',
 				linestring: 'l',
-				rectangle: 'r',
+				rectangle: 't',
 				circle: 'c',
 				select: 's'
 			});
@@ -119,8 +128,8 @@ describe('ModeKeyboardShortcutController', () => {
 			expect(draw.setMode).toHaveBeenCalledWith('linestring');
 		});
 
-		it('activates rectangle mode when r is pressed', () => {
-			fireKeydown('r');
+		it('activates rectangle mode when t is pressed', () => {
+			fireKeydown('t');
 			expect(draw.setMode).toHaveBeenCalledWith('rectangle');
 		});
 
@@ -156,7 +165,7 @@ describe('ModeKeyboardShortcutController', () => {
 		let controller: ModeKeyboardShortcutController;
 
 		beforeEach(() => {
-			controller = new ModeKeyboardShortcutController(draw as any, { point: 'p' });
+			controller = new ModeKeyboardShortcutController(draw as any, undefined, { point: 'p' });
 			controller.mount();
 		});
 
@@ -180,7 +189,7 @@ describe('ModeKeyboardShortcutController', () => {
 		let controller: ModeKeyboardShortcutController;
 
 		beforeEach(() => {
-			controller = new ModeKeyboardShortcutController(draw as any, { point: 'p' });
+			controller = new ModeKeyboardShortcutController(draw as any, undefined, { point: 'p' });
 			controller.mount();
 		});
 
@@ -214,7 +223,7 @@ describe('ModeKeyboardShortcutController', () => {
 		let controller: ModeKeyboardShortcutController;
 
 		beforeEach(() => {
-			controller = new ModeKeyboardShortcutController(draw as any, { point: 'p' });
+			controller = new ModeKeyboardShortcutController(draw as any, undefined, { point: 'p' });
 			controller.mount();
 		});
 
@@ -256,14 +265,14 @@ describe('ModeKeyboardShortcutController', () => {
 	// 6. Lifecycle
 	describe('lifecycle', () => {
 		it('does not respond to key events before mount() is called', () => {
-			const controller = new ModeKeyboardShortcutController(draw as any, { point: 'p' });
+			const controller = new ModeKeyboardShortcutController(draw as any, undefined, { point: 'p' });
 			fireKeydown('p');
 			expect(draw.setMode).not.toHaveBeenCalled();
 			controller.destroy();
 		});
 
 		it('does not respond to key events after destroy() is called', () => {
-			const controller = new ModeKeyboardShortcutController(draw as any, { point: 'p' });
+			const controller = new ModeKeyboardShortcutController(draw as any, undefined, { point: 'p' });
 			controller.mount();
 			controller.destroy();
 			fireKeydown('p');
@@ -271,7 +280,7 @@ describe('ModeKeyboardShortcutController', () => {
 		});
 
 		it('can be mounted and destroyed multiple times without error', () => {
-			const controller = new ModeKeyboardShortcutController(draw as any, { point: 'p' });
+			const controller = new ModeKeyboardShortcutController(draw as any, undefined, { point: 'p' });
 			expect(() => {
 				controller.mount();
 				controller.destroy();
@@ -282,23 +291,120 @@ describe('ModeKeyboardShortcutController', () => {
 
 		it('removes the event listener on destroy', () => {
 			const removeListener = vi.spyOn(window, 'removeEventListener');
-			const controller = new ModeKeyboardShortcutController(draw as any, { point: 'p' });
+			const controller = new ModeKeyboardShortcutController(draw as any, undefined, { point: 'p' });
 			controller.mount();
 			controller.destroy();
 			expect(removeListener).toHaveBeenCalledWith('keydown', expect.any(Function));
 		});
 
 		it('does not throw when destroy is called without mount', () => {
-			const controller = new ModeKeyboardShortcutController(draw as any, { point: 'p' });
+			const controller = new ModeKeyboardShortcutController(draw as any, undefined, { point: 'p' });
 			expect(() => controller.destroy()).not.toThrow();
 		});
 	});
 
-	// ── Edge cases ───────────────────────────────────────────────────────────
+	// 7. Mode Action Activation(delete and delete-selected)
+	describe('mode action shortcuts', () => {
+		it('does not delete when Backspace is pressed with no selected features', () => {
+			(draw.getSnapshot as ReturnType<typeof vi.fn>).mockReturnValue([]);
+			const controller = new ModeKeyboardShortcutController(draw as any);
+			controller.mount();
 
+			window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Backspace' }));
+			expect(draw.removeFeatures).not.toHaveBeenCalled();
+
+			controller.destroy();
+		});
+
+		it('deletes selected features on Shift+Backspace', () => {
+			(draw.getSnapshot as ReturnType<typeof vi.fn>).mockReturnValue([
+				{ id: '1', properties: {} },
+				{ id: '2', properties: { selected: true } }
+			]);
+
+			const controller = new ModeKeyboardShortcutController(draw as any);
+			controller.mount();
+
+			window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Backspace', shiftKey: true }));
+			expect(draw.removeFeatures).toHaveBeenCalledWith(['2']);
+
+			controller.destroy();
+		});
+
+		it('does not delete all when Shift+Backspace is pressed with no features', () => {
+			(draw.getSnapshot as ReturnType<typeof vi.fn>).mockReturnValue([]);
+			const controller = new ModeKeyboardShortcutController(draw as any, undefined);
+			controller.mount();
+
+			window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Backspace', shiftKey: true }));
+			expect(draw.removeFeatures).not.toHaveBeenCalled();
+
+			controller.destroy();
+		});
+
+		// combos that should do nothing
+		it('does nothing on Ctrl+Backspace', () => {
+			const controller = new ModeKeyboardShortcutController(draw as any);
+			controller.mount();
+
+			window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Backspace', ctrlKey: true }));
+			expect(draw.removeFeatures).not.toHaveBeenCalled();
+			expect(draw.setMode).not.toHaveBeenCalled();
+
+			controller.destroy();
+		});
+
+		it('does nothing on Alt+Backspace', () => {
+			const controller = new ModeKeyboardShortcutController(draw as any);
+			controller.mount();
+
+			window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Backspace', altKey: true }));
+			expect(draw.removeFeatures).not.toHaveBeenCalled();
+			expect(draw.setMode).not.toHaveBeenCalled();
+
+			controller.destroy();
+		});
+
+		it('does nothing on Ctrl+D (reserved browser shortcut)', () => {
+			const controller = new ModeKeyboardShortcutController(draw as any);
+			controller.mount();
+
+			window.dispatchEvent(new KeyboardEvent('keydown', { key: 'd', ctrlKey: true }));
+			expect(draw.removeFeatures).not.toHaveBeenCalled();
+			expect(draw.setMode).not.toHaveBeenCalled();
+
+			controller.destroy();
+		});
+
+		it('does nothing on Cmd+D (reserved browser shortcut)', () => {
+			const controller = new ModeKeyboardShortcutController(draw as any);
+			controller.mount();
+
+			window.dispatchEvent(new KeyboardEvent('keydown', { key: 'd', metaKey: true }));
+			expect(draw.removeFeatures).not.toHaveBeenCalled();
+			expect(draw.setMode).not.toHaveBeenCalled();
+
+			controller.destroy();
+		});
+
+		it('does nothing when Backspace is pressed inside a textarea', () => {
+			const controller = new ModeKeyboardShortcutController(draw as any);
+			controller.mount();
+
+			const textarea = document.createElement('textarea');
+			document.body.appendChild(textarea);
+			textarea.dispatchEvent(new KeyboardEvent('keydown', { key: 'Backspace', bubbles: true }));
+			expect(draw.removeFeatures).not.toHaveBeenCalled();
+
+			textarea.remove();
+			controller.destroy();
+		});
+	});
+
+	// Edge Cases
 	describe('edge cases', () => {
 		it('only calls setMode once per keydown — no double firing', () => {
-			const controller = new ModeKeyboardShortcutController(draw as any, { point: 'p' });
+			const controller = new ModeKeyboardShortcutController(draw as any, undefined, { point: 'p' });
 			controller.mount();
 			fireKeydown('p');
 			expect(draw.setMode).toHaveBeenCalledOnce();
@@ -306,7 +412,7 @@ describe('ModeKeyboardShortcutController', () => {
 		});
 
 		it('handles a single mode shortcut correctly', () => {
-			const controller = new ModeKeyboardShortcutController(draw as any, { point: 'p' });
+			const controller = new ModeKeyboardShortcutController(draw as any, undefined, { point: 'p' });
 			controller.mount();
 			fireKeydown('p');
 			expect(draw.setMode).toHaveBeenCalledWith('point');
@@ -314,7 +420,7 @@ describe('ModeKeyboardShortcutController', () => {
 		});
 
 		it('activates different modes on consecutive keypresses', () => {
-			const controller = new ModeKeyboardShortcutController(draw as any, {
+			const controller = new ModeKeyboardShortcutController(draw as any, undefined, {
 				point: 'p',
 				polygon: 'g'
 			});
@@ -327,7 +433,7 @@ describe('ModeKeyboardShortcutController', () => {
 		});
 
 		it('does not prevent default for unrecognised keys', () => {
-			const controller = new ModeKeyboardShortcutController(draw as any, { point: 'p' });
+			const controller = new ModeKeyboardShortcutController(draw as any, undefined, { point: 'p' });
 			controller.mount();
 			const event = new KeyboardEvent('keydown', { key: 'x', cancelable: true });
 			Object.defineProperty(event, 'target', {
@@ -340,7 +446,7 @@ describe('ModeKeyboardShortcutController', () => {
 		});
 
 		it('prevents default for recognised mode keys', () => {
-			const controller = new ModeKeyboardShortcutController(draw as any, { point: 'p' });
+			const controller = new ModeKeyboardShortcutController(draw as any, undefined, { point: 'p' });
 			controller.mount();
 			const event = new KeyboardEvent('keydown', { key: 'p', cancelable: true });
 			Object.defineProperty(event, 'target', {
@@ -348,7 +454,7 @@ describe('ModeKeyboardShortcutController', () => {
 			});
 			const preventDefault = vi.spyOn(event, 'preventDefault');
 			window.dispatchEvent(event);
-			expect(preventDefault).toHaveBeenCalledOnce();
+			expect(preventDefault).toHaveBeenCalledTimes(1);
 			controller.destroy();
 		});
 	});

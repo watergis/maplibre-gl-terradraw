@@ -18,12 +18,13 @@ import {
 	type GeoJSONStoreGeometries
 } from 'terra-draw';
 import { TerraDrawMapLibreGLAdapter } from 'terra-draw-maplibre-gl-adapter';
-import type {
-	TerradrawControlOptions,
-	EventType,
-	TerradrawMode,
-	TerradrawModeClass,
-	EventArgs
+import {
+	type TerradrawControlOptions,
+	type EventType,
+	type TerradrawMode,
+	type TerradrawModeClass,
+	type EventArgs,
+	defaultModeKeyboardShortcuts
 } from '../interfaces';
 import { defaultControlOptions, getDefaultModeOptions } from '../constants';
 import {
@@ -312,14 +313,13 @@ export class MaplibreTerradrawControl implements IControl {
 			this.controlContainer?.appendChild(ele);
 		});
 
-		if (this.options.keyboardShortcuts) {
-			this.modeKeyboardShortcutController = new ModeKeyboardShortcutController(
-				this.terradraw,
-				this.options.keyboardShortcuts,
-				this.controlContainer as HTMLElement
-			);
-			this.modeKeyboardShortcutController.mount();
-		}
+		this.modeKeyboardShortcutController = new ModeKeyboardShortcutController(
+			this.terradraw,
+			this.options?.keyboardShortcuts,
+			this.controlContainer as HTMLElement
+		);
+
+		this.modeKeyboardShortcutController.mount();
 
 		this.toggleButtonsWhenNoFeature();
 		this.terradraw?.on('finish', this.toggleButtonsWhenNoFeature.bind(this));
@@ -564,7 +564,13 @@ export class MaplibreTerradrawControl implements IControl {
 				btn.classList.add('hidden');
 			}
 
-			const shortcutTitle = this.options.keyboardShortcuts?.[mode]?.toUpperCase();
+			const keyboardShortcuts = this.options.keyboardShortcuts
+				? { ...defaultModeKeyboardShortcuts, ...this.options.keyboardShortcuts }
+				: defaultModeKeyboardShortcuts;
+
+			// console.log(keyboardShortcuts);
+
+			const shortcutTitle = keyboardShortcuts?.[mode]?.toUpperCase();
 			btn.title = shortcutTitle
 				? `${capitalize(mode.replace(/-/g, ' '))} ( ${shortcutTitle} )`
 				: capitalize(mode.replace(/-/g, ' '));

@@ -1,4 +1,8 @@
-import type { TerradrawMode, ModeKeyboardShortcuts } from '../interfaces';
+import {
+	type TerradrawMode,
+	type ModeKeyboardShortcuts,
+	defaultModeKeyboardShortcuts
+} from '../interfaces';
 import type { TerraDraw } from 'terra-draw';
 
 export class ModeKeyboardShortcutController {
@@ -6,12 +10,15 @@ export class ModeKeyboardShortcutController {
 
 	constructor(
 		private terradraw: TerraDraw,
-		private shortcuts: ModeKeyboardShortcuts,
+		private shortcuts?: ModeKeyboardShortcuts,
 		private controlContainer?: HTMLElement
-	) {}
+	) {
+		this.shortcuts = shortcuts
+			? { ...defaultModeKeyboardShortcuts, ...shortcuts }
+			: defaultModeKeyboardShortcuts;
+	}
 
 	mount(): void {
-		// Validate no duplicate keys before binding
 		this.validateShortcuts();
 
 		this.handler = (e: KeyboardEvent) => {
@@ -28,9 +35,9 @@ export class ModeKeyboardShortcutController {
 			const key = e.key.toLowerCase();
 
 			// Find which mode this key maps to
-			const mode = Object.entries(this.shortcuts).find(([, shortcut]) => shortcut === key)?.[0] as
-				| TerradrawMode
-				| undefined;
+			const mode = Object.entries(this.shortcuts as ModeKeyboardShortcuts).find(
+				([, shortcut]) => shortcut === key
+			)?.[0] as TerradrawMode | undefined;
 
 			if (!mode) return;
 
@@ -44,7 +51,7 @@ export class ModeKeyboardShortcutController {
 	}
 
 	private validateShortcuts(): void {
-		const keys = Object.values(this.shortcuts);
+		const keys = Object.values(this.shortcuts as ModeKeyboardShortcuts);
 		const duplicates = keys.filter((k, i) => keys.indexOf(k) !== i);
 
 		if (duplicates.length) {

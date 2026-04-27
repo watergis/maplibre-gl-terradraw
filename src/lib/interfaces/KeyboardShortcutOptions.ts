@@ -28,4 +28,19 @@ type ModeShortcutKey =
 	| 'y'
 	| 'z';
 
+export const defaultModeKeyboardShortcuts: ModeKeyboardShortcuts = {
+	point: 'p',
+	polygon: 'g',
+	linestring: 'l',
+	marker: 'm',
+	'angled-rectangle': 'a',
+	render: 'r',
+	rectangle: 't',
+	sensor: 'e',
+	circle: 'c',
+	freehand: 'f',
+	sector: 'o',
+	select: 's'
+};
+
 export type ModeKeyboardShortcuts = Partial<Record<TerradrawMode, ModeShortcutKey>>;

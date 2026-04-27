@@ -245,10 +245,8 @@
 					prefixId: 'td-default'
 				},
 				keyboardShortcuts: {
-					point: 'p',
-					polygon: 'g',
-					linestring: 'l',
-					select: 's'
+					sensor: 'w',
+					render: 'u'
 				}
 			});
 		}

@@ -128,16 +128,21 @@ export class ModeKeyboardShortcutController {
 	private syncButtonStates(mode: string): void {
 		if (!this.controlContainer) return;
 
-		const allButtons = this.controlContainer.getElementsByClassName(
-			'maplibregl-terradraw-add-control'
+		const allButtons = this.controlContainer.querySelectorAll(
+			'.maplibregl-terradraw-add-control, ' +
+				'.maplibregl-terradraw-valhalla-add-control, ' +
+				'.maplibregl-terradraw-measure-add-control'
 		);
+
 		Array.from(allButtons).forEach((btn) => btn.classList.remove('active'));
 
 		if (mode === 'render') return;
 
-		const activeModeButton = this.controlContainer.getElementsByClassName(
-			`maplibregl-terradraw-add-${mode}-button`
-		)[0];
+		const activeModeButton = this.controlContainer.querySelector(
+			`.maplibregl-terradraw-add-${mode}-button, ` +
+				`.maplibregl-terradraw-valhalla-add-${mode}-button, ` +
+				`.maplibregl-terradraw-measure-add-${mode}-button`
+		);
 
 		if (!activeModeButton) return;
 

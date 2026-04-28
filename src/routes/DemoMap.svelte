@@ -203,6 +203,9 @@
 				computeElevation: options.computeElevation === 'enabled',
 				adapterOptions: {
 					prefixId: 'td-measure'
+				},
+				keyboardShortcuts: {
+					linestring: 'u'
 				}
 			});
 		} else if (options.controlType === 'valhalla') {
@@ -246,7 +249,7 @@
 				},
 				keyboardShortcuts: {
 					sensor: 'w',
-					render: 'u'
+					linestring: 'x'
 				}
 			});
 		}

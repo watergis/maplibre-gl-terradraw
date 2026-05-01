@@ -1,4 +1,3 @@
-import type { Map } from 'maplibre-gl';
 import {
 	type TerraDrawMouseEvent,
 	type TerraDrawKeyboardEvent,
@@ -25,10 +24,10 @@ type TextModeOptions = {
 	styles?: Partial<TextModeStyling>;
 	placeholder?: string;
 	onTextCommit?: (featureId: string, text: string) => void;
-	map?: Map;
-	onDragSync?: () => void;
+	draggable?: boolean;
 	pointerEvents?: PointerEvent;
 	editable?: boolean;
+	onDragSync?: () => void;
 };
 
 export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
@@ -41,15 +40,15 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 	private activeTextarea: HTMLTextAreaElement | null = null;
 	private activeFeatureId: string | null = null;
 	options?: TextModeOptions;
-	private onDragSync?: () => void;
+	private _onDragSync: (() => void) | undefined;
+	private _mapContainer: Element;
 
 	constructor(options?: TextModeOptions) {
 		super({ styles: options?.styles ?? {} });
 		this.options = options;
 		this.styles = options?.styles ?? {};
-
-		this.onDragSync = options?.onDragSync;
 		this.editable = options?.editable ?? false;
+		this._mapContainer = this.getMap();
 	}
 
 	/** @internal */
@@ -63,6 +62,14 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 		this.cleanUp();
 		this.setStopped();
 		this.setCursor('unset');
+	}
+
+	getMap() {
+		return document.getElementsByClassName('map')[0];
+	}
+
+	set onDragSync(fn: (() => void) | undefined) {
+		this._onDragSync = fn;
 	}
 
 	// register(config: any): void {
@@ -114,9 +121,7 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 			boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
 		});
 
-		const mapContainer = document.getElementsByClassName('map');
-
-		mapContainer[0]!.appendChild(textarea);
+		this._mapContainer.appendChild(textarea);
 
 		textarea.focus();
 
@@ -289,6 +294,8 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 				}
 			}
 		]);
+
+		this._onDragSync?.();
 	}
 
 	onDragEnd(_event: TerraDrawMouseEvent, setMapDragging: (dragging: boolean) => void): void {

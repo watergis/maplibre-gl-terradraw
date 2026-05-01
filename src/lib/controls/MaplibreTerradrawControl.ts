@@ -26,7 +26,7 @@ import type {
 } from '../interfaces';
 import { defaultControlOptions, getDefaultModeOptions } from '../constants';
 import { capitalize, cleanMaplibreStyle, TERRADRAW_SOURCE_IDS, ModalDialog } from '../helpers';
-// import type { MaplibreTerradrawTextMode } from '../modes/MaplibreTerradrawTextNode';
+import type { MaplibreTerradrawTextMode } from '../modes/MaplibreTerradrawTextNode';
 
 /**
  * Maplibre GL Terra Draw Control
@@ -235,25 +235,24 @@ export class MaplibreTerradrawControl implements IControl {
 				console.log(styles);
 				this.createTerradrawTextLayer(map, styles as Record<string, string | number>);
 
-				// const textMode = m as MaplibreTerradrawTextMode;
+				const textMode = m as MaplibreTerradrawTextMode;
 
 				this.createTerradrawTextLayer(map, styles as Record<string, string>);
 
-				// if (textMode.options?.onDragSync) {
-				// 	console.log('Dragging the text')
-				// 	textMode.options.onDragSync = () => {
-				// 		const snapshot = this.terradraw?.getSnapshot() ?? [];
-				// 		const textFeatures = snapshot.filter(
-				// 			f => f.properties?.mode === 'text' && f.properties?.text
-				// 		) as GeoJSONStoreFeatures<GeoJSONStoreGeometries>[];
+				if (textMode.options?.draggable) {
+					textMode.onDragSync = () => {
+						const snapshot = this.terradraw?.getSnapshot() ?? [];
+						const textFeatures = snapshot.filter(
+							(f) => f.properties?.mode === 'text' && f.properties?.text
+						) as GeoJSONStoreFeatures<GeoJSONStoreGeometries>[];
 
-				// 		const source = map.getSource('td-text') as GeoJSONSource | undefined;
-				// 		source?.setData({
-				// 			type: 'FeatureCollection',
-				// 			features: textFeatures
-				// 		});
-				// 	};
-				// }
+						const source = map.getSource('td-text') as GeoJSONSource | undefined;
+						source?.setData({
+							type: 'FeatureCollection',
+							features: textFeatures
+						});
+					};
+				}
 			}
 		});
 

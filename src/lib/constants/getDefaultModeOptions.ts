@@ -219,13 +219,11 @@ export const getDefaultModeOptions = () => {
 		text: new MaplibreTerradrawTextMode({
 			editable: true,
 			placeholder: 'Enter Label here...',
-			onTextCommit: (featureId: string, text: string) => {
-				console.log(featureId, text);
-			},
 			styles: {
 				textColor: '#FF4732',
 				textSize: 12
-			}
+			},
+			draggable: true
 		})
 	};
 	return modeOptions;

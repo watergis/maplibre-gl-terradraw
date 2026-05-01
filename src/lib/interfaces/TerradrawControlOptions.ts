@@ -55,8 +55,8 @@ export interface TerradrawControlOptions {
 
 	/**
 	 * Configuring keyboard shortcuts for activating the different modes that are supported
-	 * Supports Standard Keys only(A-Z) to avoid OS/Browser shortcut conflicts
-	 * e.g point mode -> 'P', polygon -> 'G'
+	 * Supports Standard Keys only(a-z) to avoid OS/Browser shortcut conflicts
+	 * e.g point mode -> 'p', polygon -> 'g'
 	 */
 	keyboardShortcuts?: ModeKeyboardShortcuts;
 

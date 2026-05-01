@@ -501,8 +501,6 @@ export class MaplibreTerradrawControl implements IControl {
 				? { ...defaultModeKeyboardShortcuts, ...this.options.keyboardShortcuts }
 				: defaultModeKeyboardShortcuts;
 
-			// console.log(keyboardShortcuts);
-
 			const shortcutTitle = keyboardShortcuts?.[mode]?.toUpperCase();
 			btn.title = shortcutTitle
 				? `${capitalize(mode.replace(/-/g, ' '))} ( ${shortcutTitle} )`

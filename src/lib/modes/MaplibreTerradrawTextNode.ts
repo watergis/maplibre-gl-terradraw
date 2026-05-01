@@ -87,7 +87,6 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 	 * @returns
 	 */
 	private createTextAreaElement(x: number, y: number, currentText?: string): HTMLTextAreaElement {
-		console.log('Creating a text area element');
 		const textarea = document.createElement('textarea');
 		textarea.placeholder = this.options?.placeholder ?? 'Enter label...';
 		textarea.rows = 2;
@@ -181,7 +180,6 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 	}
 
 	private editText(featureId: string, x: number, y: number): void {
-		console.log('Now editing...');
 		this.dismissTextarea(false);
 
 		const feature = this.store.copyAll().find((f) => f.id === featureId);
@@ -273,8 +271,14 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 	}
 
 	onDrag(event: TerraDrawMouseEvent, setMapDragging: (dragging: boolean) => void): void {
+		if (this.activeTextarea) {
+			this.dismissTextarea(true);
+		}
+
 		if (!this.isDragging || !this.draggedFeatureId) return;
 		setMapDragging(false);
+
+		this.setCursor('grabbing');
 
 		this.store.updateGeometry([
 			{
@@ -316,13 +320,13 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 		const hasText = !!feature.properties?.text;
 
 		return {
-			pointColor: hasText ? ((this.styles.pointColor ?? '#5CFF2E') as HexColor) : '#aaaaaa',
+			pointColor: hasText ? ((this.styles.pointColor ?? '#5CFF2E') as HexColor) : '#72FF35',
 			pointWidth: (this.styles.pointWidth as number) ?? 0,
 			pointOutlineColor: (this.styles.pointOutlineColor as HexColor) ?? '#FFFFFF',
 			pointOutlineWidth: (this.styles.pointOutlineWidth as number) ?? 2,
 			polygonFillColor: '#000',
 			polygonFillOpacity: 0,
-			polygonOutlineColor: '#000',
+			polygonOutlineColor: '#00000',
 			polygonOutlineWidth: 0,
 			lineStringColor: '#000',
 			lineStringWidth: 0,

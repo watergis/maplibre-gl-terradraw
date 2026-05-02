@@ -372,8 +372,6 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 			}
 		}
 
-		console.log(nearest);
-
 		return nearest;
 	}
 }

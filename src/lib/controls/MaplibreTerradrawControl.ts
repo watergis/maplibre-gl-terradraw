@@ -869,7 +869,7 @@ export class MaplibreTerradrawControl implements IControl {
 
 	protected clearTextLayers() {
 		const source = this.map?.getSource('td-text') as maplibregl.GeoJSONSource | undefined;
-		const layers = this.map?.style.getLayer('td-text-labels');
+		const layers = this.map?.style?.getLayer('td-text-labels');
 
 		this.map?.removeLayer(layers?.id as string);
 		this.map?.removeSource(source?.id as string);

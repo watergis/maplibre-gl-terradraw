@@ -672,7 +672,6 @@ export class MaplibreTerradrawControl implements IControl {
 		const selected = snapshot.filter((f) => f.properties.selected === true);
 
 		if (selected.length > 0) {
-			// if feature is selected, delete only selected feature
 			const ids = selected.map((f) => f.id) as TerraDrawExtend.FeatureId[];
 
 			this.terradraw.removeFeatures(ids);
@@ -680,9 +679,35 @@ export class MaplibreTerradrawControl implements IControl {
 				this.terradraw.deselectFeature(id);
 			}
 			this.dispatchEvent('feature-deleted', { deletedIds: ids });
+
+			// handle deletion of text layer when mode === 'text'
+			this.deleteSelectedTextSymbolLayer(selected);
 		}
+
 		this.toggleDeleteSelectionButton();
 		this.toggleButtonsWhenNoFeature();
+	}
+
+	/**
+	 * Handle deletion of symbol text layer when mode === 'text'
+	 * @param selectedFeatures
+	 */
+	protected deleteSelectedTextSymbolLayer(
+		selectedFeatures: GeoJSONStoreFeatures<GeoJSONStoreGeometries>[]
+	) {
+		const hasTextFeatures = selectedFeatures.some((f) => f.properties.mode === 'text');
+
+		if (hasTextFeatures) {
+			const remainingFeatures = this.terradraw
+				?.getSnapshot()
+				.filter((f) => f.properties?.mode === 'text' && f.properties?.text);
+
+			const source = this.map?.getSource('td-text') as GeoJSONSource | undefined;
+			source?.setData({
+				type: 'FeatureCollection',
+				features: remainingFeatures as GeoJSONStoreFeatures<GeoJSONStoreGeometries>[]
+			});
+		}
 	}
 
 	/**

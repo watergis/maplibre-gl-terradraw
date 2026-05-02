@@ -400,7 +400,10 @@ describe('MaplibreTerradrawTextMode', () => {
 		});
 
 		it('onDrag updates feature geometry', () => {
-			const mode = mountMode();
+			const mode = mountMode({
+				draggable: true
+			});
+
 			(mode as any).isDragging = true;
 			(mode as any).draggedFeatureId = 'feature-1';
 

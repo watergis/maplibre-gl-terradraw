@@ -220,8 +220,10 @@ export const getDefaultModeOptions = () => {
 			editable: true,
 			placeholder: 'Enter Label here...',
 			styles: {
-				textColor: '#FF4732',
-				textSize: 12
+				textColor: '#000000',
+				textSize: 12,
+				textHaloWidth: 5,
+				textHaloColor: '#ffffff'
 			},
 			draggable: true
 		})

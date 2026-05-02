@@ -9,7 +9,7 @@ import {
 
 const { TerraDrawBaseDrawMode } = TerraDrawExtend;
 
-type TextModeStyling = {
+export type TextModeStyling = {
 	pointColor?: HexColor;
 	pointWidth?: number;
 	pointOutlineColor?: HexColor;
@@ -20,7 +20,7 @@ type TextModeStyling = {
 	textHaloWidth?: number;
 };
 
-type TextModeOptions = {
+export type TextModeOptions = {
 	styles?: Partial<TextModeStyling>;
 	placeholder?: string;
 	onTextCommit?: (featureId: string, text: string) => void;
@@ -64,7 +64,7 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 	}
 
 	getMap() {
-		return document.getElementsByClassName('map')[0];
+		return window.document.getElementsByClassName('map')[0];
 	}
 
 	set onDragSync(fn: (() => void) | undefined) {
@@ -217,12 +217,12 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 
 		const { x, y } = this.project(event.lng, event.lat);
 
-		if (
-			event.button === 'right' &&
-			this.allowPointerEvent(this.pointerEvents.rightClick, event) &&
-			this.editable
-		) {
-			this.onRightClick(event);
+		if (event.button === 'right' && this.allowPointerEvent(this.pointerEvents.rightClick, event)) {
+			if (this.editable) {
+				this.onRightClick(event);
+			} else {
+				this.activeTextarea = null;
+			}
 			return;
 		}
 
@@ -263,7 +263,6 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 
 		this.setCursor('grabbing');
 
-		// don't start a drag if textarea is open
 		if (this.activeTextarea) return;
 
 		const nearest = this.getNearestPointFeature(event);
@@ -284,15 +283,17 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 
 		this.setCursor('grabbing');
 
-		this.store.updateGeometry([
-			{
-				id: this.draggedFeatureId,
-				geometry: {
-					type: 'Point',
-					coordinates: [event.lng, event.lat]
+		if (this.options?.draggable) {
+			this.store.updateGeometry([
+				{
+					id: this.draggedFeatureId,
+					geometry: {
+						type: 'Point',
+						coordinates: [event.lng, event.lat]
+					}
 				}
-			}
-		]);
+			]);
+		}
 
 		this._onDragSync?.();
 	}

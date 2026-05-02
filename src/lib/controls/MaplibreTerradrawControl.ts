@@ -26,7 +26,10 @@ import type {
 } from '../interfaces';
 import { defaultControlOptions, getDefaultModeOptions } from '../constants';
 import { capitalize, cleanMaplibreStyle, TERRADRAW_SOURCE_IDS, ModalDialog } from '../helpers';
-import type { MaplibreTerradrawTextMode } from '../modes/MaplibreTerradrawTextMode';
+import type {
+	MaplibreTerradrawTextMode,
+	TextModeStyling
+} from '../modes/MaplibreTerradrawTextMode';
 
 /**
  * Maplibre GL Terra Draw Control
@@ -232,27 +235,9 @@ export class MaplibreTerradrawControl implements IControl {
 		modes.forEach((m: TerradrawModeClass) => {
 			if (m.mode === 'text') {
 				const styles = defaultOptions[m.mode].styles;
-				console.log(styles);
-				this.createTerradrawTextLayer(map, styles as Record<string, string | number>);
-
 				const textMode = m as MaplibreTerradrawTextMode;
-
-				this.createTerradrawTextLayer(map, styles as Record<string, string>);
-
-				if (textMode.options?.draggable) {
-					textMode.onDragSync = () => {
-						const snapshot = this.terradraw?.getSnapshot() ?? [];
-						const textFeatures = snapshot.filter(
-							(f) => f.properties?.mode === 'text' && f.properties?.text
-						) as GeoJSONStoreFeatures<GeoJSONStoreGeometries>[];
-
-						const source = map.getSource('td-text') as GeoJSONSource | undefined;
-						source?.setData({
-							type: 'FeatureCollection',
-							features: textFeatures
-						});
-					};
-				}
+				this.createTerradrawTextLayer(map, textMode, styles as Partial<TextModeStyling>);
+				// this.createTerradrawTextLayer(map, styles as Record<string, string>);
 			}
 		});
 
@@ -815,25 +800,32 @@ export class MaplibreTerradrawControl implements IControl {
 		}
 	}
 
-	protected createTerradrawTextLayer(map: Map, styles?: Record<string, string | number>) {
+	protected createTerradrawTextLayer(
+		map: Map,
+		textModeInstance: MaplibreTerradrawTextMode,
+		styles?: TextModeStyling
+	) {
 		this.terradraw?.on('finish', () => {
 			const snapshot = this.terradraw?.getSnapshot();
 			const textFeatures =
 				snapshot?.filter((f) => f.properties?.mode === 'text' && f.properties?.text) ?? [];
-
-			// match expression breaks with no cases — use empty string fallback only
-			// const matchExpression: ExpressionSpecification = textFeatures.length
-			// 	? [
-			// 		'match',
-			// 		['get', 'id'],
-			// 		...(textFeatures as GeoJSONStoreFeatures<GeoJSONStoreGeometries>[])
-			// 			.flatMap(f => [f.id, f.properties.text as string]),
-			// 		''
-			// 	]
-			// 	: ['literal', ''];
-
 			this.addFeaturesToSource(textFeatures, map, styles);
 		});
+
+		if (textModeInstance.options?.draggable) {
+			textModeInstance.onDragSync = () => {
+				const snapshot = this.terradraw?.getSnapshot() ?? [];
+				const textFeatures = snapshot.filter(
+					(f) => f.properties?.mode === 'text' && f.properties?.text
+				) as GeoJSONStoreFeatures<GeoJSONStoreGeometries>[];
+
+				const source = map.getSource('td-text') as GeoJSONSource | undefined;
+				source?.setData({
+					type: 'FeatureCollection',
+					features: textFeatures
+				});
+			};
+		}
 	}
 
 	protected addFeaturesToSource(
@@ -868,8 +860,8 @@ export class MaplibreTerradrawControl implements IControl {
 				},
 				paint: {
 					'text-color': (styles?.textColor as string) ?? '#000000',
-					'text-halo-color': '#ffffff',
-					'text-halo-width': 1.5
+					'text-halo-color': (styles?.textHaloColor as string) ?? '#ffffff',
+					'text-halo-width': (styles?.textHaloWidth as number) ?? 1.5
 				}
 			});
 		}

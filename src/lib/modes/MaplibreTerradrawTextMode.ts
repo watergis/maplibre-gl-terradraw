@@ -27,19 +27,18 @@ type TextModeOptions = {
 	draggable?: boolean;
 	pointerEvents?: PointerEvent;
 	editable?: boolean;
-	onDragSync?: () => void;
 };
 
 export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 	mode = 'text';
 
+	options?: TextModeOptions;
 	private isDragging = false;
 	private draggedFeatureId: string | null = null;
 	private editable: boolean = false;
 
 	private activeTextarea: HTMLTextAreaElement | null = null;
 	private activeFeatureId: string | null = null;
-	options?: TextModeOptions;
 	private _onDragSync: (() => void) | undefined;
 	private _mapContainer: Element;
 
@@ -372,6 +371,8 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 				nearest = { id: feature.id as string };
 			}
 		}
+
+		console.log(nearest);
 
 		return nearest;
 	}

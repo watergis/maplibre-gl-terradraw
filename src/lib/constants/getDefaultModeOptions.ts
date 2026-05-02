@@ -17,7 +17,7 @@ import {
 	type GeoJSONStoreFeatures
 } from 'terra-draw';
 import markerSvgUrl from '../../scss/icons/marker-blue.svg';
-import { MaplibreTerradrawTextMode } from '../modes/MaplibreTerradrawTextNode';
+import { MaplibreTerradrawTextMode } from '../modes/MaplibreTerradrawTextMode';
 
 /**
  * Validation function for polygon features to prevent self-intersecting polygons

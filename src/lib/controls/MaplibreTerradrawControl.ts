@@ -26,7 +26,7 @@ import type {
 } from '../interfaces';
 import { defaultControlOptions, getDefaultModeOptions } from '../constants';
 import { capitalize, cleanMaplibreStyle, TERRADRAW_SOURCE_IDS, ModalDialog } from '../helpers';
-import type { MaplibreTerradrawTextMode } from '../modes/MaplibreTerradrawTextNode';
+import type { MaplibreTerradrawTextMode } from '../modes/MaplibreTerradrawTextMode';
 
 /**
  * Maplibre GL Terra Draw Control

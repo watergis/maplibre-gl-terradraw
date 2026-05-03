@@ -1,10 +1,9 @@
-import { MODE_ACTION_SHORTCUTS } from '../constants';
-import {
-	type TerradrawMode,
-	type ModeKeyboardShortcuts,
-	defaultModeKeyboardShortcuts
-} from '../interfaces';
+import { defaultModeKeyboardShortcuts } from '../constants';
+import { type TerradrawMode, type ModeKeyboardShortcuts } from '../interfaces';
 import type { TerraDraw } from 'terra-draw';
+
+const ACTION_MODES = new Set(['delete', 'delete-selection']);
+type ActionMode = typeof ACTION_MODES extends Set<infer T> ? T : never;
 
 export class ModeKeyboardShortcutController {
 	private handler: ((e: KeyboardEvent) => void) | undefined;
@@ -35,12 +34,12 @@ export class ModeKeyboardShortcutController {
 			const key = e.key.toLowerCase();
 
 			// Mode Actions with keys + held Keys
-			this.initialiseModeActionKeyboardShortcuts(e, key);
+			this.initialiseModeActionKeyboardShortcuts(e);
 
 			if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
 
 			const mode = Object.entries(this.shortcuts as ModeKeyboardShortcuts).find(
-				([, shortcut]) => shortcut === key
+				([, shortcut]) => shortcut.key === key
 			)?.[0] as TerradrawMode | undefined;
 
 			if (!mode) return;
@@ -53,20 +52,33 @@ export class ModeKeyboardShortcutController {
 		window.addEventListener('keydown', this.handler);
 	}
 
-	private initialiseModeActionKeyboardShortcuts(e: KeyboardEvent, key: string) {
-		for (const [action, shortcut] of Object.entries(MODE_ACTION_SHORTCUTS)) {
+	private initialiseModeActionKeyboardShortcuts(e: KeyboardEvent) {
+		const actionShortcuts = Object.entries(this.shortcuts as ModeKeyboardShortcuts).filter(
+			([mode]) => ACTION_MODES.has(mode)
+		);
+
+		for (const [action, shortcut] of actionShortcuts) {
+			if (!shortcut) continue;
+
 			const keyMatches =
 				shortcut.key === 'Backspace'
 					? e.key === 'Backspace'
-					: (shortcut.key as string).toLowerCase() === key;
+					: shortcut.key.toLowerCase() === e.key.toLowerCase();
 
 			const heldKeysMatch =
 				shortcut.heldKeys.length === 0
 					? !e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey
 					: shortcut.heldKeys.every((hk) => {
-							switch (hk) {
+							switch (hk.toLowerCase()) {
+								case 'ctrl':
+								case 'control':
+									return e.ctrlKey || e.metaKey;
 								case 'shift':
 									return e.shiftKey;
+								case 'alt':
+									return e.altKey;
+								case 'meta':
+									return e.metaKey;
 								default:
 									return false;
 							}
@@ -76,14 +88,14 @@ export class ModeKeyboardShortcutController {
 				e.preventDefault();
 				const features = this.terradraw.getSnapshot();
 				if (features.length > 0) {
-					this.executeAction(action as keyof typeof MODE_ACTION_SHORTCUTS);
+					this.executeAction(action as ActionMode);
 				}
 				return;
 			}
 		}
 	}
 
-	private executeAction(action: keyof typeof MODE_ACTION_SHORTCUTS): void {
+	private executeAction(action: ActionMode): void {
 		switch (action) {
 			case 'delete': {
 				const snapshot = this.terradraw.getSnapshot();
@@ -94,7 +106,8 @@ export class ModeKeyboardShortcutController {
 				}
 				break;
 			}
-			case 'delete-selected': {
+
+			case 'delete-selection': {
 				const snapshot = this.terradraw.getSnapshot();
 				const selected = snapshot.filter((f) => f.properties?.selected);
 				const ids = selected.map((f) => f.id);
@@ -108,14 +121,28 @@ export class ModeKeyboardShortcutController {
 	}
 
 	private validateShortcuts(): void {
-		const keys = Object.values(this.shortcuts as ModeKeyboardShortcuts);
-		const duplicates = keys.filter((k, i) => keys.indexOf(k) !== i);
+		const entries = Object.entries(this.shortcuts as ModeKeyboardShortcuts).filter(
+			([, shortcut]) => shortcut != null
+		);
 
-		if (duplicates.length) {
-			throw new Error(
-				`MaplibreTerradrawControl: duplicate keyboard shortcut(s) ` +
-					`"${duplicates.join(', ')}" in modeKeyboardShortcuts`
-			);
+		const duplicates = new Map<string, string>();
+
+		for (const [mode, shortcut] of entries) {
+			if (!shortcut) continue;
+
+			const canonical = [
+				shortcut.key.toLowerCase(),
+				...shortcut.heldKeys.map((k) => k.toLowerCase()).sort()
+			].join('+');
+
+			if (duplicates.has(canonical)) {
+				throw new Error(
+					`MaplibreTerradrawControl: duplicate keyboard shortcut "${canonical}" ` +
+						`found in both "${duplicates.get(canonical)}" and "${mode}"`
+				);
+			}
+
+			duplicates.set(canonical, mode);
 		}
 	}
 

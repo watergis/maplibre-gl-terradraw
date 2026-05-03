@@ -54,9 +54,9 @@ describe('ModeKeyboardShortcutController', () => {
 	describe('constructor validation', () => {
 		it('mounts without error when shortcuts are valid', () => {
 			const controller = new ModeKeyboardShortcutController(draw as any, undefined, {
-				point: 'p',
-				polygon: 'g',
-				select: 's'
+				point: { key: 'p', heldKeys: [] },
+				polygon: { key: 'g', heldKeys: [] },
+				select: { key: 's', heldKeys: [] }
 			});
 			expect(() => controller.mount()).not.toThrow();
 			controller.destroy();
@@ -64,20 +64,24 @@ describe('ModeKeyboardShortcutController', () => {
 
 		it('throws when duplicate keys are assigned to different modes', () => {
 			const controller = new ModeKeyboardShortcutController(draw as any, undefined, {
-				point: 'p',
-				polygon: 'p'
+				point: { key: 'p', heldKeys: [] },
+				polygon: { key: 'p', heldKeys: [] }
 			});
-			expect(() => controller.mount()).toThrow('duplicate keyboard shortcut(s) "p"');
+			expect(() => controller.mount()).toThrow(
+				'MaplibreTerradrawControl: duplicate keyboard shortcut "p" found in both "point" and "polygon"'
+			);
 		});
 
 		it('throws listing all duplicate keys when multiple duplicates exist', () => {
 			const controller = new ModeKeyboardShortcutController(draw as any, undefined, {
-				point: 'p',
-				polygon: 'p',
-				select: 's',
-				sensor: 's'
+				point: { key: 'p', heldKeys: [] },
+				polygon: { key: 'p', heldKeys: [] },
+				select: { key: 's', heldKeys: [] },
+				sensor: { key: 's', heldKeys: [] }
 			});
-			expect(() => controller.mount()).toThrow('duplicate keyboard shortcut(s)');
+			expect(() => controller.mount()).toThrow(
+				'MaplibreTerradrawControl: duplicate keyboard shortcut "p" found in both "point" and "polygon"'
+			);
 		});
 
 		it('mounts with no shortcuts passed and loads defaults without error', () => {
@@ -87,7 +91,9 @@ describe('ModeKeyboardShortcutController', () => {
 		});
 
 		it('mounts with custom shortcuts merged over defaults without error', () => {
-			const controller = new ModeKeyboardShortcutController(draw as any, undefined, { point: 'q' });
+			const controller = new ModeKeyboardShortcutController(draw as any, undefined, {
+				point: { key: 'q', heldKeys: [] }
+			});
 			expect(() => controller.mount()).not.toThrow();
 			controller.destroy();
 		});
@@ -99,12 +105,12 @@ describe('ModeKeyboardShortcutController', () => {
 
 		beforeEach(() => {
 			controller = new ModeKeyboardShortcutController(draw as any, undefined, {
-				point: 'p',
-				polygon: 'g',
-				linestring: 'l',
-				rectangle: 't',
-				circle: 'c',
-				select: 's'
+				point: { key: 'p', heldKeys: [] },
+				polygon: { key: 'g', heldKeys: [] },
+				linestring: { key: 'l', heldKeys: [] },
+				rectangle: { key: 't', heldKeys: [] },
+				circle: { key: 'c', heldKeys: [] },
+				select: { key: 's', heldKeys: [] }
 			});
 			controller.mount();
 		});
@@ -165,7 +171,9 @@ describe('ModeKeyboardShortcutController', () => {
 		let controller: ModeKeyboardShortcutController;
 
 		beforeEach(() => {
-			controller = new ModeKeyboardShortcutController(draw as any, undefined, { point: 'p' });
+			controller = new ModeKeyboardShortcutController(draw as any, undefined, {
+				point: { key: 'p', heldKeys: [] }
+			});
 			controller.mount();
 		});
 
@@ -189,7 +197,9 @@ describe('ModeKeyboardShortcutController', () => {
 		let controller: ModeKeyboardShortcutController;
 
 		beforeEach(() => {
-			controller = new ModeKeyboardShortcutController(draw as any, undefined, { point: 'p' });
+			controller = new ModeKeyboardShortcutController(draw as any, undefined, {
+				point: { key: 'p', heldKeys: [] }
+			});
 			controller.mount();
 		});
 
@@ -223,7 +233,9 @@ describe('ModeKeyboardShortcutController', () => {
 		let controller: ModeKeyboardShortcutController;
 
 		beforeEach(() => {
-			controller = new ModeKeyboardShortcutController(draw as any, undefined, { point: 'p' });
+			controller = new ModeKeyboardShortcutController(draw as any, undefined, {
+				point: { key: 'p', heldKeys: [] }
+			});
 			controller.mount();
 		});
 
@@ -265,14 +277,18 @@ describe('ModeKeyboardShortcutController', () => {
 	// 6. Lifecycle
 	describe('lifecycle', () => {
 		it('does not respond to key events before mount() is called', () => {
-			const controller = new ModeKeyboardShortcutController(draw as any, undefined, { point: 'p' });
+			const controller = new ModeKeyboardShortcutController(draw as any, undefined, {
+				point: { key: 'p', heldKeys: [] }
+			});
 			fireKeydown('p');
 			expect(draw.setMode).not.toHaveBeenCalled();
 			controller.destroy();
 		});
 
 		it('does not respond to key events after destroy() is called', () => {
-			const controller = new ModeKeyboardShortcutController(draw as any, undefined, { point: 'p' });
+			const controller = new ModeKeyboardShortcutController(draw as any, undefined, {
+				point: { key: 'p', heldKeys: [] }
+			});
 			controller.mount();
 			controller.destroy();
 			fireKeydown('p');
@@ -280,7 +296,9 @@ describe('ModeKeyboardShortcutController', () => {
 		});
 
 		it('can be mounted and destroyed multiple times without error', () => {
-			const controller = new ModeKeyboardShortcutController(draw as any, undefined, { point: 'p' });
+			const controller = new ModeKeyboardShortcutController(draw as any, undefined, {
+				point: { key: 'p', heldKeys: [] }
+			});
 			expect(() => {
 				controller.mount();
 				controller.destroy();
@@ -291,19 +309,23 @@ describe('ModeKeyboardShortcutController', () => {
 
 		it('removes the event listener on destroy', () => {
 			const removeListener = vi.spyOn(window, 'removeEventListener');
-			const controller = new ModeKeyboardShortcutController(draw as any, undefined, { point: 'p' });
+			const controller = new ModeKeyboardShortcutController(draw as any, undefined, {
+				point: { key: 'p', heldKeys: [] }
+			});
 			controller.mount();
 			controller.destroy();
 			expect(removeListener).toHaveBeenCalledWith('keydown', expect.any(Function));
 		});
 
 		it('does not throw when destroy is called without mount', () => {
-			const controller = new ModeKeyboardShortcutController(draw as any, undefined, { point: 'p' });
+			const controller = new ModeKeyboardShortcutController(draw as any, undefined, {
+				point: { key: 'p', heldKeys: [] }
+			});
 			expect(() => controller.destroy()).not.toThrow();
 		});
 	});
 
-	// 7. Mode Action Activation(delete and delete-selected)
+	// 7. Mode Action Activation(delete and delete-selectio n)
 	describe('mode action shortcuts', () => {
 		it('does not delete when Backspace is pressed with no selected features', () => {
 			(draw.getSnapshot as ReturnType<typeof vi.fn>).mockReturnValue([]);
@@ -404,7 +426,9 @@ describe('ModeKeyboardShortcutController', () => {
 	// Edge Cases
 	describe('edge cases', () => {
 		it('only calls setMode once per keydown — no double firing', () => {
-			const controller = new ModeKeyboardShortcutController(draw as any, undefined, { point: 'p' });
+			const controller = new ModeKeyboardShortcutController(draw as any, undefined, {
+				point: { key: 'p', heldKeys: [] }
+			});
 			controller.mount();
 			fireKeydown('p');
 			expect(draw.setMode).toHaveBeenCalledOnce();
@@ -412,7 +436,9 @@ describe('ModeKeyboardShortcutController', () => {
 		});
 
 		it('handles a single mode shortcut correctly', () => {
-			const controller = new ModeKeyboardShortcutController(draw as any, undefined, { point: 'p' });
+			const controller = new ModeKeyboardShortcutController(draw as any, undefined, {
+				point: { key: 'p', heldKeys: [] }
+			});
 			controller.mount();
 			fireKeydown('p');
 			expect(draw.setMode).toHaveBeenCalledWith('point');
@@ -421,8 +447,8 @@ describe('ModeKeyboardShortcutController', () => {
 
 		it('activates different modes on consecutive keypresses', () => {
 			const controller = new ModeKeyboardShortcutController(draw as any, undefined, {
-				point: 'p',
-				polygon: 'g'
+				point: { key: 'p', heldKeys: [] },
+				polygon: { key: 'g', heldKeys: [] }
 			});
 			controller.mount();
 			fireKeydown('p');
@@ -433,7 +459,9 @@ describe('ModeKeyboardShortcutController', () => {
 		});
 
 		it('does not prevent default for unrecognised keys', () => {
-			const controller = new ModeKeyboardShortcutController(draw as any, undefined, { point: 'p' });
+			const controller = new ModeKeyboardShortcutController(draw as any, undefined, {
+				point: { key: 'p', heldKeys: [] }
+			});
 			controller.mount();
 			const event = new KeyboardEvent('keydown', { key: 'x', cancelable: true });
 			Object.defineProperty(event, 'target', {
@@ -446,7 +474,9 @@ describe('ModeKeyboardShortcutController', () => {
 		});
 
 		it('prevents default for recognised mode keys', () => {
-			const controller = new ModeKeyboardShortcutController(draw as any, undefined, { point: 'p' });
+			const controller = new ModeKeyboardShortcutController(draw as any, undefined, {
+				point: { key: 'p', heldKeys: [] }
+			});
 			controller.mount();
 			const event = new KeyboardEvent('keydown', { key: 'p', cancelable: true });
 			Object.defineProperty(event, 'target', {

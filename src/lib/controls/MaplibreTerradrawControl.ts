@@ -20,10 +20,13 @@ import {
 	type EventType,
 	type TerradrawMode,
 	type TerradrawModeClass,
-	type EventArgs,
-	defaultModeKeyboardShortcuts
+	type EventArgs
 } from '../interfaces';
-import { defaultControlOptions, getDefaultModeOptions } from '../constants';
+import {
+	defaultControlOptions,
+	defaultModeKeyboardShortcuts,
+	getDefaultModeOptions
+} from '../constants';
 import {
 	capitalize,
 	cleanMaplibreStyle,
@@ -501,7 +504,13 @@ export class MaplibreTerradrawControl implements IControl {
 				? { ...defaultModeKeyboardShortcuts, ...this.options.keyboardShortcuts }
 				: defaultModeKeyboardShortcuts;
 
-			const shortcutTitle = keyboardShortcuts?.[mode]?.toUpperCase();
+			const shortcut = keyboardShortcuts?.[mode];
+			const shortcutTitle = shortcut
+				? [...shortcut.heldKeys.map((k: string) => capitalize(k)), shortcut.key.toUpperCase()].join(
+						'+'
+					)
+				: undefined;
+
 			btn.title = shortcutTitle
 				? `${capitalize(mode.replace(/-/g, ' '))} ( ${shortcutTitle} )`
 				: capitalize(mode.replace(/-/g, ' '));

@@ -5,4 +5,4 @@ export * from './defaultMeasureUnitSymbols';
 export * from './defaultValhallaControlOptions';
 export * from './getDefaultModeOptions';
 export * from './terrainSources';
-export * from './defaultModeActionKeyboardShortcuts';
+export * from './defaultModeKeyboardShortcuts';

@@ -200,9 +200,6 @@
 				computeElevation: options.computeElevation === 'enabled',
 				adapterOptions: {
 					prefixId: 'td-measure'
-				},
-				keyboardShortcuts: {
-					linestring: 'u'
 				}
 			});
 			(drawControl as MaplibreMeasureControl).fontGlyphs = ['Noto Sans Medium'];
@@ -231,10 +228,6 @@
 				modeOptions: getDefaultModeOptions(),
 				adapterOptions: {
 					prefixId: 'td-default'
-				},
-				keyboardShortcuts: {
-					sensor: 'w',
-					linestring: 'x'
 				}
 			});
 			map.addControl(drawControl, 'top-left');

@@ -1,8 +1,9 @@
+import { MaplibreTerradrawControl } from '../controls';
 import { defaultModeKeyboardShortcuts } from '../constants';
 import { type TerradrawMode, type ModeKeyboardShortcuts } from '../interfaces';
 import type { TerraDraw } from 'terra-draw';
 
-const ACTION_MODES = new Set(['delete', 'delete-selection']);
+const ACTION_MODES = new Set(['delete', 'delete-selection', 'download']);
 type ActionMode = typeof ACTION_MODES extends Set<infer T> ? T : never;
 
 export class ModeKeyboardShortcutController {
@@ -116,6 +117,18 @@ export class ModeKeyboardShortcutController {
 					this.syncButtonStates(this.terradraw.getMode());
 				}
 				break;
+			}
+
+			case 'download': {
+				const fc = new MaplibreTerradrawControl().getFeatures(true);
+				const dataStr =
+					'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(fc));
+				const download = document.createElement('a');
+				download.setAttribute('href', dataStr);
+				download.setAttribute('download', 'data.geojson');
+				document.body.appendChild(download);
+				download.click();
+				download.remove();
 			}
 		}
 	}

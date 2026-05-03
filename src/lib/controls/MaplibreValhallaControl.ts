@@ -1071,7 +1071,7 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 			costingModel,
 			this.isochroneContours
 		);
-		const updatedFeatures = fc.features.map((f) => {
+		const updatedFeatures = fc.features?.map((f) => {
 			f.id = `${id}-${f.properties.contour}`;
 			f.properties.originalId = id;
 			f.properties.mode = feature.properties.mode;
@@ -1312,8 +1312,8 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 
 		const features: GeoJSONStoreFeatures[] = [];
 
-		for (let i = 0; i < fc.features.length; i++) {
-			const feature = fc.features[i];
+		for (let i = 0; i < fc.features?.length; i++) {
+			const feature = fc.features?.[i];
 			const geomType = feature.geometry.type;
 			if (geomType === 'Point') {
 				const fid = feature.id;

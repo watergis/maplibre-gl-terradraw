@@ -53,6 +53,10 @@ export const defaultModeKeyboardShortcuts: ModeKeyboardShortcuts = {
 		key: 's',
 		heldKeys: []
 	},
+	download: {
+		key: 'd',
+		heldKeys: []
+	},
 	delete: {
 		key: 'Backspace',
 		heldKeys: []

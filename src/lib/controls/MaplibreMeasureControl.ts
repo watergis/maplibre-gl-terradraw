@@ -1108,7 +1108,6 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 						this.measureUnitType,
 						this.measureUnitSymbols
 					);
-					console.log(features);
 					feature = features[0];
 				}
 				props = {

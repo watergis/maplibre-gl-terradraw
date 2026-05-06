@@ -1,22 +1,35 @@
 import { MaplibreTerradrawControl } from '../controls';
-import { defaultModeKeyboardShortcuts } from '../constants';
-import { type TerradrawMode, type ModeKeyboardShortcuts } from '../interfaces';
+import { defaultModeKeyboardShortcuts, defaultValhallaModeKeyboardShortcuts } from '../constants';
+import {
+	type TerradrawMode,
+	type ModeKeyboardShortcuts,
+	// type TerradrawValhallaMode,
+	type KeyboardShortcut,
+	type TerradrawValhallaMode
+} from '../interfaces';
 import type { TerraDraw } from 'terra-draw';
 
-const ACTION_MODES = new Set(['delete', 'delete-selection', 'download']);
+const ACTION_MODES = new Set(['delete', 'delete-selection', 'download', 'settings'] as const);
 type ActionMode = typeof ACTION_MODES extends Set<infer T> ? T : never;
+
+const VALHALLA_MODES = new Set(Object.keys(defaultValhallaModeKeyboardShortcuts));
 
 export class ModeKeyboardShortcutController {
 	private handler: ((e: KeyboardEvent) => void) | undefined;
+	private shortcuts: ModeKeyboardShortcuts;
 
 	constructor(
 		private terradraw: TerraDraw,
 		private controlContainer?: HTMLElement,
-		private shortcuts?: ModeKeyboardShortcuts
+		shortcuts?: ModeKeyboardShortcuts,
+		private onValhallaMode?: (mode: TerradrawValhallaMode) => void
 	) {
-		this.shortcuts = shortcuts
-			? { ...defaultModeKeyboardShortcuts, ...shortcuts }
-			: defaultModeKeyboardShortcuts;
+		const allDefaults: ModeKeyboardShortcuts = {
+			...defaultModeKeyboardShortcuts,
+			...defaultValhallaModeKeyboardShortcuts
+		};
+
+		this.shortcuts = shortcuts ? { ...allDefaults, ...shortcuts } : allDefaults;
 	}
 
 	mount(): void {
@@ -32,85 +45,102 @@ export class ModeKeyboardShortcutController {
 			)
 				return;
 
-			const key = e.key.toLowerCase();
+			// action modes first — may have held keys
+			if (this.initialiseModeActionKeyboardShortcuts(e)) return;
 
-			// Mode Actions with keys + held Keys
-			this.initialiseModeActionKeyboardShortcuts(e);
-
+			// mode switching — no held keys allowed
 			if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
 
-			const mode = Object.entries(this.shortcuts as ModeKeyboardShortcuts).find(
-				([, shortcut]) => shortcut.key === key
-			)?.[0] as TerradrawMode | undefined;
+			const match = Object.entries(this.shortcuts)
+				.filter(([mode]) => !ACTION_MODES.has(mode as ActionMode))
+				.find(([, shortcut]) => shortcut && this.matchesShortcut(e, shortcut));
 
-			if (!mode) return;
+			if (!match) return;
 
 			e.preventDefault();
-			this.terradraw.setMode(mode);
-			this.syncButtonStates(mode);
+			const [mode] = match;
+
+			if (VALHALLA_MODES.has(mode)) {
+				this.onValhallaMode?.(mode as TerradrawValhallaMode);
+				// new MaplibreValhallaControl().registerValhallaControl();
+			} else {
+				if (this.terradraw.enabled) {
+					this.terradraw.setMode(mode as TerradrawMode);
+				}
+				this.syncButtonStates(mode);
+			}
 		};
 
 		window.addEventListener('keydown', this.handler);
 	}
 
-	private initialiseModeActionKeyboardShortcuts(e: KeyboardEvent) {
-		const actionShortcuts = Object.entries(this.shortcuts as ModeKeyboardShortcuts).filter(
-			([mode]) => ACTION_MODES.has(mode)
+	/**
+	 * Returns true if an action was matched so mount() can early return
+	 */
+	private initialiseModeActionKeyboardShortcuts(e: KeyboardEvent): boolean {
+		const actionShortcuts = Object.entries(this.shortcuts).filter(([mode]) =>
+			ACTION_MODES.has(mode as ActionMode)
 		);
 
 		for (const [action, shortcut] of actionShortcuts) {
 			if (!shortcut) continue;
 
-			const keyMatches =
-				shortcut.key === 'Backspace'
-					? e.key === 'Backspace'
-					: shortcut.key.toLowerCase() === e.key.toLowerCase();
-
-			const heldKeysMatch =
-				shortcut.heldKeys.length === 0
-					? !e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey
-					: shortcut.heldKeys.every((hk) => {
-							switch (hk.toLowerCase()) {
-								case 'ctrl':
-								case 'control':
-									return e.ctrlKey || e.metaKey;
-								case 'shift':
-									return e.shiftKey;
-								case 'alt':
-									return e.altKey;
-								case 'meta':
-									return e.metaKey;
-								default:
-									return false;
-							}
-						});
-
-			if (keyMatches && heldKeysMatch) {
+			if (this.matchesShortcut(e, shortcut)) {
 				e.preventDefault();
 				const features = this.terradraw.getSnapshot();
 				if (features.length > 0) {
 					this.executeAction(action as ActionMode);
 				}
-				return;
+				return true;
 			}
 		}
+
+		return false;
+	}
+
+	/**
+	 * Matches a keyboard event against a shortcut config
+	 */
+	private matchesShortcut(e: KeyboardEvent, shortcut: KeyboardShortcut): boolean {
+		const keyMatches =
+			shortcut.key === 'Backspace'
+				? e.key === 'Backspace'
+				: shortcut.key.toLowerCase() === e.key.toLowerCase();
+
+		const heldKeysMatch =
+			shortcut.heldKeys.length === 0
+				? !e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey
+				: shortcut.heldKeys.every((hk) => {
+						switch (hk.toLowerCase()) {
+							case 'ctrl':
+							case 'control':
+								return e.ctrlKey || e.metaKey;
+							case 'shift':
+								return e.shiftKey;
+							case 'alt':
+								return e.altKey;
+							case 'meta':
+								return e.metaKey;
+							default:
+								return false;
+						}
+					});
+
+		return keyMatches && heldKeysMatch;
 	}
 
 	private executeAction(action: ActionMode): void {
 		switch (action) {
 			case 'delete': {
-				const snapshot = this.terradraw.getSnapshot();
-				const ids = snapshot.map((f) => f.id);
+				const ids = this.terradraw.getSnapshot().map((f) => f.id);
 				if (ids.length) {
 					this.terradraw.removeFeatures(ids as string[]);
 					this.syncButtonStates(this.terradraw.getMode());
 				}
 				break;
 			}
-
 			case 'delete-selection': {
-				const snapshot = this.terradraw.getSnapshot();
-				const selected = snapshot.filter((f) => f.properties?.selected);
+				const selected = this.terradraw.getSnapshot().filter((f) => f.properties?.selected);
 				const ids = selected.map((f) => f.id);
 				if (ids.length) {
 					this.terradraw.removeFeatures(ids as string[]);
@@ -118,27 +148,25 @@ export class ModeKeyboardShortcutController {
 				}
 				break;
 			}
-
 			case 'download': {
 				const fc = new MaplibreTerradrawControl().getFeatures(true);
 				const dataStr =
 					'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(fc));
-				const download = document.createElement('a');
-				download.setAttribute('href', dataStr);
-				download.setAttribute('download', 'data.geojson');
-				document.body.appendChild(download);
-				download.click();
-				download.remove();
+				const a = document.createElement('a');
+				a.setAttribute('href', dataStr);
+				a.setAttribute('download', 'data.geojson');
+				document.body.appendChild(a);
+				a.click();
+				a.remove();
+				break;
 			}
 		}
 	}
 
 	private validateShortcuts(): void {
-		const entries = Object.entries(this.shortcuts as ModeKeyboardShortcuts).filter(
-			([, shortcut]) => shortcut != null
-		);
+		const entries = Object.entries(this.shortcuts).filter(([, shortcut]) => shortcut != null);
 
-		const duplicates = new Map<string, string>();
+		const seen = new Map<string, string>();
 
 		for (const [mode, shortcut] of entries) {
 			if (!shortcut) continue;
@@ -148,14 +176,14 @@ export class ModeKeyboardShortcutController {
 				...shortcut.heldKeys.map((k) => k.toLowerCase()).sort()
 			].join('+');
 
-			if (duplicates.has(canonical)) {
+			if (seen.has(canonical)) {
 				throw new Error(
 					`MaplibreTerradrawControl: duplicate keyboard shortcut "${canonical}" ` +
-						`found in both "${duplicates.get(canonical)}" and "${mode}"`
+						`found in both "${seen.get(canonical)}" and "${mode}"`
 				);
 			}
 
-			duplicates.set(canonical, mode);
+			seen.set(canonical, mode);
 		}
 	}
 
@@ -193,19 +221,15 @@ export class ModeKeyboardShortcutController {
 
 		if (mode === 'select') {
 			const isActive = hasFeatures && this.terradraw.enabled;
-
 			deleteSelectionButtons.forEach((btn) => {
 				btn.classList.toggle('hidden-delete-selection', !isActive);
 			});
-
 			if (!hasFeatures) return;
-
 			activeModeButton.classList.add('active');
 		} else {
 			deleteSelectionButtons.forEach((btn) => {
 				btn.classList.add('hidden-delete-selection');
 			});
-
 			activeModeButton.classList.add('active');
 		}
 	}

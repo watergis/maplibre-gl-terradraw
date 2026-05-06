@@ -22,11 +22,11 @@ export const defaultModeKeyboardShortcuts: ModeKeyboardShortcuts = {
 		heldKeys: []
 	},
 	render: {
-		key: 'r',
+		key: 'y',
 		heldKeys: []
 	},
 	rectangle: {
-		key: 't',
+		key: 'r',
 		heldKeys: []
 	},
 	sensor: {

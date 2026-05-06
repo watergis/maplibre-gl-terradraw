@@ -1,9 +1,8 @@
-import { MaplibreTerradrawControl } from '../controls';
+import { MaplibreTerradrawControl } from '../controls/MaplibreTerradrawControl';
 import { defaultModeKeyboardShortcuts, defaultValhallaModeKeyboardShortcuts } from '../constants';
 import {
 	type TerradrawMode,
 	type ModeKeyboardShortcuts,
-	// type TerradrawValhallaMode,
 	type KeyboardShortcut,
 	type TerradrawValhallaMode
 } from '../interfaces';

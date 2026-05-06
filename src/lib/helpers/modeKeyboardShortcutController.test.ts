@@ -5,6 +5,7 @@ import { ModeKeyboardShortcutController } from './modeKeyboardShortcutController
 // Helper functions
 function createMockTerraDraw() {
 	return {
+		enabled: true,
 		setMode: vi.fn(),
 		getMode: vi.fn(),
 		stop: vi.fn(),
@@ -108,7 +109,7 @@ describe('ModeKeyboardShortcutController', () => {
 				point: { key: 'p', heldKeys: [] },
 				polygon: { key: 'g', heldKeys: [] },
 				linestring: { key: 'l', heldKeys: [] },
-				rectangle: { key: 't', heldKeys: [] },
+				rectangle: { key: 'r', heldKeys: [] },
 				circle: { key: 'c', heldKeys: [] },
 				select: { key: 's', heldKeys: [] }
 			});
@@ -134,8 +135,8 @@ describe('ModeKeyboardShortcutController', () => {
 			expect(draw.setMode).toHaveBeenCalledWith('linestring');
 		});
 
-		it('activates rectangle mode when t is pressed', () => {
-			fireKeydown('t');
+		it('activates rectangle mode when r is pressed', () => {
+			fireKeydown('r');
 			expect(draw.setMode).toHaveBeenCalledWith('rectangle');
 		});
 

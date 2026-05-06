@@ -311,6 +311,10 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 		this.controlContainer = super.onAdd(map);
 		this.createSettingsDialog();
 
+		if (this.modeKeyboardShortcutController) {
+			this.modeKeyboardShortcutController.destroy();
+		}
+
 		this.modeKeyboardShortcutController = new ModeKeyboardShortcutController(
 			this.terradraw as TerraDraw,
 			this.controlContainer,

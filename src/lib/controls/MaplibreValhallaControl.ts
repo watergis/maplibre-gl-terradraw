@@ -752,7 +752,6 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 		this.modeButtons[mode] = btn;
 
 		if ((mode as TerradrawValhallaMode) === 'settings') {
-			console.log(defaultValhallaModeKeyboardShortcuts[mode]);
 			btn.classList.add(`maplibregl-terradraw-${this.cssPrefix}add-control`);
 			btn.classList.add(`maplibregl-terradraw-${this.cssPrefix}${mode}-button`);
 			btn.addEventListener('click', this.handleSettingDialog.bind(this));

@@ -62,7 +62,6 @@ export class ModeKeyboardShortcutController {
 
 			if (VALHALLA_MODES.has(mode)) {
 				this.onValhallaMode?.(mode as TerradrawValhallaMode);
-				// new MaplibreValhallaControl().registerValhallaControl();
 			} else {
 				if (this.terradraw.enabled) {
 					this.terradraw.setMode(mode as TerradrawMode);

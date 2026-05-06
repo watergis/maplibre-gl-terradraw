@@ -165,7 +165,7 @@ export class ModeKeyboardShortcutController {
 	private validateShortcuts(): void {
 		const entries = Object.entries(this.shortcuts).filter(([, shortcut]) => shortcut != null);
 
-		const seen = new Map<string, string>();
+		const duplicates = new Map<string, string>();
 
 		for (const [mode, shortcut] of entries) {
 			if (!shortcut) continue;
@@ -175,14 +175,14 @@ export class ModeKeyboardShortcutController {
 				...shortcut.heldKeys.map((k) => k.toLowerCase()).sort()
 			].join('+');
 
-			if (seen.has(canonical)) {
+			if (duplicates.has(canonical)) {
 				throw new Error(
 					`MaplibreTerradrawControl: duplicate keyboard shortcut "${canonical}" ` +
-						`found in both "${seen.get(canonical)}" and "${mode}"`
+						`found in both "${duplicates.get(canonical)}" and "${mode}"`
 				);
 			}
 
-			seen.set(canonical, mode);
+			duplicates.set(canonical, mode);
 		}
 	}
 

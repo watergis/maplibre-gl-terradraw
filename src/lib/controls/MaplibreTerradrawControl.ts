@@ -542,19 +542,15 @@ export class MaplibreTerradrawControl implements IControl {
 				btn.classList.add(`maplibregl-terradraw-${this.cssPrefix}add-${mode}-button`);
 
 				btn.addEventListener('click', () => {
-					console.log('Add mode', mode);
 					if (!this.terradraw) return;
 
 					const isActive = btn.classList.contains('active');
-
-					console.log(mode, isActive);
 					this.activate();
 					this.resetActiveMode();
 
 					if (!isActive) {
 						// Use the original terradraw instance to avoid triggering proxy twice
 						// The proxy will be triggered when users call getTerraDrawInstance().setMode()
-						console.log('jasasads');
 						this.terradraw.setMode(mode);
 						this.syncButtonStates(mode);
 					}

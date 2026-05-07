@@ -1,4 +1,4 @@
-import type { MaplibreTerradrawTextMode } from '../modes/MaplibreTerradrawTextMode';
+import type { MaplibreTerradrawTextMode } from '../modes/TerradrawTextMode';
 import {
 	TerraDrawAngledRectangleMode,
 	TerraDrawCircleMode,

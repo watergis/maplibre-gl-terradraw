@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { MaplibreTerradrawTextMode } from './MaplibreTerradrawTextMode';
+import { MaplibreTerradrawTextMode } from './TerradrawTextMode';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 

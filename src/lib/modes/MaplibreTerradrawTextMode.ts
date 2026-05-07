@@ -1,3 +1,4 @@
+import { defaultSubmitButtonStyleOptions, defaultTextAreaStyleOptions } from '../constants';
 import {
 	type TerraDrawMouseEvent,
 	type TerraDrawKeyboardEvent,
@@ -20,25 +21,38 @@ export type TextModeStyling = {
 	textHaloWidth?: number;
 };
 
+type DOMStyles = {
+	textArea?: CSSStyleDeclaration;
+	submitButton?: CSSStyleDeclaration;
+};
+
+type TextAreaPopup = {
+	wrapper: HTMLDivElement;
+	textarea: HTMLTextAreaElement;
+};
+
 export type TextModeOptions = {
 	styles?: Partial<TextModeStyling>;
 	placeholder?: string;
 	onTextCommit?: (featureId: string, text: string) => void;
 	draggable?: boolean;
-	pointerEvents?: PointerEvent;
 	editable?: boolean;
+	domStyles?: DOMStyles;
 };
 
 export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 	mode = 'text';
 
 	options?: TextModeOptions;
+
 	private isDragging = false;
 	private draggedFeatureId: string | null = null;
 	private editable: boolean = false;
 
+	private activeWrapper: HTMLDivElement | null = null;
 	private activeTextarea: HTMLTextAreaElement | null = null;
 	private activeFeatureId: string | null = null;
+
 	private _onDragSync: (() => void) | undefined;
 	private _mapContainer: Element;
 
@@ -63,72 +77,155 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 		this.setCursor('unset');
 	}
 
-	getMap() {
-		return window.document.getElementsByClassName('map')[0];
+	cleanUp(): void {
+		this.dismissTextarea(true);
+		this.isDragging = false;
+		this.draggedFeatureId = null;
 	}
 
 	set onDragSync(fn: (() => void) | undefined) {
 		this._onDragSync = fn;
 	}
 
-	// register(config: any): void {
-	//     super.register(config);
-
-	//     // this.dragBehavior = new DragCoordinateBehavior({
-	//     //     store: this.store,
-	//     //     project: this.project,
-	//     //     unproject: this.unproject,
-	//     //     pointerDistance: this.pointerDistance,
-	//     //     coordinatePrecision: this.coordinatePrecision
-	//     // } as BehaviorConfig);
-
-	//     // grab the map container so we can position the textarea
-	//     this.container = config.getMapContainer();
-	// }
+	getMap(): Element {
+		return window.document.getElementsByClassName('map')[0];
+	}
 
 	/**
-	 * Create a textarea element
+	 * Create a Textarea Wrapper for the textarea and button elements on the DOM
 	 * @param x
 	 * @param y
 	 * @returns
 	 */
-	private createTextAreaElement(x: number, y: number, currentText?: string): HTMLTextAreaElement {
-		const textarea = document.createElement('textarea');
-		textarea.placeholder = this.options?.placeholder ?? 'Enter label...';
-		textarea.rows = 2;
-
-		if (currentText) {
-			textarea.value = currentText;
-		}
-
-		Object.assign(textarea.style, {
+	private createTextAreaWrapper(x: number, y: number): HTMLDivElement {
+		const wrapper = document.createElement('div');
+		Object.assign(wrapper.style, {
 			position: 'absolute',
 			left: `${x}px`,
 			top: `${y + 8}px`,
 			zIndex: '1000',
+			display: 'flex',
+			flexDirection: 'column',
 			minWidth: '140px',
 			maxWidth: '240px',
-			padding: '4px 8px',
-			fontSize: '12px',
-			fontFamily: 'sans-serif',
-			border: '1.5px solid #4CC9F0',
+			boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
 			borderRadius: '6px',
-			background: 'rgba(255,255,255,0.95)',
-			color: '#111',
-			resize: 'none',
-			outline: 'none',
-			boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+			overflow: 'hidden'
 		});
+		return wrapper;
+	}
 
-		this._mapContainer.appendChild(textarea);
+	/**
+	 * @param currentText
+	 * @returns
+	 */
+	private createTextAreaElement(currentText?: string): HTMLTextAreaElement {
+		const textarea = document.createElement('textarea');
+		textarea.placeholder = this.options?.placeholder ?? 'Enter label...';
+		textarea.rows = 3;
 
-		textarea.focus();
+		if (currentText) {
+			textarea.value = currentText;
+			textarea.setSelectionRange(currentText.length, currentText.length);
+		}
+
+		const textAreaStyles = this.createDomStyles('textArea');
+		Object.assign(textarea.style, textAreaStyles);
 
 		return textarea;
 	}
 
 	/**
-	 * Add a textarea element to the DOM
+	 * @param isEdit boolean
+	 * @returns
+	 */
+	private createSubmitButton(): HTMLButtonElement {
+		const button = document.createElement('button');
+		button.type = 'button';
+
+		button.innerHTML = `<img src='src/scss/icons/submit.svg' width=15 height=15/> Save`;
+
+		const btnStyles = this.createDomStyles('submitButton');
+		Object.assign(button.style, btnStyles);
+
+		button.addEventListener('mouseenter', () => {
+			button.style.background = '#2d7fc1';
+		});
+		button.addEventListener('mouseleave', () => {
+			button.style.background = '#3F97E0';
+		});
+
+		return button;
+	}
+
+	/**
+	 * Create styles for textarea and submit button elements
+	 * @returns
+	 */
+	private createDomStyles(style: 'textArea' | 'submitButton') {
+		switch (style) {
+			case 'textArea':
+				return this.options?.domStyles?.textArea
+					? { ...this.options?.domStyles?.textArea }
+					: { ...defaultTextAreaStyleOptions };
+
+			case 'submitButton':
+				return this.options?.domStyles?.submitButton
+					? { ...this.options?.domStyles?.submitButton }
+					: { ...defaultSubmitButtonStyleOptions };
+
+			default:
+				break;
+		}
+	}
+
+	/**
+	 * @param x
+	 * @param y
+	 * @param onCommit
+	 * @param onDismiss
+	 * @param currentText
+	 * @returns
+	 */
+	private mountTextAreaPopup(
+		x: number,
+		y: number,
+		onCommit: (text: string) => void,
+		onDismiss: () => void,
+		currentText?: string
+	): TextAreaPopup | undefined {
+		const wrapper = this.createTextAreaWrapper(x, y);
+		const textarea = this.createTextAreaElement(currentText);
+		const submitButton = this.createSubmitButton();
+
+		textarea.addEventListener('keydown', (e) => {
+			if (e.key === 'Escape') onDismiss();
+		});
+
+		let text = '';
+
+		wrapper.appendChild(textarea);
+
+		textarea.addEventListener('keyup', () => {
+			if (textarea.value) {
+				wrapper.appendChild(submitButton);
+			}
+			text = textarea.value.trim();
+		});
+
+		const handleCommit = () => {
+			onCommit(text);
+		};
+
+		submitButton.addEventListener('click', handleCommit);
+
+		this._mapContainer.appendChild(wrapper);
+		textarea.focus();
+
+		return { wrapper, textarea };
+	}
+
+	/**
 	 * @param featureId
 	 * @param x
 	 * @param y
@@ -136,22 +233,47 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 	private showTextarea(featureId: string, x: number, y: number): void {
 		this.dismissTextarea(false);
 
-		const textarea = this.createTextAreaElement(x, y);
+		const { wrapper, textarea } = this.mountTextAreaPopup(
+			x,
+			y,
+			(text) => this.commitText(featureId, text),
+			() => this.dismissTextarea(true)
+		) as TextAreaPopup;
 
-		textarea.addEventListener('keydown', (e) => {
-			if (e.key === 'Enter' && e.shiftKey) {
-				e.preventDefault();
-				this.commitText(featureId, textarea.value.trim());
-			}
-			if (e.key === 'Escape') {
-				this.dismissTextarea(true);
-			}
-		});
-
+		this.activeWrapper = wrapper;
 		this.activeTextarea = textarea;
 		this.activeFeatureId = featureId;
 	}
 
+	/**
+	 * @param featureId
+	 * @param x
+	 * @param y
+	 */
+	private editText(featureId: string, x: number, y: number): void {
+		this.dismissTextarea(false);
+
+		const feature = this.store.copyAll().find((f) => f.id === featureId);
+		const currentText = (feature?.properties?.text as string) ?? '';
+
+		const { wrapper, textarea } = this.mountTextAreaPopup(
+			x,
+			y,
+			(text) => this.commitText(featureId, text),
+			() => this.dismissTextarea(false),
+			currentText
+		) as TextAreaPopup;
+
+		this.activeWrapper = wrapper;
+		this.activeTextarea = textarea;
+		this.activeFeatureId = featureId;
+	}
+
+	/**
+	 * @param featureId
+	 * @param text
+	 * @returns
+	 */
 	private commitText(featureId: string, text: string): void {
 		if (!text) {
 			this.dismissTextarea(true);
@@ -168,64 +290,42 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 
 		this.options?.onTextCommit?.(featureId, text);
 		this.dismissTextarea(false);
-
 		this.onFinish(featureId, { mode: this.mode, action: 'draw' });
 	}
 
+	/**
+	 * @param deleteFeature
+	 */
 	private dismissTextarea(deleteFeature: boolean): void {
-		if (this.activeTextarea) {
-			this.activeTextarea.remove();
-			this.activeTextarea = null;
+		if (this.activeWrapper) {
+			this.activeWrapper.remove();
+			this.activeWrapper = null;
 		}
+		this.activeTextarea = null;
 		if (deleteFeature && this.activeFeatureId) {
 			this.store.delete([this.activeFeatureId]);
 		}
 		this.activeFeatureId = null;
 	}
 
-	private editText(featureId: string, x: number, y: number): void {
-		this.dismissTextarea(false);
-
-		const feature = this.store.copyAll().find((f) => f.id === featureId);
-		const currentText = (feature?.properties?.text as string) ?? '';
-
-		const textarea = this.createTextAreaElement(x, y, currentText);
-
-		textarea.addEventListener('keydown', (e) => {
-			if (e.key === 'Enter' && e.shiftKey) {
-				e.preventDefault();
-				const newText = textarea.value.trim();
-				if (newText) {
-					this.commitText(featureId, newText);
-				}
-				this.dismissTextarea(false);
-			}
-			if (e.key === 'Escape') {
-				this.dismissTextarea(false);
-			}
-		});
-
-		this.activeTextarea = textarea;
-		this.activeFeatureId = featureId;
-	}
-
+	/**
+	 * @param event
+	 * @returns
+	 */
 	onClick(event: TerraDrawMouseEvent): void {
+		// commit open textarea on outside click
 		if (this.activeTextarea && this.activeFeatureId) {
 			this.commitText(this.activeFeatureId, this.activeTextarea.value.trim());
 			return;
 		}
 
-		const { x, y } = this.project(event.lng, event.lat);
-
+		// right click — edit existing label
 		if (event.button === 'right' && this.allowPointerEvent(this.pointerEvents.rightClick, event)) {
-			if (this.editable) {
-				this.onRightClick(event);
-			} else {
-				this.activeTextarea = null;
-			}
+			if (this.editable) this.onRightClick(event);
 			return;
 		}
 
+		const { x, y } = this.project(event.lng, event.lat);
 		this.setCursor('crosshair');
 
 		const [featureId] = this.store.create([
@@ -245,25 +345,28 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 		this.showTextarea(featureId as string, x, y);
 	}
 
+	/**
+	 * @param event
+	 * @returns
+	 */
 	onRightClick(event: TerraDrawMouseEvent): void {
 		this.setCursor('pointer');
-
 		const nearest = this.getNearestPointFeature(event);
 		if (!nearest) return;
-
 		const { x, y } = this.project(event.lng, event.lat);
 		this.editText(nearest.id, x, y);
-		return;
 	}
 
+	/**
+	 * @param event
+	 * @param setMapDragging
+	 * @returns
+	 */
 	onDragStart(event: TerraDrawMouseEvent, setMapDragging: (dragging: boolean) => void): void {
-		if (!this.allowPointerEvent(this.pointerEvents.onDragStart, event)) {
-			return;
-		}
+		if (!this.allowPointerEvent(this.pointerEvents.onDragStart, event)) return;
+		if (this.activeWrapper) return; // don't drag while popup is open
 
 		this.setCursor('grabbing');
-
-		if (this.activeTextarea) return;
 
 		const nearest = this.getNearestPointFeature(event);
 		if (!nearest) return;
@@ -273,14 +376,19 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 		setMapDragging(false);
 	}
 
+	/**
+	 * @param event
+	 * @param setMapDragging
+	 * @returns
+	 */
 	onDrag(event: TerraDrawMouseEvent, setMapDragging: (dragging: boolean) => void): void {
-		if (this.activeTextarea) {
+		if (this.activeWrapper) {
 			this.dismissTextarea(true);
 		}
 
 		if (!this.isDragging || !this.draggedFeatureId) return;
-		setMapDragging(false);
 
+		setMapDragging(false);
 		this.setCursor('grabbing');
 
 		if (this.options?.draggable) {
@@ -293,36 +401,34 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 					}
 				}
 			]);
-		}
 
-		this._onDragSync?.();
+			this._onDragSync?.();
+		}
 	}
 
 	onDragEnd(_event: TerraDrawMouseEvent, setMapDragging: (dragging: boolean) => void): void {
 		this.setCursor('crosshair');
-
 		this.isDragging = false;
 		this.draggedFeatureId = null;
 		setMapDragging(true);
 	}
 
+	/**
+	 * @param event
+	 */
 	onKeyUp(event: TerraDrawKeyboardEvent): void {
-		if (event.key === 'Escape') {
-			this.dismissTextarea(true);
-		}
+		if (event.key === 'Escape') this.dismissTextarea(true);
 	}
 
-	onDeselect(): void {}
-	onSelect(_featureId: string): void {
-		console.log('I have been selected:', _featureId);
-	}
+	// onMouseMove(_event: TerraDrawMouseEvent): void {}
+	// onKeyDown(_event: TerraDrawKeyboardEvent): void {}
+	// onDeselect(): void {}
+	// onSelect(_featureId: string): void {}
 
-	cleanUp(): void {
-		this.dismissTextarea(true);
-		this.isDragging = false;
-		this.draggedFeatureId = null;
-	}
-
+	/**
+	 * @param feature
+	 * @returns
+	 */
 	styleFeature(feature: GeoJSONStoreFeatures): TerraDrawAdapterStyling {
 		const hasText = !!feature.properties?.text;
 
@@ -333,7 +439,7 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 			pointOutlineWidth: (this.styles.pointOutlineWidth as number) ?? 2,
 			polygonFillColor: '#000',
 			polygonFillOpacity: 0,
-			polygonOutlineColor: '#00000',
+			polygonOutlineColor: '#000000',
 			polygonOutlineWidth: 0,
 			lineStringColor: '#000',
 			lineStringWidth: 0,
@@ -341,12 +447,21 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 		};
 	}
 
-	validateFeature(feature: GeoJSONStoreFeatures): { valid: boolean; reason?: string | undefined } {
+	/**
+	 * @param feature
+	 * @returns
+	 */
+	validateFeature(feature: GeoJSONStoreFeatures): { valid: boolean; reason?: string } {
 		return {
 			valid: feature.geometry.type === 'Point' && feature.properties?.mode === this.mode
 		};
 	}
 
+	/**
+	 *
+	 * @param event
+	 * @returns
+	 */
 	private getNearestPointFeature(event: TerraDrawMouseEvent): { id: string } | null {
 		const features = this.store.copyAll();
 		const { x: pointerX, y: pointerY } = this.project(event.lng, event.lat);
@@ -364,7 +479,6 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 
 			const [lng, lat] = feature.geometry.coordinates as [number, number];
 			const { x, y } = this.project(lng, lat);
-
 			const distance = Math.sqrt(Math.pow(pointerX - x, 2) + Math.pow(pointerY - y, 2));
 
 			if (distance < nearestDistance && distance <= this.pointerDistance) {

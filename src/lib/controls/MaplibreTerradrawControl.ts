@@ -37,6 +37,7 @@ export class MaplibreTerradrawControl implements IControl {
 	protected modeButtons: { [key: string]: HTMLButtonElement } = {};
 	protected _isExpanded = false;
 	protected _cssPrefix = '';
+	prefixId = '';
 
 	/**
 	 * get the state of whether the control is expanded or collapsed
@@ -126,13 +127,16 @@ export class MaplibreTerradrawControl implements IControl {
 			modes: [...(defaultControlOptions.modes ?? [])],
 			...options
 		};
-		const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
+		// const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
+		this.prefixId = this.options.adapterOptions?.prefixId ?? 'td';
+
 		if (!this.options.adapterOptions) {
 			this.options.adapterOptions = {};
 		}
 		if (!this.options.adapterOptions?.prefixId) {
-			this.options.adapterOptions.prefixId = prefixId;
+			this.options.adapterOptions.prefixId = this.prefixId;
 		}
+
 		if (!this.options.undoRedo) {
 			this.options.undoRedo = {
 				modeLevel: new TerraDrawModeUndoRedo({ maxStackSize: 100 }),
@@ -234,7 +238,6 @@ export class MaplibreTerradrawControl implements IControl {
 				const styles = defaultOptions[m.mode].styles;
 				const textMode = m as MaplibreTerradrawTextMode;
 				this.createTerradrawTextLayer(map, textMode, styles as Partial<TextModeStyling>);
-				// this.createTerradrawTextLayer(map, styles as Record<string, string>);
 			}
 		});
 
@@ -699,7 +702,7 @@ export class MaplibreTerradrawControl implements IControl {
 				?.getSnapshot()
 				.filter((f) => f.properties?.mode === 'text' && f.properties?.text);
 
-			const source = this.map?.getSource('td-text') as GeoJSONSource | undefined;
+			const source = this.map?.getSource(`${this.prefixId}-text`) as GeoJSONSource | undefined;
 			source?.setData({
 				type: 'FeatureCollection',
 				features: remainingFeatures as GeoJSONStoreFeatures<GeoJSONStoreGeometries>[]
@@ -841,7 +844,7 @@ export class MaplibreTerradrawControl implements IControl {
 					(f) => f.properties?.mode === 'text' && f.properties?.text
 				) as GeoJSONStoreFeatures<GeoJSONStoreGeometries>[];
 
-				const source = map.getSource('td-text') as GeoJSONSource | undefined;
+				const source = map.getSource(`${this.prefixId}-text`) as GeoJSONSource | undefined;
 				source?.setData({
 					type: 'FeatureCollection',
 					features: textFeatures
@@ -855,7 +858,7 @@ export class MaplibreTerradrawControl implements IControl {
 		map: Map,
 		styles?: Record<string, string | number>
 	) {
-		const source = map.getSource('td-text') as maplibregl.GeoJSONSource | undefined;
+		const source = map.getSource(`${this.prefixId}-text`) as maplibregl.GeoJSONSource | undefined;
 
 		if (source) {
 			source.setData({
@@ -863,15 +866,15 @@ export class MaplibreTerradrawControl implements IControl {
 				features
 			});
 		} else {
-			map.addSource('td-text', {
+			map.addSource(`${this.prefixId}-text`, {
 				type: 'geojson',
 				data: { type: 'FeatureCollection', features }
 			});
 
 			map.addLayer({
-				id: 'td-text-labels',
+				id: `${this.prefixId}-text-labels`,
 				type: 'symbol',
-				source: 'td-text',
+				source: `${this.prefixId}-text`,
 				layout: {
 					'text-field': ['get', 'text'],
 					'text-size': (styles?.textSize as number) ?? 12,
@@ -890,8 +893,9 @@ export class MaplibreTerradrawControl implements IControl {
 	}
 
 	protected clearTextLayers() {
-		const source = this.map?.getSource('td-text') as maplibregl.GeoJSONSource | undefined;
-		const layers = this.map?.style?.getLayer('td-text-labels');
+		const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
+		const source = this.map?.getSource(`${prefixId}-text`) as maplibregl.GeoJSONSource | undefined;
+		const layers = this.map?.style?.getLayer(`${prefixId}-text-labels`);
 
 		this.map?.removeLayer(layers?.id as string);
 		this.map?.removeSource(source?.id as string);

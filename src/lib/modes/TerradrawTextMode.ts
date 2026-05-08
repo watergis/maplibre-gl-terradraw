@@ -227,21 +227,15 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 		const textarea = this.createTextAreaElement(currentText);
 		const submitButton = this.createSubmitButton();
 
-		// disable button initially if no text
 		submitButton.disabled = !currentText;
 		submitButton.style.opacity = currentText ? '1' : '0.5';
 		submitButton.style.cursor = currentText ? 'pointer' : 'not-allowed';
 
-		// enable/disable button based on textarea content
 		textarea.addEventListener('input', () => {
 			const hasText = textarea.value.trim().length > 0;
 			submitButton.disabled = !hasText;
 			submitButton.style.opacity = hasText ? '1' : '0.5';
 			submitButton.style.cursor = hasText ? 'pointer' : 'not-allowed';
-		});
-
-		textarea.addEventListener('keydown', (e) => {
-			if (e.key === 'Escape') onDismiss();
 		});
 
 		submitButton.addEventListener('click', () => {
@@ -251,7 +245,7 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 		});
 
 		wrapper.appendChild(textarea);
-		wrapper.appendChild(submitButton); // always present
+		wrapper.appendChild(submitButton);
 		this._mapContainer?.appendChild(wrapper);
 		textarea.focus();
 
@@ -345,11 +339,14 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 
 	/** @internal */
 	onClick(event: TerraDrawMouseEvent): void {
-		if (this.isContextMenuOpen) return;
+		if (this.isContextMenuOpen && this.options?.editable) {
+			this.isContextMenuOpen = false;
+			return;
+		}
 
-		// commit open textarea on outside click
 		if (this.activeTextarea && this.activeFeatureId) {
 			this.commitText(this.activeFeatureId, this.activeTextarea.value.trim());
+			this.isContextMenuOpen = false;
 			return;
 		}
 
@@ -448,7 +445,13 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 
 	/** @internal */
 	onKeyUp(event: TerraDrawKeyboardEvent): void {
-		if (event.key === 'Escape' && !this.isContextMenuOpen) this.dismissTextarea(true);
+		if (event.key === 'Escape') {
+			if (!this.isContextMenuOpen) {
+				this.dismissTextarea(true);
+			} else {
+				this.dismissTextarea(false);
+			}
+		}
 	}
 
 	/** @internal */

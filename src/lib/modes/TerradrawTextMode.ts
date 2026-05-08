@@ -238,6 +238,10 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 			submitButton.style.cursor = hasText ? 'pointer' : 'not-allowed';
 		});
 
+		textarea.addEventListener('keydown', (e) => {
+			if (e.key === 'Escape') onDismiss();
+		});
+
 		submitButton.addEventListener('click', () => {
 			const text = textarea.value.trim();
 			if (text) onCommit(text);
@@ -445,13 +449,7 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 
 	/** @internal */
 	onKeyUp(event: TerraDrawKeyboardEvent): void {
-		if (event.key === 'Escape') {
-			if (!this.isContextMenuOpen) {
-				this.dismissTextarea(true);
-			} else {
-				this.dismissTextarea(false);
-			}
-		}
+		if (event.key === 'Escape' && !this.isContextMenuOpen) this.dismissTextarea(true);
 	}
 
 	/** @internal */

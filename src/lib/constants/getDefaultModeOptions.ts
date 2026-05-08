@@ -181,18 +181,6 @@ export const getDefaultModeOptions = () => {
 							deletable: true
 						}
 					}
-				},
-				text: {
-					feature: {
-						draggable: true,
-						rotateable: true,
-						scaleable: true,
-						coordinates: {
-							midpoints: true,
-							draggable: true,
-							deletable: true
-						}
-					}
 				}
 			}
 		}),

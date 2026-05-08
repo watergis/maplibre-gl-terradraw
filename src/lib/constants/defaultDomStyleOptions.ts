@@ -11,14 +11,13 @@ export const defaultTextAreaStyleOptions = {
 	width: '100%',
 	boxSizing: 'border-box',
 	position: 'relative'
-	// paddingBottom: '40px'
 } as CSSStyleDeclaration;
 
 export const defaultSubmitButtonStyleOptions = {
 	padding: '4px 8px',
 	fontSize: '11px',
 	fontFamily: 'sans-serif',
-	background: '#3F97E0',
+	backgroundColor: '#3F97E0',
 	color: '#ffffff',
 	border: '1.5px solid #4CC9F0',
 	borderTop: 'none',
@@ -34,3 +33,15 @@ export const defaultSubmitButtonStyleOptions = {
 	right: '4px',
 	alignContent: 'center'
 } as CSSStyleDeclaration;
+
+export const defaultTextAreaWrapperStyleOptions = {
+	position: 'absolute',
+	zIndex: '1000',
+	display: 'flex',
+	flexDirection: 'column',
+	minWidth: '140px',
+	maxWidth: '240px',
+	boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+	borderRadius: '6px',
+	overflow: 'hidden'
+};

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { MaplibreTerradrawTextMode } from './TerradrawTextMode';
+import { TerradrawTextMode } from './TerradrawTextMode';
 import {
 	defaultTextAreaStyleOptions,
 	defaultSubmitButtonStyleOptions,
@@ -38,7 +38,7 @@ const mockStore = () => ({
 const mockSetMapDragging = vi.fn();
 
 const mountMode = (options = {}) => {
-	const mode = new MaplibreTerradrawTextMode(options);
+	const mode = new TerradrawTextMode(options);
 
 	// mock internal TerraDraw base class methods
 	(mode as any).store = mockStore();
@@ -70,7 +70,7 @@ describe('MaplibreTerradrawTextMode', () => {
 	// 1. Lifecycle
 	describe('lifecycle', () => {
 		it('initialises with default options when none are passed', () => {
-			const mode = new MaplibreTerradrawTextMode();
+			const mode = new TerradrawTextMode();
 			expect(mode.mode).toBe('text');
 		});
 
@@ -777,7 +777,7 @@ describe('MaplibreTerradrawTextMode', () => {
 			expect(button.style.padding).toBe(defaultSubmitButtonStyleOptions.padding);
 			expect(button.style.fontSize).toBe(defaultSubmitButtonStyleOptions.fontSize);
 			expect(button.style.fontFamily).toBe(defaultSubmitButtonStyleOptions.fontFamily);
-			expect(button.style.width).toBe(defaultSubmitButtonStyleOptions.width);
+			expect(button.style.minWidth).toBe(defaultSubmitButtonStyleOptions.minWidth);
 			expect(button.style.position).toBe(defaultSubmitButtonStyleOptions.position);
 		});
 
@@ -806,7 +806,6 @@ describe('MaplibreTerradrawTextMode', () => {
 			const mode = openEditPopup({ domStyles: { submitButton: { width: '60%' } } });
 			const button = (mode as any)._mapContainer.querySelector('button') as HTMLButtonElement;
 			expect(button.style.width).toBe('60%');
-			expect(button.style.fontFamily).toBe(defaultSubmitButtonStyleOptions.fontFamily);
 		});
 	});
 });

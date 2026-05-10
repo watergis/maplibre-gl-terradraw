@@ -26,7 +26,7 @@ import type {
 } from '../interfaces';
 import { defaultControlOptions, getDefaultModeOptions } from '../constants';
 import { capitalize, cleanMaplibreStyle, TERRADRAW_SOURCE_IDS, ModalDialog } from '../helpers';
-import type { MaplibreTerradrawTextMode, TextModeStyling } from '../modes/TerradrawTextMode';
+import type { TerradrawTextMode, TextModeStyling } from '../modes/TerradrawTextMode';
 
 /**
  * Maplibre GL Terra Draw Control
@@ -127,14 +127,13 @@ export class MaplibreTerradrawControl implements IControl {
 			modes: [...(defaultControlOptions.modes ?? [])],
 			...options
 		};
-		// const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
-		this.prefixId = this.options.adapterOptions?.prefixId ?? 'td';
+		const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
 
 		if (!this.options.adapterOptions) {
 			this.options.adapterOptions = {};
 		}
 		if (!this.options.adapterOptions?.prefixId) {
-			this.options.adapterOptions.prefixId = this.prefixId;
+			this.options.adapterOptions.prefixId = prefixId;
 		}
 
 		if (!this.options.undoRedo) {
@@ -236,7 +235,7 @@ export class MaplibreTerradrawControl implements IControl {
 		modes.forEach((m: TerradrawModeClass) => {
 			if (m.mode === 'text') {
 				const styles = defaultOptions[m.mode].styles;
-				const textMode = m as MaplibreTerradrawTextMode;
+				const textMode = m as TerradrawTextMode;
 				this.createTerradrawTextLayer(map, textMode, styles as Partial<TextModeStyling>);
 			}
 		});
@@ -696,13 +695,14 @@ export class MaplibreTerradrawControl implements IControl {
 		selectedFeatures: GeoJSONStoreFeatures<GeoJSONStoreGeometries>[]
 	) {
 		const hasTextFeatures = selectedFeatures.some((f) => f.properties.mode === 'text');
+		const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
 
 		if (hasTextFeatures) {
 			const remainingFeatures = this.terradraw
 				?.getSnapshot()
 				.filter((f) => f.properties?.mode === 'text' && f.properties?.text);
 
-			const source = this.map?.getSource(`${this.prefixId}-text`) as GeoJSONSource | undefined;
+			const source = this.map?.getSource(`${prefixId}-text`) as GeoJSONSource | undefined;
 			source?.setData({
 				type: 'FeatureCollection',
 				features: remainingFeatures as GeoJSONStoreFeatures<GeoJSONStoreGeometries>[]
@@ -827,7 +827,7 @@ export class MaplibreTerradrawControl implements IControl {
 
 	protected createTerradrawTextLayer(
 		map: Map,
-		textModeInstance: MaplibreTerradrawTextMode,
+		textModeInstance: TerradrawTextMode,
 		styles?: TextModeStyling
 	) {
 		this.terradraw?.on('finish', () => {
@@ -844,7 +844,9 @@ export class MaplibreTerradrawControl implements IControl {
 					(f) => f.properties?.mode === 'text' && f.properties?.text
 				) as GeoJSONStoreFeatures<GeoJSONStoreGeometries>[];
 
-				const source = map.getSource(`${this.prefixId}-text`) as GeoJSONSource | undefined;
+				const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
+
+				const source = map.getSource(`${prefixId}-text`) as GeoJSONSource | undefined;
 				source?.setData({
 					type: 'FeatureCollection',
 					features: textFeatures
@@ -858,7 +860,9 @@ export class MaplibreTerradrawControl implements IControl {
 		map: Map,
 		styles?: Record<string, string | number>
 	) {
-		const source = map.getSource(`${this.prefixId}-text`) as maplibregl.GeoJSONSource | undefined;
+		const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
+
+		const source = map.getSource(`${prefixId}-text`) as maplibregl.GeoJSONSource | undefined;
 
 		if (source) {
 			source.setData({
@@ -866,15 +870,15 @@ export class MaplibreTerradrawControl implements IControl {
 				features
 			});
 		} else {
-			map.addSource(`${this.prefixId}-text`, {
+			map.addSource(`${prefixId}-text`, {
 				type: 'geojson',
 				data: { type: 'FeatureCollection', features }
 			});
 
 			map.addLayer({
-				id: `${this.prefixId}-text-labels`,
+				id: `${prefixId}-text-labels`,
 				type: 'symbol',
-				source: `${this.prefixId}-text`,
+				source: `${prefixId}-text`,
 				layout: {
 					'text-field': ['get', 'text'],
 					'text-size': (styles?.textSize as number) ?? 12,

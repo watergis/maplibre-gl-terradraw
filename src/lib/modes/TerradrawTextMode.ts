@@ -44,7 +44,7 @@ export type TextModeOptions = {
 	domStyles?: DOMStyles;
 };
 
-export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
+export class TerradrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 	mode = 'text';
 
 	options?: TextModeOptions;
@@ -167,16 +167,16 @@ export class MaplibreTerradrawTextMode extends TerraDrawBaseDrawMode<TextModeSty
 		const button = document.createElement('button');
 		button.type = 'button';
 
-		button.innerHTML = `<img src='src/scss/icons/submit.svg' width=15 height=15/> Save`;
+		button.className = 'maplibregl-terradraw-text-mode-submit-button';
 
 		const btnStyles = this.createDomStyles('submitButton');
 		Object.assign(button.style, btnStyles);
 
 		button.addEventListener('mouseenter', () => {
-			button.style.background = '#2d7fc1';
+			button.style.backgroundColor = '#2d7fc1';
 		});
 		button.addEventListener('mouseleave', () => {
-			button.style.background = btnStyles?.backgroundColor as string;
+			button.style.backgroundColor = btnStyles?.backgroundColor as string;
 		});
 
 		return button;

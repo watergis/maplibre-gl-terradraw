@@ -256,6 +256,7 @@ export class MaplibreTerradrawControl implements IControl {
 		this.toggleButtonsWhenNoFeature();
 		this.terradraw?.on('finish', this.toggleButtonsWhenNoFeature.bind(this));
 		this.terradraw?.on('history', this.handleHistoryChange.bind(this));
+
 		this.map.once('idle', () => {
 			this.toggleButtonsWhenNoFeature();
 		});

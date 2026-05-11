@@ -471,9 +471,9 @@ export class TerradrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 
 		return {
 			pointColor: hasText ? ((this.styles.pointColor ?? '#5CFF2E') as HexColor) : '#72FF35',
-			pointWidth: (this.styles.pointWidth as number) ?? 0,
-			pointOutlineColor: (this.styles.pointOutlineColor as HexColor) ?? '#FFFFFF',
-			pointOutlineWidth: (this.styles.pointOutlineWidth as number) ?? 2,
+			pointWidth: 0,
+			pointOutlineColor: '#FFFFFF',
+			pointOutlineWidth: 0,
 			polygonFillColor: '#000',
 			polygonFillOpacity: 0,
 			polygonOutlineColor: '#000000',

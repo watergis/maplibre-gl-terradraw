@@ -1,4 +1,3 @@
-import { MaplibreTerradrawControl } from '../controls/MaplibreTerradrawControl';
 import { defaultModeKeyboardShortcuts, defaultValhallaModeKeyboardShortcuts } from '../constants';
 import {
 	type TerradrawMode,
@@ -8,7 +7,14 @@ import {
 } from '../interfaces';
 import type { TerraDraw } from 'terra-draw';
 
-const ACTION_MODES = new Set(['delete', 'delete-selection', 'download', 'settings'] as const);
+const ACTION_MODES = new Set([
+	'delete',
+	'delete-selection',
+	'download',
+	'settings',
+	'undo',
+	'redo'
+] as const);
 type ActionMode = typeof ACTION_MODES extends Set<infer T> ? T : never;
 
 const VALHALLA_MODES = new Set(Object.keys(defaultValhallaModeKeyboardShortcuts));
@@ -21,7 +27,8 @@ export class ModeKeyboardShortcutController {
 		private terradraw: TerraDraw,
 		private controlContainer?: HTMLElement,
 		shortcuts?: ModeKeyboardShortcuts,
-		private onValhallaMode?: (mode: TerradrawValhallaMode) => void
+		private onValhallaMode?: (mode: TerradrawValhallaMode) => void,
+		private onDelete?: () => void
 	) {
 		const allDefaults: ModeKeyboardShortcuts = {
 			...defaultModeKeyboardShortcuts,
@@ -84,10 +91,13 @@ export class ModeKeyboardShortcutController {
 			if (!shortcut) continue;
 
 			if (this.matchesShortcut(e, shortcut)) {
-				e.preventDefault();
-				const features = this.terradraw.getSnapshot();
-				if (features.length > 0) {
-					this.executeAction(action as ActionMode);
+				if (!e.defaultPrevented) {
+					e.preventDefault();
+					const isUndoRedo = action === 'undo' || action === 'redo';
+					const features = this.terradraw.getSnapshot();
+					if (isUndoRedo || features.length > 0) {
+						this.executeAction(action as ActionMode);
+					}
 				}
 				return true;
 			}
@@ -130,14 +140,11 @@ export class ModeKeyboardShortcutController {
 	private executeAction(action: ActionMode): void {
 		switch (action) {
 			case 'delete': {
-				const ids = this.terradraw.getSnapshot().map((f) => f.id);
-				if (ids.length) {
-					this.terradraw.removeFeatures(ids as string[]);
-					this.syncButtonStates(this.terradraw.getMode());
-				}
+				this.onDelete?.();
 				break;
 			}
 			case 'delete-selection': {
+				console.log('Delete  Selection');
 				const selected = this.terradraw.getSnapshot().filter((f) => f.properties?.selected);
 				const ids = selected.map((f) => f.id);
 				if (ids.length) {
@@ -147,7 +154,10 @@ export class ModeKeyboardShortcutController {
 				break;
 			}
 			case 'download': {
-				const fc = new MaplibreTerradrawControl().getFeatures(true);
+				const fc = {
+					type: 'FeatureCollection',
+					features: this.terradraw.getSnapshot()
+				};
 				const dataStr =
 					'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(fc));
 				const a = document.createElement('a');
@@ -156,6 +166,21 @@ export class ModeKeyboardShortcutController {
 				document.body.appendChild(a);
 				a.click();
 				a.remove();
+				break;
+			}
+
+			case 'undo': {
+				if (this.terradraw.canUndo()) {
+					console.log('Can Undo:');
+					this.terradraw.undo();
+				}
+				break;
+			}
+			case 'redo': {
+				if (this.terradraw.canRedo()) {
+					console.log('Can Redo:');
+					this.terradraw.redo();
+				}
 				break;
 			}
 		}

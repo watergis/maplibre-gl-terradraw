@@ -64,5 +64,13 @@ export const defaultModeKeyboardShortcuts: ModeKeyboardShortcuts = {
 	'delete-selection': {
 		key: 'Backspace',
 		heldKeys: ['shift']
+	},
+	undo: {
+		key: 'z',
+		heldKeys: ['meta']
+	},
+	redo: {
+		key: 'z',
+		heldKeys: ['meta', 'shift']
 	}
 };

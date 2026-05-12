@@ -18,12 +18,12 @@ import {
 	type GeoJSONStoreGeometries
 } from 'terra-draw';
 import { TerraDrawMapLibreGLAdapter } from 'terra-draw-maplibre-gl-adapter';
-import {
-	type TerradrawControlOptions,
-	type EventType,
-	type TerradrawMode,
-	type TerradrawModeClass,
-	type EventArgs
+import type {
+	TerradrawControlOptions,
+	EventType,
+	TerradrawMode,
+	TerradrawModeClass,
+	EventArgs
 } from '../interfaces';
 import {
 	defaultControlOptions,
@@ -320,7 +320,9 @@ export class MaplibreTerradrawControl implements IControl {
 		this.modeKeyboardShortcutController = new ModeKeyboardShortcutController(
 			this.terradraw,
 			this.controlContainer as HTMLElement,
-			this.options?.keyboardShortcuts
+			this.options?.keyboardShortcuts,
+			undefined,
+			() => this.handleDeleteAllFeatures()
 		);
 
 		this.modeKeyboardShortcutController.mount();

@@ -12,5 +12,9 @@ export const defaultValhallaModeKeyboardShortcuts: ModeKeyboardShortcuts = {
 	routing: {
 		key: 'u',
 		heldKeys: []
+	},
+	settings: {
+		key: 'y',
+		heldKeys: ['meta', 'shift']
 	}
 };

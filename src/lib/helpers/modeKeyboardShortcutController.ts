@@ -11,9 +11,9 @@ const ACTION_MODES = new Set([
 	'delete',
 	'delete-selection',
 	'download',
+	'redo',
 	'settings',
-	'undo',
-	'redo'
+	'undo'
 ] as const);
 type ActionMode = typeof ACTION_MODES extends Set<infer T> ? T : never;
 
@@ -28,7 +28,8 @@ export class ModeKeyboardShortcutController {
 		private controlContainer?: HTMLElement,
 		shortcuts?: ModeKeyboardShortcuts,
 		private onValhallaMode?: (mode: TerradrawValhallaMode) => void,
-		private onDelete?: () => void
+		private onDelete?: () => void,
+		private onValhallaSettingsSelected?: () => void
 	) {
 		const allDefaults: ModeKeyboardShortcuts = {
 			...defaultModeKeyboardShortcuts,
@@ -138,13 +139,13 @@ export class ModeKeyboardShortcutController {
 	}
 
 	private executeAction(action: ActionMode): void {
+		console.log(action);
 		switch (action) {
 			case 'delete': {
 				this.onDelete?.();
 				break;
 			}
 			case 'delete-selection': {
-				console.log('Delete  Selection');
 				const selected = this.terradraw.getSnapshot().filter((f) => f.properties?.selected);
 				const ids = selected.map((f) => f.id);
 				if (ids.length) {
@@ -171,17 +172,20 @@ export class ModeKeyboardShortcutController {
 
 			case 'undo': {
 				if (this.terradraw.canUndo()) {
-					console.log('Can Undo:');
 					this.terradraw.undo();
 				}
 				break;
 			}
 			case 'redo': {
 				if (this.terradraw.canRedo()) {
-					console.log('Can Redo:');
 					this.terradraw.redo();
 				}
 				break;
+			}
+
+			case 'settings': {
+				console.log('Open Settings in valhalla');
+				this.onValhallaSettingsSelected?.();
 			}
 		}
 	}

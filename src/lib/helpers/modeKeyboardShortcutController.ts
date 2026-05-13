@@ -17,6 +17,12 @@ const ACTION_MODES = new Set([
 ] as const);
 type ActionMode = typeof ACTION_MODES extends Set<infer T> ? T : never;
 
+type ModeActionsOptions = {
+	onValhallaMode?: (mode: TerradrawValhallaMode) => void;
+	onDelete?: () => void;
+	onValhallaSettingsSelected?: () => void;
+};
+
 const VALHALLA_MODES = new Set(Object.keys(defaultValhallaModeKeyboardShortcuts));
 
 export class ModeKeyboardShortcutController {
@@ -27,9 +33,7 @@ export class ModeKeyboardShortcutController {
 		private terradraw: TerraDraw,
 		private controlContainer?: HTMLElement,
 		shortcuts?: ModeKeyboardShortcuts,
-		private onValhallaMode?: (mode: TerradrawValhallaMode) => void,
-		private onDelete?: () => void,
-		private onValhallaSettingsSelected?: () => void
+		private modeActions?: ModeActionsOptions
 	) {
 		const allDefaults: ModeKeyboardShortcuts = {
 			...defaultModeKeyboardShortcuts,
@@ -37,6 +41,7 @@ export class ModeKeyboardShortcutController {
 		};
 
 		this.shortcuts = shortcuts ? { ...allDefaults, ...shortcuts } : allDefaults;
+		this.modeActions = modeActions;
 	}
 
 	mount(): void {
@@ -68,7 +73,7 @@ export class ModeKeyboardShortcutController {
 			const [mode] = match;
 
 			if (VALHALLA_MODES.has(mode)) {
-				this.onValhallaMode?.(mode as TerradrawValhallaMode);
+				this.modeActions?.onValhallaMode?.(mode as TerradrawValhallaMode);
 			} else {
 				if (this.terradraw.enabled) {
 					this.terradraw.setMode(mode as TerradrawMode);
@@ -139,10 +144,9 @@ export class ModeKeyboardShortcutController {
 	}
 
 	private executeAction(action: ActionMode): void {
-		console.log(action);
 		switch (action) {
 			case 'delete': {
-				this.onDelete?.();
+				this.modeActions?.onDelete?.();
 				break;
 			}
 			case 'delete-selection': {
@@ -184,8 +188,8 @@ export class ModeKeyboardShortcutController {
 			}
 
 			case 'settings': {
-				console.log('Open Settings in valhalla');
-				this.onValhallaSettingsSelected?.();
+				this.modeActions?.onValhallaSettingsSelected?.();
+				break;
 			}
 		}
 	}
@@ -217,6 +221,10 @@ export class ModeKeyboardShortcutController {
 	destroy(): void {
 		if (this.handler) {
 			window.removeEventListener('keydown', this.handler);
+
+			if (this.terradraw?.enabled) {
+				this.terradraw.stop();
+			}
 		}
 	}
 

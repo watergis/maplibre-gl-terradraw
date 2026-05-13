@@ -255,8 +255,9 @@ export class MaplibreTerradrawControl implements IControl {
 			this.terradraw,
 			this.controlContainer as HTMLElement,
 			this.options?.keyboardShortcuts,
-			undefined,
-			() => this.handleDeleteAllFeatures()
+			{
+				onDelete: () => this.handleDeleteAllFeatures()
+			}
 		);
 
 		this.modeKeyboardShortcutController.mount();
@@ -474,6 +475,7 @@ export class MaplibreTerradrawControl implements IControl {
 		if (!this.terradraw.enabled) {
 			this.terradraw.start();
 		}
+
 		this.terradraw?.setMode(this.defaultMode);
 		this.syncButtonStates(this.defaultMode);
 	}

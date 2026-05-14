@@ -16,6 +16,7 @@ import type { MeasureControlOptions } from '../interfaces/MeasureControlOptions'
 import { defaultMeasureUnitSymbols } from './defaultMeasureUnitSymbols';
 import markerSvgUrl from '../../scss/icons/marker-grey.svg';
 import { MAPTERHORN_TILES } from './terrainSources';
+import { TerraDrawTextMode } from '../modes/TerraDrawTextMode';
 
 /**
  * Default MeasureControl options
@@ -34,6 +35,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 		'circle',
 		'freehand',
 		'freehand-linestring',
+		'text',
 		'select',
 		'delete-selection',
 		'delete',
@@ -264,8 +266,24 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 							deletable: true
 						}
 					}
+				},
+				text: {
+					feature: {
+						draggable: false
+					}
 				}
 			}
+		}),
+		text: new TerraDrawTextMode({
+			editable: true,
+			placeholder: 'Enter Label here...',
+			styles: {
+				textColor: '#000000',
+				textSize: 12,
+				textHaloWidth: 5,
+				textHaloColor: '#ffffff'
+			},
+			draggable: true
 		})
 	},
 	pointLayerLabelSpec: {

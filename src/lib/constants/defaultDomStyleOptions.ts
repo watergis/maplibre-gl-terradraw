@@ -34,9 +34,19 @@ export const defaultTextAreaWrapperStyleOptions = {
 	zIndex: '1000',
 	display: 'flex',
 	flexDirection: 'column',
-	minWidth: '140px',
+	minWidth: '200px',
 	maxWidth: '240px',
 	boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
 	borderRadius: '6px',
 	overflow: 'hidden'
+} as CSSStyleDeclaration;
+
+export const defaultTextAreaTooltipSpanStyleOptions = {
+	display: 'block',
+	padding: '3px 8px',
+	fontSize: '10px',
+	fontFamily: 'sans-serif',
+	color: '#888',
+	background: 'rgba(255,255,255,0.95)',
+	borderTop: '1px solid #e0e0e0'
 } as CSSStyleDeclaration;

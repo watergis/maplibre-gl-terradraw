@@ -1,4 +1,4 @@
-import type { TerradrawTextMode } from '../modes/TerradrawTextMode';
+import type { TerraDrawTextMode } from '../modes/TerraDrawTextMode';
 import {
 	TerraDrawAngledRectangleMode,
 	TerraDrawCircleMode,
@@ -32,4 +32,4 @@ export type TerradrawModeClass =
 	| TerraDrawSensorMode
 	| TerraDrawRenderMode
 	| TerraDrawSelectMode
-	| TerradrawTextMode;
+	| TerraDrawTextMode;

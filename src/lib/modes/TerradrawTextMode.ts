@@ -1,6 +1,7 @@
 import {
 	defaultSubmitButtonStyleOptions,
 	defaultTextAreaStyleOptions,
+	defaultTextAreaTooltipSpanStyleOptions,
 	defaultTextAreaWrapperStyleOptions
 } from '../constants';
 import {
@@ -44,7 +45,7 @@ export type TextModeOptions = {
 	domStyles?: DOMStyles;
 };
 
-export class TerradrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
+export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 	mode = 'text';
 
 	options?: TextModeOptions;
@@ -134,7 +135,8 @@ export class TerradrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 		Object.assign(wrapper.style, {
 			...textAreaWrapperStyles,
 			left: `${x}px`,
-			top: `${y + 8}px`
+			top: `${y}px`,
+			transform: 'translateY(-100%)'
 		});
 		return wrapper;
 	}
@@ -146,7 +148,7 @@ export class TerradrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 	private createTextAreaElement(currentText?: string): HTMLTextAreaElement {
 		const textarea = document.createElement('textarea');
 		textarea.placeholder = this.options?.placeholder ?? 'Enter label...';
-		textarea.rows = 3;
+		textarea.rows = 2;
 
 		if (currentText) {
 			textarea.value = currentText;
@@ -157,6 +159,13 @@ export class TerradrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 		Object.assign(textarea.style, textAreaStyles);
 
 		return textarea;
+	}
+
+	private createTextAreaTooltip(): HTMLSpanElement {
+		const span = document.createElement('span');
+		span.textContent = 'shift + enter to make new line';
+		Object.assign(span.style, this.createDomStyles('span'));
+		return span;
 	}
 
 	/**
@@ -187,7 +196,7 @@ export class TerradrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 	 * @returns
 	 */
 	private createDomStyles(
-		style: 'textArea' | 'submitButton' | 'textAreaWrapper'
+		style: 'textArea' | 'submitButton' | 'textAreaWrapper' | 'span'
 	): Partial<CSSStyleDeclaration> | undefined {
 		switch (style) {
 			case 'textArea':
@@ -202,6 +211,9 @@ export class TerradrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 
 			case 'textAreaWrapper':
 				return { ...defaultTextAreaWrapperStyleOptions };
+
+			case 'span':
+				return { ...defaultTextAreaTooltipSpanStyleOptions };
 
 			default:
 				break;
@@ -225,7 +237,10 @@ export class TerradrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 	): TextAreaPopup | undefined {
 		const wrapper = this.createTextAreaWrapper(x, y);
 		const textarea = this.createTextAreaElement(currentText);
+		const tooltip = this.createTextAreaTooltip();
 		const submitButton = this.createSubmitButton();
+
+		console.log(submitButton);
 
 		submitButton.disabled = !currentText;
 		submitButton.style.opacity = currentText ? '1' : '0.5';
@@ -249,6 +264,7 @@ export class TerradrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 		});
 
 		wrapper.appendChild(textarea);
+		wrapper.appendChild(tooltip);
 		wrapper.appendChild(submitButton);
 		this._mapContainer?.appendChild(wrapper);
 		textarea.focus();
@@ -270,6 +286,13 @@ export class TerradrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 			(text) => this.commitText(featureId, text),
 			() => this.dismissTextarea(true)
 		) as TextAreaPopup;
+
+		textarea.addEventListener('keydown', (e) => {
+			if (e.key === 'Enter' && !e.shiftKey) {
+				e.preventDefault();
+				this.commitText(featureId, textarea.value.trim());
+			}
+		});
 
 		this.activeWrapper = wrapper;
 		this.activeTextarea = textarea;
@@ -294,6 +317,13 @@ export class TerradrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 			() => this.dismissTextarea(false),
 			currentText
 		) as TextAreaPopup;
+
+		textarea.addEventListener('keydown', (e) => {
+			if (e.key === 'Enter' && !e.shiftKey) {
+				e.preventDefault();
+				this.commitText(featureId, textarea.value.trim());
+			}
+		});
 
 		this.activeWrapper = wrapper;
 		this.activeTextarea = textarea;
@@ -372,6 +402,10 @@ export class TerradrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 		]);
 
 		this.showTextarea(featureId as TerraDrawExtend.FeatureId, x, y);
+	}
+
+	onSelect(selectedId: TerraDrawExtend.FeatureId): void {
+		console.log(selectedId);
 	}
 
 	/**

@@ -26,7 +26,7 @@ import type {
 } from '../interfaces';
 import { defaultControlOptions, getDefaultModeOptions } from '../constants';
 import { capitalize, cleanMaplibreStyle, TERRADRAW_SOURCE_IDS, ModalDialog } from '../helpers';
-import type { TerradrawTextMode, TextModeStyling } from '../modes/TerradrawTextMode';
+import type { TerraDrawTextMode, TextModeStyling } from '../modes/TerraDrawTextMode';
 
 /**
  * Maplibre GL Terra Draw Control
@@ -235,8 +235,16 @@ export class MaplibreTerradrawControl implements IControl {
 		modes.forEach((m: TerradrawModeClass) => {
 			if (m.mode === 'text') {
 				const styles = defaultOptions[m.mode].styles;
-				const textMode = m as TerradrawTextMode;
+				const textMode = m as TerraDrawTextMode;
 				this.createTerradrawTextLayer(map, textMode, styles as Partial<TextModeStyling>);
+
+				// set on select styles
+				this.terradraw?.on('select', (featureId) => {
+					this.selectTextLabelLayer(featureId);
+				});
+				this.terradraw?.on('deselect', () => {
+					this.resetTextLabelLayer();
+				});
 			}
 		});
 
@@ -828,7 +836,7 @@ export class MaplibreTerradrawControl implements IControl {
 
 	protected createTerradrawTextLayer(
 		map: Map,
-		textModeInstance: TerradrawTextMode,
+		textModeInstance: TerraDrawTextMode,
 		styles?: TextModeStyling
 	) {
 		this.terradraw?.on('finish', () => {
@@ -856,6 +864,12 @@ export class MaplibreTerradrawControl implements IControl {
 		}
 	}
 
+	/**
+	 * Add Text Label Terradraw Features to the map
+	 * @param features
+	 * @param map
+	 * @param styles
+	 */
 	protected addFeaturesToSource(
 		features: GeoJSONStoreFeatures<GeoJSONStoreGeometries>[],
 		map: Map,
@@ -897,6 +911,72 @@ export class MaplibreTerradrawControl implements IControl {
 		}
 	}
 
+	/**
+	 * Apply styles to the currently selected text label
+	 * @param featureId
+	 * @returns
+	 */
+	protected selectTextLabelLayer(featureId: TerraDrawExtend.FeatureId) {
+		const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
+		const layerId = `${prefixId}-text-labels`;
+
+		if (!this.map?.style?.getLayer(layerId)) return;
+
+		const snapshot = this.terradraw?.getSnapshot() ?? [];
+		const textFeatures = snapshot.filter(
+			(f) => f.properties?.mode === 'text' && f.properties?.text
+		) as GeoJSONStoreFeatures<GeoJSONStoreGeometries>[];
+
+		// Refresh source so terra-draw's `selected` property is current in the layer data
+		const source = this.map?.getSource(`${prefixId}-text`) as GeoJSONSource | undefined;
+		source?.setData({ type: 'FeatureCollection', features: textFeatures });
+
+		const isTextFeature = textFeatures.some((f) => f.id === featureId);
+
+		if (isTextFeature) {
+			this.map?.setLayoutProperty(layerId, 'text-size', [
+				'case',
+				['==', ['get', 'selected'], true],
+				14,
+				12
+			]);
+			this.map?.setPaintProperty(layerId, 'text-halo-color', [
+				'case',
+				['==', ['get', 'selected'], true],
+				'#3f97e0',
+				'#ffffff'
+			]);
+		} else {
+			this.resetTextLabelLayer();
+		}
+	}
+
+	/**
+	 * Reset styles for a text label
+	 * @returns
+	 */
+	protected resetTextLabelLayer() {
+		const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
+		const layerId = `${prefixId}-text-labels`;
+
+		if (!this.map?.style?.getLayer(layerId)) return;
+
+		const snapshot = this.terradraw?.getSnapshot() ?? [];
+		const textFeatures = snapshot.filter(
+			(f) => f.properties?.mode === 'text' && f.properties?.text
+		) as GeoJSONStoreFeatures<GeoJSONStoreGeometries>[];
+
+		const source = this.map?.getSource(`${prefixId}-text`) as GeoJSONSource | undefined;
+		source?.setData({ type: 'FeatureCollection', features: textFeatures });
+
+		this.map?.setPaintProperty(layerId, 'text-color', '#000000');
+		this.map?.setPaintProperty(layerId, 'text-halo-color', '#ffffff');
+		this.map?.setPaintProperty(layerId, 'text-halo-width', 5);
+	}
+
+	/**
+	 * Remove text label layers and sources from the map
+	 */
 	protected clearTextLayers() {
 		const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
 		const source = this.map?.getSource(`${prefixId}-text`) as maplibregl.GeoJSONSource | undefined;

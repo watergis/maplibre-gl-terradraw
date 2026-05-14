@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { TerradrawTextMode } from './TerradrawTextMode';
+import { TerraDrawTextMode } from './TerraDrawTextMode';
 import {
 	defaultTextAreaStyleOptions,
 	defaultSubmitButtonStyleOptions,
@@ -38,7 +38,7 @@ const mockStore = () => ({
 const mockSetMapDragging = vi.fn();
 
 const mountMode = (options = {}) => {
-	const mode = new TerradrawTextMode(options);
+	const mode = new TerraDrawTextMode(options);
 
 	// mock internal TerraDraw base class methods
 	(mode as any).store = mockStore();
@@ -70,7 +70,7 @@ describe('MaplibreTerradrawTextMode', () => {
 	// 1. Lifecycle
 	describe('lifecycle', () => {
 		it('initialises with default options when none are passed', () => {
-			const mode = new TerradrawTextMode();
+			const mode = new TerraDrawTextMode();
 			expect(mode.mode).toBe('text');
 		});
 
@@ -168,7 +168,7 @@ describe('MaplibreTerradrawTextMode', () => {
 				'div'
 			) as HTMLTextAreaElement;
 			expect(textAreaWrapper.style.left).toBe('100px');
-			expect(textAreaWrapper.style.top).toBe('208px'); // y + 8
+			expect(textAreaWrapper.style.top).toBe('200px');
 		});
 
 		it('submit button is disabled when textarea is empty', () => {

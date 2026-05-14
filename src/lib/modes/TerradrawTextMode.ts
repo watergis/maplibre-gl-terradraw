@@ -113,6 +113,10 @@ export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 		this._onDragSync = fn;
 	}
 
+	/**
+	 * Get map container
+	 * @returns
+	 */
 	getMap(): HTMLElement | null {
 		return (
 			window.document.getElementById('map') ??
@@ -161,6 +165,9 @@ export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 		return textarea;
 	}
 
+	/**
+	 * @returns
+	 */
 	private createTextAreaTooltip(): HTMLSpanElement {
 		const span = document.createElement('span');
 		span.textContent = 'shift + enter to make new line';
@@ -402,10 +409,6 @@ export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 		]);
 
 		this.showTextarea(featureId as TerraDrawExtend.FeatureId, x, y);
-	}
-
-	onSelect(selectedId: TerraDrawExtend.FeatureId): void {
-		console.log(selectedId);
 	}
 
 	/**

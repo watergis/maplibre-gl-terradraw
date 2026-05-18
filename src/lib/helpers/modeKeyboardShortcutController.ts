@@ -58,7 +58,6 @@ export class ModeKeyboardShortcutController {
 				return;
 
 			// action modes first — may have held keys
-			console.log('Initializing event:', e);
 			if (this.initialiseModeActionKeyboardShortcuts(e)) return;
 
 			// mode switching — no held keys allowed
@@ -146,7 +145,6 @@ export class ModeKeyboardShortcutController {
 	}
 
 	private executeAction(action: ActionMode): void {
-		console.log(action);
 		switch (action) {
 			case 'delete': {
 				this.modeActions?.onDelete?.();
@@ -192,7 +190,6 @@ export class ModeKeyboardShortcutController {
 
 			case 'settings': {
 				this.modeActions?.onValhallaSettingsSelected?.();
-				console.log('Settings activated');
 				break;
 			}
 		}

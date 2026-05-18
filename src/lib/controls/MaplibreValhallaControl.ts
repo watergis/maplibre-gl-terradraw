@@ -315,6 +315,8 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 				onValhallaSettingsSelected: () => this.handleSettingDialog()
 			}
 		);
+
+		console.log('Valhalla added!');
 		this.modeKeyboardShortcutController.mount();
 		return this.controlContainer;
 	}

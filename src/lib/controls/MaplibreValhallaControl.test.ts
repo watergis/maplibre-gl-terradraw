@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { MaplibreValhallaControl } from './MaplibreValhallaControl';
 import type { StyleSpecification } from 'maplibre-gl';
 import { Map } from 'maplibre-gl';
@@ -22,11 +22,13 @@ vi.mock('../helpers/modalDialog', () => ({
 	ModalDialog: vi.fn().mockImplementation(function () {
 		return {
 			dialog: document.createElement('div'),
+			open: vi.fn(),
 			show: vi.fn(),
 			hide: vi.fn(),
 			destroy: vi.fn(),
 			create: vi.fn().mockReturnValue({
 				dialog: document.createElement('div'),
+				open: vi.fn(),
 				show: vi.fn(),
 				hide: vi.fn(),
 				destroy: vi.fn()
@@ -450,6 +452,14 @@ describe('keyboard shortcuts', () => {
 		mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
 	});
 
+	afterEach(() => {
+		// Destroy the keyboard controller to prevent listener accumulation across tests.
+		// Without this, old handlers fire first on action shortcuts (e.g. settings) and
+		// call e.preventDefault(), blocking the current test's handler.
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(testControl as any).modeKeyboardShortcutController?.destroy();
+	});
+
 	it('initializes modeKeyboardShortcutController after onAdd', () => {
 		testControl.onAdd(mockMap);
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -521,5 +531,106 @@ describe('keyboard shortcuts', () => {
 
 		fireKeydown('x');
 		expect(setValhallaSpy).toHaveBeenCalledWith('routing');
+	});
+
+	it('handleSettingDialog calls open on the settings dialog', () => {
+		testControl.onAdd(mockMap);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const openFn = (testControl as any)._modalDialog.open as ReturnType<typeof vi.fn>;
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(testControl as any).handleSettingDialog();
+		expect(openFn).toHaveBeenCalledOnce();
+	});
+
+	it('triggers onValhallaSettingsSelected when Meta+Shift+Y is pressed with no features on the map', () => {
+		testControl.onAdd(mockMap);
+
+		const settingsSpy = vi.fn();
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const controller = (testControl as any).modeKeyboardShortcutController;
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(controller as any).modeActions = {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			...(controller as any).modeActions,
+			onValhallaSettingsSelected: settingsSpy
+		};
+
+		// Invoke the handler directly to avoid accumulated window listeners from other tests
+		// setting e.defaultPrevented before our handler runs.
+		const event = new KeyboardEvent('keydown', {
+			key: 'y',
+			metaKey: true,
+			shiftKey: true,
+			bubbles: true,
+			cancelable: true
+		});
+		Object.defineProperty(event, 'target', {
+			value: { tagName: 'BODY', isContentEditable: false },
+			writable: false
+		});
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(controller as any).handler(event);
+
+		expect(settingsSpy).toHaveBeenCalledOnce();
+	});
+
+	it('triggers onValhallaSettingsSelected when Meta+Shift+Y is pressed with features on the map', () => {
+		testControl.onAdd(mockMap);
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const terradraw = (testControl as any).terradraw;
+		if (terradraw) {
+			vi.spyOn(terradraw, 'getSnapshot').mockReturnValue([{ id: '1', properties: {} }]);
+		}
+
+		const settingsSpy = vi.fn();
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const controller = (testControl as any).modeKeyboardShortcutController;
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(controller as any).modeActions = {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			...(controller as any).modeActions,
+			onValhallaSettingsSelected: settingsSpy
+		};
+
+		const event = new KeyboardEvent('keydown', {
+			key: 'y',
+			metaKey: true,
+			shiftKey: true,
+			bubbles: true,
+			cancelable: true
+		});
+		Object.defineProperty(event, 'target', {
+			value: { tagName: 'BODY', isContentEditable: false },
+			writable: false
+		});
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(controller as any).handler(event);
+
+		expect(settingsSpy).toHaveBeenCalledOnce();
+	});
+
+	it('does not trigger onValhallaSettingsSelected when Y is pressed without modifier keys', () => {
+		testControl.onAdd(mockMap);
+
+		const settingsSpy = vi.fn();
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const controller = (testControl as any).modeKeyboardShortcutController;
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(controller as any).modeActions = {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			...(controller as any).modeActions,
+			onValhallaSettingsSelected: settingsSpy
+		};
+
+		const event = new KeyboardEvent('keydown', { key: 'y', bubbles: true, cancelable: true });
+		Object.defineProperty(event, 'target', {
+			value: { tagName: 'BODY', isContentEditable: false },
+			writable: false
+		});
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(controller as any).handler(event);
+
+		expect(settingsSpy).not.toHaveBeenCalled();
 	});
 });

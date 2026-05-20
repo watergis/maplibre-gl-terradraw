@@ -325,7 +325,6 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 			}
 		);
 
-		console.log('Valhalla added!');
 		this.modeKeyboardShortcutController.mount();
 		return this.controlContainer;
 	}

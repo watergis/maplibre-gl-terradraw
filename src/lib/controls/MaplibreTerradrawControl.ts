@@ -22,8 +22,18 @@ import type {
 	TerradrawModeClass,
 	EventArgs
 } from '../interfaces';
-import { defaultControlOptions, getDefaultModeOptions } from '../constants';
-import { capitalize, cleanMaplibreStyle, TERRADRAW_SOURCE_IDS, ModalDialog } from '../helpers';
+import {
+	defaultControlOptions,
+	defaultModeKeyboardShortcuts,
+	getDefaultModeOptions
+} from '../constants';
+import {
+	capitalize,
+	cleanMaplibreStyle,
+	TERRADRAW_SOURCE_IDS,
+	ModalDialog,
+	ModeKeyboardShortcutController
+} from '../helpers';
 
 /**
  * Maplibre GL Terra Draw Control
@@ -105,6 +115,7 @@ export class MaplibreTerradrawControl implements IControl {
 
 	protected terradraw?: TerraDraw;
 	protected options: TerradrawControlOptions;
+	protected modeKeyboardShortcutController?: ModeKeyboardShortcutController;
 	protected events: {
 		[key: string]: [(event: EventArgs) => void];
 	} = {};
@@ -157,6 +168,7 @@ export class MaplibreTerradrawControl implements IControl {
 		if (this.options && this.options.modes && this.options.modes.length === 0) {
 			throw new Error('At least a mode must be enabled.');
 		}
+
 		this.map = map;
 
 		const defaultOptions = getDefaultModeOptions();
@@ -239,6 +251,17 @@ export class MaplibreTerradrawControl implements IControl {
 			this.controlContainer?.appendChild(ele);
 		});
 
+		this.modeKeyboardShortcutController = new ModeKeyboardShortcutController(
+			this.terradraw,
+			this.controlContainer as HTMLElement,
+			this.options?.keyboardShortcuts,
+			{
+				onDelete: () => this.handleDeleteAllFeatures()
+			}
+		);
+
+		this.modeKeyboardShortcutController.mount();
+
 		this.toggleButtonsWhenNoFeature();
 		this.terradraw?.on('finish', this.toggleButtonsWhenNoFeature.bind(this));
 		this.terradraw?.on('history', this.handleHistoryChange.bind(this));
@@ -261,6 +284,7 @@ export class MaplibreTerradrawControl implements IControl {
 		this.terradraw = undefined;
 		this.map = undefined;
 		this.controlContainer.parentNode.removeChild(this.controlContainer);
+		this.modeKeyboardShortcutController?.destroy();
 	}
 
 	/**
@@ -451,6 +475,7 @@ export class MaplibreTerradrawControl implements IControl {
 		if (!this.terradraw.enabled) {
 			this.terradraw.start();
 		}
+
 		this.terradraw?.setMode(this.defaultMode);
 		this.syncButtonStates(this.defaultMode);
 	}
@@ -479,7 +504,21 @@ export class MaplibreTerradrawControl implements IControl {
 			if (!this.isExpanded) {
 				btn.classList.add('hidden');
 			}
-			btn.title = capitalize(mode.replace(/-/g, ' '));
+
+			const keyboardShortcuts = this.options.keyboardShortcuts
+				? { ...defaultModeKeyboardShortcuts, ...this.options.keyboardShortcuts }
+				: defaultModeKeyboardShortcuts;
+
+			const shortcut = keyboardShortcuts?.[mode];
+			const shortcutTitle = shortcut
+				? [...shortcut.heldKeys.map((k: string) => capitalize(k)), shortcut.key.toUpperCase()].join(
+						'+'
+					)
+				: undefined;
+
+			btn.title = shortcutTitle
+				? `${capitalize(mode.replace(/-/g, ' '))} ( ${shortcutTitle} )`
+				: capitalize(mode.replace(/-/g, ' '));
 
 			if (mode === 'delete') {
 				btn.classList.add(`maplibregl-terradraw-${this.cssPrefix}${mode}-button`);
@@ -696,6 +735,7 @@ export class MaplibreTerradrawControl implements IControl {
 			`maplibregl-terradraw-${this.cssPrefix}download-button`,
 			`maplibregl-terradraw-${this.cssPrefix}delete-button`
 		];
+
 		for (const className of targets) {
 			const btns = this.controlContainer.getElementsByClassName(className);
 			for (let i = 0; i < btns.length; i++) {

@@ -1,5 +1,5 @@
 import { MaplibreTerradrawControl } from './MaplibreTerradrawControl';
-import { defaultValhallaControlOptions } from '../constants';
+import { defaultValhallaControlOptions, defaultValhallaModeKeyboardShortcuts } from '../constants';
 import type {
 	TerradrawMode,
 	TerradrawValhallaMode,
@@ -17,7 +17,12 @@ import {
 	type StyleSpecification,
 	type SymbolLayerSpecification
 } from 'maplibre-gl';
-import type { GeoJSONStoreFeatures, GeoJSONStoreGeometries, TerraDrawExtend } from 'terra-draw';
+import type {
+	GeoJSONStoreFeatures,
+	GeoJSONStoreGeometries,
+	TerraDraw,
+	TerraDrawExtend
+} from 'terra-draw';
 import {
 	debounce,
 	ModalDialog,
@@ -30,7 +35,8 @@ import {
 	cleanMaplibreStyle,
 	ValhallaIsochrone,
 	type Contour,
-	type ContourType
+	type ContourType,
+	ModeKeyboardShortcutController
 } from '../helpers';
 
 /**
@@ -219,7 +225,8 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 	constructor(options?: ValhallaControlOptions) {
 		let _options: ValhallaControlOptions = {
 			...JSON.parse(JSON.stringify(defaultValhallaControlOptions)),
-			modeOptions: { ...defaultValhallaControlOptions.modeOptions }
+			modeOptions: { ...defaultValhallaControlOptions.modeOptions },
+			keyboardShortcuts: { ...defaultValhallaModeKeyboardShortcuts }
 		};
 		if (options) {
 			_options = Object.assign(_options, options);
@@ -281,7 +288,8 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 			modes: _options.modes as unknown as TerradrawMode[],
 			open: _options.open,
 			modeOptions: _options.modeOptions,
-			adapterOptions: _options.adapterOptions
+			adapterOptions: _options.adapterOptions,
+			keyboardShortcuts: _options.keyboardShortcuts
 		});
 		this.valhallaOptions = _options.valhallaOptions as ValhallaOptions;
 
@@ -302,6 +310,22 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 	public onAdd(map: Map): HTMLElement {
 		this.controlContainer = super.onAdd(map);
 		this.createSettingsDialog();
+
+		if (this.modeKeyboardShortcutController) {
+			this.modeKeyboardShortcutController.destroy();
+		}
+
+		this.modeKeyboardShortcutController = new ModeKeyboardShortcutController(
+			this.terradraw as TerraDraw,
+			this.controlContainer,
+			this.options?.keyboardShortcuts,
+			{
+				onValhallaMode: (mode: TerradrawValhallaMode) => this.setValhallaMode(mode),
+				onValhallaSettingsSelected: () => this.handleSettingDialog()
+			}
+		);
+
+		this.modeKeyboardShortcutController.mount();
 		return this.controlContainer;
 	}
 
@@ -758,6 +782,9 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 			btn.classList.add(`maplibregl-terradraw-${this.cssPrefix}add-control`);
 			btn.classList.add(`maplibregl-terradraw-${this.cssPrefix}${mode}-button`);
 			btn.addEventListener('click', this.handleSettingDialog.bind(this));
+			btn.title = `${mode.charAt(0).toLocaleUpperCase()}${mode.slice(1, mode.length)}`;
+
+			super.syncButtonStates(mode);
 		} else {
 			super.addTerradrawButton(mode);
 		}
@@ -768,6 +795,19 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 	 */
 	private handleSettingDialog() {
 		this.settingDialog?.open();
+	}
+
+	protected setValhallaMode(mode: TerradrawValhallaMode): void {
+		const button = this.controlContainer?.querySelector(
+			`.maplibregl-terradraw-valhalla-add-${mode}-button`
+		) as HTMLButtonElement | null;
+
+		if (!button) {
+			console.warn(`MaplibreValhallaControl: no button found for mode "${mode}"`);
+			return;
+		}
+
+		button.click();
 	}
 
 	/**
@@ -1071,7 +1111,7 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 			costingModel,
 			this.isochroneContours
 		);
-		const updatedFeatures = fc.features.map((f) => {
+		const updatedFeatures = fc.features?.map((f) => {
 			f.id = `${id}-${f.properties.contour}`;
 			f.properties.originalId = id;
 			f.properties.mode = feature.properties.mode;
@@ -1312,8 +1352,8 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 
 		const features: GeoJSONStoreFeatures[] = [];
 
-		for (let i = 0; i < fc.features.length; i++) {
-			const feature = fc.features[i];
+		for (let i = 0; i < fc.features?.length; i++) {
+			const feature = fc.features?.[i];
 			const geomType = feature.geometry.type;
 			if (geomType === 'Point') {
 				const fid = feature.id;

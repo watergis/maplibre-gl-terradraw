@@ -804,3 +804,132 @@ describe('recalc method tests', () => {
 		expect(measurePolygonSpy).not.toHaveBeenCalled();
 	});
 });
+
+describe('keyboard shortcuts', () => {
+	function fireKeydown(
+		key: string,
+		modifiers: Partial<{
+			ctrlKey: boolean;
+			metaKey: boolean;
+			altKey: boolean;
+			shiftKey: boolean;
+		}> = {}
+	) {
+		const event = new KeyboardEvent('keydown', {
+			key,
+			bubbles: true,
+			cancelable: true,
+			...modifiers
+		});
+		Object.defineProperty(event, 'target', {
+			value: { tagName: 'BODY', isContentEditable: false },
+			writable: false
+		});
+		window.dispatchEvent(event);
+	}
+
+	let mockMap: InstanceType<typeof Map>;
+
+	beforeEach(() => {
+		mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+	});
+
+	it('initializes modeKeyboardShortcutController after onAdd', () => {
+		const testControl = new MaplibreMeasureControl({ modes: ['linestring'] });
+		testControl.onAdd(mockMap);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		expect((testControl as any).modeKeyboardShortcutController).toBeDefined();
+	});
+
+	it('destroys modeKeyboardShortcutController on onRemove', () => {
+		const testControl = new MaplibreMeasureControl({ modes: ['linestring'] });
+		const container = testControl.onAdd(mockMap);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const controller = (testControl as any).modeKeyboardShortcutController;
+		const destroySpy = vi.spyOn(controller, 'destroy');
+
+		const mockParentNode = { removeChild: vi.fn() };
+		Object.defineProperty(container, 'parentNode', { value: mockParentNode, writable: true });
+
+		testControl.onRemove();
+		expect(destroySpy).toHaveBeenCalled();
+	});
+
+	it('activates linestring mode when default shortcut key l is pressed', () => {
+		const testControl = new MaplibreMeasureControl({ modes: ['linestring'] });
+		testControl.onAdd(mockMap);
+		testControl.activate();
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const rawTerradraw = (testControl as any).terradraw;
+		rawTerradraw.setMode.mockClear();
+
+		fireKeydown('l');
+		expect(rawTerradraw.setMode).toHaveBeenCalledWith('linestring');
+	});
+
+	it('activates point mode when default shortcut key p is pressed', () => {
+		const testControl = new MaplibreMeasureControl({ modes: ['point'] });
+		testControl.onAdd(mockMap);
+		testControl.activate();
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const rawTerradraw = (testControl as any).terradraw;
+		rawTerradraw.setMode.mockClear();
+
+		fireKeydown('p');
+		expect(rawTerradraw.setMode).toHaveBeenCalledWith('point');
+	});
+
+	it('activates polygon mode when default shortcut key g is pressed', () => {
+		const testControl = new MaplibreMeasureControl({ modes: ['polygon'] });
+		testControl.onAdd(mockMap);
+		testControl.activate();
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const rawTerradraw = (testControl as any).terradraw;
+		rawTerradraw.setMode.mockClear();
+
+		fireKeydown('g');
+		expect(rawTerradraw.setMode).toHaveBeenCalledWith('polygon');
+	});
+
+	it('respects custom keyboard shortcut override for a mode', () => {
+		const testControl = new MaplibreMeasureControl({
+			modes: ['linestring'],
+			keyboardShortcuts: { linestring: { key: 'z', heldKeys: [] } }
+		});
+		testControl.onAdd(mockMap);
+		testControl.activate();
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const rawTerradraw = (testControl as any).terradraw;
+		rawTerradraw.setMode.mockClear();
+
+		fireKeydown('z');
+		expect(rawTerradraw.setMode).toHaveBeenCalledWith('linestring');
+	});
+
+	it('does not activate mode when ctrl key is held', () => {
+		const testControl = new MaplibreMeasureControl({ modes: ['linestring'] });
+		testControl.onAdd(mockMap);
+		testControl.activate();
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const rawTerradraw = (testControl as any).terradraw;
+		rawTerradraw.setMode.mockClear();
+
+		fireKeydown('l', { ctrlKey: true });
+		expect(rawTerradraw.setMode).not.toHaveBeenCalledWith('linestring');
+	});
+
+	it('shows default shortcut key in button title', () => {
+		const testControl = new MaplibreMeasureControl({ modes: ['linestring'] });
+		const controlElement = testControl.onAdd(mockMap);
+
+		const linestringButton = controlElement.querySelector(
+			'.maplibregl-terradraw-measure-add-linestring-button'
+		);
+		expect(linestringButton?.getAttribute('title')).toContain('L');
+	});
+});

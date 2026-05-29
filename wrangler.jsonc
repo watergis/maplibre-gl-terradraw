@@ -1,7 +1,0 @@
-{
-	"name": "maplibre-gl-terradraw",
-	"compatibility_date": "2026-05-30",
-	"assets": {
-		"directory": ".svelte-kit/cloudflare"
-	}
-}

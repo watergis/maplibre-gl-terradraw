@@ -5,8 +5,9 @@ import authorsJson from './authors.json';
 
 export type AuthorsMap = Record<string, string>;
 
-export const load: LayoutServerLoad = async ({ fetch }) => {
+export const load: LayoutServerLoad = async ({ fetch, platform }) => {
 	const authors = authorsJson as AuthorsMap;
+	const platformEnv = (platform as { env?: { PROTOMAP_KEY?: string } } | undefined)?.env;
 
 	const packageInfo = await getPackageInfo();
 
@@ -35,7 +36,8 @@ export const load: LayoutServerLoad = async ({ fetch }) => {
 		return a.title.localeCompare(b.title);
 	});
 
-	const PROTOMAP_KEY = env.PROTOMAP_KEY ? `?key=${env.PROTOMAP_KEY}` : '';
+	const protomapKeyValue = platformEnv?.PROTOMAP_KEY ?? env.PROTOMAP_KEY ?? '';
+	const PROTOMAP_KEY = protomapKeyValue ? `?key=${protomapKeyValue}` : '';
 
 	const styles = [
 		{

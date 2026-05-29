@@ -84,7 +84,7 @@
 		"postcss-cli": "^11.0.1",
 		"postcss-url": "^10.1.4",
 		"prettier": "^3.8.3",
-		"prettier-plugin-svelte": "^3.5.2",
+		"prettier-plugin-svelte": "^4.0.0",
 		"publint": "^0.3.21",
 		"sass": "^1.100.0",
 		"sass-embedded": "^1.100.0",

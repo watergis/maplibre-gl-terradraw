@@ -3,6 +3,8 @@ allowBuilds:
   core-js: true
   esbuild: true
   lefthook: true
+  sharp: true
+  workerd: true
 minimumReleaseAgeExclude:
   - '@eslint/plugin-kit@0.7.2'
   - dependency-cruiser@17.4.3

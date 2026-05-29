@@ -167,6 +167,9 @@ importers:
       vitest:
         specifier: ^4.1.7
         version: 4.1.7(@types/node@25.9.1)(@vitest/coverage-v8@4.1.7)(jsdom@29.1.1)(vite@8.0.14(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(sass-embedded@1.100.0)(sass@1.100.0)(tsx@4.22.3)(yaml@2.9.0))
+      wrangler:
+        specifier: ^4.95.0
+        version: 4.95.0(@cloudflare/workers-types@4.20260528.1)
 
 packages:
 

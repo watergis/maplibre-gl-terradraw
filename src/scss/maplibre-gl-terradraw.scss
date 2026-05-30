@@ -42,6 +42,13 @@
 	background-size: 150%;
 }
 
+.maplibregl-terradraw-text-mode-submit-button {
+	background: url('./icons/submit.svg');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 50%;
+}
+
 .maplibregl-terradraw-valhalla-add-time-isochrone-button {
 	background: url('./icons/valhalla_time_isochrone.svg');
 	background-position: center;
@@ -138,6 +145,15 @@
 	&:disabled {
 		background-color: rgb(235, 235, 228);
 	}
+}
+
+.maplibregl-terradraw-valhalla-add-text-button,
+.maplibregl-terradraw-measure-add-text-button,
+.maplibregl-terradraw-add-text-button {
+	background: url('./icons/text.svg');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 80%;
 }
 
 .maplibregl-terradraw-measure-add-sensor-button,

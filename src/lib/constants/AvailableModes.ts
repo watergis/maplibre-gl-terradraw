@@ -21,6 +21,7 @@ export const AvailableModes = [
 	'angled-rectangle',
 	'sensor',
 	'sector',
+	'text',
 	'select',
 	'delete-selection',
 	'delete',

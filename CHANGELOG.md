@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.13.2
+
+### Patch Changes
+
+- bec501c: chore: upgrade terra-draw to 1.31.0 and terra-draw-maplibre-gl-adapter to 1.4.1
+
 ## 1.13.1
 
 ### Patch Changes

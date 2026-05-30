@@ -7,6 +7,9 @@ export default defineConfig({
 	build: {
 		minify: 'esbuild'
 	},
+	ssr: {
+		noExternal: 'maplibre-gl'
+	},
 	server: {
 		fs: {
 			allow: ['./dist']

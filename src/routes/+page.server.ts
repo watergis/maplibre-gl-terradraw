@@ -1,19 +1,30 @@
 import type { GeoJSONStoreFeatures } from 'terra-draw';
 import type { PageServerLoad } from './$types';
+import { fetchStaticAsset } from './helpers';
 
-export const load: PageServerLoad = async ({ fetch, parent }) => {
+export const load: PageServerLoad = async ({ fetch, parent, platform, url }) => {
 	const { metadata, styles } = await parent();
 
 	const getExample = async (type: 'cdn' | 'npm') => {
 		if (type === 'cdn') {
-			const res = await fetch(`/assets/maplibre-cdn-example.txt`);
+			const res = await fetchStaticAsset({
+				fetch,
+				url,
+				platform,
+				path: '/assets/maplibre-cdn-example.txt'
+			});
 			const text = await res.text();
 			return text.replace(
 				/..\/..\//g,
 				`https://cdn.jsdelivr.net/npm/${metadata.packageName}@${metadata.version}/`
 			);
 		} else {
-			const res = await fetch(`/assets/maplibre-npm-example.txt`);
+			const res = await fetchStaticAsset({
+				fetch,
+				url,
+				platform,
+				path: '/assets/maplibre-npm-example.txt'
+			});
 			const text = await res.text();
 			return text.replace(/{style}/g, styles[0].uri);
 		}

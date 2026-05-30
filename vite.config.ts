@@ -5,10 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
 	plugins: [tailwindcss(), sveltekit()],
 	build: {
-		minify: false
-	},
-	ssr: {
-		noExternal: 'maplibre-gl'
+		minify: 'esbuild'
 	},
 	server: {
 		fs: {

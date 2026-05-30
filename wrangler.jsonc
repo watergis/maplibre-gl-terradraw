@@ -6,7 +6,8 @@
 	"main": ".svelte-kit/cloudflare/_worker.js",
 	"assets": {
 		"binding": "ASSETS",
-		"directory": ".svelte-kit/cloudflare"
+		"directory": ".svelte-kit/cloudflare",
+		"run_worker_first": ["/api/*"]
 	},
 	"workers_dev": true,
 	"preview_urls": true,

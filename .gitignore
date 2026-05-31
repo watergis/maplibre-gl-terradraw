@@ -28,3 +28,4 @@ vite.config.ts.timestamp-*
 /blob-report/
 /playwright/.cache/
 /coverage
+.wrangler

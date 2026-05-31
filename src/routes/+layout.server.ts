@@ -1,18 +1,31 @@
-import { exampleIds, getDescription, getPackageInfo, getTitle, getTags } from './helpers';
+import {
+	exampleIds,
+	fetchStaticAsset,
+	getDescription,
+	getPackageInfo,
+	getTitle,
+	getTags
+} from './helpers';
 import type { LayoutServerLoad } from './$types';
 import { env } from '$env/dynamic/private';
 import authorsJson from './authors.json';
 
 export type AuthorsMap = Record<string, string>;
 
-export const load: LayoutServerLoad = async ({ fetch }) => {
+export const load: LayoutServerLoad = async ({ fetch, platform, url }) => {
 	const authors = authorsJson as AuthorsMap;
+	const platformEnv = (platform as { env?: { PROTOMAP_KEY?: string } } | undefined)?.env;
 
 	const packageInfo = await getPackageInfo();
 
 	const examples = [];
 	for (const item of exampleIds) {
-		const res = await fetch(`/api/examples/${item}`);
+		const res = await fetchStaticAsset({
+			fetch,
+			url,
+			platform,
+			path: `/assets/examples/${item}.htm`
+		});
 		if (!res.ok) continue;
 		const html = await res.text();
 
@@ -35,7 +48,8 @@ export const load: LayoutServerLoad = async ({ fetch }) => {
 		return a.title.localeCompare(b.title);
 	});
 
-	const PROTOMAP_KEY = env.PROTOMAP_KEY ? `?key=${env.PROTOMAP_KEY}` : '';
+	const protomapKeyValue = platformEnv?.PROTOMAP_KEY ?? env.PROTOMAP_KEY ?? '';
+	const PROTOMAP_KEY = protomapKeyValue ? `?key=${protomapKeyValue}` : '';
 
 	const styles = [
 		{

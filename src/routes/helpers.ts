@@ -1,5 +1,15 @@
 import pkg from '../../package.json' with { type: 'json' };
 
+type AssetsBinding = {
+	fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
+};
+
+type PlatformWithAssets = {
+	env?: {
+		ASSETS?: AssetsBinding;
+	};
+};
+
 export const exampleIds = [
 	'measure-control',
 	'measure-control-custom-font',
@@ -57,4 +67,25 @@ export const getPackageInfo = async () => {
 			version: 'latest'
 		};
 	}
+};
+
+export const fetchStaticAsset = async ({
+	fetch,
+	url,
+	platform,
+	path
+}: {
+	fetch: typeof globalThis.fetch;
+	url: URL;
+	platform?: unknown;
+	path: string;
+}) => {
+	const assetUrl = new URL(path, url).toString();
+	const assets = (platform as PlatformWithAssets | undefined)?.env?.ASSETS;
+
+	if (assets) {
+		return assets.fetch(assetUrl);
+	}
+
+	return fetch(assetUrl);
 };

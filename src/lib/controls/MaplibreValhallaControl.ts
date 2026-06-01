@@ -9,6 +9,7 @@ import {
 } from 'maplibre-gl';
 import type { GeoJSONStoreFeatures, TerraDraw, TerraDrawExtend } from 'terra-draw';
 import {
+	capitalize,
 	debounce,
 	ModalDialog,
 	routingDistanceUnitOptions,
@@ -312,7 +313,9 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 			this.options?.keyboardShortcuts,
 			{
 				onValhallaMode: (mode: TerradrawValhallaMode) => this.setValhallaMode(mode),
-				onValhallaSettingsSelected: () => this.handleSettingDialog()
+				onValhallaSettingsSelected: () => this.handleSettingDialog(),
+				onDelete: () => this.handleDeleteAllFeatures(),
+				onDeleteSelected: () => this.handleDeleteSelectedFeatures()
 			}
 		);
 
@@ -763,7 +766,17 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 			btn.classList.add(`maplibregl-terradraw-${this.cssPrefix}add-control`);
 			btn.classList.add(`maplibregl-terradraw-${this.cssPrefix}${mode}-button`);
 			btn.addEventListener('click', this.handleSettingDialog.bind(this));
-			btn.title = `${mode.charAt(0).toLocaleUpperCase()}${mode.slice(1, mode.length)}`;
+
+			const keyboardShortcuts = this.options.keyboardShortcuts
+				? { ...defaultValhallaModeKeyboardShortcuts, ...this.options.keyboardShortcuts }
+				: defaultValhallaModeKeyboardShortcuts;
+			const shortcut = keyboardShortcuts?.['settings'];
+			const shortcutTitle = shortcut
+				? [...shortcut.heldKeys.map((k: string) => capitalize(k)), shortcut.key.toUpperCase()].join(
+						'+'
+					)
+				: undefined;
+			btn.title = shortcutTitle ? `Settings ( ${shortcutTitle} )` : 'Settings';
 
 			super.syncButtonStates(mode);
 		} else {

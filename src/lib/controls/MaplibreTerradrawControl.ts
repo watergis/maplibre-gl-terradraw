@@ -256,7 +256,9 @@ export class MaplibreTerradrawControl implements IControl {
 			this.controlContainer as HTMLElement,
 			this.options?.keyboardShortcuts,
 			{
-				onDelete: () => this.handleDeleteAllFeatures()
+				onDelete: () => this.handleDeleteAllFeatures(),
+				onDeleteSelected: () => this.handleDeleteSelectedFeatures(),
+				onDownload: () => this.handleDownload()
 			}
 		);
 
@@ -686,6 +688,8 @@ export class MaplibreTerradrawControl implements IControl {
 	 * Delete selected features from the store
 	 */
 	protected handleDeleteSelectedFeatures(): void {
+		console.log(this.terradraw, this.terradraw?.enabled);
+
 		if (!this.terradraw) return;
 		if (!this.terradraw.enabled) return;
 

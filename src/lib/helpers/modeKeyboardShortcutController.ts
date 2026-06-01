@@ -18,9 +18,11 @@ const ACTION_MODES = new Set([
 type ActionMode = typeof ACTION_MODES extends Set<infer T> ? T : never;
 
 type ModeActionsOptions = {
-	onValhallaMode?: (mode: TerradrawValhallaMode) => void;
 	onDelete?: () => void;
+	onDeleteSelected?: () => void;
+	onValhallaMode?: (mode: TerradrawValhallaMode) => void;
 	onValhallaSettingsSelected?: () => void;
+	onDownload?: () => void;
 };
 
 const VALHALLA_MODES = new Set(Object.keys(defaultValhallaModeKeyboardShortcuts));
@@ -148,30 +150,18 @@ export class ModeKeyboardShortcutController {
 		switch (action) {
 			case 'delete': {
 				this.modeActions?.onDelete?.();
+				this.syncButtonStates(this.terradraw.getMode());
 				break;
 			}
+
 			case 'delete-selection': {
-				const selected = this.terradraw.getSnapshot().filter((f) => f.properties?.selected);
-				const ids = selected.map((f) => f.id);
-				if (ids.length) {
-					this.terradraw.removeFeatures(ids as string[]);
-					this.syncButtonStates(this.terradraw.getMode());
-				}
+				this.modeActions?.onDeleteSelected?.();
+				this.syncButtonStates(this.terradraw.getMode());
 				break;
 			}
+
 			case 'download': {
-				const fc = {
-					type: 'FeatureCollection',
-					features: this.terradraw.getSnapshot()
-				};
-				const dataStr =
-					'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(fc));
-				const a = document.createElement('a');
-				a.setAttribute('href', dataStr);
-				a.setAttribute('download', 'data.geojson');
-				document.body.appendChild(a);
-				a.click();
-				a.remove();
+				this.modeActions?.onDownload?.();
 				break;
 			}
 
@@ -181,6 +171,7 @@ export class ModeKeyboardShortcutController {
 				}
 				break;
 			}
+
 			case 'redo': {
 				if (this.terradraw.canRedo()) {
 					this.terradraw.redo();

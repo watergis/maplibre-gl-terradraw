@@ -10,7 +10,11 @@ function createMockTerraDraw() {
 		getMode: vi.fn(),
 		stop: vi.fn(),
 		getSnapshot: vi.fn(),
-		removeFeatures: vi.fn()
+		removeFeatures: vi.fn(),
+		undo: vi.fn(),
+		redo: vi.fn(),
+		canUndo: vi.fn(),
+		canRedo: vi.fn()
 	};
 }
 
@@ -326,7 +330,7 @@ describe('ModeKeyboardShortcutController', () => {
 		});
 	});
 
-	// 7. Mode Action Activation(delete and delete-selectio n)
+	// 7. Mode Action Activation (delete and delete-selection)
 	describe('mode action shortcuts', () => {
 		it('does not delete when Backspace is pressed with no selected features', () => {
 			(draw.getSnapshot as ReturnType<typeof vi.fn>).mockReturnValue([]);
@@ -339,28 +343,35 @@ describe('ModeKeyboardShortcutController', () => {
 			controller.destroy();
 		});
 
-		it('deletes selected features on Shift+Backspace', () => {
+		it('calls onDeleteSelected when Shift+Backspace is pressed with features', () => {
 			(draw.getSnapshot as ReturnType<typeof vi.fn>).mockReturnValue([
 				{ id: '1', properties: {} },
 				{ id: '2', properties: { selected: true } }
 			]);
+			const onDeleteSelected = vi.fn();
 
-			const controller = new ModeKeyboardShortcutController(draw as any);
+			const controller = new ModeKeyboardShortcutController(draw as any, undefined, undefined, {
+				onDeleteSelected
+			});
 			controller.mount();
 
 			window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Backspace', shiftKey: true }));
-			expect(draw.removeFeatures).toHaveBeenCalledWith(['2']);
+			expect(onDeleteSelected).toHaveBeenCalledOnce();
 
 			controller.destroy();
 		});
 
-		it('does not delete all when Shift+Backspace is pressed with no features', () => {
+		it('does not call onDeleteSelected when Shift+Backspace is pressed with no features', () => {
 			(draw.getSnapshot as ReturnType<typeof vi.fn>).mockReturnValue([]);
-			const controller = new ModeKeyboardShortcutController(draw as any, undefined);
+			const onDeleteSelected = vi.fn();
+
+			const controller = new ModeKeyboardShortcutController(draw as any, undefined, undefined, {
+				onDeleteSelected
+			});
 			controller.mount();
 
 			window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Backspace', shiftKey: true }));
-			expect(draw.removeFeatures).not.toHaveBeenCalled();
+			expect(onDeleteSelected).not.toHaveBeenCalled();
 
 			controller.destroy();
 		});
@@ -420,6 +431,206 @@ describe('ModeKeyboardShortcutController', () => {
 			expect(draw.removeFeatures).not.toHaveBeenCalled();
 
 			textarea.remove();
+			controller.destroy();
+		});
+	});
+
+	// 8. Delete action (onDelete callback)
+	describe('delete action', () => {
+		it('calls onDelete when Backspace is pressed and features exist', () => {
+			(draw.getSnapshot as ReturnType<typeof vi.fn>).mockReturnValue([{ id: '1', properties: {} }]);
+			const onDelete = vi.fn();
+			const controller = new ModeKeyboardShortcutController(draw as any, undefined, undefined, {
+				onDelete
+			});
+			controller.mount();
+
+			fireKeydown('Backspace');
+			expect(onDelete).toHaveBeenCalledOnce();
+
+			controller.destroy();
+		});
+
+		it('does not call onDelete when Backspace is pressed with no features', () => {
+			(draw.getSnapshot as ReturnType<typeof vi.fn>).mockReturnValue([]);
+			const onDelete = vi.fn();
+			const controller = new ModeKeyboardShortcutController(draw as any, undefined, undefined, {
+				onDelete
+			});
+			controller.mount();
+
+			fireKeydown('Backspace');
+			expect(onDelete).not.toHaveBeenCalled();
+
+			controller.destroy();
+		});
+	});
+
+	// 9. Download action
+	describe('download action', () => {
+		it('calls onDownload when D is pressed with features', () => {
+			(draw.getSnapshot as ReturnType<typeof vi.fn>).mockReturnValue([
+				{
+					id: '1',
+					type: 'Feature',
+					properties: {},
+					geometry: { type: 'Point', coordinates: [0, 0] }
+				}
+			]);
+			const onDownload = vi.fn();
+
+			const controller = new ModeKeyboardShortcutController(draw as any, undefined, undefined, {
+				onDownload
+			});
+			controller.mount();
+
+			fireKeydown('d');
+			expect(onDownload).toHaveBeenCalledOnce();
+
+			controller.destroy();
+		});
+
+		it('does not call onDownload when D is pressed with no features', () => {
+			(draw.getSnapshot as ReturnType<typeof vi.fn>).mockReturnValue([]);
+			const onDownload = vi.fn();
+
+			const controller = new ModeKeyboardShortcutController(draw as any, undefined, undefined, {
+				onDownload
+			});
+			controller.mount();
+
+			fireKeydown('d');
+			expect(onDownload).not.toHaveBeenCalled();
+
+			controller.destroy();
+		});
+	});
+
+	// 10. Undo action
+	describe('undo action', () => {
+		it('calls terradraw.undo() when Cmd+Z is pressed and canUndo returns true', () => {
+			(draw.canUndo as ReturnType<typeof vi.fn>).mockReturnValue(true);
+
+			const controller = new ModeKeyboardShortcutController(draw as any);
+			controller.mount();
+
+			fireKeydown('z', { metaKey: true });
+			expect(draw.undo).toHaveBeenCalledOnce();
+
+			controller.destroy();
+		});
+
+		it('does not call terradraw.undo() when Cmd+Z is pressed but canUndo returns false', () => {
+			(draw.canUndo as ReturnType<typeof vi.fn>).mockReturnValue(false);
+
+			const controller = new ModeKeyboardShortcutController(draw as any);
+			controller.mount();
+
+			fireKeydown('z', { metaKey: true });
+			expect(draw.undo).not.toHaveBeenCalled();
+
+			controller.destroy();
+		});
+
+		it('calls undo even when the canvas has no features', () => {
+			(draw.canUndo as ReturnType<typeof vi.fn>).mockReturnValue(true);
+			(draw.getSnapshot as ReturnType<typeof vi.fn>).mockReturnValue([]);
+
+			const controller = new ModeKeyboardShortcutController(draw as any);
+			controller.mount();
+
+			fireKeydown('z', { metaKey: true });
+			expect(draw.undo).toHaveBeenCalledOnce();
+
+			controller.destroy();
+		});
+
+		it('does not call undo when the event was already defaultPrevented', () => {
+			(draw.canUndo as ReturnType<typeof vi.fn>).mockReturnValue(true);
+
+			const controller = new ModeKeyboardShortcutController(draw as any);
+			controller.mount();
+
+			const event = new KeyboardEvent('keydown', {
+				key: 'z',
+				metaKey: true,
+				cancelable: true,
+				bubbles: true
+			});
+			Object.defineProperty(event, 'target', {
+				value: { tagName: 'BODY', isContentEditable: false },
+				writable: false
+			});
+			event.preventDefault();
+			window.dispatchEvent(event);
+
+			expect(draw.undo).not.toHaveBeenCalled();
+
+			controller.destroy();
+		});
+	});
+
+	// 11. Redo action
+	describe('redo action', () => {
+		it('calls terradraw.redo() when Cmd+Shift+Z is pressed and canRedo returns true', () => {
+			(draw.canRedo as ReturnType<typeof vi.fn>).mockReturnValue(true);
+
+			const controller = new ModeKeyboardShortcutController(draw as any);
+			controller.mount();
+
+			fireKeydown('z', { metaKey: true, shiftKey: true });
+			expect(draw.redo).toHaveBeenCalledOnce();
+
+			controller.destroy();
+		});
+
+		it('does not call terradraw.redo() when Cmd+Shift+Z is pressed but canRedo returns false', () => {
+			(draw.canRedo as ReturnType<typeof vi.fn>).mockReturnValue(false);
+
+			const controller = new ModeKeyboardShortcutController(draw as any);
+			controller.mount();
+
+			fireKeydown('z', { metaKey: true, shiftKey: true });
+			expect(draw.redo).not.toHaveBeenCalled();
+
+			controller.destroy();
+		});
+
+		it('calls redo even when the canvas has no features', () => {
+			(draw.canRedo as ReturnType<typeof vi.fn>).mockReturnValue(true);
+			(draw.getSnapshot as ReturnType<typeof vi.fn>).mockReturnValue([]);
+
+			const controller = new ModeKeyboardShortcutController(draw as any);
+			controller.mount();
+
+			fireKeydown('z', { metaKey: true, shiftKey: true });
+			expect(draw.redo).toHaveBeenCalledOnce();
+
+			controller.destroy();
+		});
+
+		it('does not call redo when the event was already defaultPrevented', () => {
+			(draw.canRedo as ReturnType<typeof vi.fn>).mockReturnValue(true);
+
+			const controller = new ModeKeyboardShortcutController(draw as any);
+			controller.mount();
+
+			const event = new KeyboardEvent('keydown', {
+				key: 'z',
+				metaKey: true,
+				shiftKey: true,
+				cancelable: true,
+				bubbles: true
+			});
+			Object.defineProperty(event, 'target', {
+				value: { tagName: 'BODY', isContentEditable: false },
+				writable: false
+			});
+			event.preventDefault();
+			window.dispatchEvent(event);
+
+			expect(draw.redo).not.toHaveBeenCalled();
+
 			controller.destroy();
 		});
 	});

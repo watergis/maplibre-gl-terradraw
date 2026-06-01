@@ -124,6 +124,7 @@ export class ModeKeyboardShortcutController {
 				? e.key === 'Backspace'
 				: shortcut.key.toLowerCase() === e.key.toLowerCase();
 
+		const lk = shortcut.heldKeys.map((k) => k.toLowerCase());
 		const heldKeysMatch =
 			shortcut.heldKeys.length === 0
 				? !e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey
@@ -141,7 +142,10 @@ export class ModeKeyboardShortcutController {
 							default:
 								return false;
 						}
-					});
+					}) &&
+					// prevent extra shift/alt from matching a shortcut that doesn't require them
+					(lk.includes('shift') || !e.shiftKey) &&
+					(lk.includes('alt') || !e.altKey);
 
 		return keyMatches && heldKeysMatch;
 	}

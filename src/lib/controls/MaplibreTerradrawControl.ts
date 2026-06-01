@@ -688,8 +688,6 @@ export class MaplibreTerradrawControl implements IControl {
 	 * Delete selected features from the store
 	 */
 	protected handleDeleteSelectedFeatures(): void {
-		console.log(this.terradraw, this.terradraw?.enabled);
-
 		if (!this.terradraw) return;
 		if (!this.terradraw.enabled) return;
 

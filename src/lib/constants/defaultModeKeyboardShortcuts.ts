@@ -71,6 +71,6 @@ export const defaultModeKeyboardShortcuts: ModeKeyboardShortcuts = {
 	},
 	redo: {
 		key: 'z',
-		heldKeys: ['meta', 'shift']
+		heldKeys: ['shift', 'meta']
 	}
 };

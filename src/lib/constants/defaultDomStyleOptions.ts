@@ -14,7 +14,7 @@ export const defaultTextAreaStyleOptions = {
 } as CSSStyleDeclaration;
 
 export const defaultSubmitButtonStyleOptions = {
-	padding: '8px',
+	padding: '8px 10px',
 	fontSize: '11px',
 	fontFamily: 'sans-serif',
 	backgroundColor: '#3F97E0',

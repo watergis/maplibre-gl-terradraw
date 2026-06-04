@@ -136,7 +136,7 @@
 		"url": "https://github.com/watergis/maplibre-gl-terradraw/issues"
 	},
 	"homepage": "https://github.com/watergis/maplibre-gl-terradraw#readme",
-	"packageManager": "pnpm@11.5.0",
+	"packageManager": "pnpm@11.5.1",
 	"engines": {
 		"pnpm": "^11.0.0"
 	}

@@ -62,9 +62,12 @@ vi.mock('terra-draw', () => ({
 		return { mode: 'sensor' };
 	}),
 	ValidateNotSelfIntersecting: vi.fn(),
-	TerraDrawExtend: vi.fn().mockImplementation(function () {
-		return {};
-	}),
+	TerraDrawExtend: {
+		TerraDrawBaseDrawMode: class {
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			constructor(_options?: unknown) {}
+		}
+	},
 	TerraDrawModeUndoRedo: vi.fn().mockImplementation(function () {
 		return {};
 	}),

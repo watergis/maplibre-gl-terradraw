@@ -17,6 +17,7 @@ import {
 	type GeoJSONStoreFeatures
 } from 'terra-draw';
 import markerSvgUrl from '../../scss/icons/marker-blue.svg';
+import { TerraDrawTextMode } from '../modes/TerraDrawTextMode';
 
 /**
  * Validation function for polygon features to prevent self-intersecting polygons
@@ -180,6 +181,23 @@ export const getDefaultModeOptions = () => {
 							deletable: true
 						}
 					}
+				},
+				text: {
+					feature: {
+						draggable: false
+					}
+				}
+			},
+			styles: {
+				selectedPointColor: (feature: GeoJSONStoreFeatures) => {
+					if (feature.properties.mode === 'text') {
+						return '#FFFFFF';
+					}
+				},
+				selectedPointWidth: (feature: GeoJSONStoreFeatures) => {
+					if (feature.properties.mode === 'text') {
+						return 0;
+					}
 				}
 			}
 		}),
@@ -202,6 +220,17 @@ export const getDefaultModeOptions = () => {
 		redo: new TerraDrawRenderMode({
 			modeName: 'redo',
 			styles: {}
+		}),
+		text: new TerraDrawTextMode({
+			editable: true,
+			placeholder: 'Enter Label here...',
+			styles: {
+				textColor: '#000000',
+				textSize: 12,
+				textHaloWidth: 5,
+				textHaloColor: '#ffffff'
+			},
+			draggable: true
 		})
 	};
 	return modeOptions;

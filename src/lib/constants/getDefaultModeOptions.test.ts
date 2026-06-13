@@ -21,6 +21,7 @@ describe('getDefaultModeOptions', () => {
 		expect(modeOptions).toHaveProperty('delete');
 		expect(modeOptions).toHaveProperty('delete-selection');
 		expect(modeOptions).toHaveProperty('download');
+		expect(modeOptions).toHaveProperty('text');
 	});
 
 	it('should return instances with expected mode properties', () => {
@@ -41,6 +42,7 @@ describe('getDefaultModeOptions', () => {
 		expect(modeOptions.delete).toHaveProperty('mode', 'delete');
 		expect(modeOptions['delete-selection']).toHaveProperty('mode', 'delete-selection');
 		expect(modeOptions.download).toHaveProperty('mode', 'download');
+		expect(modeOptions.text).toHaveProperty('mode', 'text');
 	});
 });
 

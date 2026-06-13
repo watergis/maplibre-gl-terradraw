@@ -34,6 +34,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 		'circle',
 		'freehand',
 		'freehand-linestring',
+		'text',
 		'select',
 		'delete-selection',
 		'delete',
@@ -263,6 +264,11 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 							draggable: true,
 							deletable: true
 						}
+					}
+				},
+				text: {
+					feature: {
+						draggable: false
 					}
 				}
 			}

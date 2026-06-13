@@ -6,6 +6,7 @@ import type {
 	TerraDrawSessionUndoRedoInterface,
 	TerraDrawUndoRedoKeyboardShortcutsInterface
 } from 'terra-draw';
+import type { ModeKeyboardShortcuts } from './KeyboardShortcutOptions';
 
 /**
  * TerraDrawMapLibreGLAdapter configuration options defined in:
@@ -51,6 +52,13 @@ export interface TerradrawControlOptions {
 	 * Show delete confirmation popup when deleting features if true. Default is false
 	 */
 	showDeleteConfirmation?: boolean;
+
+	/**
+	 * Configuring keyboard shortcuts for activating the different modes that are supported
+	 * Supports Standard Keys only(a-z) to avoid OS/Browser shortcut conflicts
+	 * e.g point mode -> 'p', polygon -> 'g'
+	 */
+	keyboardShortcuts?: ModeKeyboardShortcuts;
 
 	/**
 	 * Undo/Redo configuration for TerraDraw.

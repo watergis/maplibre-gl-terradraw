@@ -8,6 +8,7 @@ import type {
 	SymbolLayerSpecification
 } from 'maplibre-gl';
 import type { TerraDrawMapLibreGLAdapterConfig } from './TerradrawControlOptions';
+import type { ModeKeyboardShortcuts } from './KeyboardShortcutOptions';
 /**
  * ValhallaControl Plugin control constructor options
  */
@@ -41,6 +42,13 @@ export interface ValhallaControlOptions {
 	 * https://github.com/JamesLMilner/terra-draw/blob/806e319d5680a3f69edeff7dd629da3f1b4ff9bf/src/adapters/common/base.adapter.ts#L28-L48
 	 */
 	adapterOptions?: TerraDrawMapLibreGLAdapterConfig;
+
+	/**
+	 * Configuring keyboard shortcuts for activating the different modes that are supported
+	 * Supports Standard Keys only(A-Z) to avoid OS/Browser shortcut conflicts
+	 * e.g point mode -> 'p', polygon -> 'g'
+	 */
+	keyboardShortcuts?: ModeKeyboardShortcuts;
 
 	/**
 	 * Show delete confirmation popup when deleting features if true. Default is false

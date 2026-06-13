@@ -25,6 +25,7 @@ import {
 	convertElevation,
 	debounce,
 	MemoryCache,
+	// ModeKeyboardShortcutController,
 	queryElevationByPoint,
 	queryElevationFromRasterDEM,
 	TERRADRAW_SOURCE_IDS
@@ -283,7 +284,8 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			open: measureOptions.open,
 			modeOptions: measureOptions.modeOptions,
 			adapterOptions: measureOptions.adapterOptions,
-			undoRedo: measureOptions.undoRedo
+			undoRedo: measureOptions.undoRedo,
+			keyboardShortcuts: measureOptions.keyboardShortcuts
 		});
 		this._cssPrefix = 'measure-';
 		this.measureOptions = measureOptions;
@@ -305,6 +307,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	 */
 	public onAdd(map: Map): HTMLElement {
 		this.controlContainer = super.onAdd(map);
+
 		return this.controlContainer;
 	}
 

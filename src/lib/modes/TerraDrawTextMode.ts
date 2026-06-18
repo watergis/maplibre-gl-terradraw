@@ -50,15 +50,12 @@ export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 
 	options?: TextModeOptions;
 
-	private isDragging = false;
-	private draggedFeatureId: string | null = null;
 	private editable: boolean = false;
 
 	private activeWrapper: HTMLDivElement | null = null;
 	private activeTextarea: HTMLTextAreaElement | null = null;
 	private activeFeatureId: TerraDrawExtend.FeatureId | null = null;
 
-	private _onDragSync: (() => void) | undefined;
 	private _mapContainer: HTMLElement | null = null;
 	private isContextMenuOpen?: boolean = false;
 	private rafId?: number | null = null;
@@ -98,8 +95,6 @@ export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 	/** @internal */
 	cleanUp(): void {
 		this.dismissTextarea(true);
-		this.isDragging = false;
-		this.draggedFeatureId = null;
 
 		if (this.rafId) {
 			cancelAnimationFrame(this.rafId);
@@ -107,10 +102,6 @@ export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 		}
 
 		this.isContextMenuOpen = false;
-	}
-
-	set onDragSync(fn: (() => void) | undefined) {
-		this._onDragSync = fn;
 	}
 
 	/**
@@ -246,8 +237,6 @@ export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 		const textarea = this.createTextAreaElement(currentText);
 		const tooltip = this.createTextAreaTooltip();
 		const submitButton = this.createSubmitButton();
-
-		console.log(submitButton);
 
 		submitButton.disabled = !currentText;
 		submitButton.style.opacity = currentText ? '1' : '0.5';
@@ -402,8 +391,7 @@ export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 				},
 				properties: {
 					mode: this.mode,
-					text: '',
-					draggable: true
+					text: ''
 				}
 			}
 		]);
@@ -432,56 +420,6 @@ export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 			return;
 		}
 		this.editText(nearest.id, x, y);
-	}
-
-	/** @internal */
-	onDragStart(event: TerraDrawMouseEvent, setMapDragging: (dragging: boolean) => void): void {
-		if (!this.allowPointerEvent(this.pointerEvents.onDragStart, event)) return;
-		if (this.activeWrapper) return;
-
-		this.setCursor('grabbing');
-		const { x: pointerX, y: pointerY } = this.project(event.lng, event.lat);
-
-		const nearest = this.getNearestPointFeature(pointerX, pointerY);
-		if (!nearest) return;
-
-		this.isDragging = true;
-		this.draggedFeatureId = nearest.id as string;
-		setMapDragging(false);
-	}
-
-	/** @internal */
-	onDrag(event: TerraDrawMouseEvent, setMapDragging: (dragging: boolean) => void): void {
-		if (this.activeWrapper) {
-			this.dismissTextarea(true);
-		}
-
-		if (!this.isDragging || !this.draggedFeatureId) return;
-
-		setMapDragging(false);
-		this.setCursor('move');
-
-		if (this.options?.draggable) {
-			this.store.updateGeometry([
-				{
-					id: this.draggedFeatureId,
-					geometry: {
-						type: 'Point',
-						coordinates: [event.lng, event.lat]
-					}
-				}
-			]);
-
-			this._onDragSync?.();
-		}
-	}
-
-	/** @internal */
-	onDragEnd(_event: TerraDrawMouseEvent, setMapDragging: (dragging: boolean) => void): void {
-		this.setCursor('crosshair');
-		this.isDragging = false;
-		this.draggedFeatureId = null;
-		setMapDragging(true);
 	}
 
 	/** @internal */

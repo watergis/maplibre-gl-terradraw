@@ -2036,3 +2036,269 @@ describe('clearUndoRedoHistory', () => {
 		expect(instance).toBeUndefined();
 	});
 });
+
+describe('text layer methods', () => {
+	let mockMap: InstanceType<typeof Map>;
+
+	beforeEach(() => {
+		mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+	});
+
+	describe('createTerradrawTextLayer', () => {
+		it('adds source and layer when source does not exist', () => {
+			const control = new MaplibreTerradrawControl({ modes: ['text'] });
+			control.onAdd(mockMap);
+
+			expect(mockMap.addSource).toHaveBeenCalledWith(
+				'td-text',
+				expect.objectContaining({ type: 'geojson' })
+			);
+			expect(mockMap.addLayer).toHaveBeenCalledWith(
+				expect.objectContaining({ id: 'td-text-labels', type: 'symbol' })
+			);
+		});
+
+		it('calls moveLayer to bring text labels to the top', () => {
+			const control = new MaplibreTerradrawControl({ modes: ['text'] });
+			control.onAdd(mockMap);
+
+			expect(mockMap.moveLayer).toHaveBeenCalledWith('td-text-labels');
+		});
+
+		it('calls setData when source already exists', () => {
+			const mockSetData = vi.fn();
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(mockMap as any).getSource = vi.fn().mockReturnValue({ setData: mockSetData });
+
+			const control = new MaplibreTerradrawControl({ modes: ['text'] });
+			control.onAdd(mockMap);
+
+			expect(mockSetData).toHaveBeenCalled();
+			expect(mockMap.addSource).not.toHaveBeenCalled();
+		});
+
+		it('filters snapshot to only committed text features', () => {
+			const control = new MaplibreTerradrawControl({ modes: ['text'] });
+			control.onAdd(mockMap);
+
+			const terradraw = control.getTerraDrawInstance()!;
+			terradraw.getSnapshot = vi.fn().mockReturnValue([
+				{
+					id: 'f1',
+					type: 'Feature',
+					geometry: { type: 'Point', coordinates: [0, 0] },
+					properties: { mode: 'text', text: 'Hello' }
+				},
+				{
+					id: 'f2',
+					type: 'Feature',
+					geometry: { type: 'Point', coordinates: [1, 1] },
+					properties: { mode: 'text', text: '' }
+				}
+			]);
+
+			const mockSetData = vi.fn();
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(mockMap as any).getSource = vi.fn().mockReturnValue({ setData: mockSetData });
+
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(control as any).createTerradrawTextLayer(mockMap, {});
+
+			expect(mockSetData).toHaveBeenCalledWith(
+				expect.objectContaining({
+					type: 'FeatureCollection',
+					features: expect.arrayContaining([expect.objectContaining({ id: 'f1' })])
+				})
+			);
+			const call = mockSetData.mock.calls[0][0];
+			expect(call.features).toHaveLength(1);
+		});
+	});
+
+	describe('selectTextLabelLayer', () => {
+		it('does nothing when the text-labels layer does not exist', () => {
+			const control = new MaplibreTerradrawControl({ modes: ['text'] });
+			control.onAdd(mockMap);
+
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(mockMap as any).style = { getLayer: vi.fn().mockReturnValue(null) };
+
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			expect(() => (control as any).selectTextLabelLayer('f1')).not.toThrow();
+			expect(mockMap.setLayoutProperty).not.toHaveBeenCalled();
+		});
+
+		it('applies selected styles when selected feature is a text feature', () => {
+			const control = new MaplibreTerradrawControl({ modes: ['text'] });
+			control.onAdd(mockMap);
+
+			const terradraw = control.getTerraDrawInstance()!;
+			terradraw.getSnapshot = vi.fn().mockReturnValue([
+				{
+					id: 'f1',
+					type: 'Feature',
+					geometry: { type: 'Point', coordinates: [0, 0] },
+					properties: { mode: 'text', text: 'Hello' }
+				}
+			]);
+
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(mockMap as any).style = { getLayer: vi.fn().mockReturnValue({ id: 'td-text-labels' }) };
+			const mockSetData = vi.fn();
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(mockMap as any).getSource = vi.fn().mockReturnValue({ setData: mockSetData });
+
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(control as any).selectTextLabelLayer('f1');
+
+			expect(mockMap.setLayoutProperty).toHaveBeenCalledWith(
+				'td-text-labels',
+				'text-size',
+				expect.anything()
+			);
+			expect(mockMap.setPaintProperty).toHaveBeenCalledWith(
+				'td-text-labels',
+				'text-halo-color',
+				expect.anything()
+			);
+		});
+
+		it('resets layer when selected feature is not a text feature', () => {
+			const control = new MaplibreTerradrawControl({ modes: ['text'] });
+			control.onAdd(mockMap);
+
+			const terradraw = control.getTerraDrawInstance()!;
+			terradraw.getSnapshot = vi.fn().mockReturnValue([]);
+
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(mockMap as any).style = { getLayer: vi.fn().mockReturnValue({ id: 'td-text-labels' }) };
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(mockMap as any).getSource = vi.fn().mockReturnValue({ setData: vi.fn() });
+
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const resetSpy = vi.spyOn(control as any, 'resetTextLabelLayer');
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(control as any).selectTextLabelLayer('non-text-feature');
+
+			expect(resetSpy).toHaveBeenCalled();
+		});
+	});
+
+	describe('resetTextLabelLayer', () => {
+		it('does nothing when the text-labels layer does not exist', () => {
+			const control = new MaplibreTerradrawControl({ modes: ['text'] });
+			control.onAdd(mockMap);
+
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(mockMap as any).style = { getLayer: vi.fn().mockReturnValue(null) };
+
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			expect(() => (control as any).resetTextLabelLayer()).not.toThrow();
+			expect(mockMap.setPaintProperty).not.toHaveBeenCalled();
+		});
+
+		it('resets text-color, text-halo-color, and text-halo-width', () => {
+			const control = new MaplibreTerradrawControl({ modes: ['text'] });
+			control.onAdd(mockMap);
+
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(mockMap as any).style = { getLayer: vi.fn().mockReturnValue({ id: 'td-text-labels' }) };
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(mockMap as any).getSource = vi.fn().mockReturnValue({ setData: vi.fn() });
+
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(control as any).resetTextLabelLayer();
+
+			expect(mockMap.setPaintProperty).toHaveBeenCalledWith(
+				'td-text-labels',
+				'text-color',
+				'#000000'
+			);
+			expect(mockMap.setPaintProperty).toHaveBeenCalledWith(
+				'td-text-labels',
+				'text-halo-color',
+				'#3f97e0'
+			);
+			expect(mockMap.setPaintProperty).toHaveBeenCalledWith('td-text-labels', 'text-halo-width', 5);
+		});
+	});
+
+	describe('clearTextLayers', () => {
+		it('removes the text layer and source', () => {
+			const control = new MaplibreTerradrawControl({ modes: ['text'] });
+			control.onAdd(mockMap);
+
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(mockMap as any).style = { getLayer: vi.fn().mockReturnValue({ id: 'td-text-labels' }) };
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(mockMap as any).getSource = vi.fn().mockReturnValue({ id: 'td-text' });
+
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(control as any).clearTextLayers();
+
+			expect(mockMap.removeLayer).toHaveBeenCalledWith('td-text-labels');
+			expect(mockMap.removeSource).toHaveBeenCalledWith('td-text');
+		});
+	});
+
+	describe('deleteSelectedTextSymbolLayer', () => {
+		it('does nothing when no text features are selected', () => {
+			const control = new MaplibreTerradrawControl({ modes: ['text'] });
+			control.onAdd(mockMap);
+
+			vi.mocked(mockMap.getSource).mockClear();
+
+			const nonTextFeatures = [
+				{
+					id: 'f1',
+					type: 'Feature' as const,
+					geometry: { type: 'Point' as const, coordinates: [0, 0] },
+					properties: { mode: 'point', selected: true }
+				}
+			];
+
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(control as any).deleteSelectedTextSymbolLayer(nonTextFeatures);
+
+			expect(mockMap.getSource).not.toHaveBeenCalled();
+		});
+
+		it('updates source data with remaining text features after deletion', () => {
+			const control = new MaplibreTerradrawControl({ modes: ['text'] });
+			control.onAdd(mockMap);
+
+			const terradraw = control.getTerraDrawInstance()!;
+			terradraw.getSnapshot = vi.fn().mockReturnValue([
+				{
+					id: 'f2',
+					type: 'Feature',
+					geometry: { type: 'Point', coordinates: [1, 1] },
+					properties: { mode: 'text', text: 'Remaining' }
+				}
+			]);
+
+			const mockSetData = vi.fn();
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(mockMap as any).getSource = vi.fn().mockReturnValue({ setData: mockSetData });
+
+			const selectedTextFeatures = [
+				{
+					id: 'f1',
+					type: 'Feature' as const,
+					geometry: { type: 'Point' as const, coordinates: [0, 0] },
+					properties: { mode: 'text', selected: true }
+				}
+			];
+
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(control as any).deleteSelectedTextSymbolLayer(selectedTextFeatures);
+
+			expect(mockSetData).toHaveBeenCalledWith(
+				expect.objectContaining({
+					type: 'FeatureCollection',
+					features: expect.arrayContaining([expect.objectContaining({ id: 'f2' })])
+				})
+			);
+		});
+	});
+});

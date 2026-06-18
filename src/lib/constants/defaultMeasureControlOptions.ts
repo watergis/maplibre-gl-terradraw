@@ -268,7 +268,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 				},
 				text: {
 					feature: {
-						draggable: false
+						draggable: true
 					}
 				}
 			}

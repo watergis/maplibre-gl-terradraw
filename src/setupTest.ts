@@ -103,6 +103,7 @@ vi.mock('maplibre-gl', () => {
 					addSource: vi.fn(),
 					addLayer: vi.fn(),
 					getLayer: vi.fn(),
+					moveLayer: vi.fn(),
 					removeLayer: vi.fn(),
 					removeSource: vi.fn(),
 					hasImage: vi.fn(() => false),

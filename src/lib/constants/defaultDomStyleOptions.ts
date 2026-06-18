@@ -34,8 +34,8 @@ export const defaultTextAreaWrapperStyleOptions = {
 	zIndex: '1000',
 	display: 'flex',
 	flexDirection: 'column',
-	minWidth: '200px',
-	maxWidth: '240px',
+	minWidth: '210px',
+	maxWidth: '250px',
 	boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
 	borderRadius: '6px',
 	overflow: 'hidden'
@@ -43,7 +43,7 @@ export const defaultTextAreaWrapperStyleOptions = {
 
 export const defaultTextAreaTooltipSpanStyleOptions = {
 	display: 'block',
-	padding: '3px 8px',
+	padding: '8px 8px 0px 8px',
 	fontSize: '10px',
 	fontFamily: 'sans-serif',
 	color: '#888',

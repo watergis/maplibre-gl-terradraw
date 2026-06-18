@@ -35,8 +35,6 @@ const mockStore = () => ({
 	updateProperty: vi.fn()
 });
 
-const mockSetMapDragging = vi.fn();
-
 const mountMode = (options = {}) => {
 	const mode = new TerraDrawTextMode(options);
 
@@ -52,7 +50,6 @@ const mountMode = (options = {}) => {
 	(mode as any).allowPointerEvent = vi.fn().mockReturnValue(true);
 	(mode as any).pointerEvents = {
 		contextMenu: true,
-		onDragStart: true,
 		rightClick: true
 	};
 	(mode as any)._mapContainer = document.createElement('div');
@@ -111,14 +108,10 @@ describe('MaplibreTerradrawTextMode', () => {
 			(mode as any).activeWrapper = textAreaWrapper;
 			(mode as any).activeTextarea = textarea;
 			(mode as any).activeFeatureId = 'feature-1';
-			(mode as any).isDragging = true;
-			(mode as any).draggedFeatureId = 'feature-1';
 
 			mode.cleanUp();
 
 			expect((mode as any).activeTextarea).toBeNull();
-			expect((mode as any).isDragging).toBe(false);
-			expect((mode as any).draggedFeatureId).toBeNull();
 			expect(document.body.contains(textAreaWrapper)).toBe(false);
 		});
 
@@ -419,99 +412,6 @@ describe('MaplibreTerradrawTextMode', () => {
 		});
 	});
 
-	// 6. Dragging
-	describe('drag', () => {
-		it('onDragStart sets isDragging and disables map dragging when feature found', () => {
-			const mode = mountMode();
-			(mode as any).getNearestPointFeature = vi.fn().mockReturnValue({ id: 'feature-1' });
-			mode.onDragStart(mockEvent(), mockSetMapDragging);
-
-			expect((mode as any).isDragging).toBe(true);
-			expect((mode as any).draggedFeatureId).toBe('feature-1');
-			expect(mockSetMapDragging).toHaveBeenCalledWith(false);
-		});
-
-		it('onDragStart does not start drag when textarea is open', () => {
-			const mode = mountMode();
-			(mode as any).activeWrapper = document.createElement('div');
-			(mode as any).getNearestPointFeature = vi.fn().mockReturnValue({ id: 'feature-1' });
-			mode.onDragStart(mockEvent(), mockSetMapDragging);
-
-			expect((mode as any).isDragging).toBe(false);
-		});
-
-		it('onDrag updates feature geometry', () => {
-			const mode = mountMode({
-				draggable: true
-			});
-
-			(mode as any).isDragging = true;
-			(mode as any).draggedFeatureId = 'feature-1';
-
-			mode.onDrag(mockEvent({ lng: 15, lat: 25 }), mockSetMapDragging);
-
-			expect((mode as any).store.updateGeometry).toHaveBeenCalledWith([
-				{
-					id: 'feature-1',
-					geometry: { type: 'Point', coordinates: [15, 25] }
-				}
-			]);
-		});
-
-		it('onDrag calls _onDragSync when draggable is set to true', () => {
-			const mode = mountMode({
-				draggable: true
-			});
-			const syncFn = vi.fn();
-			mode.onDragSync = syncFn;
-			(mode as any).isDragging = true;
-			(mode as any).draggedFeatureId = 'feature-1';
-
-			mode.onDrag(mockEvent(), mockSetMapDragging);
-
-			expect(syncFn).toHaveBeenCalled();
-		});
-
-		it('onDrag does nothing when not dragging', () => {
-			const mode = mountMode();
-			(mode as any).isDragging = false;
-			mode.onDrag(mockEvent(), mockSetMapDragging);
-			expect((mode as any).store.updateGeometry).not.toHaveBeenCalled();
-		});
-
-		it('onDrag dismisses open textarea wrapper', () => {
-			const mode = mountMode();
-			const textAreaWrapper = document.createElement('textarea');
-			(mode as any)._mapContainer.appendChild(textAreaWrapper);
-			(mode as any).activeWrapper = textAreaWrapper;
-			(mode as any).activeFeatureId = 'feature-1';
-			(mode as any).isDragging = true;
-			(mode as any).draggedFeatureId = 'feature-1';
-
-			mode.onDrag(mockEvent(), mockSetMapDragging);
-
-			expect((mode as any)._mapContainer.querySelector('textarea')).toBeNull();
-		});
-
-		it('onDragEnd resets drag state and re-enables map dragging', () => {
-			const mode = mountMode();
-			(mode as any).isDragging = true;
-			(mode as any).draggedFeatureId = 'feature-1';
-
-			mode.onDragEnd(mockEvent(), mockSetMapDragging);
-
-			expect((mode as any).isDragging).toBe(false);
-			expect((mode as any).draggedFeatureId).toBeNull();
-			expect(mockSetMapDragging).toHaveBeenCalledWith(true);
-		});
-
-		it('onDragEnd resets cursor to crosshair', () => {
-			const mode = mountMode();
-			mode.onDragEnd(mockEvent(), mockSetMapDragging);
-			expect((mode as any).setCursor).toHaveBeenCalledWith('crosshair');
-		});
-	});
-
 	// 7. getNearestPointFeature
 	describe('getNearestPointFeature()', () => {
 		it('returns nearest committed text feature within pointer distance', () => {
@@ -650,48 +550,6 @@ describe('MaplibreTerradrawTextMode', () => {
 				properties: { mode: 'point' }
 			} as any);
 			expect(result.valid).toBe(false);
-		});
-	});
-
-	// 9. onDragSync
-	describe('onDragSync setter', () => {
-		it('assigns and calls onDragSync correctly', () => {
-			const mode = mountMode({
-				draggable: true
-			});
-			const fn = vi.fn();
-			mode.onDragSync = fn;
-			(mode as any).isDragging = true;
-			(mode as any).draggedFeatureId = 'feature-1';
-
-			mode.onDrag(mockEvent(), mockSetMapDragging);
-			expect(fn).toHaveBeenCalledTimes(1);
-		});
-
-		it('does not throw when onDragSync is not set', () => {
-			const mode = mountMode();
-			(mode as any).isDragging = true;
-			(mode as any).draggedFeatureId = 'feature-1';
-
-			expect(() => mode.onDrag(mockEvent(), mockSetMapDragging)).not.toThrow();
-		});
-
-		it('can be reassigned after construction', () => {
-			const mode = mountMode({
-				draggable: true
-			});
-			const firstFn = vi.fn();
-			const secondFn = vi.fn();
-
-			mode.onDragSync = firstFn;
-			mode.onDragSync = secondFn;
-
-			(mode as any).isDragging = true;
-			(mode as any).draggedFeatureId = 'feature-1';
-			mode.onDrag(mockEvent(), mockSetMapDragging);
-
-			expect(firstFn).not.toHaveBeenCalled();
-			expect(secondFn).toHaveBeenCalled();
 		});
 	});
 

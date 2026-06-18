@@ -285,6 +285,7 @@
 		const initData = geojson.filter((f) =>
 			(options.modes as string[]).includes(f.properties.mode as string)
 		) as GeoJSONStoreFeatures[];
+
 		if (initData.length > 0) {
 			const drawInstance = drawControl.getTerraDrawInstance();
 			if (drawInstance && drawInstance.enabled === false) {
@@ -296,6 +297,9 @@
 				if (invalid.length > 0) {
 					console.log(invalid);
 				}
+
+				// add the text symbol source too
+				drawControl.createTerradrawTextLayer(map);
 			}
 			drawInstance?.clearUndoRedoHistory();
 			if (options.controlType === 'measure') {

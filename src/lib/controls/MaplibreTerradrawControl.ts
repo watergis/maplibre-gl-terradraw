@@ -26,7 +26,7 @@ import type {
 } from '../interfaces';
 import { defaultControlOptions, getDefaultModeOptions } from '../constants';
 import { capitalize, cleanMaplibreStyle, TERRADRAW_SOURCE_IDS, ModalDialog } from '../helpers';
-import type { TerraDrawTextMode, TextModeStyling } from '../modes/TerraDrawTextMode';
+import type { TextModeStyling } from '../modes/TerraDrawTextMode';
 
 /**
  * Maplibre GL Terra Draw Control
@@ -37,7 +37,6 @@ export class MaplibreTerradrawControl implements IControl {
 	protected modeButtons: { [key: string]: HTMLButtonElement } = {};
 	protected _isExpanded = false;
 	protected _cssPrefix = '';
-	prefixId = '';
 
 	/**
 	 * get the state of whether the control is expanded or collapsed
@@ -235,13 +234,34 @@ export class MaplibreTerradrawControl implements IControl {
 		modes.forEach((m: TerradrawModeClass) => {
 			if (m.mode === 'text') {
 				const styles = defaultOptions[m.mode].styles;
-				const textMode = m as TerraDrawTextMode;
-				this.createTerradrawTextLayer(map, textMode, styles as Partial<TextModeStyling>);
+
+				this.createTerradrawTextLayer(map, styles as Partial<TextModeStyling>);
+
+				this.terradraw?.on('finish', () => {
+					this.createTerradrawTextLayer(map, styles as Partial<TextModeStyling>);
+				});
 
 				// set on select styles
 				this.terradraw?.on('select', (featureId) => {
 					this.selectTextLabelLayer(featureId);
+
+					// update text mode layers coordinates on mousemove
+					this.terradraw?.on('change', () => {
+						const snapshot = this.terradraw?.getSnapshot() ?? [];
+						const textFeatures = snapshot.filter(
+							(f) => f.properties?.mode === 'text' && f.properties?.text
+						) as GeoJSONStoreFeatures<GeoJSONStoreGeometries>[];
+
+						const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
+
+						const source = map.getSource(`${prefixId}-text`) as GeoJSONSource | undefined;
+						source?.setData({
+							type: 'FeatureCollection',
+							features: textFeatures
+						});
+					});
 				});
+
 				this.terradraw?.on('deselect', () => {
 					this.resetTextLabelLayer();
 				});
@@ -834,34 +854,16 @@ export class MaplibreTerradrawControl implements IControl {
 		}
 	}
 
-	protected createTerradrawTextLayer(
-		map: Map,
-		textModeInstance: TerraDrawTextMode,
-		styles?: TextModeStyling
-	) {
-		this.terradraw?.on('finish', () => {
-			const snapshot = this.terradraw?.getSnapshot();
-			const textFeatures =
-				snapshot?.filter((f) => f.properties?.mode === 'text' && f.properties?.text) ?? [];
-			this.addFeaturesToSource(textFeatures, map, styles);
-		});
+	public createTerradrawTextLayer(map: Map, styles?: TextModeStyling) {
+		const snapshot = this.terradraw?.getSnapshot();
+		const textFeatures =
+			snapshot?.filter((f) => f.properties?.mode === 'text' && f.properties?.text) ?? [];
+		this.addTextFeaturesToSource(textFeatures, map, styles);
 
-		if (textModeInstance.options?.draggable) {
-			textModeInstance.onDragSync = () => {
-				const snapshot = this.terradraw?.getSnapshot() ?? [];
-				const textFeatures = snapshot.filter(
-					(f) => f.properties?.mode === 'text' && f.properties?.text
-				) as GeoJSONStoreFeatures<GeoJSONStoreGeometries>[];
+		const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
 
-				const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
-
-				const source = map.getSource(`${prefixId}-text`) as GeoJSONSource | undefined;
-				source?.setData({
-					type: 'FeatureCollection',
-					features: textFeatures
-				});
-			};
-		}
+		// change the z-index position of the text label to appear above all other Terradraw features
+		map.moveLayer(`${prefixId}-text-labels`);
 	}
 
 	/**
@@ -870,7 +872,7 @@ export class MaplibreTerradrawControl implements IControl {
 	 * @param map
 	 * @param styles
 	 */
-	protected addFeaturesToSource(
+	protected addTextFeaturesToSource(
 		features: GeoJSONStoreFeatures<GeoJSONStoreGeometries>[],
 		map: Map,
 		styles?: Record<string, string | number>
@@ -940,11 +942,12 @@ export class MaplibreTerradrawControl implements IControl {
 				14,
 				12
 			]);
+
 			this.map?.setPaintProperty(layerId, 'text-halo-color', [
 				'case',
 				['==', ['get', 'selected'], true],
-				'#3f97e0',
-				'#ffffff'
+				'#ffffff',
+				'#3f97e0'
 			]);
 		} else {
 			this.resetTextLabelLayer();
@@ -970,7 +973,7 @@ export class MaplibreTerradrawControl implements IControl {
 		source?.setData({ type: 'FeatureCollection', features: textFeatures });
 
 		this.map?.setPaintProperty(layerId, 'text-color', '#000000');
-		this.map?.setPaintProperty(layerId, 'text-halo-color', '#ffffff');
+		this.map?.setPaintProperty(layerId, 'text-halo-color', '#3f97e0');
 		this.map?.setPaintProperty(layerId, 'text-halo-width', 5);
 	}
 

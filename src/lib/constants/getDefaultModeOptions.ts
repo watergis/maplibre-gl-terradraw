@@ -184,7 +184,7 @@ export const getDefaultModeOptions = () => {
 				},
 				text: {
 					feature: {
-						draggable: false
+						draggable: true
 					}
 				}
 			},
@@ -228,9 +228,8 @@ export const getDefaultModeOptions = () => {
 				textColor: '#000000',
 				textSize: 12,
 				textHaloWidth: 5,
-				textHaloColor: '#ffffff'
-			},
-			draggable: true
+				textHaloColor: '#3f97e0'
+			}
 		})
 	};
 	return modeOptions;

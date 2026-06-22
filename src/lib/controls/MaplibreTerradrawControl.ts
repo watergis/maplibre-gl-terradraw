@@ -854,6 +854,31 @@ export class MaplibreTerradrawControl implements IControl {
 		}
 	}
 
+	/**
+	 * Create (or refresh) the MapLibre GL symbol layer used to render committed
+	 * text labels from `TerraDrawTextMode`.
+	 *
+	 * Called automatically by {@link onAdd} when the `text` mode is active, and
+	 * again after every TerraDraw `finish` event so newly committed labels appear
+	 * immediately.
+	 *
+	 * ### What this method does
+	 * 1. Reads all committed text features from the TerraDraw snapshot
+	 *    (features where `properties.mode === 'text'` and `properties.text` is non-empty).
+	 * 2. If the `{prefix}-text` GeoJSON source already exists, calls `setData`
+	 *    to update it in place (no layer teardown/rebuild).
+	 * 3. If the source does **not** yet exist, adds the source **and** a
+	 *    `{prefix}-text-labels` symbol layer with defaults for
+	 *    `text-field`, `text-size`, `text-font`, `text-color`, and `text-halo-*`.
+	 * 4. Calls `map.moveLayer('{prefix}-text-labels')` to ensure the symbol
+	 *    layer renders above all other TerraDraw layers.
+	 *
+	 * The `{prefix}` comes from `adapterOptions.prefixId` (default `'td'`),
+	 * so with the default prefix the layer id is `td-text-labels`.
+	 *
+	 * @param map - The MapLibre GL `Map` instance.
+	 * @param styles - Optional style overrides forwarded to the MapLibre symbol layer.
+	 */
 	public createTerradrawTextLayer(map: Map, styles?: TextModeStyling) {
 		const snapshot = this.terradraw?.getSnapshot();
 		const textFeatures =
@@ -914,9 +939,18 @@ export class MaplibreTerradrawControl implements IControl {
 	}
 
 	/**
-	 * Apply styles to the currently selected text label
-	 * @param featureId
-	 * @returns
+	 * Apply highlighted styles to the `{prefix}-text-labels` layer when a text
+	 * feature is selected via `TerraDrawSelectMode`.
+	 *
+	 * Refreshes the GeoJSON source so the TerraDraw `selected` property is
+	 * current, then sets data-driven `text-size` and `text-halo-color` expressions
+	 * that make the selected label slightly larger and give it a white halo.
+	 * If the selected feature is **not** a text feature, delegates to
+	 * `resetTextLabelLayer` instead.
+	 *
+	 * Called automatically on `terradraw.on('select')`.
+	 *
+	 * @param featureId - The TerraDraw feature ID that was selected.
 	 */
 	protected selectTextLabelLayer(featureId: TerraDrawExtend.FeatureId) {
 		const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
@@ -955,8 +989,14 @@ export class MaplibreTerradrawControl implements IControl {
 	}
 
 	/**
-	 * Reset styles for a text label
-	 * @returns
+	 * Restore the default paint properties on the `{prefix}-text-labels` layer
+	 * after a text feature is deselected.
+	 *
+	 * Resets `text-color` to `#000000`, `text-halo-color` to `#3f97e0`, and
+	 * `text-halo-width` to `5`. Also refreshes the GeoJSON source to clear
+	 * the TerraDraw `selected` flag from the feature data.
+	 *
+	 * Called automatically on `terradraw.on('deselect')`.
 	 */
 	protected resetTextLabelLayer() {
 		const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
@@ -978,7 +1018,10 @@ export class MaplibreTerradrawControl implements IControl {
 	}
 
 	/**
-	 * Remove text label layers and sources from the map
+	 * Remove the `{prefix}-text-labels` symbol layer and the `{prefix}-text`
+	 * GeoJSON source from the map.
+	 *
+	 * Called when all features are deleted via `handleDeleteAllFeatures`.
 	 */
 	protected clearTextLayers() {
 		const prefixId = this.options.adapterOptions?.prefixId ?? 'td';

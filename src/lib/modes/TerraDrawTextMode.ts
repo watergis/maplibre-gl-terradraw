@@ -15,19 +15,51 @@ import {
 
 const { TerraDrawBaseDrawMode } = TerraDrawExtend;
 
+/**
+ * MapLibre GL paint and layout properties that control how committed text labels
+ * appear in the `{prefix}-text-labels` symbol layer.
+ *
+ * All properties are optional; omitting them falls back to the defaults set in
+ * `MaplibreTerradrawControl.createTerradrawTextLayer`.
+ *
+ * @example
+ * ```ts
+ * const styles: TextModeStyling = {
+ *   textColor: '#1a1a1a',
+ *   textSize: 14,
+ *   textHaloColor: '#ffffff',
+ *   textHaloWidth: 2,
+ * };
+ * ```
+ */
 export type TextModeStyling = {
+	/** Anchor point fill color. Rendered at `pointWidth: 0` by default so the dot is invisible. */
 	pointColor?: HexColor;
+	/** Anchor point radius in pixels. Default `0` (invisible). */
 	pointWidth?: number;
+	/** Anchor point outline / stroke color. */
 	pointOutlineColor?: HexColor;
+	/** Anchor point outline width in pixels. */
 	pointOutlineWidth?: number;
+	/** MapLibre `text-color` paint property. Default `#000000`. */
 	textColor?: HexColor;
+	/** MapLibre `text-size` layout property in pixels. Default `12`. */
 	textSize?: number;
+	/** MapLibre `text-halo-color` paint property. Default `#3f97e0`. */
 	textHaloColor?: HexColor;
+	/** MapLibre `text-halo-width` paint property in pixels. Default `5`. */
 	textHaloWidth?: number;
 };
 
-type DOMStyles = {
+/**
+ * Optional CSS overrides for the textarea popup DOM elements.
+ * Each key accepts any valid `CSSStyleDeclaration` property.
+ * Provided styles are merged over the built-in defaults.
+ */
+export type DOMStyles = {
+	/** Style overrides for the `<textarea>` element. */
 	textArea?: Partial<CSSStyleDeclaration>;
+	/** Style overrides for the submit `<button>` element. */
 	submitButton?: Partial<CSSStyleDeclaration>;
 };
 
@@ -36,15 +68,105 @@ type TextAreaPopup = {
 	textarea: HTMLTextAreaElement;
 };
 
+/**
+ * Constructor options for {@link TerraDrawTextMode}.
+ *
+ * @example
+ * ```ts
+ * new TerraDrawTextMode({
+ *   editable: true,
+ *   placeholder: 'Add a label…',
+ *   styles: { textColor: '#333333', textSize: 14 },
+ *   onTextCommit: (id, text) => console.log(id, text),
+ * });
+ * ```
+ */
 export type TextModeOptions = {
+	/**
+	 * MapLibre symbol-layer style overrides applied to committed text features.
+	 * Merged over the defaults supplied by `MaplibreTerradrawControl`.
+	 */
 	styles?: Partial<TextModeStyling>;
+	/**
+	 * Placeholder text shown in the textarea popup before the user types.
+	 * Defaults to `"Enter label..."`.
+	 */
 	placeholder?: string;
+	/**
+	 * Called after every successful commit — both new placements and edits.
+	 *
+	 * @param featureId - The TerraDraw feature ID of the committed Point feature.
+	 * @param text - The trimmed text string that was committed.
+	 */
 	onTextCommit?: (featureId: TerraDrawExtend.FeatureId, text: string) => void;
+	/**
+	 * @deprecated Not used. Draggability is controlled by the `TerraDrawSelectMode`
+	 * `flags.text.feature.draggable` setting.
+	 */
 	draggable?: boolean;
+	/**
+	 * When `true`, right-clicking (context menu) near an existing label opens the
+	 * textarea pre-filled with the current text so the user can edit it in place.
+	 * Defaults to `false`.
+	 */
 	editable?: boolean;
+	/**
+	 * Override the default CSS styles applied to the textarea popup DOM elements.
+	 * Each property is merged over the corresponding defaults from
+	 * `defaultTextAreaStyleOptions` / `defaultSubmitButtonStyleOptions`.
+	 */
 	domStyles?: DOMStyles;
 };
 
+/**
+ * A custom Terra Draw mode that lets users place, edit, and drag freeform text
+ * labels anywhere on the map.
+ *
+ * ## Interaction model
+ *
+ * | Gesture | Behaviour |
+ * |---------|-----------|
+ * | **Click** on the map | Opens a textarea popup at the clicked location. |
+ * | **Enter** (or Submit button) | Commits the label as a `Point` GeoJSON feature with a `text` property. Calls `onTextCommit` and fires the TerraDraw `finish` event. |
+ * | **Shift+Enter** | Inserts a newline without committing. |
+ * | **Escape** (in popup) | Dismisses the popup and deletes the uncommitted feature. |
+ * | **Click outside** open popup | Commits any typed text, or dismisses if empty. |
+ * | **Right-click** near label | Opens the textarea pre-filled with existing text (requires `editable: true`). |
+ * | **Drag** a committed label | Handled by `TerraDrawSelectMode` when `flags.text.feature.draggable` is `true`. |
+ *
+ * ## MapLibre GL rendering
+ *
+ * `TerraDrawTextMode` itself only stores Point features in the TerraDraw store.
+ * `MaplibreTerradrawControl` detects the `text` mode and maintains a
+ * separate `{prefix}-text-labels` MapLibre symbol layer that reads the `text`
+ * property from the GeoJSON source.  This means the labels are rendered by
+ * MapLibre GL and support all standard `text-*` paint/layout properties.
+ *
+ * ## Usage
+ *
+ * ```ts
+ * import { MaplibreTerradrawControl, TerraDrawTextMode } from '@watergis/maplibre-gl-terradraw';
+ *
+ * const control = new MaplibreTerradrawControl({
+ *   modes: ['text', 'select', 'delete'],
+ *   modeOptions: {
+ *     text: new TerraDrawTextMode({
+ *       editable: true,
+ *       placeholder: 'Add a label…',
+ *       styles: {
+ *         textColor: '#1a1a1a',
+ *         textSize: 14,
+ *         textHaloColor: '#ffffff',
+ *         textHaloWidth: 2,
+ *       },
+ *       onTextCommit: (id, text) => console.log(`${id}: ${text}`),
+ *     }),
+ *   },
+ * });
+ *
+ * map.addControl(control, 'top-right');
+ * ```
+ */
 export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 	mode = 'text';
 

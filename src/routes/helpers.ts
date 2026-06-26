@@ -26,7 +26,8 @@ export const exampleIds = [
 	'programmatic-mode-control',
 	'glass-theme-control',
 	'selected-feature-per-mode-style',
-	'custom-undo-redo-config'
+	'custom-undo-redo-config',
+	'keyboard-shortcuts'
 ];
 
 export const getTitle = (body: string) => {

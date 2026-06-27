@@ -12,7 +12,9 @@ import {
 	TerraDrawModeUndoRedo,
 	TerraDrawRenderMode,
 	TerraDrawSessionUndoRedo,
-	TerraDrawUndoRedoKeyboardShortcuts
+	TerraDrawUndoRedoKeyboardShortcuts,
+	type GeoJSONStoreFeatures,
+	type GeoJSONStoreGeometries
 } from 'terra-draw';
 import { TerraDrawMapLibreGLAdapter } from 'terra-draw-maplibre-gl-adapter';
 import type {
@@ -24,6 +26,7 @@ import type {
 } from '../interfaces';
 import { defaultControlOptions, getDefaultModeOptions } from '../constants';
 import { capitalize, cleanMaplibreStyle, TERRADRAW_SOURCE_IDS, ModalDialog } from '../helpers';
+import type { TextModeStyling } from '../modes/TerraDrawTextMode';
 
 /**
  * Maplibre GL Terra Draw Control
@@ -124,12 +127,14 @@ export class MaplibreTerradrawControl implements IControl {
 			...options
 		};
 		const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
+
 		if (!this.options.adapterOptions) {
 			this.options.adapterOptions = {};
 		}
 		if (!this.options.adapterOptions?.prefixId) {
 			this.options.adapterOptions.prefixId = prefixId;
 		}
+
 		if (!this.options.undoRedo) {
 			this.options.undoRedo = {
 				modeLevel: new TerraDrawModeUndoRedo({ maxStackSize: 100 }),
@@ -242,6 +247,7 @@ export class MaplibreTerradrawControl implements IControl {
 		this.toggleButtonsWhenNoFeature();
 		this.terradraw?.on('finish', this.toggleButtonsWhenNoFeature.bind(this));
 		this.terradraw?.on('history', this.handleHistoryChange.bind(this));
+
 		this.map.once('idle', () => {
 			this.toggleButtonsWhenNoFeature();
 		});
@@ -521,6 +527,43 @@ export class MaplibreTerradrawControl implements IControl {
 					}
 					this.dispatchEvent('mode-changed');
 				});
+
+				if (mode === 'text') {
+					const styles = this.getTextModeStyling();
+
+					const map = this.map as Map;
+
+					this.createTerradrawTextLayer(map, styles);
+
+					this.terradraw?.on('change', () => {
+						this.createTerradrawTextLayer(map, styles);
+					});
+
+					// set on select styles
+					this.terradraw?.on('select', (featureId) => {
+						this.selectTextLabelLayer(featureId);
+
+						// update text mode layers coordinates on mousemove
+						this.terradraw?.on('change', () => {
+							const snapshot = this.terradraw?.getSnapshot() ?? [];
+							const textFeatures = snapshot.filter(
+								(f) => f.properties?.mode === 'text' && f.properties?.text
+							) as GeoJSONStoreFeatures<GeoJSONStoreGeometries>[];
+
+							const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
+
+							const source = map.getSource(`${prefixId}-text`) as GeoJSONSource | undefined;
+							source?.setData({
+								type: 'FeatureCollection',
+								features: textFeatures
+							});
+						});
+					});
+
+					this.terradraw?.on('deselect', () => {
+						this.resetTextLabelLayer();
+					});
+				}
 			}
 		}
 	}
@@ -630,6 +673,7 @@ export class MaplibreTerradrawControl implements IControl {
 
 		const deleteFeatures = () => {
 			this.terradraw?.clear();
+			this.clearTextLayers();
 			this.resetActiveMode();
 			this.toggleDeleteSelectionButton();
 			this.toggleButtonsWhenNoFeature();
@@ -654,7 +698,6 @@ export class MaplibreTerradrawControl implements IControl {
 		const selected = snapshot.filter((f) => f.properties.selected === true);
 
 		if (selected.length > 0) {
-			// if feature is selected, delete only selected feature
 			const ids = selected.map((f) => f.id) as TerraDrawExtend.FeatureId[];
 
 			this.terradraw.removeFeatures(ids);
@@ -662,9 +705,36 @@ export class MaplibreTerradrawControl implements IControl {
 				this.terradraw.deselectFeature(id);
 			}
 			this.dispatchEvent('feature-deleted', { deletedIds: ids });
+
+			// handle deletion of text layer when mode === 'text'
+			this.deleteSelectedTextSymbolLayer(selected);
 		}
+
 		this.toggleDeleteSelectionButton();
 		this.toggleButtonsWhenNoFeature();
+	}
+
+	/**
+	 * Handle deletion of symbol text layer when mode === 'text'
+	 * @param selectedFeatures
+	 */
+	protected deleteSelectedTextSymbolLayer(
+		selectedFeatures: GeoJSONStoreFeatures<GeoJSONStoreGeometries>[]
+	) {
+		const hasTextFeatures = selectedFeatures.some((f) => f.properties.mode === 'text');
+		const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
+
+		if (hasTextFeatures) {
+			const remainingFeatures = this.terradraw
+				?.getSnapshot()
+				.filter((f) => f.properties?.mode === 'text' && f.properties?.text);
+
+			const source = this.map?.getSource(`${prefixId}-text`) as GeoJSONSource | undefined;
+			source?.setData({
+				type: 'FeatureCollection',
+				features: remainingFeatures as GeoJSONStoreFeatures<GeoJSONStoreGeometries>[]
+			});
+		}
 	}
 
 	/**
@@ -780,5 +850,206 @@ export class MaplibreTerradrawControl implements IControl {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Create (or refresh) the MapLibre GL symbol layer used to render committed
+	 * text labels from `TerraDrawTextMode`.
+	 *
+	 * Called automatically by {@link onAdd} when the `text` mode is active, and
+	 * again after every TerraDraw `finish` event so newly committed labels appear
+	 * immediately.
+	 *
+	 * ### What this method does
+	 * 1. Reads all committed text features from the TerraDraw snapshot
+	 *    (features where `properties.mode === 'text'` and `properties.text` is non-empty).
+	 * 2. If the `{prefix}-text` GeoJSON source already exists, calls `setData`
+	 *    to update it in place (no layer teardown/rebuild).
+	 * 3. If the source does **not** yet exist, adds the source **and** a
+	 *    `{prefix}-text-labels` symbol layer with defaults for
+	 *    `text-field`, `text-size`, `text-font`, `text-color`, and `text-halo-*`.
+	 * 4. Calls `map.moveLayer('{prefix}-text-labels')` to ensure the symbol
+	 *    layer renders above all other TerraDraw layers.
+	 *
+	 * The `{prefix}` comes from `adapterOptions.prefixId` (default `'td'`),
+	 * so with the default prefix the layer id is `td-text-labels`.
+	 *
+	 * @param map - The MapLibre GL `Map` instance.
+	 * @param styles - Optional style overrides forwarded to the MapLibre symbol layer.
+	 */
+	protected createTerradrawTextLayer(map: Map, styles?: TextModeStyling) {
+		const defaultStyles = styles ?? this.getTextModeStyling();
+		const snapshot = this.terradraw?.getSnapshot();
+		const textFeatures =
+			snapshot?.filter((f) => f.properties?.mode === 'text' && f.properties?.text) ?? [];
+		this.addTextFeaturesToSource(textFeatures, map, defaultStyles);
+
+		const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
+
+		// change the z-index position of the text label to appear above all other Terradraw features
+		map.moveLayer(`${prefixId}-text-labels`);
+	}
+
+	/**
+	 * Add Text Label Terradraw Features to the map
+	 * @param features
+	 * @param map
+	 * @param styles
+	 */
+	protected addTextFeaturesToSource(
+		features: GeoJSONStoreFeatures<GeoJSONStoreGeometries>[],
+		map: Map,
+		styles?: Record<string, string | number>
+	) {
+		const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
+
+		const source = map.getSource(`${prefixId}-text`) as maplibregl.GeoJSONSource | undefined;
+
+		if (source) {
+			source.setData({
+				type: 'FeatureCollection',
+				features
+			});
+		} else {
+			map.addSource(`${prefixId}-text`, {
+				type: 'geojson',
+				data: { type: 'FeatureCollection', features }
+			});
+
+			map.addLayer({
+				id: `${prefixId}-text-labels`,
+				type: 'symbol',
+				source: `${prefixId}-text`,
+				layout: {
+					'text-field': ['get', 'text'],
+					'text-size': (styles?.textSize as number) ?? 12,
+					'text-anchor': 'top',
+					'text-offset': [0, 0.8],
+					'text-font': ['Noto Sans Regular'],
+					'text-allow-overlap': true
+				},
+				paint: {
+					'text-color': (styles?.textColor as string) ?? '#000000',
+					'text-halo-color': (styles?.textHaloColor as string) ?? '#ffffff',
+					'text-halo-width': (styles?.textHaloWidth as number) ?? 1
+				}
+			});
+		}
+	}
+
+	/**
+	 * Resolve text mode styles by merging defaults and user overrides.
+	 */
+	protected getTextModeStyling(): Partial<TextModeStyling> {
+		const defaultOptions = getDefaultModeOptions();
+		const defaultTextMode = defaultOptions.text as
+			| (TerradrawModeClass & { options?: { styles?: TextModeStyling } })
+			| undefined;
+		const customTextMode = this.options.modeOptions?.text as
+			| (TerradrawModeClass & { options?: { styles?: TextModeStyling } })
+			| undefined;
+
+		const defaultStyles = (defaultTextMode?.options?.styles as Partial<TextModeStyling>) ?? {};
+		const customStyles = (customTextMode?.options?.styles as Partial<TextModeStyling>) ?? {};
+
+		return { ...defaultStyles, ...customStyles };
+	}
+
+	/**
+	 * Apply highlighted styles to the `{prefix}-text-labels` layer when a text
+	 * feature is selected via `TerraDrawSelectMode`.
+	 *
+	 * Refreshes the GeoJSON source so the TerraDraw `selected` property is
+	 * current, then sets data-driven `text-size` and `text-halo-color` expressions
+	 * that make the selected label slightly larger and give it a white halo.
+	 * If the selected feature is **not** a text feature, delegates to
+	 * `resetTextLabelLayer` instead.
+	 *
+	 * Called automatically on `terradraw.on('select')`.
+	 *
+	 * @param featureId - The TerraDraw feature ID that was selected.
+	 */
+	protected selectTextLabelLayer(featureId: TerraDrawExtend.FeatureId) {
+		const styles = this.getTextModeStyling();
+
+		const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
+		const layerId = `${prefixId}-text-labels`;
+
+		if (!this.map?.style?.getLayer(layerId)) return;
+
+		const snapshot = this.terradraw?.getSnapshot() ?? [];
+		const textFeatures = snapshot.filter(
+			(f) => f.properties?.mode === 'text' && f.properties?.text
+		) as GeoJSONStoreFeatures<GeoJSONStoreGeometries>[];
+
+		// Refresh source so terra-draw's `selected` property is current in the layer data
+		const source = this.map?.getSource(`${prefixId}-text`) as GeoJSONSource | undefined;
+		source?.setData({ type: 'FeatureCollection', features: textFeatures });
+
+		const isTextFeature = textFeatures.some((f) => f.id === featureId);
+
+		if (isTextFeature) {
+			this.map?.setLayoutProperty(layerId, 'text-size', [
+				'case',
+				['==', ['get', 'selected'], true],
+				styles.textSelectedSize ?? 14,
+				styles.textSize ?? 12
+			]);
+
+			this.map?.setPaintProperty(layerId, 'text-halo-color', [
+				'case',
+				['==', ['get', 'selected'], true],
+				styles.textSelectedHaloColor ?? '#ffffff',
+				styles.textHaloColor ?? '#ffffff'
+			]);
+		} else {
+			this.resetTextLabelLayer();
+		}
+	}
+
+	/**
+	 * Restore the default paint properties on the `{prefix}-text-labels` layer
+	 * after a text feature is deselected.
+	 *
+	 * Resets `text-color`, `text-halo-color`, and `text-halo-width` from
+	 * `TextModeStyling` defaults. Also refreshes the GeoJSON source to clear
+	 * the TerraDraw `selected` flag from the feature data.
+	 *
+	 * Called automatically on `terradraw.on('deselect')`.
+	 */
+	protected resetTextLabelLayer() {
+		const styles = this.getTextModeStyling();
+
+		const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
+		const layerId = `${prefixId}-text-labels`;
+
+		if (!this.map?.style?.getLayer(layerId)) return;
+
+		const snapshot = this.terradraw?.getSnapshot() ?? [];
+		const textFeatures = snapshot.filter(
+			(f) => f.properties?.mode === 'text' && f.properties?.text
+		) as GeoJSONStoreFeatures<GeoJSONStoreGeometries>[];
+
+		const source = this.map?.getSource(`${prefixId}-text`) as GeoJSONSource | undefined;
+		source?.setData({ type: 'FeatureCollection', features: textFeatures });
+
+		this.map?.setPaintProperty(layerId, 'text-color', styles.textColor ?? '#000000');
+		this.map?.setPaintProperty(layerId, 'text-halo-color', styles.textHaloColor ?? '#ffffff');
+		this.map?.setPaintProperty(layerId, 'text-halo-width', styles.textHaloWidth ?? 1);
+	}
+
+	/**
+	 * Remove the `{prefix}-text-labels` symbol layer and the `{prefix}-text`
+	 * GeoJSON source from the map.
+	 *
+	 * Called when all features are deleted via `handleDeleteAllFeatures`.
+	 */
+	protected clearTextLayers() {
+		const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
+		const source = this.map?.getSource(`${prefixId}-text`) as maplibregl.GeoJSONSource | undefined;
+		const layers = this.map?.style?.getLayer(`${prefixId}-text-labels`);
+
+		this.map?.removeLayer(layers?.id as string);
+		this.map?.removeSource(source?.id as string);
 	}
 }

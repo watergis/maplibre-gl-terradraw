@@ -451,6 +451,18 @@ export const load: PageServerLoad = async ({ fetch, parent, platform, url }) => 
 			properties: {
 				mode: 'freehand'
 			}
+		},
+		{
+			id: 'd65a6b56-c57d-4bed-9629-36b369c43c0b',
+			type: 'Feature',
+			geometry: {
+				type: 'Point',
+				coordinates: [24.6727135, -28.4792625]
+			},
+			properties: {
+				mode: 'text',
+				text: 'Text Label 1'
+			}
 		}
 	];
 

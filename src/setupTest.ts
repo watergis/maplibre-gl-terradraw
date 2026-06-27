@@ -62,9 +62,12 @@ vi.mock('terra-draw', () => ({
 		return { mode: 'sensor' };
 	}),
 	ValidateNotSelfIntersecting: vi.fn(),
-	TerraDrawExtend: vi.fn().mockImplementation(function () {
-		return {};
-	}),
+	TerraDrawExtend: {
+		TerraDrawBaseDrawMode: class {
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			constructor(_options?: unknown) {}
+		}
+	},
 	TerraDrawModeUndoRedo: vi.fn().mockImplementation(function () {
 		return {};
 	}),
@@ -100,6 +103,7 @@ vi.mock('maplibre-gl', () => {
 					addSource: vi.fn(),
 					addLayer: vi.fn(),
 					getLayer: vi.fn(),
+					moveLayer: vi.fn(),
 					removeLayer: vi.fn(),
 					removeSource: vi.fn(),
 					hasImage: vi.fn(() => false),

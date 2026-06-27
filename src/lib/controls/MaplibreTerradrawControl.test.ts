@@ -4,6 +4,7 @@ import type { StyleSpecification } from 'maplibre-gl';
 import { Map } from 'maplibre-gl';
 import { type GeoJSONStoreFeatures } from 'terra-draw';
 import { TERRADRAW_SOURCE_IDS } from '../helpers/cleanMaplibreStyle';
+import { TerraDrawTextMode } from '../modes/TerraDrawTextMode';
 
 const maplibreStyle: StyleSpecification = {
 	version: 8,
@@ -2163,6 +2164,54 @@ describe('text layer methods', () => {
 			);
 		});
 
+		it('applies selected styles from TextModeStyling overrides', () => {
+			const control = new MaplibreTerradrawControl({
+				modes: ['text'],
+				modeOptions: {
+					text: new TerraDrawTextMode({
+						styles: {
+							textSize: 13,
+							textSelectedSize: 19,
+							textHaloColor: '#123456',
+							textSelectedHaloColor: '#abcdef'
+						}
+					})
+				}
+			});
+			control.onAdd(mockMap);
+
+			const terradraw = control.getTerraDrawInstance()!;
+			terradraw.getSnapshot = vi.fn().mockReturnValue([
+				{
+					id: 'f1',
+					type: 'Feature',
+					geometry: { type: 'Point', coordinates: [0, 0] },
+					properties: { mode: 'text', text: 'Hello' }
+				}
+			]);
+
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(mockMap as any).style = { getLayer: vi.fn().mockReturnValue({ id: 'td-text-labels' }) };
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(mockMap as any).getSource = vi.fn().mockReturnValue({ setData: vi.fn() });
+
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(control as any).selectTextLabelLayer('f1');
+
+			expect(mockMap.setLayoutProperty).toHaveBeenCalledWith('td-text-labels', 'text-size', [
+				'case',
+				['==', ['get', 'selected'], true],
+				19,
+				13
+			]);
+			expect(mockMap.setPaintProperty).toHaveBeenCalledWith('td-text-labels', 'text-halo-color', [
+				'case',
+				['==', ['get', 'selected'], true],
+				'#abcdef',
+				'#123456'
+			]);
+		});
+
 		it('resets layer when selected feature is not a text feature', () => {
 			const control = new MaplibreTerradrawControl({ modes: ['text'] });
 			control.onAdd(mockMap);
@@ -2217,9 +2266,9 @@ describe('text layer methods', () => {
 			expect(mockMap.setPaintProperty).toHaveBeenCalledWith(
 				'td-text-labels',
 				'text-halo-color',
-				'#3f97e0'
+				'#FFFFFF'
 			);
-			expect(mockMap.setPaintProperty).toHaveBeenCalledWith('td-text-labels', 'text-halo-width', 5);
+			expect(mockMap.setPaintProperty).toHaveBeenCalledWith('td-text-labels', 'text-halo-width', 1);
 		});
 	});
 

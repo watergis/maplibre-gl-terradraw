@@ -27,7 +27,9 @@ const { TerraDrawBaseDrawMode } = TerraDrawExtend;
  * const styles: TextModeStyling = {
  *   textColor: '#1a1a1a',
  *   textSize: 14,
+ *   textSelectedSize: 16,
  *   textHaloColor: '#ffffff',
+ *   textSelectedHaloColor: '#3f97e0',
  *   textHaloWidth: 2,
  * };
  * ```
@@ -45,8 +47,12 @@ export type TextModeStyling = {
 	textColor?: HexColor;
 	/** MapLibre `text-size` layout property in pixels. Default `12`. */
 	textSize?: number;
+	/** MapLibre selected `text-size` in pixels. Default `14`. */
+	textSelectedSize?: number;
 	/** MapLibre `text-halo-color` paint property. Default `#3f97e0`. */
 	textHaloColor?: HexColor;
+	/** MapLibre selected `text-halo-color` paint property. Default `#ffffff`. */
+	textSelectedHaloColor?: HexColor;
 	/** MapLibre `text-halo-width` paint property in pixels. Default `5`. */
 	textHaloWidth?: number;
 };
@@ -156,8 +162,10 @@ export type TextModeOptions = {
  *       styles: {
  *         textColor: '#1a1a1a',
  *         textSize: 14,
+ *         textSelectedSize: 16,
  *         textHaloColor: '#ffffff',
  *         textHaloWidth: 2,
+ *         textSelectedHaloColor: '#E0B03F'
  *       },
  *       onTextCommit: (id, text) => console.log(`${id}: ${text}`),
  *     }),
@@ -265,7 +273,7 @@ export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 	private createTextAreaElement(currentText?: string): HTMLTextAreaElement {
 		const textarea = document.createElement('textarea');
 		textarea.placeholder = this.options?.placeholder ?? 'Enter label...';
-		textarea.rows = 2;
+		textarea.rows = 1;
 
 		if (currentText) {
 			textarea.value = currentText;
@@ -279,11 +287,36 @@ export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 	}
 
 	/**
+	 * Auto-size the textarea to content height up to 3 lines, then enable vertical scroll.
+	 */
+	private resizeTextarea(textarea: HTMLTextAreaElement): void {
+		const computedStyles = window.getComputedStyle(textarea);
+		const fontSize = Number.parseFloat(computedStyles.fontSize) || 12;
+		const lineHeight = Number.parseFloat(computedStyles.lineHeight) || fontSize * 1.2;
+		const paddingTop = Number.parseFloat(computedStyles.paddingTop) || 0;
+		const paddingBottom = Number.parseFloat(computedStyles.paddingBottom) || 0;
+		const borderTop = Number.parseFloat(computedStyles.borderTopWidth) || 0;
+		const borderBottom = Number.parseFloat(computedStyles.borderBottomWidth) || 0;
+		const verticalExtras = paddingTop + paddingBottom + borderTop + borderBottom;
+		const minHeight = lineHeight + verticalExtras;
+		const maxHeight = lineHeight * 3 + verticalExtras;
+
+		textarea.style.height = 'auto';
+		const nextHeight = Math.min(Math.max(textarea.scrollHeight, minHeight), maxHeight);
+		textarea.style.height = `${nextHeight}px`;
+		textarea.style.overflowY = textarea.scrollHeight > maxHeight ? 'auto' : 'hidden';
+	}
+
+	/**
 	 * @returns
 	 */
 	private createTextAreaTooltip(): HTMLSpanElement {
 		const span = document.createElement('span');
-		span.textContent = 'shift + enter to make new line';
+		const tooltipText = [
+			'Shift + Enter to make new line.',
+			'Right-click or long-tap to edit label.'
+		];
+		span.innerHTML = tooltipText.join('<br>');
 		Object.assign(span.style, this.createDomStyles('span'));
 		return span;
 	}
@@ -356,18 +389,25 @@ export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 		currentText?: string
 	): TextAreaPopup | undefined {
 		const wrapper = this.createTextAreaWrapper(x, y);
+		const inputRow = document.createElement('div');
+		Object.assign(inputRow.style, {
+			display: 'flex',
+			alignItems: 'flex-start'
+		});
+
 		const textarea = this.createTextAreaElement(currentText);
 		const tooltip = this.createTextAreaTooltip();
 		const submitButton = this.createSubmitButton();
 
 		submitButton.disabled = !currentText;
-		submitButton.style.opacity = currentText ? '1' : '0.5';
+		submitButton.style.opacity = '1';
 		submitButton.style.cursor = currentText ? 'pointer' : 'not-allowed';
 
 		textarea.addEventListener('input', () => {
+			this.resizeTextarea(textarea);
 			const hasText = textarea.value.trim().length > 0;
 			submitButton.disabled = !hasText;
-			submitButton.style.opacity = hasText ? '1' : '0.5';
+			submitButton.style.opacity = '1';
 			submitButton.style.cursor = hasText ? 'pointer' : 'not-allowed';
 		});
 
@@ -381,10 +421,12 @@ export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 			else onDismiss();
 		});
 
-		wrapper.appendChild(textarea);
+		inputRow.appendChild(textarea);
+		inputRow.appendChild(submitButton);
+		wrapper.appendChild(inputRow);
 		wrapper.appendChild(tooltip);
-		wrapper.appendChild(submitButton);
 		this._mapContainer?.appendChild(wrapper);
+		this.resizeTextarea(textarea);
 		textarea.focus();
 
 		return { wrapper, textarea };
@@ -497,7 +539,15 @@ export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 		}
 
 		if (this.activeTextarea && this.activeFeatureId) {
-			this.commitText(this.activeFeatureId, this.activeTextarea.value.trim());
+			const activeFeature = this.store
+				.copyAll()
+				.find((feature) => feature.id === this.activeFeatureId);
+			const hasCommittedText =
+				typeof activeFeature?.properties?.text === 'string' &&
+				activeFeature.properties.text.trim().length > 0;
+
+			// Closing without submit should discard in-progress text.
+			this.dismissTextarea(!hasCommittedText);
 			this.isContextMenuOpen = false;
 			return;
 		}
@@ -558,7 +608,7 @@ export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 
 			const nearest = this.getNearestPointFeature(event.containerX, event.containerY);
 
-			this.setCursor(nearest ? 'move' : 'crosshair');
+			this.setCursor(nearest ? 'pointer' : 'crosshair');
 		});
 	}
 

@@ -232,7 +232,7 @@ describe('MaplibreTerradrawTextMode', () => {
 			expect((mode as any).store.delete).not.toHaveBeenCalledWith(['feature-1']);
 		});
 
-		it('commits text when clicking outside open textarea', () => {
+		it('closes and discards text when clicking outside open textarea', () => {
 			const mode = mountMode();
 			mode.onClick(mockEvent());
 
@@ -242,13 +242,8 @@ describe('MaplibreTerradrawTextMode', () => {
 			// second click = outside click
 			mode.onClick(mockEvent({ lng: 99, lat: 99 }));
 
-			expect((mode as any).store.updateProperty).toHaveBeenCalledWith([
-				{
-					id: 'feature-1',
-					property: 'text',
-					value: 'Outside click commit'
-				}
-			]);
+			expect((mode as any).store.updateProperty).not.toHaveBeenCalled();
+			expect((mode as any).store.delete).toHaveBeenCalledWith(['feature-1']);
 		});
 
 		it('does not create a new feature when clicking outside open textarea', () => {

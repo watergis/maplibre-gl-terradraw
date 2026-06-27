@@ -1,32 +1,38 @@
 export const defaultTextAreaStyleOptions = {
 	padding: '4px 8px',
 	fontSize: '12px',
+	lineHeight: '1.4',
 	fontFamily: 'sans-serif',
-	borderBottom: 'none',
-	borderRadius: '6px 6px 0 0',
+	border: 'none',
+	borderRadius: '0',
 	background: 'rgba(255,255,255,0.95)',
 	color: '#111',
+	margin: '0',
+	display: 'block',
 	resize: 'none',
 	outline: 'none',
-	width: '100%',
+	overflowY: 'hidden',
+	width: 'auto',
+	flex: '1',
 	boxSizing: 'border-box',
 	position: 'relative'
 } as CSSStyleDeclaration;
 
 export const defaultSubmitButtonStyleOptions = {
-	padding: '8px 10px',
+	padding: '6px 10px',
 	fontSize: '11px',
 	fontFamily: 'sans-serif',
 	backgroundColor: '#3F97E0',
-	border: '1.5px solid #4CC9F0',
+	border: '1px solid #d9d9d9',
 	borderTop: 'none',
-	borderRadius: '6px',
+	borderRight: 'none',
+	borderBottom: 'none',
+	borderRadius: '0',
 	cursor: 'pointer',
-	minWidth: '20%',
+	minWidth: '48px',
+	minHeight: '25px',
 	boxSizing: 'border-box',
-	position: 'absolute',
-	bottom: '2px',
-	right: '4px'
+	position: 'relative'
 } as CSSStyleDeclaration;
 
 export const defaultTextAreaWrapperStyleOptions = {
@@ -36,17 +42,19 @@ export const defaultTextAreaWrapperStyleOptions = {
 	flexDirection: 'column',
 	minWidth: '210px',
 	maxWidth: '250px',
+	border: '1px solid #d9d9d9',
 	boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-	borderRadius: '6px',
-	overflow: 'hidden'
+	borderRadius: '0',
+	overflow: 'hidden',
+	background: 'rgba(255,255,255,1.0)'
 } as CSSStyleDeclaration;
 
 export const defaultTextAreaTooltipSpanStyleOptions = {
 	display: 'block',
-	padding: '8px 8px 0px 8px',
+	padding: '8px',
 	fontSize: '10px',
 	fontFamily: 'sans-serif',
 	color: '#888',
 	background: 'rgba(255,255,255,0.95)',
-	borderTop: '1px solid #e0e0e0'
+	borderTop: '1px solid #d9d9d9'
 } as CSSStyleDeclaration;

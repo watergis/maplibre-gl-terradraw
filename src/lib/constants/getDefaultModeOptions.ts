@@ -227,8 +227,10 @@ export const getDefaultModeOptions = () => {
 			styles: {
 				textColor: '#000000',
 				textSize: 12,
-				textHaloWidth: 5,
-				textHaloColor: '#3f97e0'
+				textSelectedSize: 14,
+				textHaloWidth: 1,
+				textHaloColor: '#FFFFFF',
+				textSelectedHaloColor: '#E0B03F'
 			}
 		})
 	};

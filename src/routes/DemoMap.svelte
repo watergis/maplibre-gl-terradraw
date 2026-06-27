@@ -297,9 +297,6 @@
 				if (invalid.length > 0) {
 					console.log(invalid);
 				}
-
-				// add the text symbol source too
-				drawControl.createTerradrawTextLayer(map);
 			}
 			drawInstance?.clearUndoRedoHistory();
 			if (options.controlType === 'measure') {

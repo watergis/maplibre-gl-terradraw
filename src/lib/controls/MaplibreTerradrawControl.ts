@@ -231,43 +231,6 @@ export class MaplibreTerradrawControl implements IControl {
 			});
 		}
 
-		modes.forEach((m: TerradrawModeClass) => {
-			if (m.mode === 'text') {
-				const styles = defaultOptions[m.mode].styles;
-
-				this.createTerradrawTextLayer(map, styles as Partial<TextModeStyling>);
-
-				this.terradraw?.on('finish', () => {
-					this.createTerradrawTextLayer(map, styles as Partial<TextModeStyling>);
-				});
-
-				// set on select styles
-				this.terradraw?.on('select', (featureId) => {
-					this.selectTextLabelLayer(featureId);
-
-					// update text mode layers coordinates on mousemove
-					this.terradraw?.on('change', () => {
-						const snapshot = this.terradraw?.getSnapshot() ?? [];
-						const textFeatures = snapshot.filter(
-							(f) => f.properties?.mode === 'text' && f.properties?.text
-						) as GeoJSONStoreFeatures<GeoJSONStoreGeometries>[];
-
-						const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
-
-						const source = map.getSource(`${prefixId}-text`) as GeoJSONSource | undefined;
-						source?.setData({
-							type: 'FeatureCollection',
-							features: textFeatures
-						});
-					});
-				});
-
-				this.terradraw?.on('deselect', () => {
-					this.resetTextLabelLayer();
-				});
-			}
-		});
-
 		this.controlContainer = document.createElement('div');
 		this.controlContainer.classList.add(`maplibregl-ctrl`);
 		this.controlContainer.classList.add(`maplibregl-ctrl-group`);
@@ -564,6 +527,43 @@ export class MaplibreTerradrawControl implements IControl {
 					}
 					this.dispatchEvent('mode-changed');
 				});
+
+				if (mode === 'text') {
+					const styles = this.getTextModeStyling();
+
+					const map = this.map as Map;
+
+					this.createTerradrawTextLayer(map, styles);
+
+					this.terradraw?.on('change', () => {
+						this.createTerradrawTextLayer(map, styles);
+					});
+
+					// set on select styles
+					this.terradraw?.on('select', (featureId) => {
+						this.selectTextLabelLayer(featureId);
+
+						// update text mode layers coordinates on mousemove
+						this.terradraw?.on('change', () => {
+							const snapshot = this.terradraw?.getSnapshot() ?? [];
+							const textFeatures = snapshot.filter(
+								(f) => f.properties?.mode === 'text' && f.properties?.text
+							) as GeoJSONStoreFeatures<GeoJSONStoreGeometries>[];
+
+							const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
+
+							const source = map.getSource(`${prefixId}-text`) as GeoJSONSource | undefined;
+							source?.setData({
+								type: 'FeatureCollection',
+								features: textFeatures
+							});
+						});
+					});
+
+					this.terradraw?.on('deselect', () => {
+						this.resetTextLabelLayer();
+					});
+				}
 			}
 		}
 	}
@@ -673,8 +673,6 @@ export class MaplibreTerradrawControl implements IControl {
 
 		const deleteFeatures = () => {
 			this.terradraw?.clear();
-			// also delete all text-layers
-
 			this.clearTextLayers();
 			this.resetActiveMode();
 			this.toggleDeleteSelectionButton();
@@ -879,11 +877,12 @@ export class MaplibreTerradrawControl implements IControl {
 	 * @param map - The MapLibre GL `Map` instance.
 	 * @param styles - Optional style overrides forwarded to the MapLibre symbol layer.
 	 */
-	public createTerradrawTextLayer(map: Map, styles?: TextModeStyling) {
+	protected createTerradrawTextLayer(map: Map, styles?: TextModeStyling) {
+		const defaultStyles = styles ?? this.getTextModeStyling();
 		const snapshot = this.terradraw?.getSnapshot();
 		const textFeatures =
 			snapshot?.filter((f) => f.properties?.mode === 'text' && f.properties?.text) ?? [];
-		this.addTextFeaturesToSource(textFeatures, map, styles);
+		this.addTextFeaturesToSource(textFeatures, map, defaultStyles);
 
 		const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
 
@@ -932,10 +931,28 @@ export class MaplibreTerradrawControl implements IControl {
 				paint: {
 					'text-color': (styles?.textColor as string) ?? '#000000',
 					'text-halo-color': (styles?.textHaloColor as string) ?? '#ffffff',
-					'text-halo-width': (styles?.textHaloWidth as number) ?? 1.5
+					'text-halo-width': (styles?.textHaloWidth as number) ?? 1
 				}
 			});
 		}
+	}
+
+	/**
+	 * Resolve text mode styles by merging defaults and user overrides.
+	 */
+	protected getTextModeStyling(): Partial<TextModeStyling> {
+		const defaultOptions = getDefaultModeOptions();
+		const defaultTextMode = defaultOptions.text as
+			| (TerradrawModeClass & { options?: { styles?: TextModeStyling } })
+			| undefined;
+		const customTextMode = this.options.modeOptions?.text as
+			| (TerradrawModeClass & { options?: { styles?: TextModeStyling } })
+			| undefined;
+
+		const defaultStyles = (defaultTextMode?.options?.styles as Partial<TextModeStyling>) ?? {};
+		const customStyles = (customTextMode?.options?.styles as Partial<TextModeStyling>) ?? {};
+
+		return { ...defaultStyles, ...customStyles };
 	}
 
 	/**
@@ -953,6 +970,8 @@ export class MaplibreTerradrawControl implements IControl {
 	 * @param featureId - The TerraDraw feature ID that was selected.
 	 */
 	protected selectTextLabelLayer(featureId: TerraDrawExtend.FeatureId) {
+		const styles = this.getTextModeStyling();
+
 		const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
 		const layerId = `${prefixId}-text-labels`;
 
@@ -973,15 +992,15 @@ export class MaplibreTerradrawControl implements IControl {
 			this.map?.setLayoutProperty(layerId, 'text-size', [
 				'case',
 				['==', ['get', 'selected'], true],
-				14,
-				12
+				styles.textSelectedSize ?? 14,
+				styles.textSize ?? 12
 			]);
 
 			this.map?.setPaintProperty(layerId, 'text-halo-color', [
 				'case',
 				['==', ['get', 'selected'], true],
-				'#ffffff',
-				'#3f97e0'
+				styles.textSelectedHaloColor ?? '#ffffff',
+				styles.textHaloColor ?? '#ffffff'
 			]);
 		} else {
 			this.resetTextLabelLayer();
@@ -992,13 +1011,15 @@ export class MaplibreTerradrawControl implements IControl {
 	 * Restore the default paint properties on the `{prefix}-text-labels` layer
 	 * after a text feature is deselected.
 	 *
-	 * Resets `text-color` to `#000000`, `text-halo-color` to `#3f97e0`, and
-	 * `text-halo-width` to `5`. Also refreshes the GeoJSON source to clear
+	 * Resets `text-color`, `text-halo-color`, and `text-halo-width` from
+	 * `TextModeStyling` defaults. Also refreshes the GeoJSON source to clear
 	 * the TerraDraw `selected` flag from the feature data.
 	 *
 	 * Called automatically on `terradraw.on('deselect')`.
 	 */
 	protected resetTextLabelLayer() {
+		const styles = this.getTextModeStyling();
+
 		const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
 		const layerId = `${prefixId}-text-labels`;
 
@@ -1012,9 +1033,9 @@ export class MaplibreTerradrawControl implements IControl {
 		const source = this.map?.getSource(`${prefixId}-text`) as GeoJSONSource | undefined;
 		source?.setData({ type: 'FeatureCollection', features: textFeatures });
 
-		this.map?.setPaintProperty(layerId, 'text-color', '#000000');
-		this.map?.setPaintProperty(layerId, 'text-halo-color', '#3f97e0');
-		this.map?.setPaintProperty(layerId, 'text-halo-width', 5);
+		this.map?.setPaintProperty(layerId, 'text-color', styles.textColor ?? '#000000');
+		this.map?.setPaintProperty(layerId, 'text-halo-color', styles.textHaloColor ?? '#ffffff');
+		this.map?.setPaintProperty(layerId, 'text-halo-width', styles.textHaloWidth ?? 1);
 	}
 
 	/**

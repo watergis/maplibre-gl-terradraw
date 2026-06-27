@@ -1,8 +1,6 @@
 ---
-'@watergis/maplibre-gl-terradraw': major
+'@watergis/maplibre-gl-terradraw': minor
 ---
-
-## New Feature: Text Label Mode (`text`)
 
 Added `TerraDrawTextMode` — a custom Terra Draw mode that lets users place, edit, and drag freeform text labels anywhere on the map.
 
@@ -25,30 +23,20 @@ Added `TerraDrawTextMode` — a custom Terra Draw mode that lets users place, ed
 - Labels with committed text are draggable via `TerraDrawSelectMode` when the `text` flag is configured with `draggable: true` (the default in `getDefaultModeOptions`).
 - The map symbol layer tracking (`{prefix}-text-labels`) is updated live during a drag via the `terradraw.on('change')` event.
 
-### Symbol layer management (`MaplibreTerradrawControl`)
-
-When the `text` mode is included, `MaplibreTerradrawControl` automatically manages a dedicated MapLibre GL symbol layer on top of all other TerraDraw layers:
-
-| Method                                    | Description                                                                                                                                                                                                                         |
-| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `createTerradrawTextLayer(map, styles?)`  | Adds (or refreshes) the `{prefix}-text` GeoJSON source and `{prefix}-text-labels` symbol layer, then calls `map.moveLayer` to ensure it renders above all other TerraDraw layers. Called on `onAdd` and after every `finish` event. |
-| `selectTextLabelLayer(featureId)`         | Applies highlighted styles (larger text, white halo) to the selected text label. Called on `terradraw.on('select')`.                                                                                                                |
-| `resetTextLabelLayer()`                   | Restores the default text-color, halo-color, and halo-width after a deselect. Called on `terradraw.on('deselect')`.                                                                                                                 |
-| `clearTextLayers()`                       | Removes the symbol layer and GeoJSON source from the map. Called when all features are deleted.                                                                                                                                     |
-| `deleteSelectedTextSymbolLayer(features)` | Updates the source data to remove only the deleted text features while keeping the rest. Called from `handleDeleteSelectedFeatures`.                                                                                                |
-
 ### Styling options (`TextModeStyling`)
 
-Passed via `modeOptions.text.styles` or as the second argument to `createTerradrawTextLayer`:
+Passed via `modeOptions.text.styles`:
 
-| Property        | Type       | Default   | Description                                                       |
-| --------------- | ---------- | --------- | ----------------------------------------------------------------- |
-| `textColor`     | `HexColor` | `#000000` | MapLibre `text-color` paint property                              |
-| `textSize`      | `number`   | `12`      | MapLibre `text-size` layout property (px)                         |
-| `textHaloColor` | `HexColor` | `#3f97e0` | MapLibre `text-halo-color` paint property                         |
-| `textHaloWidth` | `number`   | `5`       | MapLibre `text-halo-width` paint property (px)                    |
-| `pointColor`    | `HexColor` | `#5CFF2E` | Anchor point color (rendered at width 0, so invisible by default) |
-| `pointWidth`    | `number`   | `0`       | Anchor point radius                                               |
+| Property                | Type       | Default   | Description                                                       |
+| ----------------------- | ---------- | --------- | ----------------------------------------------------------------- |
+| `textColor`             | `HexColor` | `#000000` | MapLibre `text-color` paint property                              |
+| `textSize`              | `number`   | `12`      | MapLibre `text-size` layout property (px)                         |
+| `textSelectedSize`      | `number`   | `14`      | MapLibre `text-size` layout property (px) when selected           |
+| `textHaloColor`         | `HexColor` | `#FFFFFF` | MapLibre `text-halo-color` paint property                         |
+| `textSelectedHaloColor` | `HexColor` | `#E0B03F` | MapLibre `text-halo-color` paint property when selected           |
+| `textHaloWidth`         | `number`   | `1`       | MapLibre `text-halo-width` paint property (px)                    |
+| `pointColor`            | `HexColor` | `#5CFF2E` | Anchor point color (rendered at width 0, so invisible by default) |
+| `pointWidth`            | `number`   | `0`       | Anchor point radius                                               |
 
 ### Textarea DOM styling (`domStyles`)
 
@@ -80,8 +68,10 @@ const control = new MaplibreTerradrawControl({
 			styles: {
 				textColor: '#000000',
 				textSize: 12,
-				textHaloColor: '#3f97e0',
-				textHaloWidth: 5
+				textSelectedSize: 14
+				textHaloColor: '#FFFFFF',
+				textHaloWidth: 1,
+				textSelectedHaloColor: '#E0B03F'
 			},
 			// Optional: override the default textarea / submit button appearance
 			domStyles: {

@@ -8,6 +8,7 @@ import {
 	TerraDrawMarkerMode,
 	TerraDrawPointMode,
 	TerraDrawPolygonMode,
+	TerraDrawPolyLineMode,
 	TerraDrawRectangleMode,
 	TerraDrawRenderMode,
 	TerraDrawSectorMode,
@@ -57,6 +58,7 @@ export const getDefaultModeOptions = () => {
 		linestring: new TerraDrawLineStringMode({
 			editable: true
 		}),
+		polyline: new TerraDrawPolyLineMode(),
 		polygon: new TerraDrawPolygonMode({
 			editable: true,
 			validation: polygonValidation
@@ -93,6 +95,18 @@ export const getDefaultModeOptions = () => {
 					}
 				},
 				linestring: {
+					feature: {
+						draggable: true,
+						rotateable: true,
+						scaleable: true,
+						coordinates: {
+							midpoints: true,
+							draggable: true,
+							deletable: true
+						}
+					}
+				},
+				polyline: {
 					feature: {
 						draggable: true,
 						rotateable: true,

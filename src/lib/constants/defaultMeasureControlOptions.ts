@@ -7,6 +7,7 @@ import {
 	TerraDrawMarkerMode,
 	TerraDrawPointMode,
 	TerraDrawPolygonMode,
+	TerraDrawPolyLineMode,
 	TerraDrawRectangleMode,
 	TerraDrawSectorMode,
 	TerraDrawSelectMode,
@@ -26,6 +27,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 		'point',
 		'marker',
 		'linestring',
+		'polyline',
 		'polygon',
 		'rectangle',
 		'angled-rectangle',
@@ -67,6 +69,20 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 			styles: {
 				lineStringColor: '#666666',
 				lineStringWidth: 2,
+				closingPointColor: '#FFFFFF',
+				closingPointWidth: 3,
+				closingPointOutlineColor: '#666666',
+				closingPointOutlineWidth: 1
+			}
+		}),
+		polyline: new TerraDrawPolyLineMode({
+			styles: {
+				lineStringColor: '#666666',
+				lineStringWidth: 2,
+				polygonFillColor: '#EDEFF0',
+				polygonFillOpacity: 0.7,
+				polygonOutlineColor: '#666666',
+				polygonOutlineWidth: 2,
 				closingPointColor: '#FFFFFF',
 				closingPointWidth: 3,
 				closingPointOutlineColor: '#666666',
@@ -177,6 +193,18 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 					}
 				},
 				linestring: {
+					feature: {
+						draggable: true,
+						rotateable: true,
+						scaleable: true,
+						coordinates: {
+							midpoints: true,
+							draggable: true,
+							deletable: true
+						}
+					}
+				},
+				polyline: {
 					feature: {
 						draggable: true,
 						rotateable: true,

@@ -79,6 +79,14 @@
 	background-size: 80%;
 }
 
+.maplibregl-terradraw-measure-add-polyline-button,
+.maplibregl-terradraw-add-polyline-button {
+	background: url('./icons/polyline.svg');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 80%;
+}
+
 .maplibregl-terradraw-valhalla-add-routing-button {
 	background: url('./icons/valhalla_route.svg');
 	background-position: center;

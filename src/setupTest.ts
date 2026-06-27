@@ -34,6 +34,12 @@ vi.mock('terra-draw', () => ({
 	TerraDrawLineStringMode: vi.fn().mockImplementation(function () {
 		return { mode: 'linestring' };
 	}),
+	TerraDrawPolylineMode: vi.fn().mockImplementation(function () {
+		return { mode: 'polyline' };
+	}),
+	TerraDrawPolyLineMode: vi.fn().mockImplementation(function () {
+		return { mode: 'polyline' };
+	}),
 	TerraDrawPolygonMode: vi.fn().mockImplementation(function () {
 		return { mode: 'polygon' };
 	}),

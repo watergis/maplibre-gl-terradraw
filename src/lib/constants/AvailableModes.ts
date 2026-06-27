@@ -13,6 +13,7 @@ export const AvailableModes = [
 	'point',
 	'marker',
 	'linestring',
+	'polyline',
 	'polygon',
 	'rectangle',
 	'circle',

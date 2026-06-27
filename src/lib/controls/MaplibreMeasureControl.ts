@@ -348,7 +348,10 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				const id: string = feature.id as string;
 				const geometryType = feature.geometry.type;
 				const mode = feature.properties.mode as TerradrawMode;
-				if (['linestring', 'freehand-linestring'].includes(mode) && geometryType === 'LineString') {
+				if (
+					['linestring', 'freehand-linestring', 'polyline'].includes(mode) &&
+					geometryType === 'LineString'
+				) {
 					this.measureLine(id, false);
 				} else if (['point', 'marker'].includes(mode) && geometryType === 'Point') {
 					this.measurePoint(id, false);
@@ -406,7 +409,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		if (!this.map) return;
 
 		const lineModes = this.options.modes?.filter((m) =>
-			['linestring', 'freehand-linestring'].includes(m)
+			['linestring', 'freehand-linestring', 'polyline'].includes(m)
 		);
 		const pointMode = this.options.modes?.find((m) => ['point', 'marker'].includes(m));
 
@@ -511,7 +514,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			const lineFeatures = snapshot.filter(
 				(f) =>
 					f.properties.mode &&
-					['linestring', 'freehand-linestring'].includes(f.properties.mode as string) &&
+					['linestring', 'freehand-linestring', 'polyline'].includes(f.properties.mode as string) &&
 					f.geometry.type === 'LineString'
 			);
 			if (lineFeatures.length > 0) {
@@ -543,7 +546,10 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 		if (!feature) return;
 		const geometryType = feature.geometry.type;
 		const mode = feature.properties.mode as TerradrawMode;
-		if (['linestring', 'freehand-linestring'].includes(mode) && geometryType === 'LineString') {
+		if (
+			['linestring', 'freehand-linestring', 'polyline'].includes(mode) &&
+			geometryType === 'LineString'
+		) {
 			this.measureLine(id, false);
 		} else if (['point', 'marker'].includes(mode) && geometryType === 'Point') {
 			this.measurePoint(id, false);
@@ -588,7 +594,10 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 			if (feature) {
 				const geometryType = feature.geometry.type;
 				const mode = feature.properties.mode as TerradrawMode;
-				if (['linestring', 'freehand-linestring'].includes(mode) && geometryType === 'LineString') {
+				if (
+					['linestring', 'freehand-linestring', 'polyline'].includes(mode) &&
+					geometryType === 'LineString'
+				) {
 					this.measureLine(id, true);
 				} else if (['point', 'marker'].includes(mode) && geometryType === 'Point') {
 					this.measurePoint(id, true);

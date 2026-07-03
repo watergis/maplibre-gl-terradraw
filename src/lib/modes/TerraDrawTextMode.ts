@@ -111,7 +111,7 @@ export type TextModeOptions = {
 	 */
 	draggable?: boolean;
 	/**
-	 * When `true`, right-clicking (context menu) near an existing label opens the
+	 * When `true`, clicking/tapping near an existing label opens the
 	 * textarea pre-filled with the current text so the user can edit it in place.
 	 * Defaults to `false`.
 	 */
@@ -137,7 +137,7 @@ export type TextModeOptions = {
  * | **Shift+Enter** | Inserts a newline without committing. |
  * | **Escape** (in popup) | Dismisses the popup and deletes the uncommitted feature. |
  * | **Click outside** open popup | Commits any typed text, or dismisses if empty. |
- * | **Right-click** near label | Opens the textarea pre-filled with existing text (requires `editable: true`). |
+ * | **Click** near existing label | Opens the textarea pre-filled with existing text (requires `editable: true`). |
  * | **Drag** a committed label | Handled by `TerraDrawSelectMode` when `flags.text.feature.draggable` is `true`. |
  *
  * ## MapLibre GL rendering
@@ -187,7 +187,6 @@ export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 	private activeFeatureId: TerraDrawExtend.FeatureId | null = null;
 
 	private _mapContainer: HTMLElement | null = null;
-	private isContextMenuOpen?: boolean = false;
 	private rafId?: number | null = null;
 
 	constructor(options?: TextModeOptions) {
@@ -196,19 +195,12 @@ export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 		this.styles = options?.styles ?? {};
 		this.editable = options?.editable ?? false;
 		this._mapContainer = this.getMap();
-
-		this.pointerEvents = {
-			...this.pointerEvents,
-			contextMenu: true
-		};
 	}
 
 	/** @internal */
 	start() {
 		this.setStarted();
 		this.setCursor('crosshair');
-
-		this._mapContainer?.addEventListener('contextmenu', this.onContextMenu.bind(this));
 	}
 
 	/** @internal */
@@ -216,10 +208,6 @@ export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 		this.cleanUp();
 		this.setStopped();
 		this.setCursor('unset');
-
-		this.isContextMenuOpen = false;
-
-		this._mapContainer?.removeEventListener('contextmenu', this.onContextMenu.bind(this));
 	}
 
 	/** @internal */
@@ -230,8 +218,6 @@ export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 			cancelAnimationFrame(this.rafId);
 			this.rafId = null;
 		}
-
-		this.isContextMenuOpen = false;
 	}
 
 	/**
@@ -312,10 +298,7 @@ export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 	 */
 	private createTextAreaTooltip(): HTMLSpanElement {
 		const span = document.createElement('span');
-		const tooltipText = [
-			'Shift + Enter to make new line.',
-			'Right-click or long-tap to edit label.'
-		];
+		const tooltipText = ['Shift + Enter to make new line.'];
 		span.innerHTML = tooltipText.join('<br>');
 		Object.assign(span.style, this.createDomStyles('span'));
 		return span;
@@ -512,7 +495,6 @@ export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 		this.options?.onTextCommit?.(featureId, text);
 		this.dismissTextarea(false);
 		this.onFinish(featureId, { mode: this.mode, action: 'draw' });
-		this.isContextMenuOpen = false;
 	}
 
 	/**
@@ -533,11 +515,6 @@ export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 
 	/** @internal */
 	onClick(event: TerraDrawMouseEvent): void {
-		if (this.isContextMenuOpen && this.options?.editable) {
-			this.isContextMenuOpen = false;
-			return;
-		}
-
 		if (this.activeTextarea && this.activeFeatureId) {
 			const activeFeature = this.store
 				.copyAll()
@@ -548,11 +525,21 @@ export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 
 			// Closing without submit should discard in-progress text.
 			this.dismissTextarea(!hasCommittedText);
-			this.isContextMenuOpen = false;
 			return;
 		}
 
 		const { x, y } = this.project(event.lng, event.lat);
+
+		// When editable, clicking/tapping near an existing label edits it in place
+		// instead of creating a new overlapping label.
+		if (this.editable) {
+			const nearest = this.getNearestPointFeature(event.containerX, event.containerY);
+			if (nearest) {
+				this.editText(nearest.id as TerraDrawExtend.FeatureId, x, y);
+				return;
+			}
+		}
+
 		this.setCursor('crosshair');
 
 		const [featureId] = this.store.create([
@@ -571,32 +558,20 @@ export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 		this.showTextarea(featureId as TerraDrawExtend.FeatureId, x, y);
 	}
 
-	/**
-	 * @param event
-	 * @returns
-	 */
-	onContextMenu(event: MouseEvent): void {
-		if (!this.editable) return;
-
-		this.isContextMenuOpen = true;
-
-		event.preventDefault();
-
-		const rect = (this._mapContainer as HTMLElement).getBoundingClientRect();
-		const x = event.clientX - rect.left;
-		const y = event.clientY - rect.top;
-
-		const nearest = this.getNearestPointFeature(x, y);
-		if (!nearest) {
-			this.isContextMenuOpen = false;
-			return;
-		}
-		this.editText(nearest.id, x, y);
-	}
-
 	/** @internal */
 	onKeyUp(event: TerraDrawKeyboardEvent): void {
-		if (event.key === 'Escape' && !this.isContextMenuOpen) this.dismissTextarea(true);
+		if (event.key !== 'Escape') return;
+
+		// Discard the feature only when it has no committed text yet (new label).
+		// Editing an existing label and pressing Escape keeps the label intact.
+		const activeFeature = this.store
+			.copyAll()
+			.find((feature) => feature.id === this.activeFeatureId);
+		const hasCommittedText =
+			typeof activeFeature?.properties?.text === 'string' &&
+			activeFeature.properties.text.trim().length > 0;
+
+		this.dismissTextarea(!hasCommittedText);
 	}
 
 	/** @internal */

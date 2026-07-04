@@ -221,20 +221,13 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 	}
 
 	set fontGlyphs(fontNames: string[]) {
-		const layers = [
+		// also apply to the TextMode label layer via the base implementation
+		super.fontGlyphs = fontNames;
+		this.applyFontGlyphs(fontNames, [
 			this.measureOptions.pointLayerLabelSpec,
 			this.measureOptions.lineLayerLabelSpec,
 			this.measureOptions.polygonLayerSpec
-		];
-		for (const layer of layers) {
-			if (layer && layer.layout) {
-				layer.layout['text-font'] = fontNames;
-			}
-			// layer exists in maplibre, update glyphs as well
-			if (this.map && layer && this.map.getLayer(layer.id)) {
-				this.map.setLayoutProperty(layer.id, 'text-font', fontNames);
-			}
-		}
+		]);
 	}
 
 	/**

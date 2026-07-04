@@ -187,16 +187,9 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 	}
 
 	set fontGlyphs(fontNames: string[]) {
-		const layers = [this.controlOptions.routingLineLayerNodeLabelSpec];
-		for (const layer of layers) {
-			if (layer && layer.layout) {
-				layer.layout['text-font'] = fontNames;
-			}
-			// layer exists in maplibre, update glyphs as well
-			if (this.map && layer && this.map.getLayer(layer.id)) {
-				this.map.setLayoutProperty(layer.id, 'text-font', fontNames);
-			}
-		}
+		// also apply to the TextMode label layer via the base implementation
+		super.fontGlyphs = fontNames;
+		this.applyFontGlyphs(fontNames, [this.controlOptions.routingLineLayerNodeLabelSpec]);
 	}
 
 	/**

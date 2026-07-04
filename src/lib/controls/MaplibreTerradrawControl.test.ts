@@ -2059,6 +2059,53 @@ describe('text layer methods', () => {
 			);
 		});
 
+		it('uses the default sans-serif text-font when no textFont style is set', () => {
+			const control = new MaplibreTerradrawControl({ modes: ['text'] });
+			control.onAdd(mockMap);
+
+			expect(mockMap.addLayer).toHaveBeenCalledWith(
+				expect.objectContaining({
+					id: 'td-text-labels',
+					layout: expect.objectContaining({ 'text-font': ['sans-serif'] })
+				})
+			);
+		});
+
+		it('uses the textFont style when provided in modeOptions', () => {
+			const control = new MaplibreTerradrawControl({
+				modes: ['text'],
+				modeOptions: {
+					text: new TerraDrawTextMode({ styles: { textFont: ['Noto Sans Regular'] } })
+				}
+			});
+			control.onAdd(mockMap);
+
+			expect(mockMap.addLayer).toHaveBeenCalledWith(
+				expect.objectContaining({
+					id: 'td-text-labels',
+					layout: expect.objectContaining({ 'text-font': ['Noto Sans Regular'] })
+				})
+			);
+		});
+
+		it('uses the fontGlyphs property over the textFont style when both are set', () => {
+			const control = new MaplibreTerradrawControl({
+				modes: ['text'],
+				modeOptions: {
+					text: new TerraDrawTextMode({ styles: { textFont: ['Noto Sans Regular'] } })
+				}
+			});
+			control.fontGlyphs = ['Open Sans Italic'];
+			control.onAdd(mockMap);
+
+			expect(mockMap.addLayer).toHaveBeenCalledWith(
+				expect.objectContaining({
+					id: 'td-text-labels',
+					layout: expect.objectContaining({ 'text-font': ['Open Sans Italic'] })
+				})
+			);
+		});
+
 		it('calls moveLayer to bring text labels to the top', () => {
 			const control = new MaplibreTerradrawControl({ modes: ['text'] });
 			control.onAdd(mockMap);
@@ -2113,6 +2160,42 @@ describe('text layer methods', () => {
 			);
 			const call = mockSetData.mock.calls[0][0];
 			expect(call.features).toHaveLength(1);
+		});
+	});
+
+	describe('fontGlyphs property', () => {
+		it('returns undefined when not set', () => {
+			const control = new MaplibreTerradrawControl({ modes: ['text'] });
+			expect(control.fontGlyphs).toBeUndefined();
+		});
+
+		it('stores the assigned font glyphs on the getter', () => {
+			const control = new MaplibreTerradrawControl({ modes: ['text'] });
+			control.fontGlyphs = ['Open Sans Italic'];
+			expect(control.fontGlyphs).toEqual(['Open Sans Italic']);
+		});
+
+		it('updates the text-labels layer when it already exists on the map', () => {
+			const control = new MaplibreTerradrawControl({ modes: ['text'] });
+			control.onAdd(mockMap);
+			vi.mocked(mockMap.getLayer).mockReturnValue({ id: 'td-text-labels' } as never);
+
+			control.fontGlyphs = ['Open Sans Italic'];
+
+			expect(mockMap.setLayoutProperty).toHaveBeenCalledWith('td-text-labels', 'text-font', [
+				'Open Sans Italic'
+			]);
+		});
+
+		it('does not call setLayoutProperty when the text-labels layer does not exist', () => {
+			const control = new MaplibreTerradrawControl({ modes: ['text'] });
+			control.onAdd(mockMap);
+			vi.mocked(mockMap.getLayer).mockReturnValue(undefined as never);
+			vi.mocked(mockMap.setLayoutProperty).mockClear();
+
+			control.fontGlyphs = ['Open Sans Italic'];
+
+			expect(mockMap.setLayoutProperty).not.toHaveBeenCalled();
 		});
 	});
 

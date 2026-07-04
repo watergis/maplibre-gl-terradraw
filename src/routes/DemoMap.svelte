@@ -202,8 +202,6 @@
 					prefixId: 'td-measure'
 				}
 			});
-			(drawControl as MaplibreMeasureControl).fontGlyphs = ['Noto Sans Medium'];
-			map.addControl(drawControl, 'top-left');
 		} else if (options.controlType === 'valhalla') {
 			const modes = options.modes.filter((mode) =>
 				AvailableValhallaModes.includes(mode as (typeof AvailableValhallaModes)[number])
@@ -218,8 +216,6 @@
 				},
 				valhallaOptions: options.valhallaOptions
 			});
-			(drawControl as MaplibreValhallaControl).fontGlyphs = ['Noto Sans Medium'];
-			map.addControl(drawControl, 'top-left');
 		} else {
 			drawControl = new MaplibreTerradrawControl({
 				modes: options.modes,
@@ -230,8 +226,9 @@
 					prefixId: 'td-default'
 				}
 			});
-			map.addControl(drawControl, 'top-left');
 		}
+		drawControl.fontGlyphs = ['Noto Sans Medium'];
+		map.addControl(drawControl, 'top-left');
 
 		const drawInstance = drawControl.getTerraDrawInstance();
 		drawInstance?.on('select', (id: string | number) => {

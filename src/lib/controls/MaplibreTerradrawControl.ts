@@ -4,7 +4,8 @@ import type {
 	GeoJSONSourceSpecification,
 	IControl,
 	Map,
-	StyleSpecification
+	StyleSpecification,
+	SymbolLayerSpecification
 } from 'maplibre-gl';
 import {
 	TerraDraw,
@@ -37,12 +38,72 @@ export class MaplibreTerradrawControl implements IControl {
 	protected modeButtons: { [key: string]: HTMLButtonElement } = {};
 	protected _isExpanded = false;
 	protected _cssPrefix = '';
+	protected _fontGlyphs?: string[];
 
 	/**
 	 * get the state of whether the control is expanded or collapsed
 	 */
 	public get isExpanded(): boolean {
 		return this._isExpanded;
+	}
+
+	/**
+	 * Get/Set font glyph for the TextMode label layer (`{prefix}-text-labels`).
+	 *
+	 * As default, the TextMode label uses `sans-serif` so it is not constrained by the
+	 * glyphs available in your maplibre style. See https://maplibre.org/maplibre-style-spec/layers/#text-font
+	 *
+	 * If you are using your own maplibre style or a different map provider, you probably need to set the
+	 * font glyphs to match glyphs available in your maplibre style.
+	 *
+	 * Font glyph availability depends on what types of glyphs are supported by your maplibre style
+	 * (e.g., Carto, Openmap tiles, Protomap, Maptiler, etc.). Please make sure the font glyphs are
+	 * available in your maplibre style.
+	 *
+	 * Usage:
+	 *
+	 * ```js
+	 * const drawControl = new MaplibreTerradrawControl({ modes: ['text'] })
+	 * drawControl.fontGlyphs = ['Open Sans Italic']
+	 * map.addControl(drawControl)
+	 * ```
+	 */
+	public get fontGlyphs(): string[] | undefined {
+		return this._fontGlyphs;
+	}
+
+	public set fontGlyphs(fontNames: string[]) {
+		this._fontGlyphs = fontNames;
+		// update the TextMode label layer if it already exists on the map
+		const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
+		const layerId = `${prefixId}-text-labels`;
+		if (this.map && this.map.getLayer(layerId)) {
+			this.map.setLayoutProperty(layerId, 'text-font', fontNames);
+		}
+	}
+
+	/**
+	 * Apply the given font glyphs to the provided symbol layer specs and, when they already
+	 * exist on the map, to their live layers via `setLayoutProperty`.
+	 *
+	 * Shared by subclasses (e.g. `MaplibreMeasureControl`, `MaplibreValhallaControl`) so their
+	 * `fontGlyphs` setters can reuse the same layer-update logic.
+	 * @param fontNames font glyph names to apply as `text-font`
+	 * @param layers symbol layer specs to update (undefined entries are skipped)
+	 */
+	protected applyFontGlyphs(
+		fontNames: string[],
+		layers: (SymbolLayerSpecification | undefined)[]
+	): void {
+		for (const layer of layers) {
+			if (layer && layer.layout) {
+				layer.layout['text-font'] = fontNames;
+			}
+			// layer exists in maplibre, update glyphs as well
+			if (this.map && layer && this.map.getLayer(layer.id)) {
+				this.map.setLayoutProperty(layer.id, 'text-font', fontNames);
+			}
+		}
 	}
 
 	/**
@@ -899,7 +960,7 @@ export class MaplibreTerradrawControl implements IControl {
 	protected addTextFeaturesToSource(
 		features: GeoJSONStoreFeatures<GeoJSONStoreGeometries>[],
 		map: Map,
-		styles?: Record<string, string | number>
+		styles?: TextModeStyling
 	) {
 		const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
 
@@ -925,7 +986,7 @@ export class MaplibreTerradrawControl implements IControl {
 					'text-size': (styles?.textSize as number) ?? 12,
 					'text-anchor': 'top',
 					'text-offset': [0, 0.8],
-					'text-font': ['Noto Sans Regular'],
+					'text-font': this._fontGlyphs ?? styles?.textFont ?? ['sans-serif'],
 					'text-allow-overlap': true
 				},
 				paint: {

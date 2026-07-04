@@ -51,7 +51,7 @@ export const defaultTextAreaWrapperStyleOptions = {
 
 export const defaultTextAreaTooltipSpanStyleOptions = {
 	display: 'block',
-	padding: '8px',
+	padding: '4px 8px',
 	fontSize: '10px',
 	fontFamily: 'sans-serif',
 	color: '#888',

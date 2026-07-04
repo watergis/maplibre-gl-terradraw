@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
+import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 import { TerraDrawTextMode } from './TerraDrawTextMode';
 import {
 	defaultTextAreaStyleOptions,
@@ -11,21 +11,12 @@ import {
 const mockEvent = (overrides = {}): any => ({
 	lng: 10,
 	lat: 20,
-	x: 100,
-	y: 200,
+	containerX: 100,
+	containerY: 200,
 	button: 'left',
 	heldKeys: [],
 	...overrides
 });
-
-const mockMouseEvent = (overrides = {}): MouseEvent =>
-	new MouseEvent('contextmenu', {
-		bubbles: true,
-		cancelable: true,
-		clientX: 100,
-		clientY: 200,
-		...overrides
-	});
 
 const mockStore = () => ({
 	create: vi.fn().mockReturnValue(['feature-1']),
@@ -49,7 +40,6 @@ const mountMode = (options = {}) => {
 	(mode as any).setStopped = vi.fn();
 	(mode as any).allowPointerEvent = vi.fn().mockReturnValue(true);
 	(mode as any).pointerEvents = {
-		contextMenu: true,
 		rightClick: true
 	};
 	(mode as any)._mapContainer = document.createElement('div');
@@ -307,11 +297,10 @@ describe('MaplibreTerradrawTextMode', () => {
 					properties: { mode: 'text', text: 'Existing', draggable: true }
 				}
 			]);
-			(mode as any).activeFeatureId = 'feature-1';
-			(mode as any).activeTextarea = document.createElement('textarea');
-			(mode as any)._mapContainer.appendChild((mode as any).activeTextarea);
+			vi.spyOn(mode as any, 'getNearestPointFeature').mockReturnValue({ id: 'feature-1' });
 
-			mode.onContextMenu(mockMouseEvent());
+			// Click on an existing label to open the edit textarea.
+			mode.onClick(mockEvent());
 
 			const textarea = (mode as any)._mapContainer.querySelector('textarea') as HTMLTextAreaElement;
 			textarea?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
@@ -321,25 +310,26 @@ describe('MaplibreTerradrawTextMode', () => {
 	});
 
 	// 5. Edit mode
-	describe('edit (right click)', () => {
-		it('does not open edit textarea when editable is false', () => {
+	describe('edit (click on existing label)', () => {
+		it('creates a new feature when editable is false even if near an existing label', () => {
 			const mode = mountMode({ editable: false });
-			(mode as any).allowPointerEvent = vi.fn().mockReturnValue(false);
-			mode.onContextMenu(mockMouseEvent());
-			expect((mode as any)._mapContainer.querySelector('textarea')).toBeNull();
+			(mode as any).store.copyAll = vi.fn().mockReturnValue([
+				{
+					id: 'feature-1',
+					geometry: { type: 'Point', coordinates: [10, 20] },
+					properties: { mode: 'text', text: 'Existing' }
+				}
+			]);
+			const nearestSpy = vi.spyOn(mode as any, 'getNearestPointFeature');
+
+			mode.onClick(mockEvent());
+
+			// editable is off, so no hit-test is performed and a new feature is created.
+			expect(nearestSpy).not.toHaveBeenCalled();
+			expect((mode as any).store.create).toHaveBeenCalled();
 		});
 
-		it('resets isContextMenuOpen when no feature found', () => {
-			const mode = mountMode({ editable: true });
-			(mode as any)._mapContainer.getBoundingClientRect = vi
-				.fn()
-				.mockReturnValue({ left: 0, top: 0 });
-			vi.spyOn(mode as any, 'getNearestPointFeature').mockReturnValue(null);
-			mode.onContextMenu(mockMouseEvent());
-			expect((mode as any).isContextMenuOpen).toBe(false);
-		});
-
-		it('opens textarea pre-filled with existing text', async () => {
+		it('opens textarea pre-filled with existing text when clicking near an existing label', () => {
 			const mode = mountMode({ editable: true });
 			(mode as any).store.copyAll = vi.fn().mockReturnValue([
 				{
@@ -348,31 +338,26 @@ describe('MaplibreTerradrawTextMode', () => {
 					properties: { mode: 'text', text: 'Existing label', draggable: true }
 				}
 			]);
-			(mode as any)._mapContainer.getBoundingClientRect = vi.fn().mockReturnValue({
-				left: 0,
-				top: 0,
-				right: 800,
-				bottom: 600,
-				width: 800,
-				height: 600
-			});
-
-			(mode as any).project = vi.fn().mockReturnValue({ x: 100, y: 200 });
-
 			vi.spyOn(mode as any, 'getNearestPointFeature').mockReturnValue({ id: 'feature-1' });
 
-			mode.onContextMenu(mockMouseEvent({ clientX: 100, clientY: 200 }));
+			mode.onClick(mockEvent());
 
 			const textarea = (mode as any)._mapContainer.querySelector('textarea') as HTMLTextAreaElement;
 			expect(textarea).not.toBeNull();
 			expect(textarea?.value).toBe('Existing label');
+			expect((mode as any).store.create).not.toHaveBeenCalled();
 		});
 
-		it('does nothing on right click when no nearby feature exists', () => {
+		it('creates a new feature when clicking away from existing labels', () => {
 			const mode = mountMode({ editable: true });
-			(mode as any).getNearestPointFeature = vi.fn().mockReturnValue(null);
-			mode.onContextMenu(mockMouseEvent());
-			expect((mode as any)._mapContainer.querySelector('textarea')).toBeNull();
+			vi.spyOn(mode as any, 'getNearestPointFeature').mockReturnValue(null);
+
+			mode.onClick(mockEvent());
+
+			expect((mode as any).store.create).toHaveBeenCalled();
+			const textarea = (mode as any)._mapContainer.querySelector('textarea') as HTMLTextAreaElement;
+			expect(textarea).not.toBeNull();
+			expect(textarea?.value).toBe('');
 		});
 
 		it('updates feature text on edit commit', () => {
@@ -384,11 +369,9 @@ describe('MaplibreTerradrawTextMode', () => {
 					properties: { mode: 'text', text: 'Old text', draggable: true }
 				}
 			]);
+			vi.spyOn(mode as any, 'getNearestPointFeature').mockReturnValue({ id: 'feature-1' });
 
-			(mode as any).getNearestPointFeature = vi.fn().mockReturnValue({ id: 'feature-1' });
-			(mode as any).project = vi.fn().mockReturnValue({ x: 341, y: 177 });
-
-			mode.onContextMenu(mockMouseEvent({ clientX: 341, clientY: 177 }));
+			mode.onClick(mockEvent());
 
 			const submitButton = (mode as any)._mapContainer.querySelector('button') as HTMLButtonElement;
 			const textarea = (mode as any)._mapContainer.querySelector('textarea') as HTMLTextAreaElement;
@@ -404,6 +387,7 @@ describe('MaplibreTerradrawTextMode', () => {
 					value: 'New text'
 				}
 			]);
+			expect((mode as any).store.create).not.toHaveBeenCalled();
 		});
 	});
 
@@ -559,18 +543,8 @@ describe('MaplibreTerradrawTextMode', () => {
 					properties: { mode: 'text', text: 'Hello', draggable: true }
 				}
 			]);
-			(mode as any)._mapContainer.getBoundingClientRect = vi.fn().mockReturnValue({
-				left: 0,
-				top: 0,
-				right: 800,
-				bottom: 600,
-				width: 800,
-				height: 600
-			});
 			vi.spyOn(mode as any, 'getNearestPointFeature').mockReturnValue({ id: 'feature-1' });
-			mode.onContextMenu(
-				new MouseEvent('contextmenu', { clientX: 100, clientY: 200, cancelable: true })
-			);
+			mode.onClick(mockEvent());
 			return mode;
 		};
 
@@ -659,6 +633,118 @@ describe('MaplibreTerradrawTextMode', () => {
 			const mode = openEditPopup({ domStyles: { submitButton: { width: '60%' } } });
 			const button = (mode as any)._mapContainer.querySelector('button') as HTMLButtonElement;
 			expect(button.style.width).toBe('60%');
+		});
+	});
+
+	// 11. Reposition the popup so it stays anchored to its map point on pan/zoom
+	describe('reposition popup on map move', () => {
+		let rafCallbacks: Map<number, FrameRequestCallback>;
+		let nextRafId: number;
+
+		beforeEach(() => {
+			rafCallbacks = new Map();
+			nextRafId = 0;
+			vi.stubGlobal('requestAnimationFrame', (cb: FrameRequestCallback) => {
+				nextRafId += 1;
+				rafCallbacks.set(nextRafId, cb);
+				return nextRafId;
+			});
+			vi.stubGlobal('cancelAnimationFrame', (id: number) => {
+				rafCallbacks.delete(id);
+			});
+		});
+
+		afterEach(() => {
+			vi.unstubAllGlobals();
+		});
+
+		// Run every currently-scheduled rAF callback once (re-scheduled ones stay queued).
+		const flushRaf = () => {
+			const pending = Array.from(rafCallbacks.values());
+			rafCallbacks.clear();
+			for (const cb of pending) cb(0);
+		};
+
+		const openEditPopup = () => {
+			const mode = mountMode({ editable: true });
+			(mode as any).store.copyAll = vi.fn().mockReturnValue([
+				{
+					id: 'feature-1',
+					geometry: { type: 'Point', coordinates: [10, 20] },
+					properties: { mode: 'text', text: 'Existing', draggable: true }
+				}
+			]);
+			vi.spyOn(mode as any, 'getNearestPointFeature').mockReturnValue({ id: 'feature-1' });
+			mode.onClick(mockEvent());
+			return mode;
+		};
+
+		const getWrapper = (mode: any) =>
+			mode._mapContainer.querySelector('#text-area-wrapper') as HTMLDivElement;
+
+		it('captures the active feature lng/lat when the popup opens', () => {
+			const mode = openEditPopup();
+			expect((mode as any).activeLngLat).toEqual([10, 20]);
+		});
+
+		it('re-projects and moves the popup to follow the map', () => {
+			const mode = openEditPopup();
+			const wrapper = getWrapper(mode);
+			expect(wrapper.style.left).toBe('100px');
+			expect(wrapper.style.top).toBe('200px');
+
+			// Simulate a map pan: the same lng/lat now projects to new pixels.
+			(mode as any).project = vi.fn().mockReturnValue({ x: 300, y: 400 });
+			flushRaf();
+
+			expect(wrapper.style.left).toBe('300px');
+			expect(wrapper.style.top).toBe('400px');
+			// Re-projection uses the stored anchor, not the pointer coordinates.
+			expect((mode as any).project).toHaveBeenCalledWith(10, 20);
+		});
+
+		it('keeps repositioning across multiple frames', () => {
+			const mode = openEditPopup();
+			const wrapper = getWrapper(mode);
+
+			(mode as any).project = vi.fn().mockReturnValue({ x: 111, y: 222 });
+			flushRaf();
+			expect(wrapper.style.left).toBe('111px');
+
+			(mode as any).project = vi.fn().mockReturnValue({ x: 333, y: 444 });
+			flushRaf();
+			expect(wrapper.style.left).toBe('333px');
+			expect(wrapper.style.top).toBe('444px');
+		});
+
+		it('stops repositioning after the popup is dismissed', () => {
+			const mode = openEditPopup();
+			const wrapper = getWrapper(mode);
+
+			(mode as any).dismissTextarea(false);
+			expect((mode as any).repositionRafId).toBeNull();
+			expect((mode as any).activeLngLat).toBeNull();
+
+			// A later map move must not touch the (removed) wrapper.
+			(mode as any).project = vi.fn().mockReturnValue({ x: 999, y: 999 });
+			flushRaf();
+			expect(wrapper.style.left).not.toBe('999px');
+		});
+
+		it('stops repositioning on cleanUp', () => {
+			const mode = openEditPopup();
+			mode.cleanUp();
+			expect((mode as any).repositionRafId).toBeNull();
+		});
+
+		it('does not throw when project fails mid-edit', () => {
+			const mode = openEditPopup();
+			(mode as any).project = vi.fn().mockImplementation(() => {
+				throw new Error('map not ready');
+			});
+			expect(() => flushRaf()).not.toThrow();
+			// The loop keeps itself scheduled for the next frame.
+			expect((mode as any).repositionRafId).not.toBeNull();
 		});
 	});
 });

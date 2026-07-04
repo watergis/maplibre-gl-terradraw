@@ -2059,6 +2059,35 @@ describe('text layer methods', () => {
 			);
 		});
 
+		it('uses the default sans-serif text-font when no textFont style is set', () => {
+			const control = new MaplibreTerradrawControl({ modes: ['text'] });
+			control.onAdd(mockMap);
+
+			expect(mockMap.addLayer).toHaveBeenCalledWith(
+				expect.objectContaining({
+					id: 'td-text-labels',
+					layout: expect.objectContaining({ 'text-font': ['sans-serif'] })
+				})
+			);
+		});
+
+		it('uses the textFont style when provided in modeOptions', () => {
+			const control = new MaplibreTerradrawControl({
+				modes: ['text'],
+				modeOptions: {
+					text: new TerraDrawTextMode({ styles: { textFont: ['Noto Sans Regular'] } })
+				}
+			});
+			control.onAdd(mockMap);
+
+			expect(mockMap.addLayer).toHaveBeenCalledWith(
+				expect.objectContaining({
+					id: 'td-text-labels',
+					layout: expect.objectContaining({ 'text-font': ['Noto Sans Regular'] })
+				})
+			);
+		});
+
 		it('calls moveLayer to bring text labels to the top', () => {
 			const control = new MaplibreTerradrawControl({ modes: ['text'] });
 			control.onAdd(mockMap);

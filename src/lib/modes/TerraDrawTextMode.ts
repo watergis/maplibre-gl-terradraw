@@ -55,6 +55,14 @@ export type TextModeStyling = {
 	textSelectedHaloColor?: HexColor;
 	/** MapLibre `text-halo-width` paint property in pixels. Default `5`. */
 	textHaloWidth?: number;
+	/**
+	 * MapLibre `text-font` layout property (font stack). Default `['sans-serif']`.
+	 *
+	 * The default `sans-serif` is used so labels are not constrained by the
+	 * glyphs available in the map style. Set this to a font that exists in your
+	 * style's glyphs (e.g. `['Noto Sans Regular']`) to change the label font.
+	 */
+	textFont?: string[];
 };
 
 /**
@@ -175,7 +183,11 @@ export type TextModeOptions = {
  * map.addControl(control, 'top-right');
  * ```
  */
-export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
+// `textFont` is a MapLibre symbol-layer concern consumed by `MaplibreTerradrawControl`,
+// not by Terra Draw's `styleFeature`. It is a `string[]`, which does not satisfy Terra Draw's
+// `CustomStyling` value constraint, so it is omitted from the base-class generic while still
+// remaining part of the public `TextModeStyling` / `options.styles` merge path.
+export class TerraDrawTextMode extends TerraDrawBaseDrawMode<Omit<TextModeStyling, 'textFont'>> {
 	mode = 'text';
 
 	options?: TextModeOptions;

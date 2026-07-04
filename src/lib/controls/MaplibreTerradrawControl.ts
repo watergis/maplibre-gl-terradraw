@@ -899,7 +899,7 @@ export class MaplibreTerradrawControl implements IControl {
 	protected addTextFeaturesToSource(
 		features: GeoJSONStoreFeatures<GeoJSONStoreGeometries>[],
 		map: Map,
-		styles?: Record<string, string | number>
+		styles?: TextModeStyling
 	) {
 		const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
 
@@ -925,7 +925,7 @@ export class MaplibreTerradrawControl implements IControl {
 					'text-size': (styles?.textSize as number) ?? 12,
 					'text-anchor': 'top',
 					'text-offset': [0, 0.8],
-					'text-font': ['Noto Sans Regular'],
+					'text-font': styles?.textFont ?? ['sans-serif'],
 					'text-allow-overlap': true
 				},
 				paint: {

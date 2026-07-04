@@ -1,5 +1,17 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.14.1
+
+### Patch Changes
+
+- 501705e: fix: keep the text mode label editor popup anchored to its point when the map is panned or zoomed. Previously the textarea popup stayed at a fixed screen position while the map moved underneath it; it now follows the map so it stays over the label being edited.
+- 501705e: fix: edit existing text labels by clicking/tapping them instead of right-click or long-tap. In text mode, clicking/tapping an existing label now opens the edit textarea, while clicking/tapping an empty area adds a new label.
+- 12cded7: feat: make TextMode label font configurable.
+
+  Set it declaratively via `TextModeStyling.textFont`, or at runtime via the new `fontGlyphs` property on `MaplibreTerradrawControl`.
+
+  Defaults to `['sans-serif']` so labels are not constrained by the map style's available glyphs. `MaplibreMeasureControl` / `MaplibreValhallaControl` now reuse this base `fontGlyphs` implementation, so setting their `fontGlyphs` also updates the TextMode label font.
+
 ## 1.14.0
 
 ### Minor Changes

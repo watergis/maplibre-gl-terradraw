@@ -41,12 +41,7 @@ export const roundFeatureCoordinates = (
 	// Process coordinates based on geometry type
 	function processGeometry(geometry: GeoJSONStoreFeatures['geometry']) {
 		const type = geometry.type as
-			| 'Polygon'
-			| 'LineString'
-			| 'Point'
-			| 'MultiPoint'
-			| 'MultiLineString'
-			| 'MultiPolygon';
+			'Polygon' | 'LineString' | 'Point' | 'MultiPoint' | 'MultiLineString' | 'MultiPolygon';
 		let coordinates = geometry.coordinates as Position | Position[] | Position[][] | Position[][][];
 
 		switch (type) {

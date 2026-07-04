@@ -20,6 +20,7 @@ Select items related to this PR.
 - [ ] Fixing a bug
 - [ ] Maintaining documentation
 - [ ] Others ()
+
 <!-- ignore-task-list-end -->
 
 ## Verify the followings
@@ -31,6 +32,7 @@ Select items related to this PR.
 - [ ] All tests passes with `pnpm test`
 - [ ] Make sure all the existing features working well
 - [ ] Make sure a changeset file is added if your PR changes package code by `pnpm changeset`
+
 <!-- ignore-task-list-end -->
 
 Refer to [CONTRIBUTING.MD](https://github.com/watergis/maplibre-gl-terradraw/tree/main/CONTRIBUTING.md) for more details.

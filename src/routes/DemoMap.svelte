@@ -754,9 +754,7 @@
 										value={options.distanceUnit}
 										onchange={(e) => {
 											const value = (e.target as HTMLSelectElement).value as
-												| MetricDistanceUnit
-												| ImperialDistanceUnit
-												| 'auto';
+												MetricDistanceUnit | ImperialDistanceUnit | 'auto';
 											options.distanceUnit = value;
 											if (drawControl && options.controlType === 'measure') {
 												(drawControl as MaplibreMeasureControl).distanceUnit =
@@ -789,9 +787,7 @@
 										value={options.areaUnit}
 										onchange={(e) => {
 											const value = (e.target as HTMLSelectElement).value as
-												| MetricAreaUnit
-												| ImperialAreaUnit
-												| 'auto';
+												MetricAreaUnit | ImperialAreaUnit | 'auto';
 											options.areaUnit = value;
 											if (drawControl && options.controlType === 'measure') {
 												(drawControl as MaplibreMeasureControl).areaUnit =

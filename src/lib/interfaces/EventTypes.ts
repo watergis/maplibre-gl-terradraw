@@ -8,8 +8,4 @@
  * collapsed: an event dispatched when the tool is collapsed
  */
 export type EventType =
-	| 'mode-changed'
-	| 'feature-deleted'
-	| 'setting-changed'
-	| 'expanded'
-	| 'collapsed';
+	'mode-changed' | 'feature-deleted' | 'setting-changed' | 'expanded' | 'collapsed';

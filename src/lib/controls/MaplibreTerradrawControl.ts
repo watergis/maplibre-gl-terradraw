@@ -1004,11 +1004,9 @@ export class MaplibreTerradrawControl implements IControl {
 	protected getTextModeStyling(): Partial<TextModeStyling> {
 		const defaultOptions = getDefaultModeOptions();
 		const defaultTextMode = defaultOptions.text as
-			| (TerradrawModeClass & { options?: { styles?: TextModeStyling } })
-			| undefined;
+			(TerradrawModeClass & { options?: { styles?: TextModeStyling } }) | undefined;
 		const customTextMode = this.options.modeOptions?.text as
-			| (TerradrawModeClass & { options?: { styles?: TextModeStyling } })
-			| undefined;
+			(TerradrawModeClass & { options?: { styles?: TextModeStyling } }) | undefined;
 
 		const defaultStyles = (defaultTextMode?.options?.styles as Partial<TextModeStyling>) ?? {};
 		const customStyles = (customTextMode?.options?.styles as Partial<TextModeStyling>) ?? {};

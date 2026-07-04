@@ -89,10 +89,7 @@ export type DistanceUnitCallBackType = (valueInMeter: number) => { distance: num
  * If a specific unit is set, the value is converted to that unit.
  */
 export type distanceUnitType =
-	| DistanceUnitCallBackType
-	| MetricDistanceUnit
-	| ImperialDistanceUnit
-	| undefined;
+	DistanceUnitCallBackType | MetricDistanceUnit | ImperialDistanceUnit | undefined;
 
 /**
  * Elevation unit types for metric

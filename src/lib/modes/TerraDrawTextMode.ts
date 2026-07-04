@@ -185,9 +185,12 @@ export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 	private activeWrapper: HTMLDivElement | null = null;
 	private activeTextarea: HTMLTextAreaElement | null = null;
 	private activeFeatureId: TerraDrawExtend.FeatureId | null = null;
+	private activeLngLat: [number, number] | null = null;
 
 	private _mapContainer: HTMLElement | null = null;
 	private rafId?: number | null = null;
+	private repositionRafId?: number | null = null;
+	private lastReposition: { x: number; y: number } | null = null;
 
 	constructor(options?: TextModeOptions) {
 		super({ styles: options?.styles ?? {} });
@@ -218,6 +221,8 @@ export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 			cancelAnimationFrame(this.rafId);
 			this.rafId = null;
 		}
+
+		this.stopRepositionLoop();
 	}
 
 	/**
@@ -440,6 +445,8 @@ export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 		this.activeWrapper = wrapper;
 		this.activeTextarea = textarea;
 		this.activeFeatureId = featureId;
+		this.activeLngLat = this.getFeatureLngLat(featureId);
+		this.startRepositionLoop();
 	}
 
 	/**
@@ -471,6 +478,65 @@ export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 		this.activeWrapper = wrapper;
 		this.activeTextarea = textarea;
 		this.activeFeatureId = featureId;
+		this.activeLngLat =
+			(feature?.geometry.type === 'Point'
+				? (feature.geometry.coordinates as [number, number])
+				: null) ?? this.getFeatureLngLat(featureId);
+		this.startRepositionLoop();
+	}
+
+	/**
+	 * Read the [lng, lat] anchor coordinates of a Point feature from the store.
+	 * @param featureId
+	 * @returns the coordinates, or null when the feature is missing / not a Point.
+	 */
+	private getFeatureLngLat(featureId: TerraDrawExtend.FeatureId): [number, number] | null {
+		const feature = this.store.copyAll().find((f) => f.id === featureId);
+		if (feature?.geometry.type !== 'Point') return null;
+		return feature.geometry.coordinates as [number, number];
+	}
+
+	/**
+	 * Start a requestAnimationFrame loop that keeps the open textarea popup anchored to
+	 * its geographic point while the map pans / zooms / rotates. The popup position is
+	 * only written when the projected pixel actually changes to avoid needless layout.
+	 */
+	private startRepositionLoop(): void {
+		this.stopRepositionLoop();
+		this.lastReposition = null;
+
+		const tick = () => {
+			if (!this.activeWrapper || !this.activeLngLat) {
+				this.repositionRafId = null;
+				return;
+			}
+
+			try {
+				const { x, y } = this.project(this.activeLngLat[0], this.activeLngLat[1]);
+				if (!this.lastReposition || this.lastReposition.x !== x || this.lastReposition.y !== y) {
+					this.activeWrapper.style.left = `${x}px`;
+					this.activeWrapper.style.top = `${y}px`;
+					this.lastReposition = { x, y };
+				}
+			} catch {
+				// project can throw before the map/adapter is ready; skip this frame.
+			}
+
+			this.repositionRafId = requestAnimationFrame(tick);
+		};
+
+		this.repositionRafId = requestAnimationFrame(tick);
+	}
+
+	/**
+	 * Cancel the reposition loop if it is running.
+	 */
+	private stopRepositionLoop(): void {
+		if (this.repositionRafId) {
+			cancelAnimationFrame(this.repositionRafId);
+			this.repositionRafId = null;
+		}
+		this.lastReposition = null;
 	}
 
 	/**
@@ -501,12 +567,15 @@ export class TerraDrawTextMode extends TerraDrawBaseDrawMode<TextModeStyling> {
 	 * @param deleteFeature
 	 */
 	private dismissTextarea(deleteFeature: boolean): void {
+		this.stopRepositionLoop();
+
 		if (this.activeWrapper) {
 			this.activeWrapper.remove();
 			this.activeWrapper = null;
 		}
 
 		this.activeTextarea = null;
+		this.activeLngLat = null;
 		if (deleteFeature && this.activeFeatureId) {
 			this.store.delete([this.activeFeatureId]);
 		}

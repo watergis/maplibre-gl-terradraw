@@ -16,6 +16,7 @@ export const exampleIds = [
 	'add-geojson',
 	'add-geojson-customstyle',
 	'select-event',
+	'text-mode',
 	'drawing-option',
 	'coordinate-precision',
 	'custom-icon',

@@ -112,6 +112,7 @@ vi.mock('maplibre-gl', () => {
 					moveLayer: vi.fn(),
 					removeLayer: vi.fn(),
 					removeSource: vi.fn(),
+					isStyleLoaded: vi.fn(() => true),
 					hasImage: vi.fn(() => false),
 					addImage: vi.fn(),
 					fire: vi.fn(),

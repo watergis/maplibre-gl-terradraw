@@ -39,6 +39,7 @@ export class MaplibreTerradrawControl implements IControl {
 	protected _isExpanded = false;
 	protected _cssPrefix = '';
 	protected _fontGlyphs?: string[];
+	protected _isWaitingForTextStyleLoad = false;
 
 	/**
 	 * get the state of whether the control is expanded or collapsed
@@ -939,6 +940,17 @@ export class MaplibreTerradrawControl implements IControl {
 	 * @param styles - Optional style overrides forwarded to the MapLibre symbol layer.
 	 */
 	protected createTerradrawTextLayer(map: Map, styles?: TextModeStyling) {
+		if (!map.isStyleLoaded()) {
+			if (!this._isWaitingForTextStyleLoad) {
+				this._isWaitingForTextStyleLoad = true;
+				map.once('style.load', () => {
+					this._isWaitingForTextStyleLoad = false;
+					this.createTerradrawTextLayer(map, styles);
+				});
+			}
+			return;
+		}
+
 		const defaultStyles = styles ?? this.getTextModeStyling();
 		const snapshot = this.terradraw?.getSnapshot();
 		const textFeatures =
@@ -946,9 +958,12 @@ export class MaplibreTerradrawControl implements IControl {
 		this.addTextFeaturesToSource(textFeatures, map, defaultStyles);
 
 		const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
+		const layerId = `${prefixId}-text-labels`;
 
 		// change the z-index position of the text label to appear above all other Terradraw features
-		map.moveLayer(`${prefixId}-text-labels`);
+		if (map.getLayer(layerId)) {
+			map.moveLayer(layerId);
+		}
 	}
 
 	/**
@@ -963,8 +978,10 @@ export class MaplibreTerradrawControl implements IControl {
 		styles?: TextModeStyling
 	) {
 		const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
+		const sourceId = `${prefixId}-text`;
+		const layerId = `${prefixId}-text-labels`;
 
-		const source = map.getSource(`${prefixId}-text`) as maplibregl.GeoJSONSource | undefined;
+		const source = map.getSource(sourceId) as maplibregl.GeoJSONSource | undefined;
 
 		if (source) {
 			source.setData({
@@ -972,15 +989,17 @@ export class MaplibreTerradrawControl implements IControl {
 				features
 			});
 		} else {
-			map.addSource(`${prefixId}-text`, {
+			map.addSource(sourceId, {
 				type: 'geojson',
 				data: { type: 'FeatureCollection', features }
 			});
+		}
 
+		if (!map.getLayer(layerId)) {
 			map.addLayer({
-				id: `${prefixId}-text-labels`,
+				id: layerId,
 				type: 'symbol',
-				source: `${prefixId}-text`,
+				source: sourceId,
 				layout: {
 					'text-field': ['get', 'text'],
 					'text-size': (styles?.textSize as number) ?? 12,

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>Add label with TerraDrawTextMode</title>
+		<meta property="tag" content="mode" />
+		<meta
+			property="og:description"
+			content="A minimal setup that exposes only text, select, and delete modes in MaplibreTerradrawControl. Use text to place labels, select to edit them, and delete to remove features."
+		/>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
+		<script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+			}
+			html,
+			body,
+			#map {
+				height: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<script src="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.umd.js"></script>
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.css"
+		/>
+		<div id="map"></div>
+
+		<script>
+			const map = new maplibregl.Map({
+				container: 'map',
+				style: 'https://demotiles.maplibre.org/style.json',
+				center: [0, 0],
+				zoom: 1,
+				maxPitch: 85
+			});
+
+			const drawControl = new MaplibreTerradrawControl.MaplibreTerradrawControl({
+				modes: ['text', 'select', 'delete'],
+				open: true
+			});
+
+			map.addControl(drawControl, 'top-left');
+		</script>
+	</body>
+</html>

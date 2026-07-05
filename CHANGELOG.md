@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.14.3
+
+### Patch Changes
+
+- d3865a3: fix: fixed bug of loading text layers
+
 ## 1.14.2
 
 ### Patch Changes

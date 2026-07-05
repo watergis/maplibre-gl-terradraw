@@ -2046,6 +2046,39 @@ describe('text layer methods', () => {
 	});
 
 	describe('createTerradrawTextLayer', () => {
+		it('defers source and layer creation until style.load when style is not ready', () => {
+			const control = new MaplibreTerradrawControl({ modes: ['text'] });
+
+			let styleLoadCallback: (() => void) | undefined;
+
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(mockMap as any).isStyleLoaded = vi.fn(() => false);
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(mockMap as any).once = vi.fn((event: string, callback: () => void) => {
+				if (event === 'style.load') {
+					styleLoadCallback = callback;
+				}
+			});
+
+			control.onAdd(mockMap);
+
+			expect(mockMap.addSource).not.toHaveBeenCalled();
+			expect(mockMap.addLayer).not.toHaveBeenCalled();
+			expect(mockMap.once).toHaveBeenCalledWith('style.load', expect.any(Function));
+
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(mockMap as any).isStyleLoaded = vi.fn(() => true);
+			styleLoadCallback?.();
+
+			expect(mockMap.addSource).toHaveBeenCalledWith(
+				'td-text',
+				expect.objectContaining({ type: 'geojson' })
+			);
+			expect(mockMap.addLayer).toHaveBeenCalledWith(
+				expect.objectContaining({ id: 'td-text-labels', type: 'symbol' })
+			);
+		});
+
 		it('adds source and layer when source does not exist', () => {
 			const control = new MaplibreTerradrawControl({ modes: ['text'] });
 			control.onAdd(mockMap);
@@ -2108,6 +2141,8 @@ describe('text layer methods', () => {
 
 		it('calls moveLayer to bring text labels to the top', () => {
 			const control = new MaplibreTerradrawControl({ modes: ['text'] });
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(mockMap as any).getLayer = vi.fn().mockReturnValue({ id: 'td-text-labels' });
 			control.onAdd(mockMap);
 
 			expect(mockMap.moveLayer).toHaveBeenCalledWith('td-text-labels');

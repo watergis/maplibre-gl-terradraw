@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.14.2
+
+### Patch Changes
+
+- be47c64: fix: fixed to wait for adding text mode layers until maplibre finish loading initial style
+
 ## 1.14.1
 
 ### Patch Changes

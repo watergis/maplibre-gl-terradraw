@@ -2049,14 +2049,14 @@ describe('text layer methods', () => {
 		it('defers source and layer creation until style.load when style is not ready', () => {
 			const control = new MaplibreTerradrawControl({ modes: ['text'] });
 
-			let styleLoadCallback: (() => void) | undefined;
+			const idleCallbacks: Array<() => void> = [];
 
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			(mockMap as any).isStyleLoaded = vi.fn(() => false);
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			(mockMap as any).once = vi.fn((event: string, callback: () => void) => {
-				if (event === 'style.load') {
-					styleLoadCallback = callback;
+				if (event === 'idle') {
+					idleCallbacks.push(callback);
 				}
 			});
 
@@ -2064,11 +2064,11 @@ describe('text layer methods', () => {
 
 			expect(mockMap.addSource).not.toHaveBeenCalled();
 			expect(mockMap.addLayer).not.toHaveBeenCalled();
-			expect(mockMap.once).toHaveBeenCalledWith('style.load', expect.any(Function));
+			expect(mockMap.once).toHaveBeenCalledWith('idle', expect.any(Function));
 
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			(mockMap as any).isStyleLoaded = vi.fn(() => true);
-			styleLoadCallback?.();
+			idleCallbacks.forEach((callback) => callback());
 
 			expect(mockMap.addSource).toHaveBeenCalledWith(
 				'td-text',

@@ -39,7 +39,6 @@ export class MaplibreTerradrawControl implements IControl {
 	protected _isExpanded = false;
 	protected _cssPrefix = '';
 	protected _fontGlyphs?: string[];
-	protected _isWaitingForTextStyleLoad = false;
 
 	/**
 	 * get the state of whether the control is expanded or collapsed
@@ -941,13 +940,9 @@ export class MaplibreTerradrawControl implements IControl {
 	 */
 	protected createTerradrawTextLayer(map: Map, styles?: TextModeStyling) {
 		if (!map.isStyleLoaded()) {
-			if (!this._isWaitingForTextStyleLoad) {
-				this._isWaitingForTextStyleLoad = true;
-				map.once('style.load', () => {
-					this._isWaitingForTextStyleLoad = false;
-					this.createTerradrawTextLayer(map, styles);
-				});
-			}
+			map.once('idle', () => {
+				this.createTerradrawTextLayer(map, styles);
+			});
 			return;
 		}
 

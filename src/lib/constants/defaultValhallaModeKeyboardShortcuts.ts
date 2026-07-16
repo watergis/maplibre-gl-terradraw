@@ -2,7 +2,7 @@ import type { ModeKeyboardShortcuts } from '../interfaces';
 
 export const defaultValhallaModeKeyboardShortcuts: ModeKeyboardShortcuts = {
 	'time-isochrone': {
-		key: 't',
+		key: 'n',
 		heldKeys: []
 	},
 	'distance-isochrone': {

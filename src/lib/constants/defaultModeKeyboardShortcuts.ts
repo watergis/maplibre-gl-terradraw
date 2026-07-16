@@ -49,6 +49,10 @@ export const defaultModeKeyboardShortcuts: ModeKeyboardShortcuts = {
 		key: 'o',
 		heldKeys: []
 	},
+	text: {
+		key: 't',
+		heldKeys: []
+	},
 	select: {
 		key: 's',
 		heldKeys: []
@@ -65,12 +69,17 @@ export const defaultModeKeyboardShortcuts: ModeKeyboardShortcuts = {
 		key: 'Backspace',
 		heldKeys: ['shift']
 	},
+
+	// `undo`/`redo` are the single source of truth for the undo-redo shortcuts. They are
+	// forwarded to TerraDraw's own `TerraDrawUndoRedoKeyboardShortcuts` (see MaplibreTerradrawControl
+	// constructor), which performs the actual keyboard handling, and are used here only for the tooltip.
+	// `ctrl` is the cross-platform primary modifier: Command (⌘) on macOS, Ctrl elsewhere.
 	undo: {
 		key: 'z',
-		heldKeys: ['meta']
+		heldKeys: ['ctrl']
 	},
 	redo: {
 		key: 'z',
-		heldKeys: ['shift', 'meta']
+		heldKeys: ['ctrl', 'shift']
 	}
 };

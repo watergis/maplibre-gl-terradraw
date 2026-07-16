@@ -57,6 +57,10 @@ export interface TerradrawControlOptions {
 	 * Configuring keyboard shortcuts for activating the different modes that are supported
 	 * Supports Standard Keys only(a-z) to avoid OS/Browser shortcut conflicts
 	 * e.g point mode -> 'p', polygon -> 'g'
+	 *
+	 * This is also where the undo/redo keys are configured (`undo`/`redo`). Those definitions are the
+	 * single source of truth: the control derives TerraDraw's undo/redo matcher from them (TerraDraw
+	 * performs the actual handling) and renders the button tooltip from the same definitions.
 	 */
 	keyboardShortcuts?: ModeKeyboardShortcuts;
 
@@ -65,7 +69,11 @@ export interface TerradrawControlOptions {
 	 * If not specified, defaults to:
 	 * - modeLevel: TerraDrawModeUndoRedo({ maxStackSize: 100 })
 	 * - sessionLevel: TerraDrawSessionUndoRedo({ maxStackSize: 100 })
-	 * - keyboardShortcuts: TerraDrawUndoRedoKeyboardShortcuts()
+	 *
+	 * Note: `keyboardShortcuts` is a control-managed output — it is always derived from
+	 * `keyboardShortcuts.undo`/`keyboardShortcuts.redo` so the shortcut and its tooltip stay in sync.
+	 * Any instance passed here is ignored (with a console warning); configure the keys via the
+	 * top-level `keyboardShortcuts` option instead.
 	 */
 	undoRedo?: {
 		modeLevel?: TerraDrawModeUndoRedoInterface;

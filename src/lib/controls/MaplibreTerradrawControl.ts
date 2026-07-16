@@ -31,7 +31,9 @@ import {
 	getDefaultModeOptions
 } from '../constants';
 import {
+	buildUndoRedoShortcuts,
 	capitalize,
+	formatShortcutKey,
 	cleanMaplibreStyle,
 	TERRADRAW_SOURCE_IDS,
 	ModalDialog,
@@ -207,13 +209,36 @@ export class MaplibreTerradrawControl implements IControl {
 			this.options.adapterOptions.prefixId = prefixId;
 		}
 
+		// TerraDraw owns undo/redo keyboard handling (the plugin's own controller does not handle it).
+		// `undoRedo.keyboardShortcuts` is a plugin-managed output, always derived from the (merged)
+		// `keyboardShortcuts.undo`/`keyboardShortcuts.redo` so the very same definition drives both
+		// TerraDraw's matcher and the button tooltip — they share a single source of truth and cannot drift.
+		const mergedShortcuts = {
+			...defaultModeKeyboardShortcuts,
+			...this.options.keyboardShortcuts
+		};
+		const undoRedoKeyboardShortcuts = new TerraDrawUndoRedoKeyboardShortcuts({
+			...(mergedShortcuts.undo ? { undo: buildUndoRedoShortcuts(mergedShortcuts.undo) } : {}),
+			...(mergedShortcuts.redo ? { redo: buildUndoRedoShortcuts(mergedShortcuts.redo) } : {})
+		});
+
 		if (!this.options.undoRedo) {
 			this.options.undoRedo = {
 				modeLevel: new TerraDrawModeUndoRedo({ maxStackSize: 100 }),
-				sessionLevel: new TerraDrawSessionUndoRedo({ maxStackSize: 100 }),
-				keyboardShortcuts: new TerraDrawUndoRedoKeyboardShortcuts()
+				sessionLevel: new TerraDrawSessionUndoRedo({ maxStackSize: 100 })
 			};
+		} else if (this.options.undoRedo.keyboardShortcuts) {
+			// A pre-built TerraDrawUndoRedoKeyboardShortcuts is opaque (its key config cannot be read back),
+			// so it could not feed the tooltip and would silently disagree with it. Ignore it and tell the
+			// caller to configure undo/redo keys via `keyboardShortcuts` instead.
+			console.warn(
+				'MaplibreTerradrawControl: `undoRedo.keyboardShortcuts` is managed by the control and derived ' +
+					'from `keyboardShortcuts.undo`/`keyboardShortcuts.redo` so the tooltip stays in sync. ' +
+					'The provided instance is ignored — configure undo/redo keys via `keyboardShortcuts` instead.'
+			);
 		}
+		// keep any caller-provided modeLevel/sessionLevel stacks; the control always owns the shortcuts.
+		this.options.undoRedo.keyboardShortcuts = undoRedoKeyboardShortcuts;
 	}
 
 	/**
@@ -574,15 +599,19 @@ export class MaplibreTerradrawControl implements IControl {
 				btn.classList.add('hidden');
 			}
 
+			// default defaultModekeyboardShortucts for undo-redo should be from `this.options.undoRedo.keyboardShortcuts`
+			// So somehow, I need to extract the `options` in the `new TerraDrawUndoRedoKeyboardShortcuts()` class constructor to get the undo-redo shortcuts
+			// Verdict: not possible. Solution: invert implementation i.e plugin's keyboard shortcut controller becomes the truth when setting the shortcuts, and the default terradraw shortcuts should inherit from there
 			const keyboardShortcuts = this.options.keyboardShortcuts
 				? { ...defaultModeKeyboardShortcuts, ...this.options.keyboardShortcuts }
 				: defaultModeKeyboardShortcuts;
 
 			const shortcut = keyboardShortcuts?.[mode];
 			const shortcutTitle = shortcut
-				? [...shortcut.heldKeys.map((k: string) => capitalize(k)), shortcut.key.toUpperCase()].join(
-						'+'
-					)
+				? [
+						...shortcut.heldKeys.map((k: string) => formatShortcutKey(k)),
+						formatShortcutKey(shortcut.key)
+					].join(' + ')
 				: undefined;
 
 			btn.title = shortcutTitle

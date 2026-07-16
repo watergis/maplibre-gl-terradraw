@@ -506,130 +506,45 @@ describe('ModeKeyboardShortcutController', () => {
 		});
 	});
 
-	// 10. Undo action
-	describe('undo action', () => {
-		it('calls terradraw.undo() when Cmd+Z is pressed and canUndo returns true', () => {
+	// 10. Undo/redo delegation
+	// Undo/redo keyboard handling is owned by TerraDraw's own TerraDrawUndoRedoKeyboardShortcuts.
+	// This controller must not handle those keys (it would double-fire undo/redo).
+	describe('undo/redo delegation to TerraDraw', () => {
+		it('does not handle Cmd+Z itself (delegated to TerraDraw)', () => {
 			(draw.canUndo as ReturnType<typeof vi.fn>).mockReturnValue(true);
-
-			const controller = new ModeKeyboardShortcutController(draw as any);
-			controller.mount();
-
-			fireKeydown('z', { metaKey: true });
-			expect(draw.undo).toHaveBeenCalledOnce();
-
-			controller.destroy();
-		});
-
-		it('does not call terradraw.undo() when Cmd+Z is pressed but canUndo returns false', () => {
-			(draw.canUndo as ReturnType<typeof vi.fn>).mockReturnValue(false);
 
 			const controller = new ModeKeyboardShortcutController(draw as any);
 			controller.mount();
 
 			fireKeydown('z', { metaKey: true });
 			expect(draw.undo).not.toHaveBeenCalled();
+			expect(draw.setMode).not.toHaveBeenCalled();
 
 			controller.destroy();
 		});
 
-		it('calls undo even when the canvas has no features', () => {
-			(draw.canUndo as ReturnType<typeof vi.fn>).mockReturnValue(true);
-			(draw.getSnapshot as ReturnType<typeof vi.fn>).mockReturnValue([]);
-
-			const controller = new ModeKeyboardShortcutController(draw as any);
-			controller.mount();
-
-			fireKeydown('z', { metaKey: true });
-			expect(draw.undo).toHaveBeenCalledOnce();
-
-			controller.destroy();
-		});
-
-		it('does not call undo when the event was already defaultPrevented', () => {
+		it('does not handle Ctrl+Z itself (delegated to TerraDraw)', () => {
 			(draw.canUndo as ReturnType<typeof vi.fn>).mockReturnValue(true);
 
 			const controller = new ModeKeyboardShortcutController(draw as any);
 			controller.mount();
 
-			const event = new KeyboardEvent('keydown', {
-				key: 'z',
-				metaKey: true,
-				cancelable: true,
-				bubbles: true
-			});
-			Object.defineProperty(event, 'target', {
-				value: { tagName: 'BODY', isContentEditable: false },
-				writable: false
-			});
-			event.preventDefault();
-			window.dispatchEvent(event);
-
+			fireKeydown('z', { ctrlKey: true });
 			expect(draw.undo).not.toHaveBeenCalled();
+			expect(draw.setMode).not.toHaveBeenCalled();
 
 			controller.destroy();
 		});
-	});
 
-	// 11. Redo action
-	describe('redo action', () => {
-		it('calls terradraw.redo() when Cmd+Shift+Z is pressed and canRedo returns true', () => {
+		it('does not handle Cmd+Shift+Z itself (delegated to TerraDraw)', () => {
 			(draw.canRedo as ReturnType<typeof vi.fn>).mockReturnValue(true);
-
-			const controller = new ModeKeyboardShortcutController(draw as any);
-			controller.mount();
-
-			fireKeydown('z', { metaKey: true, shiftKey: true });
-			expect(draw.redo).toHaveBeenCalledOnce();
-
-			controller.destroy();
-		});
-
-		it('does not call terradraw.redo() when Cmd+Shift+Z is pressed but canRedo returns false', () => {
-			(draw.canRedo as ReturnType<typeof vi.fn>).mockReturnValue(false);
 
 			const controller = new ModeKeyboardShortcutController(draw as any);
 			controller.mount();
 
 			fireKeydown('z', { metaKey: true, shiftKey: true });
 			expect(draw.redo).not.toHaveBeenCalled();
-
-			controller.destroy();
-		});
-
-		it('calls redo even when the canvas has no features', () => {
-			(draw.canRedo as ReturnType<typeof vi.fn>).mockReturnValue(true);
-			(draw.getSnapshot as ReturnType<typeof vi.fn>).mockReturnValue([]);
-
-			const controller = new ModeKeyboardShortcutController(draw as any);
-			controller.mount();
-
-			fireKeydown('z', { metaKey: true, shiftKey: true });
-			expect(draw.redo).toHaveBeenCalledOnce();
-
-			controller.destroy();
-		});
-
-		it('does not call redo when the event was already defaultPrevented', () => {
-			(draw.canRedo as ReturnType<typeof vi.fn>).mockReturnValue(true);
-
-			const controller = new ModeKeyboardShortcutController(draw as any);
-			controller.mount();
-
-			const event = new KeyboardEvent('keydown', {
-				key: 'z',
-				metaKey: true,
-				shiftKey: true,
-				cancelable: true,
-				bubbles: true
-			});
-			Object.defineProperty(event, 'target', {
-				value: { tagName: 'BODY', isContentEditable: false },
-				writable: false
-			});
-			event.preventDefault();
-			window.dispatchEvent(event);
-
-			expect(draw.redo).not.toHaveBeenCalled();
+			expect(draw.setMode).not.toHaveBeenCalled();
 
 			controller.destroy();
 		});

@@ -9,7 +9,7 @@ import {
 } from 'maplibre-gl';
 import type { GeoJSONStoreFeatures, TerraDraw, TerraDrawExtend } from 'terra-draw';
 import {
-	capitalize,
+	formatShortcutKey,
 	debounce,
 	ModalDialog,
 	routingDistanceUnitOptions,
@@ -772,9 +772,10 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 				: defaultValhallaModeKeyboardShortcuts;
 			const shortcut = keyboardShortcuts?.['settings'];
 			const shortcutTitle = shortcut
-				? [...shortcut.heldKeys.map((k: string) => capitalize(k)), shortcut.key.toUpperCase()].join(
-						'+'
-					)
+				? [
+						...shortcut.heldKeys.map((k: string) => formatShortcutKey(k)),
+						formatShortcutKey(shortcut.key)
+					].join(' + ')
 				: undefined;
 			btn.title = shortcutTitle ? `Settings ( ${shortcutTitle} )` : 'Settings';
 

@@ -7,15 +7,13 @@ import {
 } from '../interfaces';
 import type { TerraDraw } from 'terra-draw';
 
-const ACTION_MODES = new Set([
-	'delete',
-	'delete-selection',
-	'download',
-	'redo',
-	'settings',
-	'undo'
-] as const);
+const ACTION_MODES = new Set(['delete', 'delete-selection', 'download', 'settings'] as const);
 type ActionMode = typeof ACTION_MODES extends Set<infer T> ? T : never;
+
+// `undo`/`redo` keyboard handling is owned by TerraDraw's own `TerraDrawUndoRedoKeyboardShortcuts`
+// (wired up in the MaplibreTerradrawControl constructor). They remain in the shortcuts map for
+// tooltip display and duplicate-shortcut validation, but this controller must not handle them.
+const DELEGATED_MODES = new Set(['undo', 'redo']);
 
 type ModeActionsOptions = {
 	onDelete?: () => void;
@@ -66,7 +64,7 @@ export class ModeKeyboardShortcutController {
 			if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
 
 			const match = Object.entries(this.shortcuts)
-				.filter(([mode]) => !ACTION_MODES.has(mode as ActionMode))
+				.filter(([mode]) => !ACTION_MODES.has(mode as ActionMode) && !DELEGATED_MODES.has(mode))
 				.find(([, shortcut]) => shortcut && this.matchesShortcut(e, shortcut));
 
 			if (!match) return;
@@ -101,8 +99,7 @@ export class ModeKeyboardShortcutController {
 			if (this.matchesShortcut(e, shortcut)) {
 				if (!e.defaultPrevented) {
 					e.preventDefault();
-					const noFeaturesRequired =
-						action === 'undo' || action === 'redo' || action === 'settings';
+					const noFeaturesRequired = action === 'settings';
 					const features = this.terradraw.getSnapshot();
 					if (noFeaturesRequired || features.length > 0) {
 						this.executeAction(action as ActionMode);
@@ -166,20 +163,6 @@ export class ModeKeyboardShortcutController {
 
 			case 'download': {
 				this.modeActions?.onDownload?.();
-				break;
-			}
-
-			case 'undo': {
-				if (this.terradraw.canUndo()) {
-					this.terradraw.undo();
-				}
-				break;
-			}
-
-			case 'redo': {
-				if (this.terradraw.canRedo()) {
-					this.terradraw.redo();
-				}
 				break;
 			}
 

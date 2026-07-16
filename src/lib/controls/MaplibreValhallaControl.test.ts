@@ -544,13 +544,13 @@ describe('keyboard shortcuts', () => {
 		expect(setValhallaSpy).toHaveBeenCalledWith('routing');
 	});
 
-	it('calls setValhallaMode with time-isochrone when shortcut key t is pressed', () => {
+	it('calls setValhallaMode with time-isochrone when shortcut key n is pressed', () => {
 		testControl.onAdd(mockMap);
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const setValhallaSpy = vi.spyOn(testControl as any, 'setValhallaMode');
 
-		fireKeydown('t');
+		fireKeydown('n');
 		expect(setValhallaSpy).toHaveBeenCalledWith('time-isochrone');
 	});
 

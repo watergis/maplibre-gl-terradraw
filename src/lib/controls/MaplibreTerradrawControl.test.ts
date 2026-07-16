@@ -2,7 +2,7 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { MaplibreTerradrawControl } from './MaplibreTerradrawControl';
 import type { StyleSpecification } from 'maplibre-gl';
 import { Map } from 'maplibre-gl';
-import { type GeoJSONStoreFeatures } from 'terra-draw';
+import { type GeoJSONStoreFeatures, TerraDrawUndoRedoKeyboardShortcuts } from 'terra-draw';
 import { TERRADRAW_SOURCE_IDS } from '../helpers/cleanMaplibreStyle';
 import { TerraDrawTextMode } from '../modes/TerraDrawTextMode';
 
@@ -1990,6 +1990,86 @@ describe('undo/redo button tests', () => {
 	});
 });
 
+describe('undo/redo keyboard shortcuts source of truth', () => {
+	beforeEach(() => {
+		vi.mocked(TerraDrawUndoRedoKeyboardShortcuts).mockClear();
+	});
+
+	it('builds TerraDraw undo/redo shortcuts from the default plugin shortcuts (cross-platform)', () => {
+		new MaplibreTerradrawControl({ modes: ['point', 'undo', 'redo'] });
+
+		expect(TerraDrawUndoRedoKeyboardShortcuts).toHaveBeenCalledWith({
+			undo: [
+				{ key: 'z', heldKeys: ['control'] },
+				{ key: 'z', heldKeys: ['meta'] }
+			],
+			redo: [
+				{ key: 'z', heldKeys: ['control', 'shift'] },
+				{ key: 'z', heldKeys: ['meta', 'shift'] }
+			]
+		});
+	});
+
+	it('derives TerraDraw undo/redo shortcuts from a custom keyboardShortcuts option', () => {
+		new MaplibreTerradrawControl({
+			modes: ['point', 'undo', 'redo'],
+			keyboardShortcuts: {
+				undo: { key: 'u', heldKeys: ['ctrl'] },
+				redo: { key: 'r', heldKeys: ['ctrl', 'shift'] }
+			}
+		});
+
+		expect(TerraDrawUndoRedoKeyboardShortcuts).toHaveBeenCalledWith({
+			undo: [
+				{ key: 'u', heldKeys: ['control'] },
+				{ key: 'u', heldKeys: ['meta'] }
+			],
+			redo: [
+				{ key: 'r', heldKeys: ['control', 'shift'] },
+				{ key: 'r', heldKeys: ['meta', 'shift'] }
+			]
+		});
+	});
+
+	it('ignores a caller-provided keyboardShortcuts instance and warns', () => {
+		const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+		const callerInstance = {
+			isUndoKeyboardShortcut: vi.fn(),
+			isRedoKeyboardShortcut: vi.fn()
+		};
+
+		const control = new MaplibreTerradrawControl({
+			modes: ['point', 'undo', 'redo'],
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			undoRedo: { keyboardShortcuts: callerInstance as any }
+		});
+
+		expect(warn).toHaveBeenCalledWith(expect.stringContaining('undoRedo.keyboardShortcuts'));
+		// the caller instance is replaced by the control-managed one derived from keyboardShortcuts
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		expect((control as any).options.undoRedo.keyboardShortcuts).not.toBe(callerInstance);
+
+		warn.mockRestore();
+	});
+
+	it('preserves caller-provided undo/redo stacks while managing the shortcuts', () => {
+		const modeLevel = { undo: vi.fn(), redo: vi.fn() };
+		const sessionLevel = { undo: vi.fn(), redo: vi.fn() };
+
+		const control = new MaplibreTerradrawControl({
+			modes: ['point', 'undo', 'redo'],
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			undoRedo: { modeLevel: modeLevel as any, sessionLevel: sessionLevel as any }
+		});
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const undoRedo = (control as any).options.undoRedo;
+		expect(undoRedo.modeLevel).toBe(modeLevel);
+		expect(undoRedo.sessionLevel).toBe(sessionLevel);
+		expect(undoRedo.keyboardShortcuts).toBeDefined();
+	});
+});
+
 describe('clearUndoRedoHistory', () => {
 	let mockMap: InstanceType<typeof Map>;
 
@@ -2235,7 +2315,6 @@ describe('text layer methods', () => {
 			const control = new MaplibreTerradrawControl({ modes: ['text'] });
 
 			const idleCallbacks: Array<() => void> = [];
-
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			(mockMap as any).isStyleLoaded = vi.fn(() => false);
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any

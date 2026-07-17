@@ -1122,7 +1122,9 @@ export class MaplibreTerradrawControl implements IControl {
 		const source = this.map?.getSource(`${prefixId}-text`) as maplibregl.GeoJSONSource | undefined;
 		const layers = this.map?.style?.getLayer(`${prefixId}-text-labels`);
 
-		this.map?.removeLayer(layers?.id as string);
-		this.map?.removeSource(source?.id as string);
+		if (layers) {
+			this.map?.removeLayer(layers?.id as string);
+			this.map?.removeSource(source?.id as string);
+		}
 	}
 }

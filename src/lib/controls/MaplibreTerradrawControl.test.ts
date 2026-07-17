@@ -2391,7 +2391,7 @@ describe('text layer methods', () => {
 	});
 
 	describe('clearTextLayers', () => {
-		it('removes the text layer and source', () => {
+		it('removes the text layer and source only', () => {
 			const control = new MaplibreTerradrawControl({ modes: ['text'] });
 			control.onAdd(mockMap);
 
@@ -2405,6 +2405,26 @@ describe('text layer methods', () => {
 
 			expect(mockMap.removeLayer).toHaveBeenCalledWith('td-text-labels');
 			expect(mockMap.removeSource).toHaveBeenCalledWith('td-text');
+		});
+
+		it('does not remove any layer or source when the text-labels layer does not exist', () => {
+			const control = new MaplibreTerradrawControl({ modes: ['text'] });
+			control.onAdd(mockMap);
+
+			vi.mocked(mockMap.removeLayer).mockClear();
+			vi.mocked(mockMap.removeSource).mockClear();
+
+			// no text-labels layer is present on the map
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(mockMap as any).style = { getLayer: vi.fn().mockReturnValue(undefined) };
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(mockMap as any).getSource = vi.fn().mockReturnValue(undefined);
+
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			expect(() => (control as any).clearTextLayers()).not.toThrow();
+
+			expect(mockMap.removeLayer).not.toHaveBeenCalled();
+			expect(mockMap.removeSource).not.toHaveBeenCalled();
 		});
 	});
 

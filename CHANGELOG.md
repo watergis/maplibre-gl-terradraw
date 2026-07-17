@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.14.4
+
+### Patch Changes
+
+- 3fa9d2f: fix: only remove the text mode layer and source when a text mode layer exists to avoid errors when deleting all features without a text layer
+
 ## 1.14.3
 
 ### Patch Changes

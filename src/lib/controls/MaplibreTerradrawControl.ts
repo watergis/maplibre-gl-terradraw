@@ -998,8 +998,8 @@ export class MaplibreTerradrawControl implements IControl {
 				layout: {
 					'text-field': ['get', 'text'],
 					'text-size': (styles?.textSize as number) ?? 12,
-					'text-anchor': 'top',
-					'text-offset': [0, 0.8],
+					'text-anchor': 'center',
+					'text-offset': [0, 0],
 					'text-font': this._fontGlyphs ?? styles?.textFont ?? ['sans-serif'],
 					'text-allow-overlap': true
 				},

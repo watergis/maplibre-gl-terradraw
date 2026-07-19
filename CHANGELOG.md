@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.14.6
+
+### Patch Changes
+
+- 22d6fc1: fix: previously text label was shown slightly south of user inputed coordinates. Set 0,0 for text-offset and center for text-anchor to show label at exact position users clicked.
+
 ## 1.14.5
 
 ### Patch Changes

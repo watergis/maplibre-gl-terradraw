@@ -391,7 +391,7 @@
 					<!-- eslint-disable svelte/no-navigation-without-resolve -->
 					<a
 						href={custom.href}
-						class="card preset-filled-surface-100-900 border-[1px] border-surface-200-800 card-hover divide-surface-200-800 flex flex-col max-w-md divide-y overflow-hidden sm:w-auto md:max-w-64 lg:max-w-80 xl:max-w-100"
+						class="card preset-filled-surface-100-900 border-[1px] border-surface-200-800 divide-surface-200-800 flex flex-col max-w-md divide-y overflow-hidden sm:w-auto md:max-w-64 lg:max-w-80 xl:max-w-100"
 					>
 						<header>
 							<img src={custom.image} class="aspect-[21/9] w-full" alt={custom.title} />

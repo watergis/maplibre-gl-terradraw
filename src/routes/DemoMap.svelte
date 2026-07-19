@@ -1142,7 +1142,7 @@
 															<th class="text-xs">Color</th>
 															<th class="text-xs">Time (min)</th>
 															<th class="text-xs">Distance (km)</th>
-															<th>&nbsp;</th>
+															<th></th>
 														</tr>
 													</thead>
 													<tbody class="[&>tr]:hover:preset-tonal-primary">

@@ -8,7 +8,6 @@ import type {
 } from '../interfaces';
 import {
 	GeoJSONSource,
-	LngLat,
 	type CircleLayerSpecification,
 	type FillLayerSpecification,
 	type GeoJSONSourceSpecification,
@@ -17,21 +16,21 @@ import {
 	type StyleSpecification,
 	type SymbolLayerSpecification
 } from 'maplibre-gl';
-import type { GeoJSONStoreFeatures, GeoJSONStoreGeometries, TerraDrawExtend } from 'terra-draw';
+import type { GeoJSONStoreFeatures, TerraDrawExtend } from 'terra-draw';
 import {
 	debounce,
 	ModalDialog,
 	routingDistanceUnitOptions,
 	type routingDistanceUnitType,
 	costingModelOptions,
-	ValhallaRouting,
 	type costingModelType,
 	TERRADRAW_SOURCE_IDS,
 	cleanMaplibreStyle,
-	ValhallaIsochrone,
-	type Contour,
-	type ContourType
+	type Contour
 } from '../helpers';
+import { TerraDrawValhallaRoutingMode } from '../modes/TerraDrawValhallaRoutingMode';
+import { TerraDrawValhallaTimeIsochroneMode } from '../modes/TerraDrawValhallaTimeIsochroneMode';
+import { TerraDrawValhallaDistanceIsochroneMode } from '../modes/TerraDrawValhallaDistanceIsochroneMode';
 
 /**
  * Maplibre GL Terra Draw Measure Control
@@ -53,6 +52,16 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 	 */
 	set valhallaUrl(value: string) {
 		this.valhallaOptions.url = value;
+		const modeOpts = this.controlOptions.modeOptions;
+		if (modeOpts?.['routing'] instanceof TerraDrawValhallaRoutingMode) {
+			modeOpts['routing'].url = value;
+		}
+		if (modeOpts?.['time-isochrone'] instanceof TerraDrawValhallaTimeIsochroneMode) {
+			modeOpts['time-isochrone'].url = value;
+		}
+		if (modeOpts?.['distance-isochrone'] instanceof TerraDrawValhallaDistanceIsochroneMode) {
+			modeOpts['distance-isochrone'].url = value;
+		}
 	}
 
 	/**
@@ -73,6 +82,10 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 			this.valhallaOptions.routingOptions = {};
 		}
 		this.valhallaOptions.routingOptions.costingModel = value;
+		const mode = this.controlOptions.modeOptions?.['routing'];
+		if (mode instanceof TerraDrawValhallaRoutingMode) {
+			mode.costingModel = value;
+		}
 		this.createSettingsDialog();
 	}
 
@@ -95,6 +108,10 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 			this.valhallaOptions.routingOptions = {};
 		}
 		this.valhallaOptions.routingOptions.distanceUnit = value;
+		const mode = this.controlOptions.modeOptions?.['routing'];
+		if (mode instanceof TerraDrawValhallaRoutingMode) {
+			mode.distanceUnit = value;
+		}
 		this.createSettingsDialog();
 	}
 
@@ -116,6 +133,10 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 			this.valhallaOptions.isochroneOptions = {};
 		}
 		this.valhallaOptions.isochroneOptions.timeCostingModel = value;
+		const mode = this.controlOptions.modeOptions?.['time-isochrone'];
+		if (mode instanceof TerraDrawValhallaTimeIsochroneMode) {
+			mode.costingModel = value;
+		}
 		this.createSettingsDialog();
 	}
 
@@ -137,6 +158,10 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 			this.valhallaOptions.isochroneOptions = {};
 		}
 		this.valhallaOptions.isochroneOptions.distanceCostingModel = value;
+		const mode = this.controlOptions.modeOptions?.['distance-isochrone'];
+		if (mode instanceof TerraDrawValhallaDistanceIsochroneMode) {
+			mode.costingModel = value;
+		}
 		this.createSettingsDialog();
 	}
 
@@ -157,6 +182,14 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 			this.valhallaOptions.isochroneOptions = {};
 		}
 		this.valhallaOptions.isochroneOptions.contours = value;
+		const timeMode = this.controlOptions.modeOptions?.['time-isochrone'];
+		if (timeMode instanceof TerraDrawValhallaTimeIsochroneMode) {
+			timeMode.contours = value;
+		}
+		const distMode = this.controlOptions.modeOptions?.['distance-isochrone'];
+		if (distMode instanceof TerraDrawValhallaDistanceIsochroneMode) {
+			distMode.contours = value;
+		}
 		this.createSettingsDialog();
 	}
 
@@ -285,6 +318,29 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 		}
 		this._cssPrefix = 'valhalla-';
 		this.controlOptions = _options;
+
+		this.syncValhallaOptionsToModes(_options);
+	}
+
+	private syncValhallaOptionsToModes(_options: ValhallaControlOptions) {
+		const modeOpts = _options.modeOptions;
+		const vo = this.valhallaOptions;
+		if (modeOpts?.['routing'] instanceof TerraDrawValhallaRoutingMode) {
+			modeOpts['routing'].url = vo.url!;
+			modeOpts['routing'].costingModel = vo.routingOptions?.costingModel ?? 'auto';
+			modeOpts['routing'].distanceUnit = vo.routingOptions?.distanceUnit ?? 'kilometers';
+		}
+		if (modeOpts?.['time-isochrone'] instanceof TerraDrawValhallaTimeIsochroneMode) {
+			modeOpts['time-isochrone'].url = vo.url!;
+			modeOpts['time-isochrone'].costingModel = vo.isochroneOptions?.timeCostingModel ?? 'auto';
+			modeOpts['time-isochrone'].contours = vo.isochroneOptions?.contours ?? [];
+		}
+		if (modeOpts?.['distance-isochrone'] instanceof TerraDrawValhallaDistanceIsochroneMode) {
+			modeOpts['distance-isochrone'].url = vo.url!;
+			modeOpts['distance-isochrone'].costingModel =
+				vo.isochroneOptions?.distanceCostingModel ?? 'auto';
+			modeOpts['distance-isochrone'].contours = vo.isochroneOptions?.contours ?? [];
+		}
 	}
 
 	/**
@@ -1031,182 +1087,40 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 	}
 
 	/**
-	 * Handle finish event of terradraw. It will be called after finishing adding a feature
+	 * Handle finish event of terradraw. Reads pre-computed results from feature properties
+	 * and updates the external MapLibre GeoJSON sources.
 	 * @param id Feature ID
 	 */
 	private handleTerradrawFeatureReady = debounce((id: TerraDrawExtend.FeatureId) => {
 		if (!this.map) return;
-		this.computeRouteByLineFeatureID(id);
-		this.computeIsochroneByPointFeatureID(id);
+
+		const feature = this.terradraw?.getSnapshotFeature(id);
+		if (!feature) return;
+
+		if (feature.properties.routeResult) {
+			const pointFeatures = JSON.parse(
+				feature.properties.routeResult as string
+			) as unknown as GeoJSONStoreFeatures[];
+			this.updateRoutingSource(id, pointFeatures);
+		}
+
+		if (feature.properties.result && feature.properties.contourType) {
+			const isochroneFeatures = JSON.parse(
+				feature.properties.result as string
+			) as unknown as GeoJSONStoreFeatures[];
+			if (feature.properties.contourType === 'time') {
+				this.updateTimeIsochroneSource(id, isochroneFeatures);
+			} else {
+				this.updateDistanceIsochroneSource(id, isochroneFeatures);
+			}
+		}
 	}, 300);
 
-	private computeIsochroneByPointFeatureID = async (id: TerraDrawExtend.FeatureId) => {
+	private updateRoutingSource(
+		id: TerraDrawExtend.FeatureId,
+		pointFeatures: GeoJSONStoreFeatures[]
+	) {
 		if (!this.map) return;
-		if (!this.valhallaOptions.url) return;
-
-		const feature = this.terradraw?.getSnapshotFeature(id);
-		if (!feature || (feature && feature.geometry.type !== 'Point')) return;
-
-		const coord = feature.geometry.coordinates as [number, number];
-
-		const contourType: ContourType =
-			feature.properties.mode === 'time-isochrone' ? 'time' : 'distance';
-		const costingModel =
-			contourType === 'time'
-				? this.valhallaOptions.isochroneOptions?.timeCostingModel || 'auto'
-				: this.valhallaOptions.isochroneOptions?.distanceCostingModel || 'auto';
-
-		const valhallaIsochrone = new ValhallaIsochrone(this.valhallaUrl);
-		const fc = await valhallaIsochrone.calcIsochrone(
-			coord[0],
-			coord[1],
-			contourType,
-			costingModel,
-			this.isochroneContours
-		);
-		const updatedFeatures = fc.features.map((f) => {
-			f.id = `${id}-${f.properties.contour}`;
-			f.properties.originalId = id;
-			f.properties.mode = feature.properties.mode;
-			return f;
-		}) as unknown as GeoJSONStoreFeatures[];
-
-		const updateProperties = {
-			contourType: contourType,
-			costingModel: costingModel,
-			result: updatedFeatures as unknown as string
-		};
-
-		feature.properties = {
-			...feature.properties,
-			...updateProperties
-		};
-
-		this.terradraw?.updateFeatureProperties(id, updateProperties);
-
-		if (contourType === 'time') {
-			const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
-				(this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification).source
-			] as GeoJSONSourceSpecification;
-			if (geojsonSource) {
-				if (
-					typeof geojsonSource.data !== 'string' &&
-					geojsonSource.data.type === 'FeatureCollection'
-				) {
-					geojsonSource.data.features = geojsonSource.data.features.filter(
-						(f) => f.properties?.originalId !== id
-					);
-				}
-				if (
-					typeof geojsonSource.data !== 'string' &&
-					geojsonSource.data.type === 'FeatureCollection'
-				) {
-					geojsonSource.data.features.push(...updatedFeatures);
-				}
-
-				(
-					this.map.getSource(
-						(this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification).source
-					) as GeoJSONSource
-				)?.setData(geojsonSource.data);
-			}
-		} else {
-			const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
-				(this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification).source
-			] as GeoJSONSourceSpecification;
-			if (geojsonSource) {
-				if (
-					typeof geojsonSource.data !== 'string' &&
-					geojsonSource.data.type === 'FeatureCollection'
-				) {
-					geojsonSource.data.features = geojsonSource.data.features.filter(
-						(f) => f.properties?.originalId !== id
-					);
-				}
-				if (
-					typeof geojsonSource.data !== 'string' &&
-					geojsonSource.data.type === 'FeatureCollection'
-				) {
-					geojsonSource.data.features.push(...updatedFeatures);
-				}
-
-				(
-					this.map.getSource(
-						(this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification).source
-					) as GeoJSONSource
-				)?.setData(geojsonSource.data);
-			}
-			this.map.moveLayer(
-				(this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification).id,
-				this.options.adapterOptions?.renderBelowLayerId
-			);
-			this.map.moveLayer(
-				(this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification).id,
-				this.options.adapterOptions?.renderBelowLayerId
-			);
-
-			this.map.moveLayer(
-				(this.controlOptions.timeIsochroneLineLayerSpec as LineLayerSpecification).id,
-				this.options.adapterOptions?.renderBelowLayerId
-			);
-			this.map.moveLayer(
-				(this.controlOptions.distanceIsochroneLineLayerSpec as LineLayerSpecification).id,
-				this.options.adapterOptions?.renderBelowLayerId
-			);
-
-			this.map.moveLayer(
-				(this.controlOptions.timeIsochroneLabelLayerSpec as SymbolLayerSpecification).id,
-				this.options.adapterOptions?.renderBelowLayerId
-			);
-			this.map.moveLayer(
-				(this.controlOptions.distanceIsochroneLabelLayerSpec as SymbolLayerSpecification).id,
-				this.options.adapterOptions?.renderBelowLayerId
-			);
-		}
-	};
-
-	/**
-	 * Compute elevation by a LineString feature ID
-	 * @param id FeatureID
-	 */
-	private computeRouteByLineFeatureID = async (id: TerraDrawExtend.FeatureId) => {
-		if (!this.map) return;
-
-		if (!this.valhallaOptions.url) return;
-
-		const feature = this.terradraw?.getSnapshotFeature(id);
-		if (!feature || (feature && feature.geometry.type !== 'LineString')) return;
-
-		const routingEngine = new ValhallaRouting(this.valhallaUrl);
-		const tripData: LngLat[] = feature.geometry.coordinates.map((c) => {
-			const coord = c as [number, number];
-			return new LngLat(coord[0], coord[1]);
-		});
-		if (!tripData || (tripData && tripData.length < 2)) return;
-
-		const result = await routingEngine.calcRoute(
-			tripData,
-			this.routingCostingModel,
-			this.routingDistanceUnit
-		);
-		if (!result || !result.feature) return;
-		const newGeometry = result?.feature.geometry as GeoJSONStoreGeometries;
-		this.terradraw?.updateFeatureGeometry(id, newGeometry);
-
-		feature.geometry = newGeometry;
-		feature.properties = {
-			...feature.properties,
-			...result?.feature.properties
-		};
-		this.terradraw?.updateFeatureProperties(id, result?.feature.properties);
-
-		// add line node features to the map for label
-		const pointFeactureCollection = result?.pointFeatures;
-		const updatedFeatures = pointFeactureCollection.features.map((f) => {
-			f.id = `${id}-${f.id}`;
-			f.properties.originalId = id;
-			return f;
-		}) as unknown as GeoJSONStoreFeatures[];
 
 		const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
 			(this.controlOptions.routingLineLayerNodeSpec as CircleLayerSpecification).source
@@ -1224,7 +1138,7 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 				typeof geojsonSource.data !== 'string' &&
 				geojsonSource.data.type === 'FeatureCollection'
 			) {
-				geojsonSource.data.features.push(...updatedFeatures);
+				geojsonSource.data.features.push(...pointFeatures);
 			}
 
 			(
@@ -1241,7 +1155,99 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 				this.options.adapterOptions?.renderBelowLayerId
 			);
 		}
-	};
+	}
+
+	private updateTimeIsochroneSource(
+		id: TerraDrawExtend.FeatureId,
+		features: GeoJSONStoreFeatures[]
+	) {
+		if (!this.map) return;
+
+		const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
+			(this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification).source
+		] as GeoJSONSourceSpecification;
+		if (geojsonSource) {
+			if (
+				typeof geojsonSource.data !== 'string' &&
+				geojsonSource.data.type === 'FeatureCollection'
+			) {
+				geojsonSource.data.features = geojsonSource.data.features.filter(
+					(f) => f.properties?.originalId !== id
+				);
+			}
+			if (
+				typeof geojsonSource.data !== 'string' &&
+				geojsonSource.data.type === 'FeatureCollection'
+			) {
+				geojsonSource.data.features.push(...features);
+			}
+
+			(
+				this.map.getSource(
+					(this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification).source
+				) as GeoJSONSource
+			)?.setData(geojsonSource.data);
+		}
+	}
+
+	private updateDistanceIsochroneSource(
+		id: TerraDrawExtend.FeatureId,
+		features: GeoJSONStoreFeatures[]
+	) {
+		if (!this.map) return;
+
+		const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
+			(this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification).source
+		] as GeoJSONSourceSpecification;
+		if (geojsonSource) {
+			if (
+				typeof geojsonSource.data !== 'string' &&
+				geojsonSource.data.type === 'FeatureCollection'
+			) {
+				geojsonSource.data.features = geojsonSource.data.features.filter(
+					(f) => f.properties?.originalId !== id
+				);
+			}
+			if (
+				typeof geojsonSource.data !== 'string' &&
+				geojsonSource.data.type === 'FeatureCollection'
+			) {
+				geojsonSource.data.features.push(...features);
+			}
+
+			(
+				this.map.getSource(
+					(this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification).source
+				) as GeoJSONSource
+			)?.setData(geojsonSource.data);
+		}
+		this.map.moveLayer(
+			(this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification).id,
+			this.options.adapterOptions?.renderBelowLayerId
+		);
+		this.map.moveLayer(
+			(this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification).id,
+			this.options.adapterOptions?.renderBelowLayerId
+		);
+
+		this.map.moveLayer(
+			(this.controlOptions.timeIsochroneLineLayerSpec as LineLayerSpecification).id,
+			this.options.adapterOptions?.renderBelowLayerId
+		);
+		this.map.moveLayer(
+			(this.controlOptions.distanceIsochroneLineLayerSpec as LineLayerSpecification).id,
+			this.options.adapterOptions?.renderBelowLayerId
+		);
+
+		this.map.moveLayer(
+			(this.controlOptions.timeIsochroneLabelLayerSpec as SymbolLayerSpecification).id,
+			this.options.adapterOptions?.renderBelowLayerId
+		);
+		this.map.moveLayer(
+			(this.controlOptions.distanceIsochroneLabelLayerSpec as SymbolLayerSpecification).id,
+			this.options.adapterOptions?.renderBelowLayerId
+		);
+	}
 
 	/**
 	 * Event definition when feature is deleted by terradraw

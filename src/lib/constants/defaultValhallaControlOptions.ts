@@ -1,10 +1,32 @@
-import {
-	TerraDrawLineStringMode,
-	TerraDrawPointMode,
-	TerraDrawRenderMode,
-	TerraDrawSelectMode
-} from 'terra-draw';
+import { TerraDrawRenderMode, TerraDrawSelectMode } from 'terra-draw';
 import type { ValhallaControlOptions } from '../interfaces/ValhallaControlOptions';
+import { TerraDrawValhallaRoutingMode } from '../modes/TerraDrawValhallaRoutingMode';
+import { TerraDrawValhallaTimeIsochroneMode } from '../modes/TerraDrawValhallaTimeIsochroneMode';
+import { TerraDrawValhallaDistanceIsochroneMode } from '../modes/TerraDrawValhallaDistanceIsochroneMode';
+import type { Contour } from '../helpers';
+
+export const defaultContours: Contour[] = [
+	{
+		time: 3,
+		distance: 1,
+		color: '#ff0000'
+	},
+	{
+		time: 5,
+		distance: 2,
+		color: '#ffff00'
+	},
+	{
+		time: 10,
+		distance: 3,
+		color: '#0000ff'
+	},
+	{
+		time: 15,
+		distance: 4,
+		color: '#ff00ff'
+	}
+];
 
 /**
  * Default ValhallaControl options
@@ -24,9 +46,10 @@ export const defaultValhallaControlOptions: ValhallaControlOptions = {
 	open: false,
 	// see styling parameters of Terra Draw at https://github.com/JamesLMilner/terra-draw/blob/main/guides/5.STYLING.md
 	modeOptions: {
-		'time-isochrone': new TerraDrawPointMode({
-			modeName: 'time-isochrone',
-			editable: false,
+		'time-isochrone': new TerraDrawValhallaTimeIsochroneMode({
+			url: '',
+			costingModel: 'auto',
+			contours: defaultContours,
 			styles: {
 				pointColor: '#FFFFFF',
 				pointWidth: 5,
@@ -34,9 +57,10 @@ export const defaultValhallaControlOptions: ValhallaControlOptions = {
 				pointOutlineWidth: 1
 			}
 		}),
-		'distance-isochrone': new TerraDrawPointMode({
-			modeName: 'distance-isochrone',
-			editable: false,
+		'distance-isochrone': new TerraDrawValhallaDistanceIsochroneMode({
+			url: '',
+			costingModel: 'auto',
+			contours: defaultContours,
 			styles: {
 				pointColor: '#FFFFFF',
 				pointWidth: 5,
@@ -44,9 +68,10 @@ export const defaultValhallaControlOptions: ValhallaControlOptions = {
 				pointOutlineWidth: 1
 			}
 		}),
-		routing: new TerraDrawLineStringMode({
-			modeName: 'routing',
-			editable: false,
+		routing: new TerraDrawValhallaRoutingMode({
+			url: '',
+			costingModel: 'auto',
+			distanceUnit: 'kilometers',
 			styles: {
 				lineStringColor: '#FF0000',
 				lineStringWidth: 2,

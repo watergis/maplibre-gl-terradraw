@@ -1,4 +1,7 @@
 import type { TerraDrawTextMode } from '../modes/TerraDrawTextMode';
+import type { TerraDrawValhallaRoutingMode } from '../modes/TerraDrawValhallaRoutingMode';
+import type { TerraDrawValhallaTimeIsochroneMode } from '../modes/TerraDrawValhallaTimeIsochroneMode';
+import type { TerraDrawValhallaDistanceIsochroneMode } from '../modes/TerraDrawValhallaDistanceIsochroneMode';
 import {
 	TerraDrawAngledRectangleMode,
 	TerraDrawCircleMode,
@@ -34,4 +37,7 @@ export type TerradrawModeClass =
 	| TerraDrawSensorMode
 	| TerraDrawRenderMode
 	| TerraDrawSelectMode
-	| TerraDrawTextMode;
+	| TerraDrawTextMode
+	| TerraDrawValhallaRoutingMode
+	| TerraDrawValhallaTimeIsochroneMode
+	| TerraDrawValhallaDistanceIsochroneMode;

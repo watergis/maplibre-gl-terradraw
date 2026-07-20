@@ -2,6 +2,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MaplibreValhallaControl } from './MaplibreValhallaControl';
 import type { StyleSpecification } from 'maplibre-gl';
 import { Map } from 'maplibre-gl';
+import { TerraDrawValhallaRoutingMode } from '../modes/TerraDrawValhallaRoutingMode';
+import { TerraDrawValhallaTimeIsochroneMode } from '../modes/TerraDrawValhallaTimeIsochroneMode';
+import { TerraDrawValhallaDistanceIsochroneMode } from '../modes/TerraDrawValhallaDistanceIsochroneMode';
 
 // Mock getDefaultModeOptions function
 vi.mock('../constants/getDefaultModeOptions', () => ({
@@ -99,6 +102,12 @@ const maplibreStyle: StyleSpecification = {
 
 let control: MaplibreValhallaControl;
 
+const createModeOptions = (url = 'https://valhalla.test.com') => ({
+	routing: new TerraDrawValhallaRoutingMode({ url }),
+	'time-isochrone': new TerraDrawValhallaTimeIsochroneMode({ url }),
+	'distance-isochrone': new TerraDrawValhallaDistanceIsochroneMode({ url })
+});
+
 beforeEach(() => {
 	// Reset all mocks before each test
 	vi.clearAllMocks();
@@ -118,9 +127,7 @@ beforeEach(() => {
 
 	// Create control with minimal required options
 	control = new MaplibreValhallaControl({
-		valhallaOptions: {
-			url: 'https://valhalla.test.com'
-		}
+		modeOptions: createModeOptions()
 	});
 });
 
@@ -128,9 +135,7 @@ describe('valhallaUrl property', () => {
 	it('should return Valhalla URL set in constructor', () => {
 		const testUrl = 'https://valhalla.example.com/v1';
 		const testControl = new MaplibreValhallaControl({
-			valhallaOptions: {
-				url: testUrl
-			}
+			modeOptions: createModeOptions(testUrl)
 		});
 		expect(testControl.valhallaUrl).toBe(testUrl);
 	});
@@ -144,10 +149,10 @@ describe('valhallaUrl property', () => {
 	it('should throw error when Valhalla URL is required but not provided', () => {
 		expect(() => {
 			new MaplibreValhallaControl({
-				valhallaOptions: {}
+				modeOptions: createModeOptions('')
 			});
 		}).toThrow(
-			'Valhalla URL is required for this control. Please set valhallaOptions.url in options.'
+			'Valhalla URL is required for this control. Please set modeOptions.routing/time-isochrone/distance-isochrone url in options.'
 		);
 	});
 });

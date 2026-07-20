@@ -106,6 +106,9 @@ export abstract class TerraDrawValhallaIsochroneBaseMode extends TerraDrawBaseDr
 	}
 
 	onClick(event: TerraDrawMouseEvent): void {
+		// avoid creating transient features that can never be resolved
+		if (!this._url) return;
+
 		const [featureId] = this.store.create([
 			{
 				geometry: {
@@ -170,9 +173,20 @@ export abstract class TerraDrawValhallaIsochroneBaseMode extends TerraDrawBaseDr
 	}
 
 	validateFeature(feature: GeoJSONStoreFeatures): { valid: boolean; reason?: string } {
-		return {
-			valid: feature.geometry.type === 'Polygon' && feature.properties?.mode === this.mode
-		};
+		if (feature.properties?.mode !== this.mode) return { valid: false };
+
+		if (feature.geometry.type === 'Polygon') {
+			return { valid: true };
+		}
+
+		// allow only the transient in-flight click points created by this mode
+		if (feature.geometry.type === 'Point') {
+			return {
+				valid: this.pendingPointIds.has(feature.id as TerraDrawExtend.FeatureId)
+			};
+		}
+
+		return { valid: false };
 	}
 
 	private async computeIsochrone(

@@ -12,4 +12,5 @@ export * from './queryElevationByPoint';
 export * from './queryElevationFromRasterDEM';
 export * from './roundFeatureCoordinates';
 export * from './valhallaIsochrone';
+export * from './valhallaResultRegistry';
 export * from './valhallaRouting';

@@ -421,3 +421,130 @@ describe('getFeatures method tests', () => {
 		expect(result).toEqual(mockFeatures);
 	});
 });
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+describe('mode result rendering', () => {
+	const isochroneFeature = (id: string, originalId: string) => ({
+		type: 'Feature' as const,
+		id,
+		geometry: { type: 'Polygon' as const, coordinates: [] },
+		properties: { originalId, contour: 3 }
+	});
+
+	const pointFeature = (id: string) => ({
+		type: 'Feature' as const,
+		id,
+		geometry: { type: 'Point' as const, coordinates: [0, 0] },
+		properties: { mode: 'time-isochrone' }
+	});
+
+	const mockMap = () => {
+		const setData = vi.fn();
+		return {
+			setData,
+			map: {
+				getSource: vi.fn().mockReturnValue({ setData }),
+				moveLayer: vi.fn()
+			}
+		};
+	};
+
+	const getModes = (targetControl: MaplibreValhallaControl) => {
+		const modeOptions = (targetControl as any).controlOptions.modeOptions;
+		return {
+			routing: modeOptions['routing'] as TerraDrawValhallaRoutingMode,
+			time: modeOptions['time-isochrone'] as TerraDrawValhallaTimeIsochroneMode,
+			distance: modeOptions['distance-isochrone'] as TerraDrawValhallaDistanceIsochroneMode
+		};
+	};
+
+	describe('getFeatures merges mode results', () => {
+		it('should append isochrone result features from modes after each Point feature', () => {
+			const { time, distance } = getModes(control);
+			time.deleteResultFeatures();
+			(time as any).registry.set('point-1', [isochroneFeature('point-1-3', 'point-1')]);
+			(distance as any).registry.set('point-1', [isochroneFeature('point-1-1', 'point-1')]);
+
+			(control as any).terradraw = {};
+			vi.spyOn(
+				Object.getPrototypeOf(MaplibreValhallaControl.prototype),
+				'getFeatures'
+			).mockReturnValue({
+				type: 'FeatureCollection',
+				features: [pointFeature('point-1')]
+			});
+
+			const result = control.getFeatures();
+			expect(result?.features).toHaveLength(3);
+			// the point feature must appear exactly once
+			expect(result?.features.filter((f: any) => f.id === 'point-1')).toHaveLength(1);
+			expect(result?.features.map((f: any) => f.id)).toEqual(['point-1', 'point-1-3', 'point-1-1']);
+		});
+	});
+
+	describe('handleTerradrawFeatureReady', () => {
+		it('should render all result features of the mode via setData after debounce', () => {
+			vi.useFakeTimers();
+			try {
+				const { setData, map } = mockMap();
+				(control as any).map = map;
+
+				const { routing } = getModes(control);
+				const nodeFeatures = [isochroneFeature('route-1-node-0', 'route-1')];
+				(routing as any).registry.set('route-1', nodeFeatures);
+
+				(control as any).handleTerradrawFeatureReady('route-1');
+				vi.advanceTimersByTime(300);
+
+				expect(setData).toHaveBeenCalledWith({
+					type: 'FeatureCollection',
+					features: nodeFeatures
+				});
+				expect(map.moveLayer).toHaveBeenCalled();
+			} finally {
+				vi.useRealTimers();
+			}
+		});
+	});
+
+	describe('onFeatureDeleted', () => {
+		it('should delete results of the given IDs from all modes and re-render sources', () => {
+			const { setData, map } = mockMap();
+			(control as any).map = map;
+
+			const { routing, time, distance } = getModes(control);
+			(routing as any).registry.set('f-1', [isochroneFeature('f-1-node-0', 'f-1')]);
+			(time as any).registry.set('f-1', [isochroneFeature('f-1-3', 'f-1')]);
+			const remaining = [isochroneFeature('f-2-3', 'f-2')];
+			(time as any).registry.set('f-2', remaining);
+			(distance as any).registry.set('f-1', [isochroneFeature('f-1-1', 'f-1')]);
+
+			(control as any).onFeatureDeleted({ deletedIds: ['f-1'] });
+
+			expect(routing.getAllResultFeatures()).toEqual([]);
+			expect(time.getAllResultFeatures()).toEqual(remaining);
+			expect(distance.getAllResultFeatures()).toEqual([]);
+			// three sources are re-rendered
+			expect(setData).toHaveBeenCalledTimes(3);
+			expect(setData).toHaveBeenCalledWith({
+				type: 'FeatureCollection',
+				features: remaining
+			});
+		});
+
+		it('should clear all results when no IDs are given', () => {
+			const { map } = mockMap();
+			(control as any).map = map;
+
+			const { routing, time } = getModes(control);
+			(routing as any).registry.set('f-1', [isochroneFeature('f-1-node-0', 'f-1')]);
+			(time as any).registry.set('f-1', [isochroneFeature('f-1-3', 'f-1')]);
+
+			(control as any).onFeatureDeleted({ deletedIds: [] });
+
+			expect(routing.getAllResultFeatures()).toEqual([]);
+			expect(time.getAllResultFeatures()).toEqual([]);
+		});
+	});
+});

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
+import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 import { TerraDrawValhallaDistanceIsochroneMode } from './TerraDrawValhallaDistanceIsochroneMode';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -238,6 +238,99 @@ describe('TerraDrawValhallaDistanceIsochroneMode', () => {
 				);
 			});
 			expect((mode as any).onFinish).not.toHaveBeenCalled();
+		});
+	});
+
+	describe('result registry', () => {
+		// re-apply a successful implementation because the preceding
+		// 'handles API error gracefully' test replaces it with a rejecting one
+		beforeEach(async () => {
+			const { ValhallaIsochrone } = await import('../helpers/valhallaIsochrone');
+			(ValhallaIsochrone as any).mockImplementation(function () {
+				return {
+					calcIsochrone: vi.fn().mockResolvedValue({
+						type: 'FeatureCollection',
+						features: [
+							{
+								type: 'Feature',
+								id: 'iso-1',
+								geometry: { type: 'Polygon', coordinates: [] },
+								properties: { contour: 3, fillColor: '#ff0000', fillOpacity: 0.3 }
+							},
+							{
+								type: 'Feature',
+								id: 'iso-2',
+								geometry: { type: 'Polygon', coordinates: [] },
+								properties: { contour: 5, fillColor: '#ffff00', fillOpacity: 0.3 }
+							}
+						]
+					})
+				};
+			});
+		});
+
+		const drawPoint = async (mode: any) => {
+			mode.onClick(mockEvent());
+			await vi.waitFor(() => {
+				expect(mode.onFinish).toHaveBeenCalled();
+			});
+		};
+
+		it('getResultFeatures returns contour features with originalId and mode', async () => {
+			const mode = mountMode();
+			await drawPoint(mode);
+
+			const features = mode.getResultFeatures('feature-1');
+			expect(features).toHaveLength(2);
+			expect(features[0].properties.originalId).toBe('feature-1');
+			expect(features[0].properties.mode).toBe('distance-isochrone');
+		});
+
+		it('registry is populated before onFinish fires', async () => {
+			const mode = mountMode();
+			let lengthAtFinish = -1;
+			(mode as any).onFinish = vi.fn().mockImplementation(() => {
+				lengthAtFinish = mode.getResultFeatures('feature-1').length;
+			});
+			await drawPoint(mode);
+			expect(lengthAtFinish).toBe(2);
+		});
+
+		it('getAllResultFeatures aggregates results across points', async () => {
+			const mode = mountMode();
+			(mode as any).store.create = vi
+				.fn()
+				.mockReturnValueOnce(['feature-1'])
+				.mockReturnValueOnce(['feature-2']);
+
+			await drawPoint(mode);
+			await drawPoint(mode);
+
+			expect(mode.getResultFeatures('feature-2')).toHaveLength(2);
+			expect(mode.getAllResultFeatures()).toHaveLength(4);
+		});
+
+		it('deleteResultFeatures removes only the given IDs', async () => {
+			const mode = mountMode();
+			(mode as any).store.create = vi
+				.fn()
+				.mockReturnValueOnce(['feature-1'])
+				.mockReturnValueOnce(['feature-2']);
+
+			await drawPoint(mode);
+			await drawPoint(mode);
+
+			mode.deleteResultFeatures(['feature-1']);
+			expect(mode.getResultFeatures('feature-1')).toEqual([]);
+			expect(mode.getResultFeatures('feature-2')).toHaveLength(2);
+		});
+
+		it('deleteResultFeatures without arguments clears all results', async () => {
+			const mode = mountMode();
+			await drawPoint(mode);
+
+			mode.deleteResultFeatures();
+			expect(mode.getAllResultFeatures()).toEqual([]);
 		});
 	});
 

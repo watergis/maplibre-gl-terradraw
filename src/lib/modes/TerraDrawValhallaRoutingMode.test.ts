@@ -350,6 +350,74 @@ describe('TerraDrawValhallaRoutingMode', () => {
 		});
 	});
 
+	describe('result registry', () => {
+		const drawRoute = async (mode: any) => {
+			mode.onClick(mockEvent());
+			mode.onClick(mockEvent({ lng: 30.01, lat: -2.01, containerX: 200, containerY: 300 }));
+			mode.onKeyUp({ key: 'Enter', heldKeys: [], preventDefault: vi.fn() } as any);
+			await vi.waitFor(() => {
+				expect(mode.onFinish).toHaveBeenCalled();
+			});
+		};
+
+		it('getResultFeatures returns node point features with originalId', async () => {
+			const mode = mountMode();
+			await drawRoute(mode);
+
+			const features = mode.getResultFeatures('feature-1');
+			expect(features).toHaveLength(2);
+			expect(features[0].id).toBe('feature-1-node-0');
+			expect(features[0].properties.originalId).toBe('feature-1');
+		});
+
+		it('registry is populated before onFinish fires', async () => {
+			const mode = mountMode();
+			let lengthAtFinish = -1;
+			(mode as any).onFinish = vi.fn().mockImplementation(() => {
+				lengthAtFinish = mode.getResultFeatures('feature-1').length;
+			});
+			await drawRoute(mode);
+			expect(lengthAtFinish).toBe(2);
+		});
+
+		it('getAllResultFeatures aggregates results across routes', async () => {
+			const mode = mountMode();
+			(mode as any).store.create = vi
+				.fn()
+				.mockReturnValueOnce(['feature-1'])
+				.mockReturnValueOnce(['feature-2']);
+
+			await drawRoute(mode);
+			await drawRoute(mode);
+
+			expect(mode.getResultFeatures('feature-2')).toHaveLength(2);
+			expect(mode.getAllResultFeatures()).toHaveLength(4);
+		});
+
+		it('deleteResultFeatures removes only the given IDs', async () => {
+			const mode = mountMode();
+			(mode as any).store.create = vi
+				.fn()
+				.mockReturnValueOnce(['feature-1'])
+				.mockReturnValueOnce(['feature-2']);
+
+			await drawRoute(mode);
+			await drawRoute(mode);
+
+			mode.deleteResultFeatures(['feature-1']);
+			expect(mode.getResultFeatures('feature-1')).toEqual([]);
+			expect(mode.getResultFeatures('feature-2')).toHaveLength(2);
+		});
+
+		it('deleteResultFeatures without arguments clears all results', async () => {
+			const mode = mountMode();
+			await drawRoute(mode);
+
+			mode.deleteResultFeatures();
+			expect(mode.getAllResultFeatures()).toEqual([]);
+		});
+	});
+
 	describe('public property setters', () => {
 		it('url setter updates the url', () => {
 			const mode = mountMode();

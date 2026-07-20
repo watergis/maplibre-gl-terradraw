@@ -5,7 +5,6 @@ import {
 	GeoJSONSource,
 	type CircleLayerSpecification,
 	type FillLayerSpecification,
-	type GeoJSONSourceSpecification,
 	type LineLayerSpecification,
 	type Map,
 	type StyleSpecification,
@@ -924,6 +923,13 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 	 */
 	private unregisterValhallaControl() {
 		this.off('feature-deleted', this.onFeatureDeleted.bind(this));
+
+		// clear computed results kept by the modes so that
+		// re-adding the control starts from a clean state
+		this.routingMode?.deleteResultFeatures();
+		this.timeIsochroneMode?.deleteResultFeatures();
+		this.distanceIsochroneMode?.deleteResultFeatures();
+
 		if (!this.map) return;
 
 		if (
@@ -1038,140 +1044,72 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 	}
 
 	/**
-	 * Handle finish event of terradraw. Reads pre-computed results from feature properties
-	 * and updates the external MapLibre GeoJSON sources.
+	 * Handle finish event of terradraw. Result features are computed and kept by
+	 * the mode classes; this handler only re-renders the external MapLibre GeoJSON sources.
 	 * @param id Feature ID
 	 */
 	private handleTerradrawFeatureReady = debounce((id: TerraDrawExtend.FeatureId) => {
 		if (!this.map) return;
 
-		const feature = this.terradraw?.getSnapshotFeature(id);
-		if (!feature) return;
-
-		if (feature.properties.routeResult) {
-			const pointFeatures = JSON.parse(
-				feature.properties.routeResult as string
-			) as unknown as GeoJSONStoreFeatures[];
-			this.updateRoutingSource(id, pointFeatures);
+		if (this.routingMode && this.routingMode.getResultFeatures(id).length > 0) {
+			this.updateRoutingSource();
 		}
-
-		if (feature.properties.result && feature.properties.contourType) {
-			const isochroneFeatures = JSON.parse(
-				feature.properties.result as string
-			) as unknown as GeoJSONStoreFeatures[];
-			if (feature.properties.contourType === 'time') {
-				this.updateTimeIsochroneSource(id, isochroneFeatures);
-			} else {
-				this.updateDistanceIsochroneSource(id, isochroneFeatures);
-			}
+		if (this.timeIsochroneMode && this.timeIsochroneMode.getResultFeatures(id).length > 0) {
+			this.updateTimeIsochroneSource();
+		}
+		if (this.distanceIsochroneMode && this.distanceIsochroneMode.getResultFeatures(id).length > 0) {
+			this.updateDistanceIsochroneSource();
 		}
 	}, 300);
 
-	private updateRoutingSource(
-		id: TerraDrawExtend.FeatureId,
-		pointFeatures: GeoJSONStoreFeatures[]
-	) {
-		if (!this.map) return;
+	private updateRoutingSource() {
+		if (!this.map || !this.routingMode) return;
 
-		const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
+		const source = this.map.getSource(
 			(this.controlOptions.routingLineLayerNodeSpec as CircleLayerSpecification).source
-		] as GeoJSONSourceSpecification;
-		if (geojsonSource) {
-			if (
-				typeof geojsonSource.data !== 'string' &&
-				geojsonSource.data.type === 'FeatureCollection'
-			) {
-				geojsonSource.data.features = geojsonSource.data.features.filter(
-					(f) => f.properties?.originalId !== id
-				);
-			}
-			if (
-				typeof geojsonSource.data !== 'string' &&
-				geojsonSource.data.type === 'FeatureCollection'
-			) {
-				geojsonSource.data.features.push(...pointFeatures);
-			}
+		) as GeoJSONSource;
+		if (!source) return;
 
-			(
-				this.map.getSource(
-					(this.controlOptions.routingLineLayerNodeSpec as CircleLayerSpecification).source
-				) as GeoJSONSource
-			)?.setData(geojsonSource.data);
-			this.map.moveLayer(
-				(this.controlOptions.routingLineLayerNodeSpec as CircleLayerSpecification).id,
-				this.options.adapterOptions?.renderBelowLayerId
-			);
-			this.map.moveLayer(
-				(this.controlOptions.routingLineLayerNodeLabelSpec as SymbolLayerSpecification).id,
-				this.options.adapterOptions?.renderBelowLayerId
-			);
-		}
+		source.setData({
+			type: 'FeatureCollection',
+			features: this.routingMode.getAllResultFeatures() as unknown as GeoJSON.Feature[]
+		});
+		this.map.moveLayer(
+			(this.controlOptions.routingLineLayerNodeSpec as CircleLayerSpecification).id,
+			this.options.adapterOptions?.renderBelowLayerId
+		);
+		this.map.moveLayer(
+			(this.controlOptions.routingLineLayerNodeLabelSpec as SymbolLayerSpecification).id,
+			this.options.adapterOptions?.renderBelowLayerId
+		);
 	}
 
-	private updateTimeIsochroneSource(
-		id: TerraDrawExtend.FeatureId,
-		features: GeoJSONStoreFeatures[]
-	) {
-		if (!this.map) return;
+	private updateTimeIsochroneSource() {
+		if (!this.map || !this.timeIsochroneMode) return;
 
-		const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
+		const source = this.map.getSource(
 			(this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification).source
-		] as GeoJSONSourceSpecification;
-		if (geojsonSource) {
-			if (
-				typeof geojsonSource.data !== 'string' &&
-				geojsonSource.data.type === 'FeatureCollection'
-			) {
-				geojsonSource.data.features = geojsonSource.data.features.filter(
-					(f) => f.properties?.originalId !== id
-				);
-			}
-			if (
-				typeof geojsonSource.data !== 'string' &&
-				geojsonSource.data.type === 'FeatureCollection'
-			) {
-				geojsonSource.data.features.push(...features);
-			}
+		) as GeoJSONSource;
+		if (!source) return;
 
-			(
-				this.map.getSource(
-					(this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification).source
-				) as GeoJSONSource
-			)?.setData(geojsonSource.data);
-		}
+		source.setData({
+			type: 'FeatureCollection',
+			features: this.timeIsochroneMode.getAllResultFeatures() as unknown as GeoJSON.Feature[]
+		});
 	}
 
-	private updateDistanceIsochroneSource(
-		id: TerraDrawExtend.FeatureId,
-		features: GeoJSONStoreFeatures[]
-	) {
-		if (!this.map) return;
+	private updateDistanceIsochroneSource() {
+		if (!this.map || !this.distanceIsochroneMode) return;
 
-		const geojsonSource: GeoJSONSourceSpecification = this.map.getStyle().sources[
+		const source = this.map.getSource(
 			(this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification).source
-		] as GeoJSONSourceSpecification;
-		if (geojsonSource) {
-			if (
-				typeof geojsonSource.data !== 'string' &&
-				geojsonSource.data.type === 'FeatureCollection'
-			) {
-				geojsonSource.data.features = geojsonSource.data.features.filter(
-					(f) => f.properties?.originalId !== id
-				);
-			}
-			if (
-				typeof geojsonSource.data !== 'string' &&
-				geojsonSource.data.type === 'FeatureCollection'
-			) {
-				geojsonSource.data.features.push(...features);
-			}
+		) as GeoJSONSource;
+		if (!source) return;
 
-			(
-				this.map.getSource(
-					(this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification).source
-				) as GeoJSONSource
-			)?.setData(geojsonSource.data);
-		}
+		source.setData({
+			type: 'FeatureCollection',
+			features: this.distanceIsochroneMode.getAllResultFeatures() as unknown as GeoJSON.Feature[]
+		});
 		this.map.moveLayer(
 			(this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification).id,
 			this.options.adapterOptions?.renderBelowLayerId
@@ -1205,27 +1143,21 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 	 */
 	private onFeatureDeleted(args: unknown) {
 		if (!this.map) return;
-		const drawInstance = this.getTerraDrawInstance();
-		if (drawInstance) {
-			let deletedIds: string[] = [];
-			if (typeof args === 'object' && args !== null && 'deletedIds' in args) {
-				deletedIds = (args as { deletedIds: string[] }).deletedIds;
-			}
 
-			const sources = [
-				this.controlOptions.routingLineLayerNodeSpec as CircleLayerSpecification,
-				this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification,
-				this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification
-			];
-			const sourceIds = sources.map((src) => src.source);
-			if (deletedIds && deletedIds.length > 0) {
-				// delete only features by IDs
-				this.clearExtendedFeatures(sourceIds, deletedIds);
-			} else {
-				// delete all features
-				this.clearExtendedFeatures(sourceIds, undefined);
-			}
+		let deletedIds: string[] = [];
+		if (typeof args === 'object' && args !== null && 'deletedIds' in args) {
+			deletedIds = (args as { deletedIds: string[] }).deletedIds;
 		}
+
+		// If no IDs are given, all results are cleared.
+		const ids = deletedIds && deletedIds.length > 0 ? deletedIds : undefined;
+		this.routingMode?.deleteResultFeatures(ids);
+		this.timeIsochroneMode?.deleteResultFeatures(ids);
+		this.distanceIsochroneMode?.deleteResultFeatures(ids);
+
+		this.updateRoutingSource();
+		this.updateTimeIsochroneSource();
+		this.updateDistanceIsochroneSource();
 	}
 
 	/**
@@ -1237,68 +1169,15 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 		const fc = super.getFeatures(onlySelected);
 		if (!fc) return fc;
 		if (!this.terradraw) return fc;
-		if (!this.map) return fc;
-
-		// Check if map style and sources are available
-		const style = this.map.getStyle();
-		if (!style || !style.sources) return fc;
-
-		const timeSourceId = (
-			this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification
-		).source;
-		if (!timeSourceId || !style.sources[timeSourceId]) return fc;
-		const distanceSourceId = (
-			this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification
-		).source;
-		if (!distanceSourceId || !style.sources[distanceSourceId]) return fc;
-
-		const geojsonTimeSource: GeoJSONSourceSpecification = style.sources[
-			timeSourceId
-		] as GeoJSONSourceSpecification;
-
-		const geojsonDistanceSource: GeoJSONSourceSpecification = style.sources[
-			distanceSourceId
-		] as GeoJSONSourceSpecification;
 
 		const features: GeoJSONStoreFeatures[] = [];
 
 		for (let i = 0; i < fc.features.length; i++) {
 			const feature = fc.features[i];
-			const geomType = feature.geometry.type;
-			if (geomType === 'Point') {
-				const fid = feature.id;
-
-				if (geojsonTimeSource) {
-					if (
-						typeof geojsonTimeSource.data !== 'string' &&
-						geojsonTimeSource.data.type === 'FeatureCollection'
-					) {
-						const filtered = geojsonTimeSource.data.features.filter(
-							(f) => f.properties?.originalId === fid
-						) as unknown as GeoJSONStoreFeatures[];
-						features.push(feature);
-						if (filtered.length > 0) {
-							features.push(...filtered);
-						}
-					}
-				}
-
-				if (geojsonDistanceSource) {
-					if (
-						typeof geojsonDistanceSource.data !== 'string' &&
-						geojsonDistanceSource.data.type === 'FeatureCollection'
-					) {
-						const filtered = geojsonDistanceSource.data.features.filter(
-							(f) => f.properties?.originalId === fid
-						) as unknown as GeoJSONStoreFeatures[];
-						features.push(feature);
-						if (filtered.length > 0) {
-							features.push(...filtered);
-						}
-					}
-				}
-			} else {
-				features.push(feature);
+			features.push(feature);
+			if (feature.geometry.type === 'Point' && feature.id !== undefined) {
+				features.push(...(this.timeIsochroneMode?.getResultFeatures(feature.id) ?? []));
+				features.push(...(this.distanceIsochroneMode?.getResultFeatures(feature.id) ?? []));
 			}
 		}
 		return {

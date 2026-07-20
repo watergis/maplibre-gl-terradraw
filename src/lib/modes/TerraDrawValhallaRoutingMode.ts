@@ -13,6 +13,7 @@ import {
 	type costingModelType,
 	type routingDistanceUnitType
 } from '../helpers/valhallaRouting';
+import { ValhallaResultRegistry } from '../helpers/valhallaResultRegistry';
 
 const { TerraDrawBaseDrawMode } = TerraDrawExtend;
 
@@ -39,6 +40,8 @@ export class TerraDrawValhallaRoutingMode extends TerraDrawBaseDrawMode<RoutingM
 	private _costingModel: costingModelType;
 	private _distanceUnit: routingDistanceUnitType;
 
+	private registry = new ValhallaResultRegistry();
+
 	private currentCoordinates: [number, number][] = [];
 	private currentFeatureId: TerraDrawExtend.FeatureId | null = null;
 	private rafId: number | null = null;
@@ -64,6 +67,32 @@ export class TerraDrawValhallaRoutingMode extends TerraDrawBaseDrawMode<RoutingM
 	}
 	set distanceUnit(value: routingDistanceUnitType) {
 		this._distanceUnit = value;
+	}
+
+	/**
+	 * Get computed routing node point features (with cumulative distance/time)
+	 * for the given original LineString feature ID.
+	 * @param id Original TerraDraw feature ID
+	 * @returns Node point features, or an empty array if none exist
+	 */
+	public getResultFeatures(id: TerraDrawExtend.FeatureId): GeoJSONStoreFeatures[] {
+		return this.registry.get(id);
+	}
+
+	/**
+	 * Get all computed routing node point features across all routes.
+	 * @returns All node point features
+	 */
+	public getAllResultFeatures(): GeoJSONStoreFeatures[] {
+		return this.registry.getAll();
+	}
+
+	/**
+	 * Delete computed routing results.
+	 * @param ids Original TerraDraw feature IDs to delete. If omitted, all results are cleared.
+	 */
+	public deleteResultFeatures(ids?: TerraDrawExtend.FeatureId[]): void {
+		this.registry.delete(ids);
 	}
 
 	constructor(options: ValhallaRoutingModeOptions) {
@@ -271,6 +300,8 @@ export class TerraDrawValhallaRoutingMode extends TerraDrawBaseDrawMode<RoutingM
 				f.properties.originalId = featureId;
 				return f;
 			});
+
+			this.registry.set(featureId, pointFeatures as unknown as GeoJSONStoreFeatures[]);
 
 			this.store.updateProperty([
 				{

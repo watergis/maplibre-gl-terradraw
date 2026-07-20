@@ -4,11 +4,11 @@ import {
 	type TerraDrawAdapterStyling,
 	type HexColor,
 	TerraDrawExtend,
-	type GeoJSONStoreFeatures
+	type GeoJSONStoreFeatures,
+	type GeoJSONStoreGeometries
 } from 'terra-draw';
 import { ValhallaIsochrone, type Contour, type ContourType } from '../helpers/valhallaIsochrone';
 import type { costingModelType } from '../helpers/valhallaRouting';
-import { ValhallaResultRegistry } from '../helpers/valhallaResultRegistry';
 
 const { TerraDrawBaseDrawMode } = TerraDrawExtend;
 
@@ -17,6 +17,8 @@ export type IsochronePointStyling = {
 	pointWidth?: number;
 	pointOutlineColor?: HexColor;
 	pointOutlineWidth?: number;
+	polygonFillOpacity?: number;
+	polygonOutlineWidth?: number;
 };
 
 export type ValhallaIsochroneModeOptions = {
@@ -36,15 +38,21 @@ const defaultContours: Contour[] = [
 /**
  * Abstract base mode shared by time/distance isochrone modes.
  * A subclass only needs to declare its `mode` name and `contourType`.
+ *
+ * The clicked location is kept in the store only while the Valhalla API request
+ * is in flight; once isochrone polygons are computed they are stored in the
+ * Terra Draw store as the canonical features and the transient point is removed.
+ * Polygons computed from the same click share `properties.groupId`.
  */
 export abstract class TerraDrawValhallaIsochroneBaseMode extends TerraDrawBaseDrawMode<IsochronePointStyling> {
 	protected abstract readonly contourType: ContourType;
 
-	private registry = new ValhallaResultRegistry();
-
 	private _url: string;
 	private _costingModel: costingModelType;
 	private _contours: Contour[];
+
+	// transient click points whose isochrone request is still in flight
+	private pendingPointIds = new Set<TerraDrawExtend.FeatureId>();
 
 	get url(): string {
 		return this._url;
@@ -75,31 +83,6 @@ export abstract class TerraDrawValhallaIsochroneBaseMode extends TerraDrawBaseDr
 		this.styles = options.styles ?? {};
 	}
 
-	/**
-	 * Get computed isochrone polygon features for the given original Point feature ID.
-	 * @param id Original TerraDraw feature ID
-	 * @returns Isochrone polygon features, or an empty array if none exist
-	 */
-	public getResultFeatures(id: TerraDrawExtend.FeatureId): GeoJSONStoreFeatures[] {
-		return this.registry.get(id);
-	}
-
-	/**
-	 * Get all computed isochrone polygon features across all points.
-	 * @returns All isochrone polygon features
-	 */
-	public getAllResultFeatures(): GeoJSONStoreFeatures[] {
-		return this.registry.getAll();
-	}
-
-	/**
-	 * Delete computed isochrone results.
-	 * @param ids Original TerraDraw feature IDs to delete. If omitted, all results are cleared.
-	 */
-	public deleteResultFeatures(ids?: TerraDrawExtend.FeatureId[]): void {
-		this.registry.delete(ids);
-	}
-
 	start(): void {
 		this.setStarted();
 		this.setCursor('crosshair');
@@ -112,7 +95,14 @@ export abstract class TerraDrawValhallaIsochroneBaseMode extends TerraDrawBaseDr
 	}
 
 	cleanUp(): void {
-		// No in-progress state for point placement
+		for (const id of this.pendingPointIds) {
+			try {
+				this.store.delete([id]);
+			} catch {
+				// feature may already be deleted
+			}
+		}
+		this.pendingPointIds.clear();
 	}
 
 	onClick(event: TerraDrawMouseEvent): void {
@@ -128,6 +118,7 @@ export abstract class TerraDrawValhallaIsochroneBaseMode extends TerraDrawBaseDr
 			}
 		]);
 
+		this.pendingPointIds.add(featureId as TerraDrawExtend.FeatureId);
 		this.computeIsochrone(featureId as TerraDrawExtend.FeatureId, [event.lng, event.lat]);
 	}
 
@@ -141,8 +132,28 @@ export abstract class TerraDrawValhallaIsochroneBaseMode extends TerraDrawBaseDr
 		// no-op
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	styleFeature(_feature: GeoJSONStoreFeatures): TerraDrawAdapterStyling {
+	styleFeature(feature: GeoJSONStoreFeatures): TerraDrawAdapterStyling {
+		if (feature.geometry.type === 'Polygon') {
+			const fillColor = (feature.properties?.fillColor ?? '#ff0000') as HexColor;
+			const contour = Number(feature.properties?.contour ?? 0);
+			return {
+				pointColor: '#000000',
+				pointWidth: 0,
+				pointOutlineColor: '#000000',
+				pointOutlineWidth: 0,
+				polygonFillColor: fillColor,
+				polygonFillOpacity:
+					this.styles.polygonFillOpacity ?? Number(feature.properties?.fillOpacity ?? 0.33),
+				polygonOutlineColor: fillColor,
+				polygonOutlineWidth: this.styles.polygonOutlineWidth ?? 3,
+				lineStringColor: '#000000',
+				lineStringWidth: 0,
+				// render smaller contours above larger ones
+				zIndex: Number.isFinite(contour) ? Math.max(0, 100 - contour) : 10
+			};
+		}
+
+		// transient click point styling while the isochrone request is in flight
 		return {
 			pointColor: (this.styles.pointColor ?? '#FFFFFF') as HexColor,
 			pointWidth: this.styles.pointWidth ?? 5,
@@ -154,13 +165,13 @@ export abstract class TerraDrawValhallaIsochroneBaseMode extends TerraDrawBaseDr
 			polygonOutlineWidth: 0,
 			lineStringColor: '#000',
 			lineStringWidth: 0,
-			zIndex: 20
+			zIndex: 120
 		};
 	}
 
 	validateFeature(feature: GeoJSONStoreFeatures): { valid: boolean; reason?: string } {
 		return {
-			valid: feature.geometry.type === 'Point' && feature.properties?.mode === this.mode
+			valid: feature.geometry.type === 'Polygon' && feature.properties?.mode === this.mode
 		};
 	}
 
@@ -181,36 +192,37 @@ export abstract class TerraDrawValhallaIsochroneBaseMode extends TerraDrawBaseDr
 				this._contours
 			);
 
-			const updatedFeatures = fc.features.map((f) => {
-				f.id = `${featureId}-${f.properties.contour}`;
-				f.properties.originalId = featureId;
-				f.properties.mode = this.mode;
-				return f;
-			});
+			const polygonIds = this.store.create(
+				fc.features.map((f) => ({
+					geometry: f.geometry as GeoJSONStoreGeometries,
+					properties: {
+						...f.properties,
+						mode: this.mode,
+						groupId: String(featureId),
+						contourType: this.contourType,
+						costingModel: this._costingModel
+					}
+				}))
+			);
 
-			this.registry.set(featureId, updatedFeatures as unknown as GeoJSONStoreFeatures[]);
+			this.deletePendingPoint(featureId);
 
-			this.store.updateProperty([
-				{
-					id: featureId,
-					property: 'contourType',
-					value: this.contourType
-				},
-				{
-					id: featureId,
-					property: 'costingModel',
-					value: this._costingModel
-				},
-				{
-					id: featureId,
-					property: 'result',
-					value: JSON.stringify(updatedFeatures)
-				}
-			]);
-
-			this.onFinish(featureId, { mode: this.mode, action: 'draw' });
+			const lastId = polygonIds[polygonIds.length - 1];
+			if (lastId !== undefined) {
+				this.onFinish(lastId as TerraDrawExtend.FeatureId, { mode: this.mode, action: 'draw' });
+			}
 		} catch (error) {
+			this.deletePendingPoint(featureId);
 			console.error(`Valhalla ${this.contourType} isochrone error:`, error);
+		}
+	}
+
+	private deletePendingPoint(featureId: TerraDrawExtend.FeatureId) {
+		this.pendingPointIds.delete(featureId);
+		try {
+			this.store.delete([featureId]);
+		} catch {
+			// feature may already be deleted
 		}
 	}
 }

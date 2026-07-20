@@ -1,12 +1,7 @@
 import type { ModeOptions } from './ModeOptions';
 import type { TerradrawValhallaMode } from './TerradrawMode';
 import type { Contour, routingDistanceUnitType, costingModelType } from '../helpers';
-import type {
-	CircleLayerSpecification,
-	FillLayerSpecification,
-	LineLayerSpecification,
-	SymbolLayerSpecification
-} from 'maplibre-gl';
+import type { SymbolLayerSpecification } from 'maplibre-gl';
 import type { TerraDrawMapLibreGLAdapterConfig } from './TerradrawControlOptions';
 /**
  * ValhallaControl Plugin control constructor options
@@ -43,42 +38,20 @@ export interface ValhallaControlOptions {
 	showDeleteConfirmation?: boolean;
 
 	/**
-	 * Maplibre symbol layer specification (on line nodes) for line distance layer
+	 * Maplibre symbol layer specification (on line nodes) for routing node label layer.
+	 * The label features are fed from the Terra Draw store (routing node points).
 	 */
 	routingLineLayerNodeLabelSpec?: SymbolLayerSpecification;
 
 	/**
-	 * Maplibre circle layer specification for visualizing node style of line distance layer
-	 */
-	routingLineLayerNodeSpec?: CircleLayerSpecification;
-
-	/**
-	 * Maplibre fill layer specification for time isochrone polygon layer
-	 */
-	timeIsochronePolygonLayerSpec?: FillLayerSpecification;
-
-	/**
-	 * Maplibre line layer specification for time isochrone line layer
-	 */
-	timeIsochroneLineLayerSpec?: LineLayerSpecification;
-
-	/**
-	 * Maplibre symbol layer specification for time isochrone label layer
+	 * Maplibre symbol layer specification for time isochrone label layer.
+	 * The label features are fed from the Terra Draw store (isochrone polygons).
 	 */
 	timeIsochroneLabelLayerSpec?: SymbolLayerSpecification;
 
 	/**
-	 * Maplibre fill layer specification for distance isochrone polygon layer
-	 */
-	distanceIsochronePolygonLayerSpec?: FillLayerSpecification;
-
-	/**
-	 * Maplibre line layer specification for distance isochrone line layer
-	 */
-	distanceIsochroneLineLayerSpec?: LineLayerSpecification;
-
-	/**
-	 * Maplibre symbol layer specification for distance isochrone label layer
+	 * Maplibre symbol layer specification for distance isochrone label layer.
+	 * The label features are fed from the Terra Draw store (isochrone polygons).
 	 */
 	distanceIsochroneLabelLayerSpec?: SymbolLayerSpecification;
 }

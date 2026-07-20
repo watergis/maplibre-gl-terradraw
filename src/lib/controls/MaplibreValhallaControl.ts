@@ -3,9 +3,6 @@ import { defaultValhallaControlOptions } from '../constants';
 import type { TerradrawMode, TerradrawValhallaMode, ValhallaControlOptions } from '../interfaces';
 import {
 	GeoJSONSource,
-	type CircleLayerSpecification,
-	type FillLayerSpecification,
-	type LineLayerSpecification,
 	type Map,
 	type StyleSpecification,
 	type SymbolLayerSpecification
@@ -235,35 +232,10 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 		(_options.routingLineLayerNodeLabelSpec as SymbolLayerSpecification).source =
 			_options.routingLineLayerNodeLabelSpec?.source.replace('{prefix}', prefixId) as string;
 
-		(_options.routingLineLayerNodeSpec as CircleLayerSpecification).id =
-			_options.routingLineLayerNodeSpec?.id.replace('{prefix}', prefixId) as string;
-		(_options.routingLineLayerNodeSpec as CircleLayerSpecification).source =
-			_options.routingLineLayerNodeSpec?.source.replace('{prefix}', prefixId) as string;
-
-		(_options.timeIsochronePolygonLayerSpec as FillLayerSpecification).id =
-			_options.timeIsochronePolygonLayerSpec?.id.replace('{prefix}', prefixId) as string;
-		(_options.timeIsochronePolygonLayerSpec as FillLayerSpecification).source =
-			_options.timeIsochronePolygonLayerSpec?.source.replace('{prefix}', prefixId) as string;
-
-		(_options.timeIsochroneLineLayerSpec as LineLayerSpecification).id =
-			_options.timeIsochroneLineLayerSpec?.id.replace('{prefix}', prefixId) as string;
-		(_options.timeIsochroneLineLayerSpec as LineLayerSpecification).source =
-			_options.timeIsochroneLineLayerSpec?.source.replace('{prefix}', prefixId) as string;
-
 		(_options.timeIsochroneLabelLayerSpec as SymbolLayerSpecification).id =
 			_options.timeIsochroneLabelLayerSpec?.id.replace('{prefix}', prefixId) as string;
 		(_options.timeIsochroneLabelLayerSpec as SymbolLayerSpecification).source =
 			_options.timeIsochroneLabelLayerSpec?.source.replace('{prefix}', prefixId) as string;
-
-		(_options.distanceIsochronePolygonLayerSpec as FillLayerSpecification).id =
-			_options.distanceIsochronePolygonLayerSpec?.id.replace('{prefix}', prefixId) as string;
-		(_options.distanceIsochronePolygonLayerSpec as FillLayerSpecification).source =
-			_options.distanceIsochronePolygonLayerSpec?.source.replace('{prefix}', prefixId) as string;
-
-		(_options.distanceIsochroneLineLayerSpec as LineLayerSpecification).id =
-			_options.distanceIsochroneLineLayerSpec?.id.replace('{prefix}', prefixId) as string;
-		(_options.distanceIsochroneLineLayerSpec as LineLayerSpecification).source =
-			_options.distanceIsochroneLineLayerSpec?.source.replace('{prefix}', prefixId) as string;
 
 		(_options.distanceIsochroneLabelLayerSpec as SymbolLayerSpecification).id =
 			_options.distanceIsochroneLabelLayerSpec?.id.replace('{prefix}', prefixId) as string;
@@ -350,17 +322,17 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 		style: StyleSpecification,
 		options?: { excludeTerraDrawLayers?: boolean; onlyTerraDrawLayers?: boolean }
 	) {
-		const sourceIds = TERRADRAW_SOURCE_IDS;
+		const sourceIds = [...TERRADRAW_SOURCE_IDS];
 
-		const pointSource = this.controlOptions.routingLineLayerNodeSpec?.source;
-		if (pointSource) sourceIds.push(pointSource);
+		const routingLabelSource = this.controlOptions.routingLineLayerNodeLabelSpec?.source;
+		if (routingLabelSource) sourceIds.push(routingLabelSource);
 
-		const timeIsochronePolygonSource = this.controlOptions.timeIsochronePolygonLayerSpec?.source;
-		if (timeIsochronePolygonSource) sourceIds.push(timeIsochronePolygonSource);
+		const timeIsochroneLabelSource = this.controlOptions.timeIsochroneLabelLayerSpec?.source;
+		if (timeIsochroneLabelSource) sourceIds.push(timeIsochroneLabelSource);
 
-		const distanceIsochronePolygonSource =
-			this.controlOptions.distanceIsochronePolygonLayerSpec?.source;
-		if (distanceIsochronePolygonSource) sourceIds.push(distanceIsochronePolygonSource);
+		const distanceIsochroneLabelSource =
+			this.controlOptions.distanceIsochroneLabelLayerSpec?.source;
+		if (distanceIsochroneLabelSource) sourceIds.push(distanceIsochroneLabelSource);
 
 		return cleanMaplibreStyle(style, options, sourceIds, this.options.adapterOptions?.prefixId);
 	}
@@ -770,419 +742,159 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 	}
 
 	/**
-	 * Register  measure control related maplibre sources and layers
+	 * Register Valhalla control related maplibre sources and label layers.
+	 *
+	 * Result features (routed lines, node points and isochrone polygons) are kept
+	 * in the Terra Draw store and rendered by Terra Draw itself. Only the text
+	 * label layers are kept as custom maplibre symbol layers because Terra Draw
+	 * has no text rendering; their sources are fed from the Terra Draw store.
 	 */
 	private registerValhallaControl() {
 		if (!this.map) return;
 
-		const lineModes = this.options.modes?.filter((m) => ['routing'].includes(m));
+		const labelSpecs: SymbolLayerSpecification[] = [];
+		const modes: TerradrawValhallaMode[] = this.options.modes as TerradrawValhallaMode[];
+		if (modes?.includes('routing')) {
+			labelSpecs.push(
+				this.controlOptions.routingLineLayerNodeLabelSpec as SymbolLayerSpecification
+			);
+		}
+		if (modes?.includes('time-isochrone')) {
+			labelSpecs.push(this.controlOptions.timeIsochroneLabelLayerSpec as SymbolLayerSpecification);
+		}
+		if (modes?.includes('distance-isochrone')) {
+			labelSpecs.push(
+				this.controlOptions.distanceIsochroneLabelLayerSpec as SymbolLayerSpecification
+			);
+		}
 
-		if (lineModes && lineModes.length > 0) {
-			// add GeoJSON source for line node
-			if (
-				!this.map.getSource(
-					(this.controlOptions.routingLineLayerNodeSpec as CircleLayerSpecification).source
-				)
-			) {
-				this.map.addSource(
-					(this.controlOptions.routingLineLayerNodeSpec as CircleLayerSpecification).source,
-					{
-						type: 'geojson',
-						data: { type: 'FeatureCollection', features: [] }
-					}
-				);
+		for (const spec of labelSpecs) {
+			if (!spec) continue;
+			if (!this.map.getSource(spec.source)) {
+				this.map.addSource(spec.source, {
+					type: 'geojson',
+					data: { type: 'FeatureCollection', features: [] }
+				});
 			}
-
-			// add GeoJSON layer for distance label node appearance
-			if (
-				!this.map.getLayer(
-					(this.controlOptions.routingLineLayerNodeSpec as CircleLayerSpecification).id
-				)
-			) {
-				this.map.addLayer(this.controlOptions.routingLineLayerNodeSpec as CircleLayerSpecification);
-			}
-			if (
-				!this.map.getLayer(
-					(this.controlOptions.routingLineLayerNodeLabelSpec as SymbolLayerSpecification).id
-				)
-			) {
-				this.map.addLayer(
-					this.controlOptions.routingLineLayerNodeLabelSpec as SymbolLayerSpecification
-				);
+			if (!this.map.getLayer(spec.id)) {
+				this.map.addLayer(spec);
 			}
 		}
 
-		const pointModes = this.options.modes?.filter((m) =>
-			['time-isochrone', 'distance-isochrone'].includes(m)
-		);
-
-		if (pointModes && pointModes.length > 0) {
-			// add GeoJSON source for time isochrone features
-			if (
-				!this.map.getSource(
-					(this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification).source
-				)
-			) {
-				this.map.addSource(
-					(this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification).source,
-					{
-						type: 'geojson',
-						data: { type: 'FeatureCollection', features: [] }
-					}
-				);
-			}
-
-			// add GeoJSON layer for time isochrone appearance
-			if (
-				!this.map.getLayer(
-					(this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification).id
-				)
-			) {
-				this.map.addLayer(
-					this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification
-				);
-			}
-			if (
-				!this.map.getLayer(
-					(this.controlOptions.timeIsochroneLineLayerSpec as LineLayerSpecification).id
-				)
-			) {
-				this.map.addLayer(this.controlOptions.timeIsochroneLineLayerSpec as LineLayerSpecification);
-			}
-			if (
-				!this.map.getLayer(
-					(this.controlOptions.timeIsochroneLabelLayerSpec as SymbolLayerSpecification).id
-				)
-			) {
-				this.map.addLayer(
-					this.controlOptions.timeIsochroneLabelLayerSpec as SymbolLayerSpecification
-				);
-			}
-
-			// add GeoJSON source for distance isochrone features
-			if (
-				!this.map.getSource(
-					(this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification).source
-				)
-			) {
-				this.map.addSource(
-					(this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification).source,
-					{
-						type: 'geojson',
-						data: { type: 'FeatureCollection', features: [] }
-					}
-				);
-			}
-
-			// add GeoJSON layer for distance isochrone appearance
-			if (
-				!this.map.getLayer(
-					(this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification).id
-				)
-			) {
-				this.map.addLayer(
-					this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification
-				);
-			}
-			if (
-				!this.map.getLayer(
-					(this.controlOptions.distanceIsochroneLineLayerSpec as LineLayerSpecification).id
-				)
-			) {
-				this.map.addLayer(
-					this.controlOptions.distanceIsochroneLineLayerSpec as LineLayerSpecification
-				);
-			}
-			if (
-				!this.map.getLayer(
-					(this.controlOptions.distanceIsochroneLabelLayerSpec as SymbolLayerSpecification).id
-				)
-			) {
-				this.map.addLayer(
-					this.controlOptions.distanceIsochroneLabelLayerSpec as SymbolLayerSpecification
-				);
-			}
-		}
-
-		if (
-			((lineModes && lineModes.length > 0) || (pointModes && pointModes.length > 0)) &&
-			this.map
-		) {
+		if (labelSpecs.length > 0) {
 			const drawInstance = this.getTerraDrawInstance();
 			if (drawInstance) {
-				// subscribe change event of TerraDraw to calc distance
-				drawInstance.on('finish', this.handleTerradrawFeatureReady.bind(this));
-				// subscribe feature-deleted event for the plugin control
-				this.on('feature-deleted', this.onFeatureDeleted.bind(this));
+				drawInstance.on('change', this.handleStoreChange);
+				drawInstance.on('finish', this.handleStoreChange);
 			}
+			this.on('feature-deleted', this.handleStoreChange);
 		}
 	}
 
 	/**
-	 * Register  measure control related maplibre sources and layers
+	 * Unregister Valhalla control related maplibre sources and label layers
 	 */
 	private unregisterValhallaControl() {
-		this.off('feature-deleted', this.onFeatureDeleted.bind(this));
-
-		// clear computed results kept by the modes so that
-		// re-adding the control starts from a clean state
-		this.routingMode?.deleteResultFeatures();
-		this.timeIsochroneMode?.deleteResultFeatures();
-		this.distanceIsochroneMode?.deleteResultFeatures();
-
-		if (!this.map) return;
-
-		if (
-			this.map.getLayer(
-				(this.controlOptions.routingLineLayerNodeSpec as CircleLayerSpecification).id
-			)
-		) {
-			this.map.removeLayer(
-				(this.controlOptions.routingLineLayerNodeSpec as CircleLayerSpecification).id
-			);
-		}
-		if (
-			this.map.getLayer(
-				(this.controlOptions.routingLineLayerNodeLabelSpec as SymbolLayerSpecification).id
-			)
-		) {
-			this.map.removeLayer(
-				(this.controlOptions.routingLineLayerNodeLabelSpec as SymbolLayerSpecification).id
-			);
-		}
-		if (
-			this.map.getSource(
-				(this.controlOptions.routingLineLayerNodeSpec as CircleLayerSpecification).source
-			)
-		) {
-			this.map.removeSource(
-				(this.controlOptions.routingLineLayerNodeSpec as CircleLayerSpecification).source
-			);
-		}
-
-		if (
-			this.map.getLayer(
-				(this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification).id
-			)
-		) {
-			this.map.removeLayer(
-				(this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification).id
-			);
-		}
-		if (
-			this.map.getLayer(
-				(this.controlOptions.timeIsochroneLineLayerSpec as LineLayerSpecification).id
-			)
-		) {
-			this.map.removeLayer(
-				(this.controlOptions.timeIsochroneLineLayerSpec as LineLayerSpecification).id
-			);
-		}
-		if (
-			this.map.getLayer(
-				(this.controlOptions.timeIsochroneLabelLayerSpec as SymbolLayerSpecification).id
-			)
-		) {
-			this.map.removeLayer(
-				(this.controlOptions.timeIsochroneLabelLayerSpec as SymbolLayerSpecification).id
-			);
-		}
-
-		if (
-			this.map.getSource(
-				(this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification).source
-			)
-		) {
-			this.map.removeSource(
-				(this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification).source
-			);
-		}
-
-		if (
-			this.map.getLayer(
-				(this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification).id
-			)
-		) {
-			this.map.removeLayer(
-				(this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification).id
-			);
-		}
-		if (
-			this.map.getLayer(
-				(this.controlOptions.distanceIsochroneLineLayerSpec as LineLayerSpecification).id
-			)
-		) {
-			this.map.removeLayer(
-				(this.controlOptions.distanceIsochroneLineLayerSpec as LineLayerSpecification).id
-			);
-		}
-		if (
-			this.map.getLayer(
-				(this.controlOptions.distanceIsochroneLabelLayerSpec as SymbolLayerSpecification).id
-			)
-		) {
-			this.map.removeLayer(
-				(this.controlOptions.distanceIsochroneLabelLayerSpec as SymbolLayerSpecification).id
-			);
-		}
-
-		if (
-			this.map.getSource(
-				(this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification).source
-			)
-		) {
-			this.map.removeSource(
-				(this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification).source
-			);
-		}
+		this.off('feature-deleted', this.handleStoreChange);
 
 		const drawInstance = this.getTerraDrawInstance();
 		if (drawInstance) {
-			// subscribe change event of TerraDraw to calc distance
-			drawInstance.off('finish', this.handleTerradrawFeatureReady.bind(this));
+			drawInstance.off('change', this.handleStoreChange);
+			drawInstance.off('finish', this.handleStoreChange);
 		}
-	}
 
-	/**
-	 * Handle finish event of terradraw. Result features are computed and kept by
-	 * the mode classes; this handler only re-renders the external MapLibre GeoJSON sources.
-	 * @param id Feature ID
-	 */
-	private handleTerradrawFeatureReady = debounce((id: TerraDrawExtend.FeatureId) => {
 		if (!this.map) return;
 
-		if (this.routingMode && this.routingMode.getResultFeatures(id).length > 0) {
-			this.updateRoutingSource();
-		}
-		if (this.timeIsochroneMode && this.timeIsochroneMode.getResultFeatures(id).length > 0) {
-			this.updateTimeIsochroneSource();
-		}
-		if (this.distanceIsochroneMode && this.distanceIsochroneMode.getResultFeatures(id).length > 0) {
-			this.updateDistanceIsochroneSource();
-		}
-	}, 300);
-
-	private updateRoutingSource() {
-		if (!this.map || !this.routingMode) return;
-
-		const source = this.map.getSource(
-			(this.controlOptions.routingLineLayerNodeSpec as CircleLayerSpecification).source
-		) as GeoJSONSource;
-		if (!source) return;
-
-		source.setData({
-			type: 'FeatureCollection',
-			features: this.routingMode.getAllResultFeatures() as unknown as GeoJSON.Feature[]
-		});
-		this.map.moveLayer(
-			(this.controlOptions.routingLineLayerNodeSpec as CircleLayerSpecification).id,
-			this.options.adapterOptions?.renderBelowLayerId
-		);
-		this.map.moveLayer(
-			(this.controlOptions.routingLineLayerNodeLabelSpec as SymbolLayerSpecification).id,
-			this.options.adapterOptions?.renderBelowLayerId
-		);
-	}
-
-	private updateTimeIsochroneSource() {
-		if (!this.map || !this.timeIsochroneMode) return;
-
-		const source = this.map.getSource(
-			(this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification).source
-		) as GeoJSONSource;
-		if (!source) return;
-
-		source.setData({
-			type: 'FeatureCollection',
-			features: this.timeIsochroneMode.getAllResultFeatures() as unknown as GeoJSON.Feature[]
-		});
-	}
-
-	private updateDistanceIsochroneSource() {
-		if (!this.map || !this.distanceIsochroneMode) return;
-
-		const source = this.map.getSource(
-			(this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification).source
-		) as GeoJSONSource;
-		if (!source) return;
-
-		source.setData({
-			type: 'FeatureCollection',
-			features: this.distanceIsochroneMode.getAllResultFeatures() as unknown as GeoJSON.Feature[]
-		});
-		this.map.moveLayer(
-			(this.controlOptions.timeIsochronePolygonLayerSpec as FillLayerSpecification).id,
-			this.options.adapterOptions?.renderBelowLayerId
-		);
-		this.map.moveLayer(
-			(this.controlOptions.distanceIsochronePolygonLayerSpec as FillLayerSpecification).id,
-			this.options.adapterOptions?.renderBelowLayerId
-		);
-
-		this.map.moveLayer(
-			(this.controlOptions.timeIsochroneLineLayerSpec as LineLayerSpecification).id,
-			this.options.adapterOptions?.renderBelowLayerId
-		);
-		this.map.moveLayer(
-			(this.controlOptions.distanceIsochroneLineLayerSpec as LineLayerSpecification).id,
-			this.options.adapterOptions?.renderBelowLayerId
-		);
-
-		this.map.moveLayer(
-			(this.controlOptions.timeIsochroneLabelLayerSpec as SymbolLayerSpecification).id,
-			this.options.adapterOptions?.renderBelowLayerId
-		);
-		this.map.moveLayer(
-			(this.controlOptions.distanceIsochroneLabelLayerSpec as SymbolLayerSpecification).id,
-			this.options.adapterOptions?.renderBelowLayerId
-		);
-	}
-
-	/**
-	 * Event definition when feature is deleted by terradraw
-	 */
-	private onFeatureDeleted(args: unknown) {
-		if (!this.map) return;
-
-		let deletedIds: string[] = [];
-		if (typeof args === 'object' && args !== null && 'deletedIds' in args) {
-			deletedIds = (args as { deletedIds: string[] }).deletedIds;
-		}
-
-		// If no IDs are given, all results are cleared.
-		const ids = deletedIds && deletedIds.length > 0 ? deletedIds : undefined;
-		this.routingMode?.deleteResultFeatures(ids);
-		this.timeIsochroneMode?.deleteResultFeatures(ids);
-		this.distanceIsochroneMode?.deleteResultFeatures(ids);
-
-		this.updateRoutingSource();
-		this.updateTimeIsochroneSource();
-		this.updateDistanceIsochroneSource();
-	}
-
-	/**
-	 * get GeoJSON features
-	 * @param onlySelected If true, returns only selected features. Default is false.
-	 * @returns FeatureCollection in GeoJSON format
-	 */
-	public getFeatures(onlySelected = false) {
-		const fc = super.getFeatures(onlySelected);
-		if (!fc) return fc;
-		if (!this.terradraw) return fc;
-
-		const features: GeoJSONStoreFeatures[] = [];
-
-		for (let i = 0; i < fc.features.length; i++) {
-			const feature = fc.features[i];
-			features.push(feature);
-			if (feature.geometry.type === 'Point' && feature.id !== undefined) {
-				features.push(...(this.timeIsochroneMode?.getResultFeatures(feature.id) ?? []));
-				features.push(...(this.distanceIsochroneMode?.getResultFeatures(feature.id) ?? []));
+		const labelSpecs = [
+			this.controlOptions.routingLineLayerNodeLabelSpec,
+			this.controlOptions.timeIsochroneLabelLayerSpec,
+			this.controlOptions.distanceIsochroneLabelLayerSpec
+		];
+		for (const spec of labelSpecs) {
+			if (!spec) continue;
+			if (this.map.getLayer(spec.id)) {
+				this.map.removeLayer(spec.id);
+			}
+			if (this.map.getSource(spec.source)) {
+				this.map.removeSource(spec.source);
 			}
 		}
-		return {
+	}
+
+	/**
+	 * Update the label symbol layer sources from the current Terra Draw store snapshot.
+	 */
+	private handleStoreChange = debounce(() => {
+		if (!this.map || !this.terradraw) return;
+
+		const snapshot = this.terradraw.getSnapshot();
+
+		this.setLabelSourceData(
+			this.controlOptions.routingLineLayerNodeLabelSpec,
+			snapshot.filter((f) => f.properties?.mode === 'routing' && f.geometry.type === 'Point')
+		);
+		this.setLabelSourceData(
+			this.controlOptions.timeIsochroneLabelLayerSpec,
+			snapshot.filter(
+				(f) => f.properties?.mode === 'time-isochrone' && f.geometry.type === 'Polygon'
+			)
+		);
+		this.setLabelSourceData(
+			this.controlOptions.distanceIsochroneLabelLayerSpec,
+			snapshot.filter(
+				(f) => f.properties?.mode === 'distance-isochrone' && f.geometry.type === 'Polygon'
+			)
+		);
+	}, 100);
+
+	private setLabelSourceData(
+		spec: SymbolLayerSpecification | undefined,
+		features: GeoJSONStoreFeatures[]
+	) {
+		if (!this.map || !spec) return;
+		const source = this.map.getSource(spec.source) as GeoJSONSource | undefined;
+		if (!source) return;
+		source.setData({
 			type: 'FeatureCollection',
-			features: features
-		};
+			features: features as unknown as GeoJSON.Feature[]
+		});
+		if (this.map.getLayer(spec.id)) {
+			this.map.moveLayer(spec.id, this.options.adapterOptions?.renderBelowLayerId);
+		}
+	}
+
+	/**
+	 * Delete selected features from the store.
+	 *
+	 * Valhalla result features created from the same operation share
+	 * `properties.groupId` (isochrone contour polygons of one request, or a route
+	 * line and its node points). The selection is expanded to the whole group so
+	 * that e.g. deleting one contour polygon removes its siblings, and deleting a
+	 * route line removes its node points as well.
+	 */
+	protected handleDeleteSelectedFeatures(): void {
+		if (!this.terradraw) return;
+		if (!this.terradraw.enabled) return;
+
+		const snapshot = this.terradraw.getSnapshot();
+		const selected = snapshot.filter((f) => f.properties.selected === true);
+
+		if (selected.length > 0) {
+			const groupKey = (f: GeoJSONStoreFeatures) =>
+				String(f.properties?.groupId ?? f.properties?.originalId ?? f.id);
+			const groupKeys = new Set(selected.map((f) => groupKey(f)));
+			const ids = snapshot
+				.filter((f) => f.properties.mode !== 'select' && groupKeys.has(groupKey(f)))
+				.map((f) => f.id) as TerraDrawExtend.FeatureId[];
+
+			this.terradraw.removeFeatures(ids);
+			for (const id of ids) {
+				this.terradraw.deselectFeature(id);
+			}
+			this.dispatchEvent('feature-deleted', { deletedIds: ids });
+		}
+
+		this.toggleDeleteSelectionButton();
+		this.toggleButtonsWhenNoFeature();
 	}
 }

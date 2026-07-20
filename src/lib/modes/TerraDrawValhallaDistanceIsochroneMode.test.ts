@@ -26,7 +26,7 @@ vi.mock('../helpers/valhallaIsochrone', async (importOriginal) => {
 									]
 								]
 							},
-							properties: { contour: 1, fillColor: '#ff0000', fillOpacity: 0.3 }
+							properties: { contour: 3, fillColor: '#ff0000', fillOpacity: 0.3 }
 						},
 						{
 							type: 'Feature',
@@ -42,7 +42,7 @@ vi.mock('../helpers/valhallaIsochrone', async (importOriginal) => {
 									]
 								]
 							},
-							properties: { contour: 2, fillColor: '#ffff00', fillOpacity: 0.3 }
+							properties: { contour: 5, fillColor: '#ffff00', fillOpacity: 0.3 }
 						}
 					]
 				})
@@ -61,13 +61,16 @@ const mockEvent = (overrides = {}): any => ({
 	...overrides
 });
 
-const mockStore = () => ({
-	create: vi.fn().mockReturnValue(['feature-1']),
-	delete: vi.fn(),
-	copyAll: vi.fn().mockReturnValue([]),
-	updateGeometry: vi.fn(),
-	updateProperty: vi.fn()
-});
+const mockStore = () => {
+	let idCounter = 0;
+	return {
+		create: vi.fn().mockImplementation((feats: any[]) => feats.map(() => `feature-${++idCounter}`)),
+		delete: vi.fn(),
+		copyAll: vi.fn().mockReturnValue([]),
+		updateGeometry: vi.fn(),
+		updateProperty: vi.fn()
+	};
+};
 
 const mountMode = (options: Partial<any> = {}) => {
 	const mode = new TerraDrawValhallaDistanceIsochroneMode({
@@ -105,11 +108,11 @@ describe('TerraDrawValhallaDistanceIsochroneMode', () => {
 		it('sets options from constructor', () => {
 			const mode = new TerraDrawValhallaDistanceIsochroneMode({
 				url: 'https://test.com',
-				costingModel: 'bicycle',
+				costingModel: 'pedestrian',
 				contours: [{ time: 10, distance: 3, color: '#0000ff' }]
 			});
 			expect(mode.url).toBe('https://test.com');
-			expect(mode.costingModel).toBe('bicycle');
+			expect(mode.costingModel).toBe('pedestrian');
 			expect(mode.contours).toEqual([{ time: 10, distance: 3, color: '#0000ff' }]);
 		});
 
@@ -147,19 +150,12 @@ describe('TerraDrawValhallaDistanceIsochroneMode', () => {
 				}
 			]);
 		});
-
-		it('each click creates a new Point feature', () => {
-			const mode = mountMode();
-			mode.onClick(mockEvent());
-			mode.onClick(mockEvent({ lng: 30.01, lat: -2.01 }));
-			expect((mode as any).store.create).toHaveBeenCalledTimes(2);
-		});
 	});
 
 	describe('computeIsochrone', () => {
 		it('calls ValhallaIsochrone with contourType=distance', async () => {
 			const { ValhallaIsochrone } = await import('../helpers/valhallaIsochrone');
-			const mode = mountMode({ costingModel: 'auto' });
+			const mode = mountMode({ costingModel: 'pedestrian' });
 			mode.onClick(mockEvent());
 
 			await vi.waitFor(() => {
@@ -169,43 +165,43 @@ describe('TerraDrawValhallaDistanceIsochroneMode', () => {
 					30.0,
 					-2.0,
 					'distance',
-					'auto',
+					'pedestrian',
 					expect.any(Array)
 				);
 			});
 		});
 
-		it('stores result in feature properties', async () => {
+		it('creates polygon features in the store and deletes the click point', async () => {
 			const mode = mountMode();
 			mode.onClick(mockEvent());
 
 			await vi.waitFor(() => {
-				expect((mode as any).store.updateProperty).toHaveBeenCalled();
-				const calls = (mode as any).store.updateProperty.mock.calls[0][0];
-				expect(calls[0]).toEqual({
-					id: 'feature-1',
-					property: 'contourType',
-					value: 'distance'
-				});
-				expect(calls[1]).toEqual({
-					id: 'feature-1',
-					property: 'costingModel',
-					value: 'auto'
-				});
-				expect(calls[2].property).toBe('result');
-				const result = JSON.parse(calls[2].value);
-				expect(result).toHaveLength(2);
-				expect(result[0].properties.originalId).toBe('feature-1');
-				expect(result[0].properties.mode).toBe('distance-isochrone');
+				expect((mode as any).store.create).toHaveBeenCalledTimes(2);
 			});
+
+			const polygonFeatures = (mode as any).store.create.mock.calls[1][0];
+			expect(polygonFeatures).toHaveLength(2);
+			expect(polygonFeatures[0].geometry.type).toBe('Polygon');
+			expect(polygonFeatures[0].properties).toMatchObject({
+				mode: 'distance-isochrone',
+				groupId: 'feature-1',
+				contourType: 'distance',
+				costingModel: 'auto',
+				contour: 3,
+				fillColor: '#ff0000'
+			});
+			expect(polygonFeatures[1].properties.groupId).toBe('feature-1');
+
+			// transient click point is removed once polygons are stored
+			expect((mode as any).store.delete).toHaveBeenCalledWith(['feature-1']);
 		});
 
-		it('calls onFinish after successful computation', async () => {
+		it('calls onFinish with the last polygon id after successful computation', async () => {
 			const mode = mountMode();
 			mode.onClick(mockEvent());
 
 			await vi.waitFor(() => {
-				expect((mode as any).onFinish).toHaveBeenCalledWith('feature-1', {
+				expect((mode as any).onFinish).toHaveBeenCalledWith('feature-3', {
 					mode: 'distance-isochrone',
 					action: 'draw'
 				});
@@ -221,7 +217,7 @@ describe('TerraDrawValhallaDistanceIsochroneMode', () => {
 			expect(ValhallaIsochrone).not.toHaveBeenCalled();
 		});
 
-		it('handles API error gracefully', async () => {
+		it('handles API error gracefully and deletes the click point', async () => {
 			const { ValhallaIsochrone } = await import('../helpers/valhallaIsochrone');
 			(ValhallaIsochrone as any).mockImplementation(function () {
 				return { calcIsochrone: vi.fn().mockRejectedValue(new Error('API error')) };
@@ -237,11 +233,12 @@ describe('TerraDrawValhallaDistanceIsochroneMode', () => {
 					expect.any(Error)
 				);
 			});
+			expect((mode as any).store.delete).toHaveBeenCalledWith(['feature-1']);
 			expect((mode as any).onFinish).not.toHaveBeenCalled();
 		});
 	});
 
-	describe('result registry', () => {
+	describe('store-managed results', () => {
 		// re-apply a successful implementation because the preceding
 		// 'handles API error gracefully' test replaces it with a rejecting one
 		beforeEach(async () => {
@@ -269,68 +266,45 @@ describe('TerraDrawValhallaDistanceIsochroneMode', () => {
 			});
 		});
 
-		const drawPoint = async (mode: any) => {
+		it('polygons are created in the store before onFinish fires', async () => {
+			const mode = mountMode();
+			let createCallsAtFinish = -1;
+			(mode as any).onFinish = vi.fn().mockImplementation(() => {
+				createCallsAtFinish = (mode as any).store.create.mock.calls.length;
+			});
 			mode.onClick(mockEvent());
 			await vi.waitFor(() => {
-				expect(mode.onFinish).toHaveBeenCalled();
+				expect((mode as any).onFinish).toHaveBeenCalled();
 			});
-		};
-
-		it('getResultFeatures returns contour features with originalId and mode', async () => {
-			const mode = mountMode();
-			await drawPoint(mode);
-
-			const features = mode.getResultFeatures('feature-1');
-			expect(features).toHaveLength(2);
-			expect(features[0].properties.originalId).toBe('feature-1');
-			expect(features[0].properties.mode).toBe('distance-isochrone');
+			expect(createCallsAtFinish).toBe(2);
 		});
 
-		it('registry is populated before onFinish fires', async () => {
+		it('polygons from separate clicks get separate groupIds', async () => {
 			const mode = mountMode();
-			let lengthAtFinish = -1;
-			(mode as any).onFinish = vi.fn().mockImplementation(() => {
-				lengthAtFinish = mode.getResultFeatures('feature-1').length;
+			mode.onClick(mockEvent());
+			await vi.waitFor(() => {
+				expect((mode as any).onFinish).toHaveBeenCalledTimes(1);
 			});
-			await drawPoint(mode);
-			expect(lengthAtFinish).toBe(2);
+			mode.onClick(mockEvent({ lng: 30.01, lat: -2.01 }));
+			await vi.waitFor(() => {
+				expect((mode as any).onFinish).toHaveBeenCalledTimes(2);
+			});
+
+			const firstPolygons = (mode as any).store.create.mock.calls[1][0];
+			const secondPolygons = (mode as any).store.create.mock.calls[3][0];
+			expect(firstPolygons[0].properties.groupId).toBe('feature-1');
+			expect(secondPolygons[0].properties.groupId).toBe('feature-4');
 		});
 
-		it('getAllResultFeatures aggregates results across points', async () => {
+		it('cleanUp deletes in-flight click points', async () => {
+			const { ValhallaIsochrone } = await import('../helpers/valhallaIsochrone');
+			(ValhallaIsochrone as any).mockImplementation(function () {
+				return { calcIsochrone: vi.fn().mockReturnValue(new Promise(() => {})) };
+			});
 			const mode = mountMode();
-			(mode as any).store.create = vi
-				.fn()
-				.mockReturnValueOnce(['feature-1'])
-				.mockReturnValueOnce(['feature-2']);
-
-			await drawPoint(mode);
-			await drawPoint(mode);
-
-			expect(mode.getResultFeatures('feature-2')).toHaveLength(2);
-			expect(mode.getAllResultFeatures()).toHaveLength(4);
-		});
-
-		it('deleteResultFeatures removes only the given IDs', async () => {
-			const mode = mountMode();
-			(mode as any).store.create = vi
-				.fn()
-				.mockReturnValueOnce(['feature-1'])
-				.mockReturnValueOnce(['feature-2']);
-
-			await drawPoint(mode);
-			await drawPoint(mode);
-
-			mode.deleteResultFeatures(['feature-1']);
-			expect(mode.getResultFeatures('feature-1')).toEqual([]);
-			expect(mode.getResultFeatures('feature-2')).toHaveLength(2);
-		});
-
-		it('deleteResultFeatures without arguments clears all results', async () => {
-			const mode = mountMode();
-			await drawPoint(mode);
-
-			mode.deleteResultFeatures();
-			expect(mode.getAllResultFeatures()).toEqual([]);
+			mode.onClick(mockEvent());
+			mode.cleanUp();
+			expect((mode as any).store.delete).toHaveBeenCalledWith(['feature-1']);
 		});
 	});
 
@@ -343,8 +317,8 @@ describe('TerraDrawValhallaDistanceIsochroneMode', () => {
 
 		it('costingModel setter updates the costing model', () => {
 			const mode = mountMode();
-			mode.costingModel = 'pedestrian';
-			expect(mode.costingModel).toBe('pedestrian');
+			mode.costingModel = 'bicycle';
+			expect(mode.costingModel).toBe('bicycle');
 		});
 
 		it('contours setter updates contours', () => {
@@ -356,29 +330,23 @@ describe('TerraDrawValhallaDistanceIsochroneMode', () => {
 	});
 
 	describe('validateFeature', () => {
-		it('returns valid for Point with mode=distance-isochrone', () => {
+		it('returns valid for Polygon with mode=time-isochrone', () => {
 			const mode = mountMode();
 			const result = mode.validateFeature({
 				id: '1',
 				type: 'Feature',
-				geometry: { type: 'Point', coordinates: [0, 0] },
+				geometry: { type: 'Polygon', coordinates: [[]] },
 				properties: { mode: 'distance-isochrone' }
 			} as any);
 			expect(result.valid).toBe(true);
 		});
 
-		it('returns invalid for non-Point geometry', () => {
+		it('returns invalid for Point geometry', () => {
 			const mode = mountMode();
 			const result = mode.validateFeature({
 				id: '1',
 				type: 'Feature',
-				geometry: {
-					type: 'LineString',
-					coordinates: [
-						[0, 0],
-						[1, 1]
-					]
-				},
+				geometry: { type: 'Point', coordinates: [0, 0] },
 				properties: { mode: 'distance-isochrone' }
 			} as any);
 			expect(result.valid).toBe(false);
@@ -389,7 +357,7 @@ describe('TerraDrawValhallaDistanceIsochroneMode', () => {
 			const result = mode.validateFeature({
 				id: '1',
 				type: 'Feature',
-				geometry: { type: 'Point', coordinates: [0, 0] },
+				geometry: { type: 'Polygon', coordinates: [[]] },
 				properties: { mode: 'time-isochrone' }
 			} as any);
 			expect(result.valid).toBe(false);
@@ -397,7 +365,43 @@ describe('TerraDrawValhallaDistanceIsochroneMode', () => {
 	});
 
 	describe('styleFeature', () => {
-		it('returns point styling', () => {
+		it('styles polygons from their own feature properties', () => {
+			const mode = mountMode();
+			const style = mode.styleFeature({
+				id: '1',
+				type: 'Feature',
+				geometry: { type: 'Polygon', coordinates: [[]] },
+				properties: {
+					mode: 'distance-isochrone',
+					contour: 5,
+					fillColor: '#ffff00',
+					fillOpacity: 0.3
+				}
+			} as any);
+			expect(style.polygonFillColor).toBe('#ffff00');
+			expect(style.polygonFillOpacity).toBe(0.3);
+			expect(style.polygonOutlineColor).toBe('#ffff00');
+			expect(style.polygonOutlineWidth).toBe(3);
+		});
+
+		it('renders smaller contours above larger ones', () => {
+			const mode = mountMode();
+			const smaller = mode.styleFeature({
+				id: '1',
+				type: 'Feature',
+				geometry: { type: 'Polygon', coordinates: [[]] },
+				properties: { mode: 'distance-isochrone', contour: 3, fillColor: '#ff0000' }
+			} as any);
+			const larger = mode.styleFeature({
+				id: '2',
+				type: 'Feature',
+				geometry: { type: 'Polygon', coordinates: [[]] },
+				properties: { mode: 'distance-isochrone', contour: 15, fillColor: '#ff00ff' }
+			} as any);
+			expect(smaller.zIndex).toBeGreaterThan(larger.zIndex as number);
+		});
+
+		it('returns point styling for the transient click point', () => {
 			const mode = mountMode({
 				styles: { pointColor: '#FF0000', pointWidth: 8 }
 			});

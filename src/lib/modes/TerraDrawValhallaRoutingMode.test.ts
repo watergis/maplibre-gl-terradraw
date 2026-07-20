@@ -308,7 +308,7 @@ describe('TerraDrawValhallaRoutingMode', () => {
 			});
 		});
 
-		it('stores route result in feature properties', async () => {
+		it('stores route summary in feature properties without serialized results', async () => {
 			const mode = mountMode();
 			mode.onClick(mockEvent());
 			mode.onClick(mockEvent({ lng: 30.01, lat: -2.01, containerX: 200, containerY: 300 }));
@@ -317,8 +317,16 @@ describe('TerraDrawValhallaRoutingMode', () => {
 			await vi.waitFor(() => {
 				expect((mode as any).store.updateProperty).toHaveBeenCalled();
 				const call = (mode as any).store.updateProperty.mock.calls[0][0];
-				expect(call[0].property).toBe('routeResult');
-				expect(call[1].property).toBe('costingModel');
+				const properties = call.map((c: any) => c.property);
+				expect(properties).toEqual([
+					'groupId',
+					'costingModel',
+					'distance',
+					'distance_unit',
+					'time'
+				]);
+				expect(properties).not.toContain('routeResult');
+				expect(call[0].value).toBe('feature-1');
 				expect(call[1].value).toBe('auto');
 			});
 		});
@@ -350,7 +358,7 @@ describe('TerraDrawValhallaRoutingMode', () => {
 		});
 	});
 
-	describe('result registry', () => {
+	describe('store-managed node points', () => {
 		const drawRoute = async (mode: any) => {
 			mode.onClick(mockEvent());
 			mode.onClick(mockEvent({ lng: 30.01, lat: -2.01, containerX: 200, containerY: 300 }));
@@ -360,61 +368,43 @@ describe('TerraDrawValhallaRoutingMode', () => {
 			});
 		};
 
-		it('getResultFeatures returns node point features with originalId', async () => {
+		it('creates node point features in the store with originalId and groupId', async () => {
 			const mode = mountMode();
 			await drawRoute(mode);
 
-			const features = mode.getResultFeatures('feature-1');
-			expect(features).toHaveLength(2);
-			expect(features[0].id).toBe('feature-1-node-0');
-			expect(features[0].properties.originalId).toBe('feature-1');
+			// first create is the drawn line, second create is the node points
+			expect((mode as any).store.create).toHaveBeenCalledTimes(2);
+			const nodeFeatures = (mode as any).store.create.mock.calls[1][0];
+			expect(nodeFeatures).toHaveLength(2);
+			expect(nodeFeatures[0].geometry.type).toBe('Point');
+			expect(nodeFeatures[0].properties).toMatchObject({
+				mode: 'routing',
+				originalId: 'feature-1',
+				groupId: 'feature-1',
+				sequence: 0,
+				text: 'Start'
+			});
+			expect(nodeFeatures[1].properties.text).toBe('Goal');
 		});
 
-		it('registry is populated before onFinish fires', async () => {
+		it('does not store maneuvers on node point features', async () => {
 			const mode = mountMode();
-			let lengthAtFinish = -1;
+			await drawRoute(mode);
+
+			const nodeFeatures = (mode as any).store.create.mock.calls[1][0];
+			for (const f of nodeFeatures) {
+				expect(f.properties).not.toHaveProperty('maneuvers');
+			}
+		});
+
+		it('node points are created before onFinish fires', async () => {
+			const mode = mountMode();
+			let createCallsAtFinish = -1;
 			(mode as any).onFinish = vi.fn().mockImplementation(() => {
-				lengthAtFinish = mode.getResultFeatures('feature-1').length;
+				createCallsAtFinish = (mode as any).store.create.mock.calls.length;
 			});
 			await drawRoute(mode);
-			expect(lengthAtFinish).toBe(2);
-		});
-
-		it('getAllResultFeatures aggregates results across routes', async () => {
-			const mode = mountMode();
-			(mode as any).store.create = vi
-				.fn()
-				.mockReturnValueOnce(['feature-1'])
-				.mockReturnValueOnce(['feature-2']);
-
-			await drawRoute(mode);
-			await drawRoute(mode);
-
-			expect(mode.getResultFeatures('feature-2')).toHaveLength(2);
-			expect(mode.getAllResultFeatures()).toHaveLength(4);
-		});
-
-		it('deleteResultFeatures removes only the given IDs', async () => {
-			const mode = mountMode();
-			(mode as any).store.create = vi
-				.fn()
-				.mockReturnValueOnce(['feature-1'])
-				.mockReturnValueOnce(['feature-2']);
-
-			await drawRoute(mode);
-			await drawRoute(mode);
-
-			mode.deleteResultFeatures(['feature-1']);
-			expect(mode.getResultFeatures('feature-1')).toEqual([]);
-			expect(mode.getResultFeatures('feature-2')).toHaveLength(2);
-		});
-
-		it('deleteResultFeatures without arguments clears all results', async () => {
-			const mode = mountMode();
-			await drawRoute(mode);
-
-			mode.deleteResultFeatures();
-			expect(mode.getAllResultFeatures()).toEqual([]);
+			expect(createCallsAtFinish).toBe(2);
 		});
 	});
 
@@ -456,7 +446,18 @@ describe('TerraDrawValhallaRoutingMode', () => {
 			expect(result.valid).toBe(true);
 		});
 
-		it('returns invalid for Point geometry', () => {
+		it('returns valid for node Point with originalId', () => {
+			const mode = mountMode();
+			const result = mode.validateFeature({
+				id: '1',
+				type: 'Feature',
+				geometry: { type: 'Point', coordinates: [0, 0] },
+				properties: { mode: 'routing', originalId: 'feature-1' }
+			} as any);
+			expect(result.valid).toBe(true);
+		});
+
+		it('returns invalid for Point geometry without originalId', () => {
 			const mode = mountMode();
 			const result = mode.validateFeature({
 				id: '1',
@@ -486,6 +487,20 @@ describe('TerraDrawValhallaRoutingMode', () => {
 	});
 
 	describe('styleFeature', () => {
+		it('styles node points by their text label', () => {
+			const mode = mountMode();
+			const styleOf = (text: string) =>
+				mode.styleFeature({
+					id: '1',
+					type: 'Feature',
+					geometry: { type: 'Point', coordinates: [0, 0] },
+					properties: { mode: 'routing', originalId: 'feature-1', text }
+				} as any);
+			expect(styleOf('Start').pointColor).toBe('#0000FF');
+			expect(styleOf('Goal').pointColor).toBe('#FFFF00');
+			expect(styleOf('No.2').pointColor).toBe('#FFFFFF');
+		});
+
 		it('returns line styling', () => {
 			const mode = mountMode({
 				styles: { lineStringColor: '#00FF00', lineStringWidth: 4 }

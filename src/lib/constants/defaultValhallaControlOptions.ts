@@ -85,12 +85,26 @@ export const defaultValhallaControlOptions: ValhallaControlOptions = {
 			flags: {
 				'time-isochrone': {
 					feature: {
-						draggable: false
+						draggable: false,
+						rotateable: false,
+						scaleable: false,
+						coordinates: {
+							midpoints: false,
+							draggable: false,
+							deletable: false
+						}
 					}
 				},
 				'distance-isochrone': {
 					feature: {
-						draggable: false
+						draggable: false,
+						rotateable: false,
+						scaleable: false,
+						coordinates: {
+							midpoints: false,
+							draggable: false,
+							deletable: false
+						}
 					}
 				},
 				routing: {
@@ -172,49 +186,6 @@ export const defaultValhallaControlOptions: ValhallaControlOptions = {
 			'text-color': '#232E3D'
 		}
 	},
-	routingLineLayerNodeSpec: {
-		id: '{prefix}-routing-node',
-		type: 'circle',
-		source: '{prefix}-routing-source',
-		filter: ['==', '$type', 'Point'],
-		layout: {},
-		paint: {
-			'circle-radius': 3,
-			'circle-color': [
-				'case',
-				['==', ['get', 'text'], 'Start'],
-				'#0000FF',
-				['==', ['get', 'text'], 'Goal'],
-				'#FFFF00',
-				'#FFFFFF'
-			],
-			'circle-stroke-color': '#000000',
-			'circle-stroke-width': 1
-		}
-	},
-	timeIsochronePolygonLayerSpec: {
-		id: '{prefix}-time-isochrone-polygon',
-		type: 'fill',
-		source: '{prefix}-time-isochrone-source',
-		layout: {},
-		paint: {
-			'fill-color': ['get', 'fillColor'],
-			'fill-opacity': ['get', 'fillOpacity']
-		}
-	},
-	timeIsochroneLineLayerSpec: {
-		id: '{prefix}-time-isochrone-line',
-		type: 'line',
-		source: '{prefix}-time-isochrone-source',
-		layout: {
-			'line-join': 'round',
-			'line-cap': 'round'
-		},
-		paint: {
-			'line-color': ['get', 'fillColor'],
-			'line-width': 3
-		}
-	},
 	timeIsochroneLabelLayerSpec: {
 		id: '{prefix}-time-isochrone-label',
 		type: 'symbol',
@@ -231,29 +202,6 @@ export const defaultValhallaControlOptions: ValhallaControlOptions = {
 			'text-color': 'rgb(0, 0, 0)',
 			'text-halo-width': 1,
 			'text-halo-color': 'rgb(255, 255, 255)'
-		}
-	},
-	distanceIsochronePolygonLayerSpec: {
-		id: '{prefix}-distance-isochrone-polygon',
-		type: 'fill',
-		source: '{prefix}-distance-isochrone-source',
-		layout: {},
-		paint: {
-			'fill-color': ['get', 'fillColor'],
-			'fill-opacity': ['get', 'fillOpacity']
-		}
-	},
-	distanceIsochroneLineLayerSpec: {
-		id: '{prefix}-distance-isochrone-line',
-		type: 'line',
-		source: '{prefix}-distance-isochrone-source',
-		layout: {
-			'line-join': 'round',
-			'line-cap': 'round'
-		},
-		paint: {
-			'line-color': ['get', 'fillColor'],
-			'line-width': 3
 		}
 	},
 	distanceIsochroneLabelLayerSpec: {

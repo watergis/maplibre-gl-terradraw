@@ -13,7 +13,6 @@ import {
 	type costingModelType,
 	type routingDistanceUnitType
 } from '../helpers/valhallaRouting';
-import { ValhallaResultRegistry } from '../helpers/valhallaResultRegistry';
 
 const { TerraDrawBaseDrawMode } = TerraDrawExtend;
 
@@ -40,8 +39,6 @@ export class TerraDrawValhallaRoutingMode extends TerraDrawBaseDrawMode<RoutingM
 	private _costingModel: costingModelType;
 	private _distanceUnit: routingDistanceUnitType;
 
-	private registry = new ValhallaResultRegistry();
-
 	private currentCoordinates: [number, number][] = [];
 	private currentFeatureId: TerraDrawExtend.FeatureId | null = null;
 	private rafId: number | null = null;
@@ -67,32 +64,6 @@ export class TerraDrawValhallaRoutingMode extends TerraDrawBaseDrawMode<RoutingM
 	}
 	set distanceUnit(value: routingDistanceUnitType) {
 		this._distanceUnit = value;
-	}
-
-	/**
-	 * Get computed routing node point features (with cumulative distance/time)
-	 * for the given original LineString feature ID.
-	 * @param id Original TerraDraw feature ID
-	 * @returns Node point features, or an empty array if none exist
-	 */
-	public getResultFeatures(id: TerraDrawExtend.FeatureId): GeoJSONStoreFeatures[] {
-		return this.registry.get(id);
-	}
-
-	/**
-	 * Get all computed routing node point features across all routes.
-	 * @returns All node point features
-	 */
-	public getAllResultFeatures(): GeoJSONStoreFeatures[] {
-		return this.registry.getAll();
-	}
-
-	/**
-	 * Delete computed routing results.
-	 * @param ids Original TerraDraw feature IDs to delete. If omitted, all results are cleared.
-	 */
-	public deleteResultFeatures(ids?: TerraDrawExtend.FeatureId[]): void {
-		this.registry.delete(ids);
 	}
 
 	constructor(options: ValhallaRoutingModeOptions) {
@@ -211,6 +182,25 @@ export class TerraDrawValhallaRoutingMode extends TerraDrawBaseDrawMode<RoutingM
 	}
 
 	styleFeature(feature: GeoJSONStoreFeatures): TerraDrawAdapterStyling {
+		if (feature.geometry.type === 'Point' && feature.properties?.originalId !== undefined) {
+			// computed routing node point (Start / No.x / Goal)
+			const text = feature.properties?.text;
+			const pointColor = text === 'Start' ? '#0000FF' : text === 'Goal' ? '#FFFF00' : '#FFFFFF';
+			return {
+				pointColor: pointColor as HexColor,
+				pointWidth: 3,
+				pointOutlineColor: '#000000',
+				pointOutlineWidth: 1,
+				polygonFillColor: '#000',
+				polygonFillOpacity: 0,
+				polygonOutlineColor: '#000000',
+				polygonOutlineWidth: 0,
+				lineStringColor: '#000',
+				lineStringWidth: 0,
+				zIndex: 25
+			};
+		}
+
 		const isDrawing = feature.id === this.currentFeatureId;
 		return {
 			pointColor: (this.styles.closingPointColor ?? '#FF0000') as HexColor,
@@ -228,8 +218,14 @@ export class TerraDrawValhallaRoutingMode extends TerraDrawBaseDrawMode<RoutingM
 	}
 
 	validateFeature(feature: GeoJSONStoreFeatures): { valid: boolean; reason?: string } {
+		if (feature.properties?.mode !== this.mode) {
+			return { valid: false };
+		}
+		// routed LineString, or computed node Point linked to a route
 		return {
-			valid: feature.geometry.type === 'LineString' && feature.properties?.mode === this.mode
+			valid:
+				feature.geometry.type === 'LineString' ||
+				(feature.geometry.type === 'Point' && feature.properties?.originalId !== undefined)
 		};
 	}
 
@@ -295,19 +291,28 @@ export class TerraDrawValhallaRoutingMode extends TerraDrawBaseDrawMode<RoutingM
 				}
 			]);
 
-			const pointFeatures = result.pointFeatures.features.map((f) => {
-				f.id = `${featureId}-${f.id}`;
-				f.properties.originalId = featureId;
-				return f;
-			});
-
-			this.registry.set(featureId, pointFeatures as unknown as GeoJSONStoreFeatures[]);
+			this.store.create(
+				result.pointFeatures.features.map((f) => {
+					// maneuvers is a large nested object array only needed for the line summary
+					// eslint-disable-next-line @typescript-eslint/no-unused-vars
+					const { maneuvers, ...nodeProps } = f.properties ?? {};
+					return {
+						geometry: f.geometry as GeoJSONStoreGeometries,
+						properties: {
+							...nodeProps,
+							mode: this.mode,
+							originalId: String(featureId),
+							groupId: String(featureId)
+						}
+					};
+				})
+			);
 
 			this.store.updateProperty([
 				{
 					id: featureId,
-					property: 'routeResult',
-					value: JSON.stringify(pointFeatures)
+					property: 'groupId',
+					value: String(featureId)
 				},
 				{
 					id: featureId,

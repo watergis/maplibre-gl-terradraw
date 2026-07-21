@@ -2,6 +2,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MaplibreValhallaControl } from './MaplibreValhallaControl';
 import type { StyleSpecification } from 'maplibre-gl';
 import { Map } from 'maplibre-gl';
+import { TerraDrawValhallaRoutingMode } from '../modes/TerraDrawValhallaRoutingMode';
+import { TerraDrawValhallaTimeIsochroneMode } from '../modes/TerraDrawValhallaTimeIsochroneMode';
+import { TerraDrawValhallaDistanceIsochroneMode } from '../modes/TerraDrawValhallaDistanceIsochroneMode';
 
 // Mock getDefaultModeOptions function
 vi.mock('../constants/getDefaultModeOptions', () => ({
@@ -99,6 +102,12 @@ const maplibreStyle: StyleSpecification = {
 
 let control: MaplibreValhallaControl;
 
+const createModeOptions = (url = 'https://valhalla.test.com') => ({
+	routing: new TerraDrawValhallaRoutingMode({ url }),
+	'time-isochrone': new TerraDrawValhallaTimeIsochroneMode({ url }),
+	'distance-isochrone': new TerraDrawValhallaDistanceIsochroneMode({ url })
+});
+
 beforeEach(() => {
 	// Reset all mocks before each test
 	vi.clearAllMocks();
@@ -118,9 +127,7 @@ beforeEach(() => {
 
 	// Create control with minimal required options
 	control = new MaplibreValhallaControl({
-		valhallaOptions: {
-			url: 'https://valhalla.test.com'
-		}
+		modeOptions: createModeOptions()
 	});
 });
 
@@ -128,9 +135,7 @@ describe('valhallaUrl property', () => {
 	it('should return Valhalla URL set in constructor', () => {
 		const testUrl = 'https://valhalla.example.com/v1';
 		const testControl = new MaplibreValhallaControl({
-			valhallaOptions: {
-				url: testUrl
-			}
+			modeOptions: createModeOptions(testUrl)
 		});
 		expect(testControl.valhallaUrl).toBe(testUrl);
 	});
@@ -144,11 +149,61 @@ describe('valhallaUrl property', () => {
 	it('should throw error when Valhalla URL is required but not provided', () => {
 		expect(() => {
 			new MaplibreValhallaControl({
-				valhallaOptions: {}
+				modeOptions: createModeOptions('')
 			});
 		}).toThrow(
-			'Valhalla URL is required for this control. Please set valhallaOptions.url in options.'
+			'Valhalla URL is required for this control. Please set modeOptions.routing/time-isochrone/distance-isochrone url in options.'
 		);
+	});
+});
+
+describe('default mode styles', () => {
+	it('should keep default styles when user replaces a mode without styles', () => {
+		const modeOptions = createModeOptions();
+		new MaplibreValhallaControl({ modeOptions });
+
+		expect(modeOptions.routing.styles).toMatchObject({
+			lineStringColor: '#FF0000',
+			lineStringWidth: 2,
+			closingPointColor: '#FF0000',
+			closingPointWidth: 3,
+			closingPointOutlineColor: '#666666',
+			closingPointOutlineWidth: 1,
+			startPointColor: '#0000FF',
+			startPointWidth: 3,
+			startPointOutlineColor: '#000000',
+			startPointOutlineWidth: 1,
+			goalPointColor: '#FFFF00',
+			goalPointWidth: 3,
+			goalPointOutlineColor: '#000000',
+			goalPointOutlineWidth: 1,
+			viaPointColor: '#FFFFFF',
+			viaPointWidth: 3,
+			viaPointOutlineColor: '#000000',
+			viaPointOutlineWidth: 1
+		});
+		expect(modeOptions['time-isochrone'].styles).toMatchObject({ pointColor: '#FFFFFF' });
+		expect(modeOptions['distance-isochrone'].styles).toMatchObject({ pointColor: '#FFFFFF' });
+	});
+
+	it('should let user specified styles take precedence over default styles', () => {
+		const modeOptions = {
+			...createModeOptions(),
+			routing: new TerraDrawValhallaRoutingMode({
+				url: 'https://valhalla.test.com',
+				styles: { lineStringColor: '#00FF00', startPointColor: '#FF00FF' }
+			})
+		};
+		new MaplibreValhallaControl({ modeOptions });
+
+		expect(modeOptions.routing.styles).toMatchObject({
+			// user specified
+			lineStringColor: '#00FF00',
+			startPointColor: '#FF00FF',
+			// default styles are kept for the other properties
+			lineStringWidth: 2,
+			closingPointColor: '#FF0000'
+		});
 	});
 });
 

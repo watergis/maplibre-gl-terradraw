@@ -179,7 +179,23 @@
 	};
 
 	const getValhallaOptions = () => {
-		return `valhallaOptions: ${JSON.stringify(demoOptions.valhallaOptions)}`;
+		return `modeOptions: {
+		routing: new TerraDrawValhallaRoutingMode({
+			url: '${demoOptions.valhallaOptions.url ?? ''}',
+			costingModel: '${demoOptions.valhallaOptions.routingOptions?.costingModel ?? 'auto'}',
+			distanceUnit: '${demoOptions.valhallaOptions.routingOptions?.distanceUnit ?? 'kilometers'}'
+		}),
+		'time-isochrone': new TerraDrawValhallaTimeIsochroneMode({
+			url: '${demoOptions.valhallaOptions.url ?? ''}',
+			costingModel: '${demoOptions.valhallaOptions.isochroneOptions?.timeCostingModel ?? 'auto'}',
+			contours: ${JSON.stringify(demoOptions.valhallaOptions.isochroneOptions?.contours ?? [])}
+		}),
+		'distance-isochrone': new TerraDrawValhallaDistanceIsochroneMode({
+			url: '${demoOptions.valhallaOptions.url ?? ''}',
+			costingModel: '${demoOptions.valhallaOptions.isochroneOptions?.distanceCostingModel ?? 'auto'}',
+			contours: ${JSON.stringify(demoOptions.valhallaOptions.isochroneOptions?.contours ?? [])}
+		})
+	}`;
 	};
 </script>
 

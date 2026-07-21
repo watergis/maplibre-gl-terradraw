@@ -31,9 +31,30 @@ vi.mock('terra-draw', () => ({
 	TerraDrawPointMode: vi.fn().mockImplementation(function () {
 		return { mode: 'point' };
 	}),
-	TerraDrawLineStringMode: vi.fn().mockImplementation(function () {
-		return { mode: 'linestring' };
-	}),
+	TerraDrawLineStringMode: class {
+		mode: string;
+		styles: unknown;
+		state = 'unregistered';
+		constructor(options?: { modeName?: string; styles?: unknown }) {
+			this.mode = options?.modeName ?? 'linestring';
+			this.styles = options?.styles ?? {};
+		}
+		register() {}
+		start() {
+			this.state = 'started';
+		}
+		stop() {
+			this.state = 'stopped';
+		}
+		onClick() {}
+		onKeyUp() {}
+		styleFeature() {
+			return {};
+		}
+		validateFeature() {
+			return { valid: true };
+		}
+	},
 	TerraDrawPolylineMode: vi.fn().mockImplementation(function () {
 		return { mode: 'polyline' };
 	}),

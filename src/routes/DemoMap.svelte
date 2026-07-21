@@ -26,6 +26,9 @@
 		MaplibreValhallaControl,
 		roundFeatureCoordinates,
 		routingDistanceUnitOptions,
+		TerraDrawValhallaDistanceIsochroneMode,
+		TerraDrawValhallaRoutingMode,
+		TerraDrawValhallaTimeIsochroneMode,
 		type Contour,
 		type costingModelType,
 		type distanceUnitType,
@@ -211,10 +214,26 @@
 				modes: modes,
 				open: options.isOpen === 'open',
 				showDeleteConfirmation: options.showDeleteConfirmation,
+				modeOptions: {
+					routing: new TerraDrawValhallaRoutingMode({
+						url: options.valhallaOptions.url ?? '',
+						costingModel: options.valhallaOptions.routingOptions?.costingModel,
+						distanceUnit: options.valhallaOptions.routingOptions?.distanceUnit
+					}),
+					'time-isochrone': new TerraDrawValhallaTimeIsochroneMode({
+						url: options.valhallaOptions.url ?? '',
+						costingModel: options.valhallaOptions.isochroneOptions?.timeCostingModel,
+						contours: options.valhallaOptions.isochroneOptions?.contours
+					}),
+					'distance-isochrone': new TerraDrawValhallaDistanceIsochroneMode({
+						url: options.valhallaOptions.url ?? '',
+						costingModel: options.valhallaOptions.isochroneOptions?.distanceCostingModel,
+						contours: options.valhallaOptions.isochroneOptions?.contours
+					})
+				},
 				adapterOptions: {
 					prefixId: 'td-valhalla'
-				},
-				valhallaOptions: options.valhallaOptions
+				}
 			});
 		} else {
 			drawControl = new MaplibreTerradrawControl({

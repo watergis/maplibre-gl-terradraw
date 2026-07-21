@@ -219,6 +219,21 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 			};
 		}
 
+		// When a user replaces a Valhalla mode through modeOptions (typically only to set the API url),
+		// the default mode instance - and with it the default styling of the control - is dropped.
+		// Restore the default styles underneath the user specified ones.
+		const valhallaModeKeys: TerradrawValhallaMode[] = [
+			'routing',
+			'time-isochrone',
+			'distance-isochrone'
+		];
+		for (const key of valhallaModeKeys) {
+			const defaultMode = defaultValhallaControlOptions.modeOptions?.[key];
+			const targetMode = _options.modeOptions?.[key];
+			if (!defaultMode || !targetMode || defaultMode === targetMode) continue;
+			targetMode.styles = { ...defaultMode.styles, ...targetMode.styles };
+		}
+
 		// replace {prefix} with prefixId for sources and layers
 		if (!_options.adapterOptions) {
 			_options.adapterOptions = {};

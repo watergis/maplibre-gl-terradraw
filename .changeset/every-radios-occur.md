@@ -13,6 +13,8 @@ feat: split Valhalla logic into dedicated modes and store isochrone results as p
 - Time and distance isochrone results are now stored as contour polygons directly in the Terra Draw store.
 - Routing results are handled in mode logic, including route line updates and route-node point features.
 - Valhalla responsibilities are moved from control-level layer handling into mode-level behavior for simpler management.
+- The default Valhalla mode styles are now merged into the mode instances you pass through `modeOptions`, so replacing a mode only to set its `url` no longer drops the control's default styling. Styles you specify yourself still take precedence.
+- The routing node points can now be styled per node type through `TerraDrawValhallaRoutingMode` styles: `startPointColor` / `startPointWidth` / `startPointOutlineColor` / `startPointOutlineWidth` for the first node, the same `goalPoint*` properties for the last node and `viaPoint*` properties for the intermediate nodes. Their defaults are defined in `defaultValhallaControlOptions`.
 
 ### Breaking changes
 

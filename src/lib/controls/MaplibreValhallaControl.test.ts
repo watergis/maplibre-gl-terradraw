@@ -157,6 +157,56 @@ describe('valhallaUrl property', () => {
 	});
 });
 
+describe('default mode styles', () => {
+	it('should keep default styles when user replaces a mode without styles', () => {
+		const modeOptions = createModeOptions();
+		new MaplibreValhallaControl({ modeOptions });
+
+		expect(modeOptions.routing.styles).toMatchObject({
+			lineStringColor: '#FF0000',
+			lineStringWidth: 2,
+			closingPointColor: '#FF0000',
+			closingPointWidth: 3,
+			closingPointOutlineColor: '#666666',
+			closingPointOutlineWidth: 1,
+			startPointColor: '#0000FF',
+			startPointWidth: 3,
+			startPointOutlineColor: '#000000',
+			startPointOutlineWidth: 1,
+			goalPointColor: '#FFFF00',
+			goalPointWidth: 3,
+			goalPointOutlineColor: '#000000',
+			goalPointOutlineWidth: 1,
+			viaPointColor: '#FFFFFF',
+			viaPointWidth: 3,
+			viaPointOutlineColor: '#000000',
+			viaPointOutlineWidth: 1
+		});
+		expect(modeOptions['time-isochrone'].styles).toMatchObject({ pointColor: '#FFFFFF' });
+		expect(modeOptions['distance-isochrone'].styles).toMatchObject({ pointColor: '#FFFFFF' });
+	});
+
+	it('should let user specified styles take precedence over default styles', () => {
+		const modeOptions = {
+			...createModeOptions(),
+			routing: new TerraDrawValhallaRoutingMode({
+				url: 'https://valhalla.test.com',
+				styles: { lineStringColor: '#00FF00', startPointColor: '#FF00FF' }
+			})
+		};
+		new MaplibreValhallaControl({ modeOptions });
+
+		expect(modeOptions.routing.styles).toMatchObject({
+			// user specified
+			lineStringColor: '#00FF00',
+			startPointColor: '#FF00FF',
+			// default styles are kept for the other properties
+			lineStringWidth: 2,
+			closingPointColor: '#FF0000'
+		});
+	});
+});
+
 describe('routingCostingModel property', () => {
 	it('should return default routing costing model', () => {
 		expect(control.routingCostingModel).toBeDefined();

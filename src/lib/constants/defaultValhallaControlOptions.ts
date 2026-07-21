@@ -78,7 +78,19 @@ export const defaultValhallaControlOptions: ValhallaControlOptions = {
 				closingPointColor: '#FF0000',
 				closingPointWidth: 3,
 				closingPointOutlineColor: '#666666',
-				closingPointOutlineWidth: 1
+				closingPointOutlineWidth: 1,
+				startPointColor: '#0000FF',
+				startPointWidth: 3,
+				startPointOutlineColor: '#000000',
+				startPointOutlineWidth: 1,
+				goalPointColor: '#FFFF00',
+				goalPointWidth: 3,
+				goalPointOutlineColor: '#000000',
+				goalPointOutlineWidth: 1,
+				viaPointColor: '#FFFFFF',
+				viaPointWidth: 3,
+				viaPointOutlineColor: '#000000',
+				viaPointOutlineWidth: 1
 			}
 		}),
 		select: new TerraDrawSelectMode({

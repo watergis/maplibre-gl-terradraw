@@ -1,10 +1,11 @@
 import { LngLat } from 'maplibre-gl';
 import {
+	TerraDrawLineStringMode,
+	TerraDrawExtend,
 	type TerraDrawMouseEvent,
 	type TerraDrawKeyboardEvent,
 	type TerraDrawAdapterStyling,
 	type HexColor,
-	TerraDrawExtend,
 	type GeoJSONStoreFeatures,
 	type GeoJSONStoreGeometries
 } from 'terra-draw';
@@ -14,16 +15,42 @@ import {
 	type routingDistanceUnitType
 } from '../helpers/valhallaRouting';
 
-const { TerraDrawBaseDrawMode } = TerraDrawExtend;
+export type LineStringModeStyling = NonNullable<
+	NonNullable<ConstructorParameters<typeof TerraDrawLineStringMode>[0]>['styles']
+>;
 
-export type RoutingModeStyling = {
-	lineStringColor?: HexColor;
-	lineStringWidth?: number;
-	closingPointColor?: HexColor;
-	closingPointWidth?: number;
-	closingPointOutlineColor?: HexColor;
-	closingPointOutlineWidth?: number;
+/**
+ * Styling for the node points (Start / No.x / Goal) which are created
+ * after a route is computed by the Valhalla API.
+ */
+export type RoutingNodePointStyling = {
+	/** Color of the first node point. Default is `#0000FF` */
+	startPointColor: TerraDrawExtend.HexColorStyling;
+	/** Width of the first node point. Default is 3 */
+	startPointWidth: TerraDrawExtend.NumericStyling;
+	/** Outline color of the first node point. Default is `#000000` */
+	startPointOutlineColor: TerraDrawExtend.HexColorStyling;
+	/** Outline width of the first node point. Default is 1 */
+	startPointOutlineWidth: TerraDrawExtend.NumericStyling;
+	/** Color of the last node point. Default is `#FFFF00` */
+	goalPointColor: TerraDrawExtend.HexColorStyling;
+	/** Width of the last node point. Default is 3 */
+	goalPointWidth: TerraDrawExtend.NumericStyling;
+	/** Outline color of the last node point. Default is `#000000` */
+	goalPointOutlineColor: TerraDrawExtend.HexColorStyling;
+	/** Outline width of the last node point. Default is 1 */
+	goalPointOutlineWidth: TerraDrawExtend.NumericStyling;
+	/** Color of the intermediate node points. Default is `#FFFFFF` */
+	viaPointColor: TerraDrawExtend.HexColorStyling;
+	/** Width of the intermediate node points. Default is 3 */
+	viaPointWidth: TerraDrawExtend.NumericStyling;
+	/** Outline color of the intermediate node points. Default is `#000000` */
+	viaPointOutlineColor: TerraDrawExtend.HexColorStyling;
+	/** Outline width of the intermediate node points. Default is 1 */
+	viaPointOutlineWidth: TerraDrawExtend.NumericStyling;
 };
+
+export type RoutingModeStyling = LineStringModeStyling & RoutingNodePointStyling;
 
 export type ValhallaRoutingModeOptions = {
 	url: string;
@@ -32,18 +59,13 @@ export type ValhallaRoutingModeOptions = {
 	styles?: Partial<RoutingModeStyling>;
 };
 
-export class TerraDrawValhallaRoutingMode extends TerraDrawBaseDrawMode<RoutingModeStyling> {
-	mode = 'routing';
-
+export class TerraDrawValhallaRoutingMode extends TerraDrawLineStringMode {
 	private _url: string;
 	private _costingModel: costingModelType;
 	private _distanceUnit: routingDistanceUnitType;
 
-	private currentCoordinates: [number, number][] = [];
-	private currentFeatureId: TerraDrawExtend.FeatureId | null = null;
-	private rafId: number | null = null;
-	private lastClickTime = 0;
-	private lastClickCoord: [number, number] | null = null;
+	private pendingLineId: TerraDrawExtend.FeatureId | null = null;
+	private trackedLineIds = new Set<TerraDrawExtend.FeatureId>();
 
 	get url(): string {
 		return this._url;
@@ -67,130 +89,99 @@ export class TerraDrawValhallaRoutingMode extends TerraDrawBaseDrawMode<RoutingM
 	}
 
 	constructor(options: ValhallaRoutingModeOptions) {
-		super({ styles: options?.styles ?? {} });
+		super({
+			modeName: 'routing',
+			styles: (options.styles ?? {}) as Partial<LineStringModeStyling>
+		});
 		this._url = options.url;
 		this._costingModel = options.costingModel ?? 'auto';
 		this._distanceUnit = options.distanceUnit ?? 'kilometers';
-		this.styles = options.styles ?? {};
-	}
-
-	start(): void {
-		this.setStarted();
-		this.setCursor('crosshair');
-	}
-
-	stop(): void {
-		this.cleanUp();
-		this.setStopped();
-		this.setCursor('unset');
-	}
-
-	cleanUp(): void {
-		if (this.currentFeatureId) {
-			try {
-				this.store.delete([this.currentFeatureId]);
-			} catch {
-				// feature may already be deleted
-			}
-		}
-		this.currentFeatureId = null;
-		this.currentCoordinates = [];
-
-		if (this.rafId) {
-			cancelAnimationFrame(this.rafId);
-			this.rafId = null;
-		}
 	}
 
 	onClick(event: TerraDrawMouseEvent): void {
-		const coord: [number, number] = [event.lng, event.lat];
-		const now = Date.now();
-		const isDoubleClick =
-			this.lastClickCoord &&
-			now - this.lastClickTime < 300 &&
-			Math.abs(coord[0] - this.lastClickCoord[0]) < 1e-5 &&
-			Math.abs(coord[1] - this.lastClickCoord[1]) < 1e-5;
+		const wasDrawing = this.state === 'drawing';
+		super.onClick(event);
+		const isDrawing = this.state === 'drawing';
 
-		this.lastClickTime = now;
-		this.lastClickCoord = coord;
-
-		if (!this.currentFeatureId) {
-			this.currentCoordinates = [coord, coord];
-			const [featureId] = this.store.create([
-				{
-					geometry: {
-						type: 'LineString',
-						coordinates: [...this.currentCoordinates]
-					},
-					properties: {
-						mode: this.mode
-					}
-				}
-			]);
-			this.currentFeatureId = featureId as TerraDrawExtend.FeatureId;
+		if (!wasDrawing && isDrawing) {
+			const newLine = this.store
+				.copyAll()
+				.find(
+					(f) =>
+						f.geometry.type === 'LineString' &&
+						f.properties?.mode === this.mode &&
+						!this.trackedLineIds.has(f.id as TerraDrawExtend.FeatureId)
+				);
+			if (newLine) {
+				this.pendingLineId = newLine.id as TerraDrawExtend.FeatureId;
+				this.trackedLineIds.add(this.pendingLineId);
+			}
 			return;
 		}
 
-		if (isDoubleClick && this.currentCoordinates.length >= 3) {
-			this.finishDrawing();
-			return;
+		if (wasDrawing && !isDrawing) {
+			this.finishAndRoute();
 		}
-
-		const lastIndex = this.currentCoordinates.length - 1;
-		this.currentCoordinates.splice(lastIndex, 0, coord);
-		this.store.updateGeometry([
-			{
-				id: this.currentFeatureId,
-				geometry: {
-					type: 'LineString',
-					coordinates: [...this.currentCoordinates]
-				}
-			}
-		]);
-	}
-
-	onMouseMove(event: TerraDrawMouseEvent): void {
-		if (this.rafId) return;
-
-		this.rafId = requestAnimationFrame(() => {
-			this.rafId = null;
-
-			if (this.currentFeatureId && this.currentCoordinates.length >= 2) {
-				const lastIndex = this.currentCoordinates.length - 1;
-				this.currentCoordinates[lastIndex] = [event.lng, event.lat];
-				this.store.updateGeometry([
-					{
-						id: this.currentFeatureId,
-						geometry: {
-							type: 'LineString',
-							coordinates: [...this.currentCoordinates]
-						}
-					}
-				]);
-			}
-
-			this.setCursor('crosshair');
-		});
 	}
 
 	onKeyUp(event: TerraDrawKeyboardEvent): void {
-		if (event.key === 'Enter' && this.currentFeatureId && this.currentCoordinates.length >= 3) {
-			this.finishDrawing();
-		} else if (event.key === 'Escape') {
-			this.cancelDrawing();
+		const wasDrawing = this.state === 'drawing';
+		super.onKeyUp(event);
+		const isDrawing = this.state === 'drawing';
+
+		if (wasDrawing && !isDrawing && this.pendingLineId !== null) {
+			if (this.store.has(this.pendingLineId)) {
+				this.finishAndRoute();
+			} else {
+				this.trackedLineIds.delete(this.pendingLineId);
+				this.pendingLineId = null;
+			}
 		}
+	}
+
+	private finishAndRoute(): void {
+		if (this.pendingLineId === null) return;
+		const featureId = this.pendingLineId;
+		this.pendingLineId = null;
+		const geometry = this.store.getGeometryCopy<GeoJSONStoreGeometries>(featureId);
+		if (geometry.type !== 'LineString') return;
+		this.computeRoute(featureId, geometry.coordinates as [number, number][]);
 	}
 
 	styleFeature(feature: GeoJSONStoreFeatures): TerraDrawAdapterStyling {
 		if (feature.geometry.type === 'Point' && feature.properties?.originalId !== undefined) {
 			// computed routing node point (Start / No.x / Goal)
+			const styles = this.styles as Partial<RoutingModeStyling>;
 			const text = feature.properties?.text;
-			const pointColor = text === 'Start' ? '#0000FF' : text === 'Goal' ? '#FFFF00' : '#FFFFFF';
+			const node =
+				text === 'Start'
+					? {
+							color: styles.startPointColor,
+							defaultColor: '#0000FF' as HexColor,
+							width: styles.startPointWidth,
+							outlineColor: styles.startPointOutlineColor,
+							outlineWidth: styles.startPointOutlineWidth
+						}
+					: text === 'Goal'
+						? {
+								color: styles.goalPointColor,
+								defaultColor: '#FFFF00' as HexColor,
+								width: styles.goalPointWidth,
+								outlineColor: styles.goalPointOutlineColor,
+								outlineWidth: styles.goalPointOutlineWidth
+							}
+						: {
+								color: styles.viaPointColor,
+								defaultColor: '#FFFFFF' as HexColor,
+								width: styles.viaPointWidth,
+								outlineColor: styles.viaPointOutlineColor,
+								outlineWidth: styles.viaPointOutlineWidth
+							};
 			return {
-				pointColor: pointColor as HexColor,
-				pointWidth: 3,
-				pointOutlineColor: '#000000',
-				pointOutlineWidth: 1,
+				pointColor: this.getHexColorStylingValue(node.color, node.defaultColor, feature),
+				pointWidth: this.getNumericStylingValue(node.width, 3, feature),
+				pointOutlineColor: this.getHexColorStylingValue(node.outlineColor, '#000000', feature),
+				pointOutlineWidth: this.getNumericStylingValue(node.outlineWidth, 1, feature),
 				polygonFillColor: '#000',
 				polygonFillOpacity: 0,
 				polygonOutlineColor: '#000000',
@@ -201,71 +192,17 @@ export class TerraDrawValhallaRoutingMode extends TerraDrawBaseDrawMode<RoutingM
 			};
 		}
 
-		const isDrawing = feature.id === this.currentFeatureId;
-		return {
-			pointColor: (this.styles.closingPointColor ?? '#FF0000') as HexColor,
-			pointWidth: this.styles.closingPointWidth ?? 3,
-			pointOutlineColor: (this.styles.closingPointOutlineColor ?? '#666666') as HexColor,
-			pointOutlineWidth: this.styles.closingPointOutlineWidth ?? 1,
-			polygonFillColor: '#000',
-			polygonFillOpacity: 0,
-			polygonOutlineColor: '#000000',
-			polygonOutlineWidth: 0,
-			lineStringColor: (this.styles.lineStringColor ?? '#FF0000') as HexColor,
-			lineStringWidth: this.styles.lineStringWidth ?? 2,
-			zIndex: isDrawing ? 30 : 20
-		};
+		return super.styleFeature(feature);
 	}
 
 	validateFeature(feature: GeoJSONStoreFeatures): { valid: boolean; reason?: string } {
-		if (feature.properties?.mode !== this.mode) {
-			return { valid: false };
+		if (feature.geometry.type === 'Point' && feature.properties?.originalId !== undefined) {
+			return feature.properties?.mode === this.mode ? { valid: true } : { valid: false };
 		}
-		// routed LineString, or computed node Point linked to a route
-		return {
-			valid:
-				feature.geometry.type === 'LineString' ||
-				(feature.geometry.type === 'Point' && feature.properties?.originalId !== undefined)
-		};
+		return super.validateFeature(feature);
 	}
 
-	private finishDrawing(): void {
-		if (!this.currentFeatureId) return;
-
-		this.currentCoordinates.pop();
-
-		this.store.updateGeometry([
-			{
-				id: this.currentFeatureId,
-				geometry: {
-					type: 'LineString',
-					coordinates: [...this.currentCoordinates]
-				}
-			}
-		]);
-
-		const featureId = this.currentFeatureId;
-		const coordinates = [...this.currentCoordinates];
-
-		this.currentFeatureId = null;
-		this.currentCoordinates = [];
-
-		this.computeRoute(featureId, coordinates);
-	}
-
-	private cancelDrawing(): void {
-		if (this.currentFeatureId) {
-			try {
-				this.store.delete([this.currentFeatureId]);
-			} catch {
-				// feature may already be deleted
-			}
-		}
-		this.currentFeatureId = null;
-		this.currentCoordinates = [];
-	}
-
-	private async computeRoute(
+	protected async computeRoute(
 		featureId: TerraDrawExtend.FeatureId,
 		coordinates: [number, number][]
 	): Promise<void> {

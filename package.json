@@ -60,7 +60,7 @@
 		"@sveltejs/kit": "^2.70.0",
 		"@sveltejs/vite-plugin-svelte": "^7.2.0",
 		"@tailwindcss/vite": "^4.3.3",
-		"@testing-library/jest-dom": "^6.9.1",
+		"@testing-library/jest-dom": "^7.0.0",
 		"@turf/area": "^7.3.5",
 		"@turf/centroid": "^7.3.5",
 		"@turf/distance": "^7.3.5",

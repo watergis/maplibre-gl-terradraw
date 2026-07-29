@@ -502,7 +502,7 @@ describe('keyboard shortcuts', () => {
 
 	beforeEach(() => {
 		testControl = new MaplibreValhallaControl({
-			valhallaOptions: { url: 'https://valhalla.test.com' }
+			modeOptions: createModeOptions()
 		});
 		mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
 	});
@@ -576,7 +576,7 @@ describe('keyboard shortcuts', () => {
 
 	it('accepts custom keyboard shortcut for a valhalla mode', () => {
 		const customControl = new MaplibreValhallaControl({
-			valhallaOptions: { url: 'https://valhalla.test.com' },
+			modeOptions: createModeOptions(),
 			keyboardShortcuts: { routing: { key: 'x', heldKeys: [] } }
 		});
 		customControl.onAdd(mockMap);

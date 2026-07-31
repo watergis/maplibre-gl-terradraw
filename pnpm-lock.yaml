@@ -66,8 +66,8 @@ importers:
         specifier: ^4.1.10
         version: 4.1.10(vitest@4.1.10)
       '@watergis/maplibre-gl-export':
-        specifier: ^4.1.2
-        version: 4.1.2
+        specifier: ^5.0.0
+        version: 5.0.0(maplibre-gl@5.24.0)
       '@watergis/terrain-rgb':
         specifier: ^2.1.1
         version: 2.1.1
@@ -1486,8 +1486,10 @@ packages:
   '@vitest/utils@4.1.10':
     resolution: {integrity: sha512-fy9am/HWxbaGt/Sawrp90vt6Y6jQwf1RX77cz3uwoJwJVMli/e1IEwRPnMNJ7vKfPTwo0diXifkpPvwH9v7nGA==}
 
-  '@watergis/maplibre-gl-export@4.1.2':
-    resolution: {integrity: sha512-t4c9ITQCM8LV3HpBF6N75oHj8jxTv5lrtcu5wmjSLLM+FVSWt4l8OuruBObgeo6k1lcpwyc9Moux5tzH0c902Q==}
+  '@watergis/maplibre-gl-export@5.0.0':
+    resolution: {integrity: sha512-nXQ+PWWENJwiuQBbCC/vfRumrMlnaXJSkGdcOzoKMIqhS6gCCarFNK3xD1nKZScA98YVK+WyfXrH/5k90sXudA==}
+    peerDependencies:
+      maplibre-gl: ^5.21.1 || >=6.0.0-0 <7.0.0
 
   '@watergis/terrain-rgb@2.1.1':
     resolution: {integrity: sha512-iZQVUDyFvil1CoBjwWWgQ95JYFETwMViU6DocacDiwVLuSTQL6V5RqphN5nbjjA6OahqR4uoxPFXaUbBJGBrlg==}
@@ -2366,6 +2368,9 @@ packages:
 
   html-escaper@2.0.2:
     resolution: {integrity: sha512-H2iMtd0I4Mt5eYiapRdIDjp+XzelXQ0tFE4JS7YFwFevXXMmOp9myNrUvCg0D6ws8iqkRPBfKHgbwig1SmlLfg==}
+
+  html-to-image@1.11.13:
+    resolution: {integrity: sha512-cuOPoI7WApyhBElTTb9oqsawRvZ0rHhaHwghRLlTuffoD1B2aDemlCruLeZrUIIdvG7gs9xeELEPm6PhuASqrg==}
 
   html-void-elements@3.0.0:
     resolution: {integrity: sha512-bEqo66MRXsUGxWHV5IP0PUiAWwoEjba4VCzg0LjFJBpchPaTfyfCKTG6bc5F8ucKec3q5y6qOdGyYTSBEvhCrg==}
@@ -5462,8 +5467,9 @@ snapshots:
       convert-source-map: 2.0.0
       tinyrainbow: 3.1.0
 
-  '@watergis/maplibre-gl-export@4.1.2':
+  '@watergis/maplibre-gl-export@5.0.0(maplibre-gl@5.24.0)':
     dependencies:
+      html-to-image: 1.11.13
       jspdf: 4.2.1
       maplibre-gl: 5.24.0
 
@@ -6601,6 +6607,8 @@ snapshots:
       - '@noble/hashes'
 
   html-escaper@2.0.2: {}
+
+  html-to-image@1.11.13: {}
 
   html-void-elements@3.0.0: {}
 

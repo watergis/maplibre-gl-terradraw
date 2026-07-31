@@ -9,8 +9,14 @@
 		/>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
-		<script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+		<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@^6.0.0/dist/maplibre-gl.css" />
+		<script type="importmap">
+			{
+				"imports": {
+					"maplibre-gl": "https://unpkg.com/maplibre-gl@^6.0.0/dist/maplibre-gl.mjs"
+				}
+			}
+		</script>
 		<style>
 			body {
 				margin: 0;
@@ -24,15 +30,17 @@
 		</style>
 	</head>
 	<body>
-		<script src="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.umd.js"></script>
 		<link
 			rel="stylesheet"
 			href="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.css"
 		/>
 		<div id="map"></div>
 
-		<script>
-			const map = new maplibregl.Map({
+		<script type="module">
+			import { Map } from 'maplibre-gl';
+			import { MaplibreMeasureControl } from 'https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.es.js';
+
+			const map = new Map({
 				container: 'map',
 				style: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
 				center: [0, 0],
@@ -40,7 +48,7 @@
 				maxPitch: 85
 			});
 
-			const drawControl = new MaplibreTerradrawControl.MaplibreMeasureControl({
+			const drawControl = new MaplibreMeasureControl({
 				modes: ['point', 'linestring', 'polygon', 'delete'],
 				open: true,
 				computeElevation: true

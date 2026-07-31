@@ -355,12 +355,12 @@
 							lang="html"
 							code={data.codes.cdn
 								.replace(
-									/MaplibreTerradrawControl\(/g,
+									/MaplibreTerradrawControl/g,
 									demoOptions.controlType === 'default'
-										? 'MaplibreTerradrawControl('
+										? 'MaplibreTerradrawControl'
 										: demoOptions.controlType === 'measure'
-											? 'MaplibreMeasureControl('
-											: 'MaplibreValhallaControl('
+											? 'MaplibreMeasureControl'
+											: 'MaplibreValhallaControl'
 								)
 								.replace('{modes}', demoOptions.modes.map((m) => `'${m}'`).join(','))
 								.replace('{open}', demoOptions.isOpen === 'open' ? 'true' : 'false')

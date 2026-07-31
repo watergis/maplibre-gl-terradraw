@@ -13,9 +13,13 @@
 		type ValhallaOptions
 	} from '$lib';
 	import { SegmentedControl, Tabs } from '@skeletonlabs/skeleton-svelte';
+	import { setWorkerUrl } from 'maplibre-gl';
+	import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 	import type { PageData } from './$types';
 	import CodeBlock from './CodeBlock.svelte';
 	import DemoMap, { type DemoOptions } from './DemoMap.svelte';
+
+	setWorkerUrl(workerUrl);
 
 	interface Props {
 		data: PageData;

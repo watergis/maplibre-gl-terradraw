@@ -976,7 +976,7 @@ export class MaplibreTerradrawControl implements IControl {
 		const sourceId = `${prefixId}-text`;
 		const layerId = `${prefixId}-text-labels`;
 
-		const source = map.getSource(sourceId) as maplibregl.GeoJSONSource | undefined;
+		const source = map.getSource(sourceId) as GeoJSONSource | undefined;
 
 		if (source) {
 			source.setData({
@@ -1119,7 +1119,7 @@ export class MaplibreTerradrawControl implements IControl {
 	 */
 	protected clearTextLayers() {
 		const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
-		const source = this.map?.getSource(`${prefixId}-text`) as maplibregl.GeoJSONSource | undefined;
+		const source = this.map?.getSource(`${prefixId}-text`) as GeoJSONSource | undefined;
 		const layers = this.map?.style?.getLayer(`${prefixId}-text-labels`);
 
 		if (layers) {

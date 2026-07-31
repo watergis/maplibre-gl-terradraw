@@ -1,4 +1,4 @@
-import { GeoJSONFeature, LngLat } from 'maplibre-gl';
+import { type GeoJSONFeature, LngLat } from 'maplibre-gl';
 
 /**
  * ValhallaTripSummary interface for the summary of the trip.

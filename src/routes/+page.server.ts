@@ -15,7 +15,7 @@ export const load: PageServerLoad = async ({ fetch, parent, platform, url }) => 
 			});
 			const text = await res.text();
 			return text.replace(
-				/..\/..\//g,
+				/\.\.\/\.\.\//g,
 				`https://cdn.jsdelivr.net/npm/${metadata.packageName}@${metadata.version}/`
 			);
 		} else {

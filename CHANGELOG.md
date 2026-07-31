@@ -1,5 +1,12 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.15.1
+
+### Patch Changes
+
+- 75a40a8: chore: upgrade terra-draw to v1.32.2
+- 63e8eb4: chore: support maplibre-gl v6
+
 ## 1.15.0
 
 ### Minor Changes

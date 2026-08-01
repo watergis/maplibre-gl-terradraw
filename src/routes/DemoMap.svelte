@@ -699,7 +699,7 @@
 							<Switch.Thumb />
 						</Switch.Control>
 						<Switch.Label>
-							{options.showDeleteConfirmation ? 'Show' : 'Hide'} delete confirmation
+							{options.showDeleteConfirmation ? 'Hide' : 'Show'} delete confirmation
 						</Switch.Label>
 						<Switch.HiddenInput />
 					</Switch>

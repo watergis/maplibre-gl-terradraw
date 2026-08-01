@@ -471,3 +471,111 @@ describe('getFeatures method tests', () => {
 		expect(result).toEqual(mockFeatures);
 	});
 });
+
+describe('showDeleteConfirmation tests', () => {
+	let mockMap: InstanceType<typeof Map>;
+
+	beforeEach(() => {
+		HTMLDialogElement.prototype.showModal = vi.fn();
+		HTMLDialogElement.prototype.close = vi.fn();
+		mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+	});
+
+	it('should show delete confirmation dialog when deleting selected features and showDeleteConfirmation is true', () => {
+		const valhallaControl = new MaplibreValhallaControl({
+			modeOptions: createModeOptions(),
+			showDeleteConfirmation: true
+		});
+		valhallaControl.onAdd(mockMap);
+
+		const mockRemoveFeatures = vi.fn();
+		const mockDeselectFeature = vi.fn();
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const vc = valhallaControl as any;
+		vc.terradraw = {
+			enabled: true,
+			getSnapshot: vi.fn(() => [
+				{
+					id: 'feature1',
+					type: 'Feature' as const,
+					geometry: { type: 'Point' as const, coordinates: [0, 0] },
+					properties: { selected: true, mode: 'routing' }
+				}
+			]),
+			removeFeatures: mockRemoveFeatures,
+			deselectFeature: mockDeselectFeature,
+			getMode: vi.fn(() => 'select')
+		};
+
+		const showDialogSpy = vi.spyOn(vc, 'showDeleteConfirmationDialog').mockImplementation(vi.fn());
+
+		vc.handleDeleteSelectedFeatures();
+
+		expect(showDialogSpy).toHaveBeenCalledWith(
+			expect.any(Function),
+			'Delete Selected Features',
+			'Are you sure you want to delete the selected features?'
+		);
+		expect(mockRemoveFeatures).not.toHaveBeenCalled();
+	});
+
+	it('should not show delete confirmation dialog when deleting selected features and showDeleteConfirmation is false', () => {
+		const valhallaControl = new MaplibreValhallaControl({
+			modeOptions: createModeOptions(),
+			showDeleteConfirmation: false
+		});
+		valhallaControl.onAdd(mockMap);
+
+		const mockRemoveFeatures = vi.fn();
+		const mockDeselectFeature = vi.fn();
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const vc = valhallaControl as any;
+		vc.terradraw = {
+			enabled: true,
+			getSnapshot: vi.fn(() => [
+				{
+					id: 'feature1',
+					type: 'Feature' as const,
+					geometry: { type: 'Point' as const, coordinates: [0, 0] },
+					properties: { selected: true, mode: 'routing' }
+				}
+			]),
+			removeFeatures: mockRemoveFeatures,
+			deselectFeature: mockDeselectFeature,
+			getMode: vi.fn(() => 'select')
+		};
+
+		const showDialogSpy = vi.spyOn(vc, 'showDeleteConfirmationDialog');
+
+		vc.handleDeleteSelectedFeatures();
+
+		expect(showDialogSpy).not.toHaveBeenCalled();
+		expect(mockRemoveFeatures).toHaveBeenCalled();
+	});
+
+	it('should show delete confirmation dialog when deleting all features and showDeleteConfirmation is true', () => {
+		const valhallaControl = new MaplibreValhallaControl({
+			modeOptions: createModeOptions(),
+			showDeleteConfirmation: true
+		});
+		valhallaControl.onAdd(mockMap);
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const vc = valhallaControl as any;
+		vc.terradraw = {
+			enabled: true,
+			clear: vi.fn(),
+			getSnapshot: vi.fn(() => []),
+			getMode: vi.fn(() => 'select'),
+			setMode: vi.fn()
+		};
+
+		const showDialogSpy = vi.spyOn(vc, 'showDeleteConfirmationDialog').mockImplementation(vi.fn());
+
+		vc.handleDeleteAllFeatures();
+
+		expect(showDialogSpy).toHaveBeenCalled();
+	});
+});

@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.15.2
+
+### Patch Changes
+
+- 9223f70: Applied delete confirmation functionality to deleting selected features too. It was only available when deleting all features on the map
+
 ## 1.15.1
 
 ### Patch Changes

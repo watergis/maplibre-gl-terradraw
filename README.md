@@ -21,7 +21,7 @@ See the [documentation](https://terradraw.water-gis.com/).
 
 ## Plugin API
 
-See the [API documentation](https://watergis.github.io/maplibre-gl-terradraw/).
+See the [API documentation](https://terradraw.water-gis.com/docs).
 
 ![dependency-graph.svg](./dependency-graph.svg)
 

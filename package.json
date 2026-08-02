@@ -26,7 +26,7 @@
 	],
 	"scripts": {
 		"dev": "vite dev",
-		"build": "npm run build:doc && npm run package",
+		"build": "npm run typedoc && npm run build:doc && npm run package",
 		"build:doc": "vite build --config vite.config.ts",
 		"preview": "vite preview",
 		"package": "npm run package:js && npm run package:css",
@@ -41,7 +41,7 @@
 		"format": "prettier --write .",
 		"release": "changeset publish",
 		"typedoc": "typedoc",
-		"typedoc:serve": "serve ./docs",
+		"typedoc:serve": "serve ./static/docs",
 		"depcruise": "depcruise src/lib --include-only '^src/lib' --output-type dot | dot -T svg > dependency-graph.svg",
 		"test": "npm run test:vitest && npm run test:playwright",
 		"test:vitest": "vitest --run --passWithNoTests",

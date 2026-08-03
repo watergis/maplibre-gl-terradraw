@@ -599,9 +599,6 @@ export class MaplibreTerradrawControl implements IControl {
 				btn.classList.add('hidden');
 			}
 
-			// default defaultModekeyboardShortucts for undo-redo should be from `this.options.undoRedo.keyboardShortcuts`
-			// So somehow, I need to extract the `options` in the `new TerraDrawUndoRedoKeyboardShortcuts()` class constructor to get the undo-redo shortcuts
-			// Verdict: not possible. Solution: invert implementation i.e plugin's keyboard shortcut controller becomes the truth when setting the shortcuts, and the default terradraw shortcuts should inherit from there
 			const keyboardShortcuts = this.options.keyboardShortcuts
 				? { ...defaultModeKeyboardShortcuts, ...this.options.keyboardShortcuts }
 				: defaultModeKeyboardShortcuts;

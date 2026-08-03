@@ -64,7 +64,8 @@
 		Map,
 		NavigationControl,
 		ScaleControl,
-		TerrainControl
+		TerrainControl,
+		type IControl
 	} from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { onMount, untrack } from 'svelte';
@@ -349,7 +350,7 @@
 		map.addControl(new ScaleControl(), 'bottom-left');
 
 		const styleSwitcherControl = new MaplibreStyleSwitcherControl(styles);
-		map.addControl(styleSwitcherControl, 'bottom-left');
+		map.addControl(styleSwitcherControl as unknown as IControl, 'bottom-left');
 
 		/**
 		 * Function to add terrain source
@@ -698,7 +699,7 @@
 							<Switch.Thumb />
 						</Switch.Control>
 						<Switch.Label>
-							{options.showDeleteConfirmation ? 'Show' : 'Hide'} delete confirmation
+							{options.showDeleteConfirmation ? 'Hide' : 'Show'} delete confirmation
 						</Switch.Label>
 						<Switch.HiddenInput />
 					</Switch>

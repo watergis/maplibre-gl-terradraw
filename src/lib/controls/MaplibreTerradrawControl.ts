@@ -753,17 +753,20 @@ export class MaplibreTerradrawControl implements IControl {
 	 * @param onConfirm Callback function that will be invoked when the user confirms deletion
 	 * by clicking the "Delete" button in the dialog; typically used to delete all features
 	 * before the dialog is closed.
+	 * @param title Optional dialog title. Defaults to 'Delete All Features'.
+	 * @param message Optional dialog message. Defaults to 'Are you sure you want to delete all features?'.
 	 */
-	protected showDeleteConfirmationDialog(onConfirm: () => void): void {
-		const dialog = new ModalDialog(
-			'maplibre-terradraw-delete-confirmation-dialog',
-			'Delete All Features'
-		);
+	protected showDeleteConfirmationDialog(
+		onConfirm: () => void,
+		title = 'Delete All Features',
+		message = 'Are you sure you want to delete all features?'
+	): void {
+		const dialog = new ModalDialog('maplibre-terradraw-delete-confirmation-dialog', title);
 
 		dialog.create(document.body, (content) => {
-			const message = document.createElement('p');
-			message.textContent = 'Are you sure you want to delete all features?';
-			content.appendChild(message);
+			const messageEl = document.createElement('p');
+			messageEl.textContent = message;
+			content.appendChild(messageEl);
 
 			const buttonContainer = document.createElement('div');
 			buttonContainer.classList.add('dialog-buttons');
@@ -828,21 +831,33 @@ export class MaplibreTerradrawControl implements IControl {
 		const snapshot = this.terradraw?.getSnapshot();
 		const selected = snapshot.filter((f) => f.properties.selected === true);
 
-		if (selected.length > 0) {
+		if (selected.length === 0) return;
+
+		const deleteFeatures = () => {
 			const ids = selected.map((f) => f.id) as TerraDrawExtend.FeatureId[];
 
-			this.terradraw.removeFeatures(ids);
+			this.terradraw?.removeFeatures(ids);
 			for (const id of ids) {
-				this.terradraw.deselectFeature(id);
+				this.terradraw?.deselectFeature(id);
 			}
 			this.dispatchEvent('feature-deleted', { deletedIds: ids });
 
 			// handle deletion of text layer when mode === 'text'
 			this.deleteSelectedTextSymbolLayer(selected);
-		}
 
-		this.toggleDeleteSelectionButton();
-		this.toggleButtonsWhenNoFeature();
+			this.toggleDeleteSelectionButton();
+			this.toggleButtonsWhenNoFeature();
+		};
+
+		if (this.options.showDeleteConfirmation === true) {
+			this.showDeleteConfirmationDialog(
+				deleteFeatures,
+				'Delete Selected Features',
+				'Are you sure you want to delete the selected features?'
+			);
+		} else {
+			deleteFeatures();
+		}
 	}
 
 	/**
@@ -1047,7 +1062,7 @@ export class MaplibreTerradrawControl implements IControl {
 		const sourceId = `${prefixId}-text`;
 		const layerId = `${prefixId}-text-labels`;
 
-		const source = map.getSource(sourceId) as maplibregl.GeoJSONSource | undefined;
+		const source = map.getSource(sourceId) as GeoJSONSource | undefined;
 
 		if (source) {
 			source.setData({
@@ -1190,7 +1205,7 @@ export class MaplibreTerradrawControl implements IControl {
 	 */
 	protected clearTextLayers() {
 		const prefixId = this.options.adapterOptions?.prefixId ?? 'td';
-		const source = this.map?.getSource(`${prefixId}-text`) as maplibregl.GeoJSONSource | undefined;
+		const source = this.map?.getSource(`${prefixId}-text`) as GeoJSONSource | undefined;
 		const layers = this.map?.style?.getLayer(`${prefixId}-text-labels`);
 
 		if (layers) {

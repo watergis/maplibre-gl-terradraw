@@ -265,6 +265,7 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 			open: _options.open,
 			modeOptions: _options.modeOptions,
 			adapterOptions: _options.adapterOptions,
+			showDeleteConfirmation: _options.showDeleteConfirmation,
 			keyboardShortcuts: _options.keyboardShortcuts
 		});
 		this._cssPrefix = 'valhalla-';
@@ -943,7 +944,9 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 		const snapshot = this.terradraw.getSnapshot();
 		const selected = snapshot.filter((f) => f.properties.selected === true);
 
-		if (selected.length > 0) {
+		if (selected.length === 0) return;
+
+		const deleteFeatures = () => {
 			const groupKey = (f: GeoJSONStoreFeatures) =>
 				String(f.properties?.groupId ?? f.properties?.originalId ?? f.id);
 			const groupKeys = new Set(selected.map((f) => groupKey(f)));
@@ -951,14 +954,24 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 				.filter((f) => f.properties.mode !== 'select' && groupKeys.has(groupKey(f)))
 				.map((f) => f.id) as TerraDrawExtend.FeatureId[];
 
-			this.terradraw.removeFeatures(ids);
+			this.terradraw?.removeFeatures(ids);
 			for (const id of ids) {
-				this.terradraw.deselectFeature(id);
+				this.terradraw?.deselectFeature(id);
 			}
 			this.dispatchEvent('feature-deleted', { deletedIds: ids });
-		}
 
-		this.toggleDeleteSelectionButton();
-		this.toggleButtonsWhenNoFeature();
+			this.toggleDeleteSelectionButton();
+			this.toggleButtonsWhenNoFeature();
+		};
+
+		if (this.options.showDeleteConfirmation === true) {
+			this.showDeleteConfirmationDialog(
+				deleteFeatures,
+				'Delete Selected Features',
+				'Are you sure you want to delete the selected features?'
+			);
+		} else {
+			deleteFeatures();
+		}
 	}
 }

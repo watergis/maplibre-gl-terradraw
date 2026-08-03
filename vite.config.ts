@@ -15,5 +15,8 @@ export default defineConfig({
 			allow: ['./dist']
 		},
 		host: true
+	},
+	optimizeDeps: {
+		include: ['maplibre-gl']
 	}
 });

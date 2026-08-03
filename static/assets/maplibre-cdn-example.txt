@@ -4,8 +4,14 @@
 		<title>Draw geometries with terra-draw</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
-		<script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+		<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@^6.0.0/dist/maplibre-gl.css" />
+		<script type="importmap">
+			{
+				"imports": {
+					"maplibre-gl": "https://unpkg.com/maplibre-gl@^6.0.0/dist/maplibre-gl.mjs"
+				}
+			}
+		</script>
 		<style>
 			body {
 				margin: 0;
@@ -19,19 +25,21 @@
 		</style>
 	</head>
 	<body>
-		<script src="../../dist/maplibre-gl-terradraw.umd.js"></script>
 		<link rel="stylesheet" href="../../dist/maplibre-gl-terradraw.css" />
 		<div id="map"></div>
 
-		<script>
-			const map = new maplibregl.Map({
+		<script type="module">
+			import { Map } from 'maplibre-gl';
+			import { MaplibreTerradrawControl } from '../../dist/maplibre-gl-terradraw.es.js';
+
+			const map = new Map({
 				container: 'map',
 				style: 'https://demotiles.maplibre.org/style.json',
 				center: [0, 0],
 				zoom: 1
 			});
 
-			const draw = new MaplibreTerradrawControl.MaplibreTerradrawControl({
+			const draw = new MaplibreTerradrawControl({
 				modes: [{modes}],
 				open: {open},
 				showDeleteConfirmation: {showDeleteConfirmation},

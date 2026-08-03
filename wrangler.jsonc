@@ -7,7 +7,10 @@
 	"assets": {
 		"binding": "ASSETS",
 		"directory": ".svelte-kit/cloudflare",
-		"run_worker_first": true
+		// The typedoc API docs under /docs are plain static HTML. They must be served by the
+		// asset layer directly: it rewrites `foo.html` to the extensionless `/foo`, which the
+		// SvelteKit worker does not recognise as an asset and would answer with a 404.
+		"run_worker_first": ["/*", "!/docs", "!/docs/*"]
 	},
 	"workers_dev": true,
 	"preview_urls": true,

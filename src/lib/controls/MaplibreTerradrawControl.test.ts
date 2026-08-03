@@ -1844,6 +1844,74 @@ describe('showDeleteConfirmation tests', () => {
 		expect(showDialogSpy).not.toHaveBeenCalled();
 		expect(clearSpy).toHaveBeenCalled();
 	});
+
+	it('should show delete confirmation dialog when deleting selected features and showDeleteConfirmation is true', () => {
+		const control = new MaplibreTerradrawControl({
+			modes: ['point', 'delete-selection'],
+			showDeleteConfirmation: true
+		});
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+		control.onAdd(mockMap);
+		control.activate();
+
+		const terradraw = control.getTerraDrawInstance()!;
+		terradraw.enabled = true;
+		terradraw.getSnapshot = vi.fn(() => [
+			{
+				id: 'feature1',
+				type: 'Feature' as const,
+				geometry: { type: 'Point' as const, coordinates: [0, 0] },
+				properties: { selected: true, mode: 'point' }
+			}
+		]);
+		terradraw.removeFeatures = vi.fn();
+		terradraw.deselectFeature = vi.fn();
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const showDialogSpy = vi.spyOn(control as any, 'showDeleteConfirmationDialog');
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(control as any).handleDeleteSelectedFeatures();
+
+		expect(showDialogSpy).toHaveBeenCalledWith(
+			expect.any(Function),
+			'Delete Selected Features',
+			'Are you sure you want to delete the selected features?'
+		);
+		expect(terradraw.removeFeatures).not.toHaveBeenCalled();
+	});
+
+	it('should not show delete confirmation dialog when deleting selected features and showDeleteConfirmation is false', () => {
+		const control = new MaplibreTerradrawControl({
+			modes: ['point', 'delete-selection'],
+			showDeleteConfirmation: false
+		});
+		const mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+		control.onAdd(mockMap);
+		control.activate();
+
+		const terradraw = control.getTerraDrawInstance()!;
+		terradraw.enabled = true;
+		terradraw.getSnapshot = vi.fn(() => [
+			{
+				id: 'feature1',
+				type: 'Feature' as const,
+				geometry: { type: 'Point' as const, coordinates: [0, 0] },
+				properties: { selected: true, mode: 'point' }
+			}
+		]);
+		terradraw.removeFeatures = vi.fn();
+		terradraw.deselectFeature = vi.fn();
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const showDialogSpy = vi.spyOn(control as any, 'showDeleteConfirmationDialog');
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(control as any).handleDeleteSelectedFeatures();
+
+		expect(showDialogSpy).not.toHaveBeenCalled();
+		expect(terradraw.removeFeatures).toHaveBeenCalledWith(['feature1']);
+	});
 });
 
 describe('undo/redo button tests', () => {

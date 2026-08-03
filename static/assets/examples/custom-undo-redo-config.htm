@@ -9,8 +9,15 @@
 		/>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
-		<script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+		<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@^6.0.0/dist/maplibre-gl.css" />
+		<script type="importmap">
+			{
+				"imports": {
+					"maplibre-gl": "https://unpkg.com/maplibre-gl@^6.0.0/dist/maplibre-gl.mjs",
+					"terra-draw": "https://unpkg.com/terra-draw@1.32.0/dist/terra-draw.module.js"
+				}
+			}
+		</script>
 		<style>
 			body {
 				margin: 0;
@@ -26,17 +33,22 @@
 	</head>
 
 	<body>
-		<script src="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.umd.js"></script>
-		<script src="https://unpkg.com/terra-draw@1.27.0/dist/terra-draw.umd.js"></script>
-
 		<link
 			rel="stylesheet"
 			href="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.css"
 		/>
 		<div id="map"></div>
 
-		<script>
-			const map = new maplibregl.Map({
+		<script type="module">
+			import { Map } from 'maplibre-gl';
+			import {
+				TerraDrawModeUndoRedo,
+				TerraDrawSessionUndoRedo,
+				TerraDrawUndoRedoKeyboardShortcuts
+			} from 'terra-draw';
+			import { MaplibreTerradrawControl } from 'https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.es.js';
+
+			const map = new Map({
 				container: 'map',
 				style: 'https://demotiles.maplibre.org/style.json',
 				center: [0, 0],
@@ -44,7 +56,7 @@
 				maxPitch: 85
 			});
 
-			const drawControl = new MaplibreTerradrawControl.MaplibreTerradrawControl({
+			const drawControl = new MaplibreTerradrawControl({
 				modes: ['point', 'linestring', 'polygon', 'select', 'delete', 'undo', 'redo'],
 				open: true,
 				/** 
@@ -64,9 +76,9 @@
                 
                 */
 				undoRedo: {
-					modeLevel: new terraDraw.TerraDrawModeUndoRedo({ maxStackSize: 40 }),
-					sessionLevel: new terraDraw.TerraDrawSessionUndoRedo({ maxStackSize: 30 }),
-					keyboardShortcuts: new terraDraw.TerraDrawUndoRedoKeyboardShortcuts({
+					modeLevel: new TerraDrawModeUndoRedo({ maxStackSize: 40 }),
+					sessionLevel: new TerraDrawSessionUndoRedo({ maxStackSize: 30 }),
+					keyboardShortcuts: new TerraDrawUndoRedoKeyboardShortcuts({
 						undo: [
 							{
 								key: 'z',

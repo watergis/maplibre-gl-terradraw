@@ -13,9 +13,13 @@
 		type ValhallaOptions
 	} from '$lib';
 	import { SegmentedControl, Tabs } from '@skeletonlabs/skeleton-svelte';
+	import { setWorkerUrl } from 'maplibre-gl';
+	import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 	import type { PageData } from './$types';
 	import CodeBlock from './CodeBlock.svelte';
 	import DemoMap, { type DemoOptions } from './DemoMap.svelte';
+
+	setWorkerUrl(workerUrl);
 
 	interface Props {
 		data: PageData;
@@ -351,12 +355,12 @@
 							lang="html"
 							code={data.codes.cdn
 								.replace(
-									/MaplibreTerradrawControl\(/g,
+									/MaplibreTerradrawControl/g,
 									demoOptions.controlType === 'default'
-										? 'MaplibreTerradrawControl('
+										? 'MaplibreTerradrawControl'
 										: demoOptions.controlType === 'measure'
-											? 'MaplibreMeasureControl('
-											: 'MaplibreValhallaControl('
+											? 'MaplibreMeasureControl'
+											: 'MaplibreValhallaControl'
 								)
 								.replace('{modes}', demoOptions.modes.map((m) => `'${m}'`).join(','))
 								.replace('{open}', demoOptions.isOpen === 'open' ? 'true' : 'false')
@@ -383,8 +387,14 @@
 		<h3 class="h3 pt-6">API Documentation</h3>
 
 		<p class="py-4">
-			See <a
-				href="https://watergis.github.io/maplibre-gl-terradraw"
+			<!-- typedoc output is a static asset under /static/docs, not a SvelteKit route.
+				 index.html is spelled out because the vite dev server does not resolve directory
+				 indexes for static/ (in production Cloudflare rewrites this to /docs/). -->
+			<!-- eslint-disable svelte/no-navigation-without-resolve -->
+			See
+			<a
+				href="/docs/index.html"
+				data-sveltekit-reload
 				class="text-blue-800 dark:text-surface-50 visited:text-purple-800 dark:visited:text-error-400"
 				>Plugin API documentation</a
 			>

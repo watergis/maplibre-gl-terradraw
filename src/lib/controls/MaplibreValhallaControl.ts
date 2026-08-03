@@ -847,10 +847,9 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 		}
 
 		if (labelSpecs.length > 0) {
-			const drawInstance = this.getTerraDrawInstance();
-			if (drawInstance) {
-				drawInstance.on('change', this.handleStoreChange);
-				drawInstance.on('finish', this.handleStoreChange);
+			if (this.terradraw) {
+				this.terradraw.on('change', this.handleStoreChange);
+				this.terradraw.on('finish', this.handleStoreChange);
 			}
 			this.on('feature-deleted', this.handleStoreChange);
 		}
@@ -862,10 +861,9 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 	private unregisterValhallaControl() {
 		this.off('feature-deleted', this.handleStoreChange);
 
-		const drawInstance = this.getTerraDrawInstance();
-		if (drawInstance) {
-			drawInstance.off('change', this.handleStoreChange);
-			drawInstance.off('finish', this.handleStoreChange);
+		if (this.terradraw) {
+			this.terradraw.off('change', this.handleStoreChange);
+			this.terradraw.off('finish', this.handleStoreChange);
 		}
 
 		if (!this.map) return;

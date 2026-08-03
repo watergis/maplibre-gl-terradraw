@@ -475,12 +475,9 @@ describe('getFeatures method tests', () => {
 });
 
 describe('showDeleteConfirmation tests', () => {
-	let mockMap: InstanceType<typeof Map>;
-
 	beforeEach(() => {
 		HTMLDialogElement.prototype.showModal = vi.fn();
 		HTMLDialogElement.prototype.close = vi.fn();
-		mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
 	});
 
 	it('should show delete confirmation dialog when deleting selected features and showDeleteConfirmation is true', () => {
@@ -488,7 +485,6 @@ describe('showDeleteConfirmation tests', () => {
 			modeOptions: createModeOptions(),
 			showDeleteConfirmation: true
 		});
-		valhallaControl.onAdd(mockMap);
 
 		const mockRemoveFeatures = vi.fn();
 		const mockDeselectFeature = vi.fn();
@@ -527,7 +523,6 @@ describe('showDeleteConfirmation tests', () => {
 			modeOptions: createModeOptions(),
 			showDeleteConfirmation: false
 		});
-		valhallaControl.onAdd(mockMap);
 
 		const mockRemoveFeatures = vi.fn();
 		const mockDeselectFeature = vi.fn();
@@ -562,7 +557,6 @@ describe('showDeleteConfirmation tests', () => {
 			modeOptions: createModeOptions(),
 			showDeleteConfirmation: true
 		});
-		valhallaControl.onAdd(mockMap);
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const vc = valhallaControl as any;

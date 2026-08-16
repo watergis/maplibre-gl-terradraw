@@ -15,7 +15,7 @@ type ActionMode = typeof ACTION_MODES extends Set<infer T> ? T : never;
 // tooltip display and duplicate-shortcut validation, but this controller must not handle them.
 const DELEGATED_MODES = new Set(['undo', 'redo']);
 
-type ModeActionsOptions = {
+export type ModeActionsOptions = {
 	onDelete?: () => void;
 	onDeleteSelected?: () => void;
 	onValhallaMode?: (mode: TerradrawValhallaMode) => void;

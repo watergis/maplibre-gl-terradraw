@@ -26,12 +26,13 @@
 		isDark = !isDark;
 		onCheckedChange({ isDark });
 	}}
+	title="Switch to {isDark ? 'Light' : 'Dark'} Mode"
 >
 	<span>
 		{#if isDark}
-			<IconMoon />
-		{:else}
 			<IconSun />
+		{:else}
+			<IconMoon />
 		{/if}
 	</span>
 </button>

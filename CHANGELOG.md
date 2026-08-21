@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-terradraw
 
+## 1.15.3
+
+### Patch Changes
+
+- e720365: chore: upgrade Terra Draw to v1.32.3, and also upgrate other dependencies versions
+
 ## 1.15.2
 
 ### Patch Changes

@@ -50,7 +50,7 @@
 		"generate:authors": "tsx scripts/generate-example-page-authors.ts && pnpm exec prettier --write src/routes/authors.json"
 	},
 	"devDependencies": {
-		"@changesets/cli": "^2.31.1",
+		"@changesets/cli": "^3.0.0",
 		"@eslint/js": "^10.0.1",
 		"@lucide/svelte": "^1.28.0",
 		"@playwright/test": "^1.62.1",

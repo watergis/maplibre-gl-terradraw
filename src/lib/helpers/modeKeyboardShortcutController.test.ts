@@ -97,7 +97,7 @@ describe('ModeKeyboardShortcutController', () => {
 
 		it('mounts with custom shortcuts merged over defaults without error', () => {
 			const controller = new ModeKeyboardShortcutController(draw as any, undefined, {
-				point: { key: 'q', heldKeys: [] }
+				point: { key: 'k', heldKeys: [] }
 			});
 			expect(() => controller.mount()).not.toThrow();
 			controller.destroy();
@@ -113,6 +113,7 @@ describe('ModeKeyboardShortcutController', () => {
 				point: { key: 'p', heldKeys: [] },
 				polygon: { key: 'g', heldKeys: [] },
 				linestring: { key: 'l', heldKeys: [] },
+				polyline: { key: 'q', heldKeys: [] },
 				rectangle: { key: 'r', heldKeys: [] },
 				circle: { key: 'c', heldKeys: [] },
 				select: { key: 's', heldKeys: [] }
@@ -137,6 +138,23 @@ describe('ModeKeyboardShortcutController', () => {
 		it('activates linestring mode when l is pressed', () => {
 			fireKeydown('l');
 			expect(draw.setMode).toHaveBeenCalledWith('linestring');
+		});
+
+		it('activates polyline mode when q is pressed', () => {
+			fireKeydown('q');
+			expect(draw.setMode).toHaveBeenCalledWith('polyline');
+		});
+
+		it('is case insensitive — uppercase Q activates polyline mode', () => {
+			fireKeydown('Q');
+			expect(draw.setMode).toHaveBeenCalledWith('polyline');
+		});
+
+		it('does not activate polyline mode when q is pressed with a modifier held', () => {
+			fireKeydown('q', { shiftKey: true });
+			fireKeydown('q', { ctrlKey: true });
+			fireKeydown('q', { altKey: true });
+			expect(draw.setMode).not.toHaveBeenCalled();
 		});
 
 		it('activates rectangle mode when r is pressed', () => {

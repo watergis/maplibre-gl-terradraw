@@ -13,6 +13,10 @@ export const defaultModeKeyboardShortcuts: ModeKeyboardShortcuts = {
 		key: 'l',
 		heldKeys: []
 	},
+	polyline: {
+		key: 'q',
+		heldKeys: []
+	},
 	marker: {
 		key: 'm',
 		heldKeys: []

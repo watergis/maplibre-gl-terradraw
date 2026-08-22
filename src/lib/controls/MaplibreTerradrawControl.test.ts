@@ -2263,6 +2263,30 @@ describe('keyboard shortcuts', () => {
 		expect(rawTerradraw.setMode).toHaveBeenCalledWith('linestring');
 	});
 
+	it('activates polyline mode when default shortcut key q is pressed', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['polyline'] });
+		control.onAdd(mockMap);
+		control.activate();
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const rawTerradraw = (control as any).terradraw;
+		rawTerradraw.setMode.mockClear();
+
+		fireKeydown('q');
+		expect(rawTerradraw.setMode).toHaveBeenCalledWith('polyline');
+	});
+
+	it('shows the default polyline shortcut key in the polyline button title', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['polyline'] });
+		const controlElement = control.onAdd(mockMap);
+
+		const polylineButton = controlElement.querySelector(
+			'.maplibregl-terradraw-add-polyline-button'
+		);
+
+		expect(polylineButton?.getAttribute('title')).toContain('Q');
+	});
+
 	it('activates polygon mode when default shortcut key g is pressed', () => {
 		const control = new MaplibreTerradrawControl({ modes: ['polygon'] });
 		control.onAdd(mockMap);
@@ -2292,7 +2316,7 @@ describe('keyboard shortcuts', () => {
 	it('respects custom keyboard shortcut override for a mode', () => {
 		const control = new MaplibreTerradrawControl({
 			modes: ['point'],
-			keyboardShortcuts: { point: { key: 'q', heldKeys: [] } }
+			keyboardShortcuts: { point: { key: 'k', heldKeys: [] } }
 		});
 		control.onAdd(mockMap);
 		control.activate();
@@ -2301,14 +2325,14 @@ describe('keyboard shortcuts', () => {
 		const rawTerradraw = (control as any).terradraw;
 		rawTerradraw.setMode.mockClear();
 
-		fireKeydown('q');
+		fireKeydown('k');
 		expect(rawTerradraw.setMode).toHaveBeenCalledWith('point');
 	});
 
 	it('does not activate point mode with default key when custom shortcut overrides it', () => {
 		const control = new MaplibreTerradrawControl({
 			modes: ['point'],
-			keyboardShortcuts: { point: { key: 'q', heldKeys: [] } }
+			keyboardShortcuts: { point: { key: 'k', heldKeys: [] } }
 		});
 		control.onAdd(mockMap);
 		control.activate();
@@ -2335,13 +2359,13 @@ describe('keyboard shortcuts', () => {
 	it('shows custom shortcut key in button title', () => {
 		const control = new MaplibreTerradrawControl({
 			modes: ['point'],
-			keyboardShortcuts: { point: { key: 'q', heldKeys: [] } }
+			keyboardShortcuts: { point: { key: 'k', heldKeys: [] } }
 		});
 		const controlElement = control.onAdd(mockMap);
 
 		const pointButton = controlElement.querySelector('.maplibregl-terradraw-add-point-button');
 
-		expect(pointButton?.getAttribute('title')).toContain('Q');
+		expect(pointButton?.getAttribute('title')).toContain('K');
 	});
 
 	it('does not activate mode when ctrl key is held', () => {

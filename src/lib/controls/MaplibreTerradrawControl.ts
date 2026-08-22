@@ -25,8 +25,20 @@ import type {
 	TerradrawModeClass,
 	EventArgs
 } from '../interfaces';
-import { defaultControlOptions, getDefaultModeOptions } from '../constants';
-import { capitalize, cleanMaplibreStyle, TERRADRAW_SOURCE_IDS, ModalDialog } from '../helpers';
+import {
+	defaultControlOptions,
+	defaultModeKeyboardShortcuts,
+	getDefaultModeOptions
+} from '../constants';
+import {
+	buildUndoRedoShortcuts,
+	capitalize,
+	formatShortcutKey,
+	cleanMaplibreStyle,
+	TERRADRAW_SOURCE_IDS,
+	ModalDialog,
+	ModeKeyboardShortcutController
+} from '../helpers';
 import type { TextModeStyling } from '../modes/TerraDrawTextMode';
 
 /**
@@ -169,6 +181,7 @@ export class MaplibreTerradrawControl implements IControl {
 
 	protected terradraw?: TerraDraw;
 	protected options: TerradrawControlOptions;
+	protected modeKeyboardShortcutController?: ModeKeyboardShortcutController;
 	protected events: {
 		[key: string]: [(event: EventArgs) => void];
 	} = {};
@@ -196,13 +209,36 @@ export class MaplibreTerradrawControl implements IControl {
 			this.options.adapterOptions.prefixId = prefixId;
 		}
 
+		// TerraDraw owns undo/redo keyboard handling (the plugin's own controller does not handle it).
+		// `undoRedo.keyboardShortcuts` is a plugin-managed output, always derived from the (merged)
+		// `keyboardShortcuts.undo`/`keyboardShortcuts.redo` so the very same definition drives both
+		// TerraDraw's matcher and the button tooltip — they share a single source of truth and cannot drift.
+		const mergedShortcuts = {
+			...defaultModeKeyboardShortcuts,
+			...this.options.keyboardShortcuts
+		};
+		const undoRedoKeyboardShortcuts = new TerraDrawUndoRedoKeyboardShortcuts({
+			...(mergedShortcuts.undo ? { undo: buildUndoRedoShortcuts(mergedShortcuts.undo) } : {}),
+			...(mergedShortcuts.redo ? { redo: buildUndoRedoShortcuts(mergedShortcuts.redo) } : {})
+		});
+
 		if (!this.options.undoRedo) {
 			this.options.undoRedo = {
 				modeLevel: new TerraDrawModeUndoRedo({ maxStackSize: 100 }),
-				sessionLevel: new TerraDrawSessionUndoRedo({ maxStackSize: 100 }),
-				keyboardShortcuts: new TerraDrawUndoRedoKeyboardShortcuts()
+				sessionLevel: new TerraDrawSessionUndoRedo({ maxStackSize: 100 })
 			};
+		} else if (this.options.undoRedo.keyboardShortcuts) {
+			// A pre-built TerraDrawUndoRedoKeyboardShortcuts is opaque (its key config cannot be read back),
+			// so it could not feed the tooltip and would silently disagree with it. Ignore it and tell the
+			// caller to configure undo/redo keys via `keyboardShortcuts` instead.
+			console.warn(
+				'MaplibreTerradrawControl: `undoRedo.keyboardShortcuts` is managed by the control and derived ' +
+					'from `keyboardShortcuts.undo`/`keyboardShortcuts.redo` so the tooltip stays in sync. ' +
+					'The provided instance is ignored — configure undo/redo keys via `keyboardShortcuts` instead.'
+			);
 		}
+		// keep any caller-provided modeLevel/sessionLevel stacks; the control always owns the shortcuts.
+		this.options.undoRedo.keyboardShortcuts = undoRedoKeyboardShortcuts;
 	}
 
 	/**
@@ -223,6 +259,7 @@ export class MaplibreTerradrawControl implements IControl {
 		if (this.options && this.options.modes && this.options.modes.length === 0) {
 			throw new Error('At least a mode must be enabled.');
 		}
+
 		this.map = map;
 
 		const defaultOptions = getDefaultModeOptions();
@@ -305,6 +342,19 @@ export class MaplibreTerradrawControl implements IControl {
 			this.controlContainer?.appendChild(ele);
 		});
 
+		this.modeKeyboardShortcutController = new ModeKeyboardShortcutController(
+			this.terradraw,
+			this.controlContainer as HTMLElement,
+			this.options?.keyboardShortcuts,
+			{
+				onDelete: () => this.handleDeleteAllFeatures(),
+				onDeleteSelected: () => this.handleDeleteSelectedFeatures(),
+				onDownload: () => this.handleDownload()
+			}
+		);
+
+		this.modeKeyboardShortcutController.mount();
+
 		this.toggleButtonsWhenNoFeature();
 		this.terradraw?.on('finish', this.toggleButtonsWhenNoFeature.bind(this));
 		this.terradraw?.on('history', this.handleHistoryChange.bind(this));
@@ -328,6 +378,7 @@ export class MaplibreTerradrawControl implements IControl {
 		this.terradraw = undefined;
 		this.map = undefined;
 		this.controlContainer.parentNode.removeChild(this.controlContainer);
+		this.modeKeyboardShortcutController?.destroy();
 	}
 
 	/**
@@ -518,6 +569,7 @@ export class MaplibreTerradrawControl implements IControl {
 		if (!this.terradraw.enabled) {
 			this.terradraw.start();
 		}
+
 		this.terradraw?.setMode(this.defaultMode);
 		this.syncButtonStates(this.defaultMode);
 	}
@@ -546,7 +598,22 @@ export class MaplibreTerradrawControl implements IControl {
 			if (!this.isExpanded) {
 				btn.classList.add('hidden');
 			}
-			btn.title = capitalize(mode.replace(/-/g, ' '));
+
+			const keyboardShortcuts = this.options.keyboardShortcuts
+				? { ...defaultModeKeyboardShortcuts, ...this.options.keyboardShortcuts }
+				: defaultModeKeyboardShortcuts;
+
+			const shortcut = keyboardShortcuts?.[mode];
+			const shortcutTitle = shortcut
+				? [
+						...shortcut.heldKeys.map((k: string) => formatShortcutKey(k)),
+						formatShortcutKey(shortcut.key)
+					].join(' + ')
+				: undefined;
+
+			btn.title = shortcutTitle
+				? `${capitalize(mode.replace(/-/g, ' '))} ( ${shortcutTitle} )`
+				: capitalize(mode.replace(/-/g, ' '));
 
 			if (mode === 'delete') {
 				btn.classList.add(`maplibregl-terradraw-${this.cssPrefix}${mode}-button`);
@@ -842,6 +909,7 @@ export class MaplibreTerradrawControl implements IControl {
 			`maplibregl-terradraw-${this.cssPrefix}download-button`,
 			`maplibregl-terradraw-${this.cssPrefix}delete-button`
 		];
+
 		for (const className of targets) {
 			const btns = this.controlContainer.getElementsByClassName(className);
 			for (let i = 0; i < btns.length; i++) {

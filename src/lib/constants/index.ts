@@ -6,3 +6,5 @@ export * from './defaultValhallaControlOptions';
 export * from './getDefaultModeOptions';
 export * from './terrainSources';
 export * from './defaultDomStyleOptions';
+export * from './defaultModeKeyboardShortcuts';
+export * from './defaultValhallaModeKeyboardShortcuts';

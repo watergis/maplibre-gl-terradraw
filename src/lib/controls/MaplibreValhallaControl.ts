@@ -1,5 +1,5 @@
 import { MaplibreTerradrawControl } from './MaplibreTerradrawControl';
-import { defaultValhallaControlOptions } from '../constants';
+import { defaultValhallaControlOptions, defaultValhallaModeKeyboardShortcuts } from '../constants';
 import type { TerradrawMode, TerradrawValhallaMode, ValhallaControlOptions } from '../interfaces';
 import {
 	GeoJSONSource,
@@ -7,8 +7,9 @@ import {
 	type StyleSpecification,
 	type SymbolLayerSpecification
 } from 'maplibre-gl';
-import type { GeoJSONStoreFeatures, TerraDrawExtend } from 'terra-draw';
+import type { GeoJSONStoreFeatures, TerraDraw, TerraDrawExtend } from 'terra-draw';
 import {
+	formatShortcutKey,
 	debounce,
 	ModalDialog,
 	routingDistanceUnitOptions,
@@ -17,7 +18,8 @@ import {
 	type costingModelType,
 	TERRADRAW_SOURCE_IDS,
 	cleanMaplibreStyle,
-	type Contour
+	type Contour,
+	ModeKeyboardShortcutController
 } from '../helpers';
 import { TerraDrawValhallaRoutingMode } from '../modes/TerraDrawValhallaRoutingMode';
 import { TerraDrawValhallaTimeIsochroneMode } from '../modes/TerraDrawValhallaTimeIsochroneMode';
@@ -206,7 +208,8 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 	constructor(options?: ValhallaControlOptions) {
 		let _options: ValhallaControlOptions = {
 			...JSON.parse(JSON.stringify(defaultValhallaControlOptions)),
-			modeOptions: { ...defaultValhallaControlOptions.modeOptions }
+			modeOptions: { ...defaultValhallaControlOptions.modeOptions },
+			keyboardShortcuts: { ...defaultValhallaModeKeyboardShortcuts }
 		};
 		if (options) {
 			_options = {
@@ -262,7 +265,8 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 			open: _options.open,
 			modeOptions: _options.modeOptions,
 			adapterOptions: _options.adapterOptions,
-			showDeleteConfirmation: _options.showDeleteConfirmation
+			showDeleteConfirmation: _options.showDeleteConfirmation,
+			keyboardShortcuts: _options.keyboardShortcuts
 		});
 		this._cssPrefix = 'valhalla-';
 		this.controlOptions = _options;
@@ -299,6 +303,24 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 	public onAdd(map: Map): HTMLElement {
 		this.controlContainer = super.onAdd(map);
 		this.createSettingsDialog();
+
+		if (this.modeKeyboardShortcutController) {
+			this.modeKeyboardShortcutController.destroy();
+		}
+
+		this.modeKeyboardShortcutController = new ModeKeyboardShortcutController(
+			this.terradraw as TerraDraw,
+			this.controlContainer,
+			this.options?.keyboardShortcuts,
+			{
+				onValhallaMode: (mode: TerradrawValhallaMode) => this.setValhallaMode(mode),
+				onValhallaSettingsSelected: () => this.handleSettingDialog(),
+				onDelete: () => this.handleDeleteAllFeatures(),
+				onDeleteSelected: () => this.handleDeleteSelectedFeatures()
+			}
+		);
+
+		this.modeKeyboardShortcutController.mount();
 		return this.controlContainer;
 	}
 
@@ -745,6 +767,20 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 			btn.classList.add(`maplibregl-terradraw-${this.cssPrefix}add-control`);
 			btn.classList.add(`maplibregl-terradraw-${this.cssPrefix}${mode}-button`);
 			btn.addEventListener('click', this.handleSettingDialog.bind(this));
+
+			const keyboardShortcuts = this.options.keyboardShortcuts
+				? { ...defaultValhallaModeKeyboardShortcuts, ...this.options.keyboardShortcuts }
+				: defaultValhallaModeKeyboardShortcuts;
+			const shortcut = keyboardShortcuts?.['settings'];
+			const shortcutTitle = shortcut
+				? [
+						...shortcut.heldKeys.map((k: string) => formatShortcutKey(k)),
+						formatShortcutKey(shortcut.key)
+					].join(' + ')
+				: undefined;
+			btn.title = shortcutTitle ? `Settings ( ${shortcutTitle} )` : 'Settings';
+
+			super.syncButtonStates(mode);
 		} else {
 			super.addTerradrawButton(mode);
 		}
@@ -755,6 +791,19 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 	 */
 	private handleSettingDialog() {
 		this.settingDialog?.open();
+	}
+
+	protected setValhallaMode(mode: TerradrawValhallaMode): void {
+		const button = this.controlContainer?.querySelector(
+			`.maplibregl-terradraw-valhalla-add-${mode}-button`
+		) as HTMLButtonElement | null;
+
+		if (!button) {
+			console.warn(`MaplibreValhallaControl: no button found for mode "${mode}"`);
+			return;
+		}
+
+		button.click();
 	}
 
 	/**
@@ -798,10 +847,9 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 		}
 
 		if (labelSpecs.length > 0) {
-			const drawInstance = this.getTerraDrawInstance();
-			if (drawInstance) {
-				drawInstance.on('change', this.handleStoreChange);
-				drawInstance.on('finish', this.handleStoreChange);
+			if (this.terradraw) {
+				this.terradraw.on('change', this.handleStoreChange);
+				this.terradraw.on('finish', this.handleStoreChange);
 			}
 			this.on('feature-deleted', this.handleStoreChange);
 		}
@@ -813,10 +861,9 @@ export class MaplibreValhallaControl extends MaplibreTerradrawControl {
 	private unregisterValhallaControl() {
 		this.off('feature-deleted', this.handleStoreChange);
 
-		const drawInstance = this.getTerraDrawInstance();
-		if (drawInstance) {
-			drawInstance.off('change', this.handleStoreChange);
-			drawInstance.off('finish', this.handleStoreChange);
+		if (this.terradraw) {
+			this.terradraw.off('change', this.handleStoreChange);
+			this.terradraw.off('finish', this.handleStoreChange);
 		}
 
 		if (!this.map) return;

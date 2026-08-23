@@ -2,7 +2,7 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { MaplibreTerradrawControl } from './MaplibreTerradrawControl';
 import type { StyleSpecification } from 'maplibre-gl';
 import { Map } from 'maplibre-gl';
-import { type GeoJSONStoreFeatures } from 'terra-draw';
+import { type GeoJSONStoreFeatures, TerraDrawUndoRedoKeyboardShortcuts } from 'terra-draw';
 import { TERRADRAW_SOURCE_IDS } from '../helpers/cleanMaplibreStyle';
 import { TerraDrawTextMode } from '../modes/TerraDrawTextMode';
 
@@ -2058,6 +2058,86 @@ describe('undo/redo button tests', () => {
 	});
 });
 
+describe('undo/redo keyboard shortcuts source of truth', () => {
+	beforeEach(() => {
+		vi.mocked(TerraDrawUndoRedoKeyboardShortcuts).mockClear();
+	});
+
+	it('builds TerraDraw undo/redo shortcuts from the default plugin shortcuts (cross-platform)', () => {
+		new MaplibreTerradrawControl({ modes: ['point', 'undo', 'redo'] });
+
+		expect(TerraDrawUndoRedoKeyboardShortcuts).toHaveBeenCalledWith({
+			undo: [
+				{ key: 'z', heldKeys: ['control'] },
+				{ key: 'z', heldKeys: ['meta'] }
+			],
+			redo: [
+				{ key: 'z', heldKeys: ['control', 'shift'] },
+				{ key: 'z', heldKeys: ['meta', 'shift'] }
+			]
+		});
+	});
+
+	it('derives TerraDraw undo/redo shortcuts from a custom keyboardShortcuts option', () => {
+		new MaplibreTerradrawControl({
+			modes: ['point', 'undo', 'redo'],
+			keyboardShortcuts: {
+				undo: { key: 'u', heldKeys: ['ctrl'] },
+				redo: { key: 'r', heldKeys: ['ctrl', 'shift'] }
+			}
+		});
+
+		expect(TerraDrawUndoRedoKeyboardShortcuts).toHaveBeenCalledWith({
+			undo: [
+				{ key: 'u', heldKeys: ['control'] },
+				{ key: 'u', heldKeys: ['meta'] }
+			],
+			redo: [
+				{ key: 'r', heldKeys: ['control', 'shift'] },
+				{ key: 'r', heldKeys: ['meta', 'shift'] }
+			]
+		});
+	});
+
+	it('ignores a caller-provided keyboardShortcuts instance and warns', () => {
+		const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+		const callerInstance = {
+			isUndoKeyboardShortcut: vi.fn(),
+			isRedoKeyboardShortcut: vi.fn()
+		};
+
+		const control = new MaplibreTerradrawControl({
+			modes: ['point', 'undo', 'redo'],
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			undoRedo: { keyboardShortcuts: callerInstance as any }
+		});
+
+		expect(warn).toHaveBeenCalledWith(expect.stringContaining('undoRedo.keyboardShortcuts'));
+		// the caller instance is replaced by the control-managed one derived from keyboardShortcuts
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		expect((control as any).options.undoRedo.keyboardShortcuts).not.toBe(callerInstance);
+
+		warn.mockRestore();
+	});
+
+	it('preserves caller-provided undo/redo stacks while managing the shortcuts', () => {
+		const modeLevel = { undo: vi.fn(), redo: vi.fn() };
+		const sessionLevel = { undo: vi.fn(), redo: vi.fn() };
+
+		const control = new MaplibreTerradrawControl({
+			modes: ['point', 'undo', 'redo'],
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			undoRedo: { modeLevel: modeLevel as any, sessionLevel: sessionLevel as any }
+		});
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const undoRedo = (control as any).options.undoRedo;
+		expect(undoRedo.modeLevel).toBe(modeLevel);
+		expect(undoRedo.sessionLevel).toBe(sessionLevel);
+		expect(undoRedo.keyboardShortcuts).toBeDefined();
+	});
+});
+
 describe('clearUndoRedoHistory', () => {
 	let mockMap: InstanceType<typeof Map>;
 
@@ -2106,6 +2186,215 @@ describe('clearUndoRedoHistory', () => {
 	});
 });
 
+describe('keyboard shortcuts', () => {
+	function fireKeydown(
+		key: string,
+		modifiers: Partial<{
+			ctrlKey: boolean;
+			metaKey: boolean;
+			altKey: boolean;
+			shiftKey: boolean;
+		}> = {}
+	) {
+		const event = new KeyboardEvent('keydown', {
+			key,
+			bubbles: true,
+			cancelable: true,
+			...modifiers
+		});
+
+		Object.defineProperty(event, 'target', {
+			value: { tagName: 'BODY', isContentEditable: false },
+			writable: false
+		});
+		window.dispatchEvent(event);
+	}
+
+	let mockMap: InstanceType<typeof Map>;
+
+	beforeEach(() => {
+		mockMap = new Map({ container: document.createElement('div'), style: maplibreStyle });
+	});
+
+	it('initializes modeKeyboardShortcutController after onAdd', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['point'] });
+		control.onAdd(mockMap);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		expect((control as any).modeKeyboardShortcutController).toBeDefined();
+	});
+
+	it('destroys modeKeyboardShortcutController on onRemove', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['point'] });
+		const container = control.onAdd(mockMap);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const controller = (control as any).modeKeyboardShortcutController;
+		const destroySpy = vi.spyOn(controller, 'destroy');
+
+		const mockParentNode = { removeChild: vi.fn() };
+		Object.defineProperty(container, 'parentNode', { value: mockParentNode, writable: true });
+
+		control.onRemove();
+		expect(destroySpy).toHaveBeenCalled();
+	});
+
+	it('activates point mode when default shortcut key p is pressed', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['point'] });
+		control.onAdd(mockMap);
+		control.activate();
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const rawTerradraw = (control as any).terradraw;
+		rawTerradraw.setMode.mockClear();
+
+		fireKeydown('p');
+		expect(rawTerradraw.setMode).toHaveBeenCalledWith('point');
+	});
+
+	it('activates linestring mode when default shortcut key l is pressed', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['linestring'] });
+		control.onAdd(mockMap);
+		control.activate();
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const rawTerradraw = (control as any).terradraw;
+		rawTerradraw.setMode.mockClear();
+
+		fireKeydown('l');
+		expect(rawTerradraw.setMode).toHaveBeenCalledWith('linestring');
+	});
+
+	it('activates polyline mode when default shortcut key q is pressed', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['polyline'] });
+		control.onAdd(mockMap);
+		control.activate();
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const rawTerradraw = (control as any).terradraw;
+		rawTerradraw.setMode.mockClear();
+
+		fireKeydown('q');
+		expect(rawTerradraw.setMode).toHaveBeenCalledWith('polyline');
+	});
+
+	it('shows the default polyline shortcut key in the polyline button title', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['polyline'] });
+		const controlElement = control.onAdd(mockMap);
+
+		const polylineButton = controlElement.querySelector(
+			'.maplibregl-terradraw-add-polyline-button'
+		);
+
+		expect(polylineButton?.getAttribute('title')).toContain('Q');
+	});
+
+	it('activates polygon mode when default shortcut key g is pressed', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['polygon'] });
+		control.onAdd(mockMap);
+		control.activate();
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const rawTerradraw = (control as any).terradraw;
+		rawTerradraw.setMode.mockClear();
+
+		fireKeydown('g');
+		expect(rawTerradraw.setMode).toHaveBeenCalledWith('polygon');
+	});
+
+	it('activates select mode when default shortcut key s is pressed', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['select'] });
+		control.onAdd(mockMap);
+		control.activate();
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const rawTerradraw = (control as any).terradraw;
+		rawTerradraw.setMode.mockClear();
+
+		fireKeydown('s');
+		expect(rawTerradraw.setMode).toHaveBeenCalledWith('select');
+	});
+
+	it('respects custom keyboard shortcut override for a mode', () => {
+		const control = new MaplibreTerradrawControl({
+			modes: ['point'],
+			keyboardShortcuts: { point: { key: 'k', heldKeys: [] } }
+		});
+		control.onAdd(mockMap);
+		control.activate();
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const rawTerradraw = (control as any).terradraw;
+		rawTerradraw.setMode.mockClear();
+
+		fireKeydown('k');
+		expect(rawTerradraw.setMode).toHaveBeenCalledWith('point');
+	});
+
+	it('does not activate point mode with default key when custom shortcut overrides it', () => {
+		const control = new MaplibreTerradrawControl({
+			modes: ['point'],
+			keyboardShortcuts: { point: { key: 'k', heldKeys: [] } }
+		});
+		control.onAdd(mockMap);
+		control.activate();
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const rawTerradraw = (control as any).terradraw;
+		rawTerradraw.setMode.mockClear();
+
+		fireKeydown('p');
+		expect(rawTerradraw.setMode).not.toHaveBeenCalledWith('point');
+	});
+
+	it('shows default shortcut key in button title', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['point'] });
+		const controlElement = control.onAdd(mockMap);
+
+		const pointButton = controlElement.querySelector(
+			'.maplibregl-terradraw-add-point-button'
+		) as HTMLButtonElement;
+
+		expect(pointButton?.getAttribute('title')).toContain('P');
+	});
+
+	it('shows custom shortcut key in button title', () => {
+		const control = new MaplibreTerradrawControl({
+			modes: ['point'],
+			keyboardShortcuts: { point: { key: 'k', heldKeys: [] } }
+		});
+		const controlElement = control.onAdd(mockMap);
+
+		const pointButton = controlElement.querySelector('.maplibregl-terradraw-add-point-button');
+
+		expect(pointButton?.getAttribute('title')).toContain('K');
+	});
+
+	it('does not activate mode when ctrl key is held', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['point'] });
+		control.onAdd(mockMap);
+		control.activate();
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const rawTerradraw = (control as any).terradraw;
+		rawTerradraw.setMode.mockClear();
+
+		fireKeydown('p', { ctrlKey: true });
+		expect(rawTerradraw.setMode).not.toHaveBeenCalledWith('point');
+	});
+
+	it('does not throw when key is pressed after onRemove', () => {
+		const control = new MaplibreTerradrawControl({ modes: ['point'] });
+		const container = control.onAdd(mockMap);
+		control.activate();
+
+		const mockParentNode = { removeChild: vi.fn() };
+		Object.defineProperty(container, 'parentNode', { value: mockParentNode, writable: true });
+
+		control.onRemove();
+
+		expect(() => fireKeydown('p')).not.toThrow();
+	});
+});
+
 describe('text layer methods', () => {
 	let mockMap: InstanceType<typeof Map>;
 
@@ -2118,7 +2407,6 @@ describe('text layer methods', () => {
 			const control = new MaplibreTerradrawControl({ modes: ['text'] });
 
 			const idleCallbacks: Array<() => void> = [];
-
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			(mockMap as any).isStyleLoaded = vi.fn(() => false);
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any

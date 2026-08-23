@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>Customising keyboard shortcuts</title>
+		<meta property="tag" content="custom" />
+		<meta
+			property="og:description"
+			content="Keyboard shortcuts let you switch between drawing modes without reaching for the mouse. 
+            Default shortcuts are preconfigured for all modes, and can be overridden by passing your own key mappings."
+		/>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
+		<script type="importmap">
+			{
+				"imports": {
+					"maplibre-gl": "https://unpkg.com/maplibre-gl@^6.0.0/dist/maplibre-gl.mjs"
+				}
+			}
+		</script>
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+			}
+			html,
+			body,
+			#map {
+				height: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.css"
+		/>
+		<div id="map"></div>
+
+		<script type="module">
+			import { Map } from 'maplibre-gl';
+			import { MaplibreTerradrawControl } from 'https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@latest/dist/maplibre-gl-terradraw.es.js';
+
+			const map = new Map({
+				container: 'map',
+				style: 'https://demotiles.maplibre.org/style.json',
+				center: [0, 0],
+				zoom: 1,
+				maxPitch: 85
+			});
+
+			const drawControl = new MaplibreTerradrawControl({
+				modes: ['polygon', 'point', 'marker', 'linestring', 'select', 'delete'],
+				open: true,
+				keyboardShortcuts: {
+					point: {
+						heldKeys: [],
+						key: 'v'
+					},
+					marker: {
+						heldKeys: [],
+						key: 'b'
+					}
+				}
+			});
+			map.addControl(drawControl, 'top-left');
+		</script>
+	</body>
+</html>

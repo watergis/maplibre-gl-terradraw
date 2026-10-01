@@ -71,7 +71,7 @@
 		"@vitest/coverage-v8": "^4.1.11",
 		"@watergis/maplibre-gl-export": "^5.0.0",
 		"@watergis/terrain-rgb": "^2.1.1",
-		"cssnano": "^8.0.7",
+		"cssnano": "^9.0.0",
 		"dependency-cruiser": "^18.2.0",
 		"eslint": "^10.8.1",
 		"eslint-config-prettier": "^10.1.8",

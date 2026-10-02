@@ -68,7 +68,7 @@
 		"@types/geojson": "^7946.0.16",
 		"@types/node": "^26.2.0",
 		"@undp-data/style-switcher": "^2.0.15",
-		"@vitest/coverage-v8": "^4.1.11",
+		"@vitest/coverage-v8": "^5.0.0",
 		"@watergis/maplibre-gl-export": "^5.0.0",
 		"@watergis/terrain-rgb": "^2.1.1",
 		"cssnano": "^8.0.7",
@@ -102,7 +102,7 @@
 		"typescript": "^6.0.3",
 		"typescript-eslint": "^8.67.0",
 		"vite": "^8.2.2",
-		"vitest": "^4.1.11",
+		"vitest": "^5.0.0",
 		"wrangler": "^4.125.0"
 	},
 	"peerDependencies": {

@@ -90,7 +90,7 @@
 		"sass-embedded": "^1.102.0",
 		"serve": "^14.2.6",
 		"shiki": "^4.4.3",
-		"simple-git": "^3.36.0",
+		"simple-git": "^4.0.0",
 		"simple-icons": "^16.28.0",
 		"svelte": "^5.56.10",
 		"svelte-check": "^4.7.6",

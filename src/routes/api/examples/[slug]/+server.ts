@@ -1,6 +1,7 @@
 import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { fetchStaticAsset, getPackageInfo } from '../../../helpers';
+import { fetchStaticAsset } from '../../../assets.server';
+import { getPackageInfo } from '../../../helpers';
 
 export const GET: RequestHandler = async ({ params, fetch, url }) => {
 	const slug = params.slug;

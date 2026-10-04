@@ -1,11 +1,5 @@
-import {
-	exampleIds,
-	fetchStaticAsset,
-	getDescription,
-	getPackageInfo,
-	getTitle,
-	getTags
-} from './helpers';
+import { fetchStaticAsset } from './assets.server';
+import { exampleIds, getDescription, getPackageInfo, getTitle, getTags } from './helpers';
 import type { LayoutServerLoad } from './$types';
 import { PROTOMAP_KEY } from '$app/env/private';
 import authorsJson from './authors.json';

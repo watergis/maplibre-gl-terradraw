@@ -1,4 +1,3 @@
-import { env } from 'cloudflare:workers';
 import pkg from '../../package.json' with { type: 'json' };
 
 export const exampleIds = [
@@ -59,24 +58,4 @@ export const getPackageInfo = async () => {
 			version: 'latest'
 		};
 	}
-};
-
-export const fetchStaticAsset = async ({
-	fetch,
-	url,
-	path
-}: {
-	fetch: typeof globalThis.fetch;
-	url: URL;
-	path: string;
-}) => {
-	const assetUrl = new URL(path, url).toString();
-	// adapter-cloudflare v8 no longer passes bindings through `platform.env`
-	const assets = env.ASSETS;
-
-	if (assets) {
-		return assets.fetch(assetUrl);
-	}
-
-	return fetch(assetUrl);
 };

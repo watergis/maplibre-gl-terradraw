@@ -1,6 +1,6 @@
 import type { GeoJSONStoreFeatures } from 'terra-draw';
 import type { PageServerLoad } from './$types';
-import { fetchStaticAsset } from './helpers';
+import { fetchStaticAsset } from './assets.server';
 
 export const load: PageServerLoad = async ({ fetch, parent, url }) => {
 	const { metadata, styles } = await parent();

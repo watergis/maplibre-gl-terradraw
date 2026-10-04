@@ -17,6 +17,7 @@ export const AvailableModes = [
 	'polygon',
 	'rectangle',
 	'circle',
+	'ellipse',
 	'freehand',
 	'freehand-linestring',
 	'angled-rectangle',

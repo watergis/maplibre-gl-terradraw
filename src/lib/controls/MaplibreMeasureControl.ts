@@ -457,6 +457,7 @@ export class MaplibreMeasureControl extends MaplibreTerradrawControl {
 				'rectangle',
 				'angled-rectangle',
 				'circle',
+				'ellipse',
 				'sector',
 				'sensor',
 				'freehand'

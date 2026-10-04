@@ -15,6 +15,7 @@ export const defaultControlOptions: TerradrawControlOptions = {
 		'sensor',
 		'sector',
 		'circle',
+		'ellipse',
 		'freehand',
 		'freehand-linestring',
 		'text',

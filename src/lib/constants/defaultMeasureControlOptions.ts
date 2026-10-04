@@ -1,6 +1,7 @@
 import {
 	TerraDrawAngledRectangleMode,
 	TerraDrawCircleMode,
+	TerraDrawEllipseMode,
 	TerraDrawFreehandLineStringMode,
 	TerraDrawFreehandMode,
 	TerraDrawLineStringMode,
@@ -34,6 +35,7 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 		'sensor',
 		'sector',
 		'circle',
+		'ellipse',
 		'freehand',
 		'freehand-linestring',
 		'text',
@@ -119,6 +121,14 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 			}
 		}),
 		circle: new TerraDrawCircleMode({
+			styles: {
+				fillColor: '#EDEFF0',
+				fillOpacity: 0.7,
+				outlineColor: '#666666',
+				outlineWidth: 2
+			}
+		}),
+		ellipse: new TerraDrawEllipseMode({
 			styles: {
 				fillColor: '#EDEFF0',
 				fillOpacity: 0.7,
@@ -241,6 +251,17 @@ export const defaultMeasureControlOptions: MeasureControlOptions = {
 				circle: {
 					feature: {
 						draggable: true,
+						coordinates: {
+							resizable: 'center-fixed',
+							deletable: false,
+							midpoints: false
+						}
+					}
+				},
+				ellipse: {
+					feature: {
+						draggable: true,
+						rotateable: true,
 						coordinates: {
 							resizable: 'center',
 							deletable: false,

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { replaceState } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import {
 		AvailableModes,
@@ -11,7 +11,7 @@
 		type MetricDistanceUnit,
 		type TerradrawMode,
 		type ValhallaOptions
-	} from '$lib';
+	} from '#lib';
 	import { SegmentedControl, Tabs } from '@skeletonlabs/skeleton-svelte';
 	import { setWorkerUrl } from 'maplibre-gl';
 	import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
@@ -109,6 +109,7 @@
 		const filteredExamples = data.examples.filter(
 			(example: { title: string; description: string }) => {
 				const query = searchQuery.toLowerCase();
+
 				return (
 					example.title.toLowerCase().includes(query) ||
 					example.description.toLowerCase().includes(query)
@@ -161,8 +162,7 @@
 			pageUrl.searchParams.delete('valhallaOptions');
 		}
 		pageUrl.searchParams.set('packageManager', packageManager);
-		// eslint-disable-next-line svelte/no-navigation-without-resolve
-		replaceState(pageUrl, '');
+		goto(pageUrl, { shallow: true, replace: true, state: {} });
 	};
 
 	const getMeasureOptions = () => {
@@ -217,7 +217,7 @@
 			onclick={() => {
 				document.getElementById('getting-started')?.scrollIntoView({ behavior: 'smooth' });
 			}}
-		></DemoMap>
+		/>
 	</section>
 
 	<section id="getting-started" class="px-4 snap-start">

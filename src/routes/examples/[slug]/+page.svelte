@@ -3,14 +3,14 @@
 	import CodeBlock from '../../CodeBlock.svelte';
 	import type { PageData } from './$types';
 
-	type Props = {
-		data: PageData;
-	};
-	const { data }: Props = $props();
+	type Props = { data: PageData };
 
+	const { data }: Props = $props();
 	let titleElement: HTMLElement | undefined = $state();
 
-	afterNavigate(() => {
+	afterNavigate(({ shallow }) => {
+		if (shallow) return;
+
 		titleElement?.scrollIntoView();
 	});
 </script>
@@ -22,10 +22,7 @@
 </div>
 
 <iframe class="map-iframe" src={data.url} title={data.title}></iframe>
-
-<div class="p-4">
-	<CodeBlock lang="html" code={data.html} />
-</div>
+<div class="p-4"><CodeBlock lang="html" code={data.html} /></div>
 
 <style lang="scss">
 	.map-iframe {

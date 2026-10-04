@@ -7,7 +7,7 @@ import {
 	getTags
 } from './helpers';
 import type { LayoutServerLoad } from './$types';
-import { env } from '$env/dynamic/private';
+import { PROTOMAP_KEY } from '$app/env/private';
 import authorsJson from './authors.json';
 
 export type AuthorsMap = Record<string, string>;
@@ -36,11 +36,11 @@ export const load: LayoutServerLoad = async ({ fetch, platform, url }) => {
 
 		examples.push({
 			href: `/examples/${item}`,
-			title: title,
-			tags: tags,
+			title,
+			tags,
 			image: `/assets/images/${item}.webp`,
-			description: description,
-			author: author
+			description,
+			author
 		});
 	}
 
@@ -48,33 +48,33 @@ export const load: LayoutServerLoad = async ({ fetch, platform, url }) => {
 		return a.title.localeCompare(b.title);
 	});
 
-	const protomapKeyValue = platformEnv?.PROTOMAP_KEY ?? env.PROTOMAP_KEY ?? '';
-	const PROTOMAP_KEY = protomapKeyValue ? `?key=${protomapKeyValue}` : '';
+	const protomapKeyValue = platformEnv?.PROTOMAP_KEY ?? PROTOMAP_KEY ?? '';
+	const protomapKeyQuery = protomapKeyValue ? `?key=${protomapKeyValue}` : '';
 
 	const styles = [
 		{
 			title: 'Light',
-			uri: `https://api.protomaps.com/styles/v5/light/en.json${PROTOMAP_KEY}`,
+			uri: `https://api.protomaps.com/styles/v5/light/en.json${protomapKeyQuery}`,
 			image: '/assets/style-switcher/light.webp'
 		},
 		{
 			title: 'Dark',
-			uri: `https://api.protomaps.com/styles/v5/dark/en.json${PROTOMAP_KEY}`,
+			uri: `https://api.protomaps.com/styles/v5/dark/en.json${protomapKeyQuery}`,
 			image: '/assets/style-switcher/dark.webp'
 		},
 		{
 			title: 'White',
-			uri: `https://api.protomaps.com/styles/v5/white/en.json${PROTOMAP_KEY}`,
+			uri: `https://api.protomaps.com/styles/v5/white/en.json${protomapKeyQuery}`,
 			image: '/assets/style-switcher/white.webp'
 		},
 		{
 			title: 'Grayscale',
-			uri: `https://api.protomaps.com/styles/v5/grayscale/en.json${PROTOMAP_KEY}`,
+			uri: `https://api.protomaps.com/styles/v5/grayscale/en.json${protomapKeyQuery}`,
 			image: '/assets/style-switcher/grayscale.webp'
 		},
 		{
 			title: 'Black',
-			uri: `https://api.protomaps.com/styles/v5/black/en.json${PROTOMAP_KEY}`,
+			uri: `https://api.protomaps.com/styles/v5/black/en.json${protomapKeyQuery}`,
 			image: '/assets/style-switcher/black.webp'
 		}
 	];
@@ -88,7 +88,7 @@ export const load: LayoutServerLoad = async ({ fetch, platform, url }) => {
 			author: packageInfo.author.name,
 			contact: packageInfo.author.url
 		},
-		styles: styles,
+		styles,
 		nav: [
 			{ href: 'https://twitter.com/j_igarashi', icon: 'twitter' },
 			{
@@ -96,6 +96,6 @@ export const load: LayoutServerLoad = async ({ fetch, platform, url }) => {
 				icon: 'github'
 			}
 		],
-		examples: examples
+		examples
 	};
 };

@@ -6,6 +6,9 @@ importers:
   .:
     configDependencies: {}
     packageManagerDependencies:
+      '@pnpm/exe':
+        specifier: 12.7.0
+        version: 12.7.0
       pnpm:
         specifier: 12.7.0
         version: 12.7.0
@@ -89,6 +92,11 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@pnpm/exe@12.7.0':
+    resolution: {integrity: sha512-3p5QdoIi1oNH+1U6/SH0h6jdF02xMGXoDhBYkwcqSqYsjGJmYBpsZf17T87QE1kzLuUwA0f0IA0vUYCxQEj0aA==}
+    engines: {node: '>=18.*'}
+    hasBin: true
+
   pnpm@12.7.0:
     resolution: {integrity: sha512-nFZHfjYAaNbp3KapLvtORrPcWlL86/PYTXi5c2wN7ViaVhYhpS9oIZp6OfrMY83AecMibvnJ1fArefdOaagHtg==}
     engines: {node: '>=18.*'}
@@ -137,6 +145,23 @@ snapshots:
 
   '@pnpm/exe.win32-x64@12.7.0':
     optional: true
+
+  '@pnpm/exe@12.7.0':
+    optionalDependencies:
+      '@pnpm/exe.android-arm64': 12.7.0
+      '@pnpm/exe.android-x64': 12.7.0
+      '@pnpm/exe.darwin-arm64': 12.7.0
+      '@pnpm/exe.darwin-x64': 12.7.0
+      '@pnpm/exe.freebsd-x64': 12.7.0
+      '@pnpm/exe.linux-arm64': 12.7.0
+      '@pnpm/exe.linux-arm64-musl': 12.7.0
+      '@pnpm/exe.linux-ppc64': 12.7.0
+      '@pnpm/exe.linux-riscv64': 12.7.0
+      '@pnpm/exe.linux-s390x': 12.7.0
+      '@pnpm/exe.linux-x64': 12.7.0
+      '@pnpm/exe.linux-x64-musl': 12.7.0
+      '@pnpm/exe.win32-arm64': 12.7.0
+      '@pnpm/exe.win32-x64': 12.7.0
 
   pnpm@12.7.0:
     optionalDependencies:
@@ -302,11 +327,11 @@ importers:
         specifier: ^4.3.3
         version: 4.3.3
       terra-draw:
-        specifier: ^1.32.3
-        version: 1.35.0
+        specifier: ^1.36.0
+        version: 1.36.0
       terra-draw-maplibre-gl-adapter:
         specifier: ^1.4.1
-        version: 1.4.1(maplibre-gl@6.11.2)(terra-draw@1.35.0)
+        version: 1.4.1(maplibre-gl@6.11.2)(terra-draw@1.36.0)
       tsx:
         specifier: ^4.23.12
         version: 4.23.15
@@ -4037,8 +4062,8 @@ packages:
       maplibre-gl: '>=4'
       terra-draw: ^1.0.0
 
-  terra-draw@1.35.0:
-    resolution: {integrity: sha512-uQI8lcPiUMqwVV29CexTfvT/AM4lGHtA+xWraW4njVExiM1+eGvRetYOBXmXEmgy5pL4X2dmjwMRH8JEYVtbgw==}
+  terra-draw@1.36.0:
+    resolution: {integrity: sha512-qvfMP2t8pVJectt3VL4h9VOoRaI7NEaKsvoiU+7rXzKuyDfsc+h0wsbl0d3ru7etiVSwl+ic64YCKVdVrcqJnA==}
 
   text-segmentation@1.0.3:
     resolution: {integrity: sha512-iOiPUo/BGnZ6+54OsWxZidGCsdU8YbE4PSpdPinp7DeMtUJNJBoJ/ouUSTJjHkh1KntHaltHl/gDs2FC4i5+Nw==}
@@ -8193,12 +8218,12 @@ snapshots:
 
   tapable@2.3.3: {}
 
-  terra-draw-maplibre-gl-adapter@1.4.1(maplibre-gl@6.11.2)(terra-draw@1.35.0):
+  terra-draw-maplibre-gl-adapter@1.4.1(maplibre-gl@6.11.2)(terra-draw@1.36.0):
     dependencies:
       maplibre-gl: 6.11.2
-      terra-draw: 1.35.0
+      terra-draw: 1.36.0
 
-  terra-draw@1.35.0: {}
+  terra-draw@1.36.0: {}
 
   text-segmentation@1.0.3:
     dependencies:

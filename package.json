@@ -95,7 +95,7 @@
 		"svelte": "^5.56.10",
 		"svelte-check": "^4.7.6",
 		"tailwindcss": "^4.3.3",
-		"terra-draw": "^1.32.3",
+		"terra-draw": "^1.36.0",
 		"terra-draw-maplibre-gl-adapter": "^1.4.1",
 		"tsx": "^4.23.12",
 		"typedoc": "^0.28.20",

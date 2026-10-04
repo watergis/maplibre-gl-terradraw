@@ -1,8 +1,8 @@
 import type { GeoJSONStoreFeatures } from 'terra-draw';
 import type { PageServerLoad } from './$types';
-import { fetchStaticAsset } from './helpers';
+import { fetchStaticAsset } from './assets.server';
 
-export const load: PageServerLoad = async ({ fetch, parent, platform, url }) => {
+export const load: PageServerLoad = async ({ fetch, parent, url }) => {
 	const { metadata, styles } = await parent();
 
 	const getExample = async (type: 'cdn' | 'npm') => {
@@ -10,7 +10,6 @@ export const load: PageServerLoad = async ({ fetch, parent, platform, url }) => 
 			const res = await fetchStaticAsset({
 				fetch,
 				url,
-				platform,
 				path: '/assets/maplibre-cdn-example.txt'
 			});
 			const text = await res.text();
@@ -22,7 +21,6 @@ export const load: PageServerLoad = async ({ fetch, parent, platform, url }) => 
 			const res = await fetchStaticAsset({
 				fetch,
 				url,
-				platform,
 				path: '/assets/maplibre-npm-example.txt'
 			});
 			const text = await res.text();

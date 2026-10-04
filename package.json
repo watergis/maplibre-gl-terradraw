@@ -56,8 +56,8 @@
 		"@playwright/test": "^1.63.0",
 		"@skeletonlabs/skeleton": "^5.0.1",
 		"@skeletonlabs/skeleton-svelte": "^5.0.1",
-		"@sveltejs/adapter-cloudflare": "^7.2.9",
-		"@sveltejs/kit": "^2.70.3",
+		"@sveltejs/adapter-cloudflare": "^8.0.0",
+		"@sveltejs/kit": "^3.0.0",
 		"@sveltejs/vite-plugin-svelte": "^7.3.1",
 		"@tailwindcss/vite": "^4.3.3",
 		"@testing-library/jest-dom": "^7.0.1",
@@ -139,5 +139,9 @@
 	"packageManager": "pnpm@12.9.1",
 	"engines": {
 		"pnpm": "^12.0.0"
+	},
+	"imports": {
+		"#lib": "./src/lib/index.js",
+		"#lib/*": "./src/lib/*"
 	}
 }

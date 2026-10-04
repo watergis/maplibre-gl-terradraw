@@ -41,7 +41,7 @@
 		type TerradrawMode,
 		type TerradrawValhallaMode,
 		type ValhallaOptions
-	} from '$lib';
+	} from '#lib';
 	import Info from '@lucide/svelte/icons/info';
 	import IconPlus from '@lucide/svelte/icons/plus';
 	import IconX from '@lucide/svelte/icons/x';

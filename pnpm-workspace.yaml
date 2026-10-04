@@ -20,10 +20,19 @@ minimumReleaseAgeExclude:
   - lefthook-windows-arm64@2.1.9
   - lefthook-windows-x64@2.1.9
   - lefthook@2.1.9
-  - terra-draw@1.31.0
+  - terra-draw@1.31.0 || 1.36.0
   - eslint-plugin-svelte@3.20.0
   - prettier@3.8.5
-  - maplibre-gl@6.5.0
+  - maplibre-gl@6.5.0 || 6.12.0
+  - '@lucide/svelte@1.51.0'
+  - cssnano-preset-default@9.2.2
+  - cssnano-utils@8.1.0
+  - cssnano@9.2.2
+  - postcss-discard-duplicates@9.0.5
+  - postcss-merge-rules@9.0.8
+  - postcss-minify-font-values@9.0.7
+  - postcss-ordered-values@9.0.6
+  - simple-icons@16.34.0
 onlyBuiltDependencies:
   - lefthook
   - oniguruma

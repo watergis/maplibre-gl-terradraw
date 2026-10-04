@@ -1,4 +1,4 @@
-import simpleGit from 'simple-git';
+import { simpleGit } from 'simple-git';
 import fs from 'fs';
 import path from 'path';
 import { getPackageInfo } from '../src/routes/helpers.ts';

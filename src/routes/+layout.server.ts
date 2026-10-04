@@ -12,9 +12,8 @@ import authorsJson from './authors.json';
 
 export type AuthorsMap = Record<string, string>;
 
-export const load: LayoutServerLoad = async ({ fetch, platform, url }) => {
+export const load: LayoutServerLoad = async ({ fetch, url }) => {
 	const authors = authorsJson as AuthorsMap;
-	const platformEnv = (platform as { env?: { PROTOMAP_KEY?: string } } | undefined)?.env;
 
 	const packageInfo = await getPackageInfo();
 
@@ -23,7 +22,6 @@ export const load: LayoutServerLoad = async ({ fetch, platform, url }) => {
 		const res = await fetchStaticAsset({
 			fetch,
 			url,
-			platform,
 			path: `/assets/examples/${item}.htm`
 		});
 		if (!res.ok) continue;
@@ -48,8 +46,7 @@ export const load: LayoutServerLoad = async ({ fetch, platform, url }) => {
 		return a.title.localeCompare(b.title);
 	});
 
-	const protomapKeyValue = platformEnv?.PROTOMAP_KEY ?? PROTOMAP_KEY ?? '';
-	const protomapKeyQuery = protomapKeyValue ? `?key=${protomapKeyValue}` : '';
+	const protomapKeyQuery = PROTOMAP_KEY ? `?key=${PROTOMAP_KEY}` : '';
 
 	const styles = [
 		{

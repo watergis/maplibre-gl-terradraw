@@ -2,7 +2,7 @@ import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { fetchStaticAsset, getPackageInfo } from '../../../helpers';
 
-export const GET: RequestHandler = async ({ params, fetch, platform, url }) => {
+export const GET: RequestHandler = async ({ params, fetch, url }) => {
 	const slug = params.slug;
 
 	const filePath = `/assets/examples/${slug}.htm`;
@@ -10,7 +10,6 @@ export const GET: RequestHandler = async ({ params, fetch, platform, url }) => {
 	const res = await fetchStaticAsset({
 		fetch,
 		url,
-		platform,
 		path: filePath
 	});
 	if (!res.ok) {

@@ -2,6 +2,7 @@ import type { ModeOptions } from '../interfaces/ModeOptions';
 import {
 	TerraDrawAngledRectangleMode,
 	TerraDrawCircleMode,
+	TerraDrawEllipseMode,
 	TerraDrawFreehandLineStringMode,
 	TerraDrawFreehandMode,
 	TerraDrawLineStringMode,
@@ -66,6 +67,7 @@ export const getDefaultModeOptions = () => {
 		rectangle: new TerraDrawRectangleMode(),
 		'angled-rectangle': new TerraDrawAngledRectangleMode(),
 		circle: new TerraDrawCircleMode(),
+		ellipse: new TerraDrawEllipseMode(),
 		freehand: new TerraDrawFreehandMode(),
 		'freehand-linestring': new TerraDrawFreehandLineStringMode(),
 		sensor: new TerraDrawSensorMode(),
@@ -143,6 +145,17 @@ export const getDefaultModeOptions = () => {
 				circle: {
 					feature: {
 						draggable: true,
+						coordinates: {
+							resizable: 'center-fixed',
+							deletable: false,
+							midpoints: false
+						}
+					}
+				},
+				ellipse: {
+					feature: {
+						draggable: true,
+						rotateable: true,
 						coordinates: {
 							resizable: 'center',
 							deletable: false,

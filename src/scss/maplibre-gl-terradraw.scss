@@ -126,6 +126,14 @@
 	background-size: 80%;
 }
 
+.maplibregl-terradraw-measure-add-ellipse-button,
+.maplibregl-terradraw-add-ellipse-button {
+	background: url('./icons/ellipse.svg');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 80%;
+}
+
 .maplibregl-terradraw-measure-add-freehand-button,
 .maplibregl-terradraw-add-freehand-button {
 	background: url('./icons/freehand.svg');

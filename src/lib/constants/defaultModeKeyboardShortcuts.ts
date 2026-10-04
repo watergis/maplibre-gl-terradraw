@@ -41,6 +41,10 @@ export const defaultModeKeyboardShortcuts: ModeKeyboardShortcuts = {
 		key: 'c',
 		heldKeys: []
 	},
+	ellipse: {
+		key: 'v',
+		heldKeys: []
+	},
 	freehand: {
 		key: 'f',
 		heldKeys: []

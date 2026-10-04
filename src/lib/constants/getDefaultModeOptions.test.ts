@@ -13,6 +13,7 @@ describe('getDefaultModeOptions', () => {
 		expect(modeOptions).toHaveProperty('rectangle');
 		expect(modeOptions).toHaveProperty('angled-rectangle');
 		expect(modeOptions).toHaveProperty('circle');
+		expect(modeOptions).toHaveProperty('ellipse');
 		expect(modeOptions).toHaveProperty('freehand');
 		expect(modeOptions).toHaveProperty('freehand-linestring');
 		expect(modeOptions).toHaveProperty('sensor');
@@ -34,6 +35,7 @@ describe('getDefaultModeOptions', () => {
 		expect(modeOptions.rectangle).toHaveProperty('mode', 'rectangle');
 		expect(modeOptions['angled-rectangle']).toHaveProperty('mode', 'angled-rectangle');
 		expect(modeOptions.circle).toHaveProperty('mode', 'circle');
+		expect(modeOptions.ellipse).toHaveProperty('mode', 'ellipse');
 		expect(modeOptions.freehand).toHaveProperty('mode', 'freehand');
 		expect(modeOptions['freehand-linestring']).toHaveProperty('mode', 'freehand-linestring');
 		expect(modeOptions.sensor).toHaveProperty('mode', 'sensor');

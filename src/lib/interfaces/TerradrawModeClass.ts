@@ -5,6 +5,7 @@ import type { TerraDrawValhallaDistanceIsochroneMode } from '../modes/TerraDrawV
 import {
 	TerraDrawAngledRectangleMode,
 	TerraDrawCircleMode,
+	TerraDrawEllipseMode,
 	TerraDrawFreehandMode,
 	TerraDrawFreehandLineStringMode,
 	TerraDrawLineStringMode,
@@ -25,6 +26,7 @@ import {
 export type TerradrawModeClass =
 	| TerraDrawAngledRectangleMode
 	| TerraDrawCircleMode
+	| TerraDrawEllipseMode
 	| TerraDrawFreehandMode
 	| TerraDrawFreehandLineStringMode
 	| TerraDrawLineStringMode

@@ -70,6 +70,9 @@ vi.mock('terra-draw', () => ({
 	TerraDrawCircleMode: vi.fn().mockImplementation(function () {
 		return { mode: 'circle' };
 	}),
+	TerraDrawEllipseMode: vi.fn().mockImplementation(function () {
+		return { mode: 'ellipse' };
+	}),
 	TerraDrawFreehandMode: vi.fn().mockImplementation(function () {
 		return { mode: 'freehand' };
 	}),
